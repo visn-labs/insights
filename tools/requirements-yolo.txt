@@ -1,3 +1,5 @@
 ultralytics>=8.4,<9
-opencv-python-headless>=4.10,<5
-
+# Keep a single cv2 distribution. Ultralytics declares opencv-python directly.
+opencv-python>=4.10,<5
+# Bundled FFmpeg executable for reliable HTTP, HLS, and MJPEG ingestion.
+imageio-ffmpeg>=0.5,<0.7

@@ -86,6 +86,13 @@ async fn capabilities(State(state): State<AppState>) -> Json<CapabilityResponse>
         local_state: "memory + local uploads; no database required".to_owned(),
         simulator: true,
         yolo26_command: true,
+        stream_protocols: vec![
+            "http".to_owned(),
+            "https".to_owned(),
+            "rtsp".to_owned(),
+            "rtsps".to_owned(),
+        ],
+        max_analysis_secs: state.config.max_analysis_secs,
         gemma_endpoint: state.config.gemma_base_url.clone(),
         kafka_compiled: cfg!(feature = "kafka"),
         kafka_enabled: state.config.kafka_enabled,

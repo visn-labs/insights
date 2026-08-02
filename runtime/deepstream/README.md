@@ -9,7 +9,7 @@ The Phase 0 Rust service consumes a stable `DetectorOutput` contract:
 The included YOLO26 command runner produces this contract for development. The production NVIDIA implementation replaces that process with a long-running DeepStream worker using this graph:
 
 ```text
-RTSP/file -> parser -> NVDEC -> nvstreammux -> nvinfer(YOLO26 TensorRT)
+HTTP(S)/RTSP/file -> parser -> NVDEC -> nvstreammux -> nvinfer(YOLO26 TensorRT)
           -> nvtracker(NvDCF) -> metadata adapter -> Rust observations
 ```
 
@@ -26,4 +26,3 @@ Implementation steps on the selected Linux/NVIDIA host:
 7. Benchmark 16/32/64 sources; set batch size and inference interval from measured results.
 
 The web/API service remains unchanged when this adapter is substituted.
-

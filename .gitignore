@@ -1,9 +1,9 @@
 /target/
 /data/
+/.venv/
 /.env
 *.engine
 *.onnx
 *.pt
 __pycache__/
 *.pyc
-

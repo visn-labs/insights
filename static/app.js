@@ -41,7 +41,7 @@ function bindForm() {
     radio.addEventListener('change', () => {
       $$('.source-card').forEach((card) => card.classList.remove('active'));
       $(`#${radio.value}-source`).classList.add('active');
-      if (radio.value === 'sample') $('#backend').value = 'simulator';
+      $('#backend').value = radio.value === 'sample' ? 'simulator' : 'yolo26_command';
     });
   });
 
@@ -94,6 +94,11 @@ async function refreshAll() {
 async function loadCapabilities() {
   try {
     state.capabilities = await api('/api/v1/capabilities');
+    const durationInput = $('#monitor-duration');
+    durationInput.max = state.capabilities.max_analysis_secs;
+    if (Number(durationInput.value) > state.capabilities.max_analysis_secs) {
+      durationInput.value = state.capabilities.max_analysis_secs;
+    }
     $('#service-dot').className = 'status-dot ok';
     $('#service-status').textContent = 'Service ready';
     $('#service-version').textContent = `v${state.capabilities.service_version} · ${state.capabilities.kafka_enabled ? 'Kafka' : 'No-op sink'}`;
@@ -176,10 +181,14 @@ async function submitJob(event) {
     } else if (sourceKind === 'upload') {
       if (!state.upload) throw new Error('Choose and finish uploading a video first.');
       source = { upload: { upload_id: state.upload.id } };
-    } else {
+    } else if (sourceKind === 'rtsp') {
       const uri = $('#rtsp-uri').value.trim();
       if (!uri) throw new Error('Enter an RTSP address.');
       source = { rtsp: { uri } };
+    } else {
+      const uri = $('#http-uri').value.trim();
+      if (!uri) throw new Error('Enter an HTTP or HTTPS stream address.');
+      source = { http: { uri } };
     }
 
     const backend = $('#backend').value;
@@ -192,6 +201,7 @@ async function submitJob(event) {
       source,
       backend,
       detector_fps: Number($('#detector-fps').value),
+      monitor_duration_secs: Number($('#monitor-duration').value),
       gemma_enabled: $('#gemma-enabled').checked,
       observations: backend === 'simulator' ? observations : [],
       policy,
@@ -238,6 +248,9 @@ function inspectJob(job) {
   status.textContent = job.status;
   status.className = `badge ${job.status}`;
   $('#processing-state').classList.toggle('hidden', !['queued', 'running'].includes(job.status));
+  $('#processing-help').textContent = ['http', 'rtsp'].some((kind) => job.request.source?.[kind])
+    ? `Monitoring the stream for up to ${job.request.monitor_duration_secs} seconds, then generating insights.`
+    : 'Results update automatically.';
   $('#job-error').classList.toggle('hidden', job.status !== 'failed');
   $('#job-error').textContent = job.error || '';
 
@@ -312,7 +325,8 @@ function renderCapabilities() {
   if (!state.capabilities) return;
   const labels = {
     service_version: 'Service version', local_state: 'State mode', simulator: 'Simulator',
-    yolo26_command: 'YOLO26 adapter', gemma_endpoint: 'Gemma endpoint',
+    yolo26_command: 'YOLO26 adapter', stream_protocols: 'Stream protocols',
+    max_analysis_secs: 'Maximum monitor duration (sec)', gemma_endpoint: 'Gemma endpoint',
     kafka_compiled: 'Kafka compiled', kafka_enabled: 'Kafka enabled',
   };
   $('#capability-list').innerHTML = Object.entries(labels).map(([key, title]) => `<dt>${title}</dt><dd>${escapeHtml(String(state.capabilities[key]))}</dd>`).join('');
@@ -374,4 +388,3 @@ function escapeHtml(value) {
   node.textContent = String(value);
   return node.innerHTML;
 }
-

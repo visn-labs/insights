@@ -61,6 +61,7 @@
                   <label><input type="radio" name="source" value="sample" checked><span>Sample</span></label>
                   <label><input type="radio" name="source" value="upload"><span>Upload</span></label>
                   <label><input type="radio" name="source" value="rtsp"><span>RTSP</span></label>
+                  <label><input type="radio" name="source" value="http"><span>HTTP(S)</span></label>
                 </div>
               </fieldset>
 
@@ -84,6 +85,11 @@
                 <p class="privacy-note">Credentials are accepted for execution but redacted from API responses and logs.</p>
               </div>
 
+              <div id="http-source" class="source-card">
+                <label class="field full"><span>HTTP/HTTPS stream address</span><input id="http-uri" type="url" placeholder="https://camera.example/live.m3u8"></label>
+                <p class="privacy-note">Supports streams OpenCV/FFmpeg can decode, including HLS and MJPEG. Credentials and query tokens are redacted from job responses.</p>
+              </div>
+
               <div class="form-row">
                 <label class="field">
                   <span>Detector backend</span>
@@ -95,6 +101,10 @@
                 <label class="field">
                   <span>Detector rate</span>
                   <div class="input-suffix"><input id="detector-fps" type="number" min="0.1" max="60" step="0.1" value="5"><b>FPS</b></div>
+                </label>
+                <label class="field">
+                  <span>Monitor duration</span>
+                  <div class="input-suffix"><input id="monitor-duration" type="number" min="1" max="3600" step="1" value="120"><b>SEC</b></div>
                 </label>
               </div>
 
@@ -131,7 +141,7 @@
               </div>
 
               <div id="job-error" class="inline-error hidden"></div>
-              <div id="processing-state" class="processing hidden"><span class="spinner"></span><div><strong>Pipeline is running</strong><small>Results update automatically.</small></div></div>
+              <div id="processing-state" class="processing hidden"><span class="spinner"></span><div><strong>Pipeline is running</strong><small id="processing-help">Results update automatically.</small></div></div>
 
               <video id="video-preview" class="video-preview hidden" controls preload="metadata"></video>
 
@@ -188,4 +198,3 @@
   <script src="/app.js" defer></script>
 </body>
 </html>
-

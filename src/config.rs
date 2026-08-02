@@ -34,6 +34,18 @@ impl Config {
             bail!("VISN_MAX_UPLOAD_MB must be greater than zero");
         }
 
+        let max_analysis_secs = value("VISN_MAX_ANALYSIS_SECS", "3600")
+            .parse::<u64>()
+            .context("VISN_MAX_ANALYSIS_SECS must be an integer")?;
+        if max_analysis_secs == 0 {
+            bail!("VISN_MAX_ANALYSIS_SECS must be greater than zero");
+        }
+        let default_detector_executable = if PathBuf::from(".venv/bin/python").is_file() {
+            ".venv/bin/python"
+        } else {
+            "python3"
+        };
+
         Ok(Self {
             bind: value("VISN_BIND", "127.0.0.1:8080"),
             data_dir: PathBuf::from(value("VISN_DATA_DIR", "./data")),
@@ -47,15 +59,13 @@ impl Config {
             gemma_timeout_secs: value("VISN_GEMMA_TIMEOUT_SECS", "120")
                 .parse()
                 .context("VISN_GEMMA_TIMEOUT_SECS must be an integer")?,
-            detector_executable: value("VISN_DETECTOR_EXECUTABLE", "python3"),
+            detector_executable: value("VISN_DETECTOR_EXECUTABLE", default_detector_executable),
             detector_args: value("VISN_DETECTOR_ARGS", "tools/yolo26_runner.py")
                 .split_whitespace()
                 .map(ToOwned::to_owned)
                 .collect(),
             yolo_model: value("VISN_YOLO_MODEL", "yolo26s.pt"),
-            max_analysis_secs: value("VISN_MAX_ANALYSIS_SECS", "120")
-                .parse()
-                .context("VISN_MAX_ANALYSIS_SECS must be an integer")?,
+            max_analysis_secs,
             kafka_enabled: bool_value("VISN_KAFKA_ENABLED", false)?,
             #[cfg(feature = "kafka")]
             kafka_brokers: value("VISN_KAFKA_BROKERS", "127.0.0.1:9092"),

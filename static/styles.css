@@ -80,7 +80,7 @@ input, select { height: 43px; padding: 0 12px; }
 textarea { min-height: 170px; padding: 12px; resize: vertical; font: 11px/1.55 'DM Mono', monospace; }
 input:focus, select:focus, textarea:focus { border-color: #6b8a60; box-shadow: 0 0 0 3px rgba(185,255,102,.06); }
 .source-fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 9px; }
-.segmented { padding: 3px; background: #0b1011; border: 1px solid var(--line); border-radius: 10px; display: grid; grid-template-columns: repeat(3, 1fr); }
+.segmented { padding: 3px; background: #0b1011; border: 1px solid var(--line); border-radius: 10px; display: grid; grid-template-columns: repeat(4, 1fr); }
 .segmented label { cursor: pointer; }
 .segmented input { position: absolute; opacity: 0; pointer-events: none; }
 .segmented span { height: 34px; border-radius: 7px; display: grid; place-items: center; color: var(--muted); font-size: 11px; }
@@ -96,8 +96,8 @@ input:focus, select:focus, textarea:focus { border-color: #6b8a60; box-shadow: 0
 .progress span { display: block; width: 35%; height: 100%; background: var(--accent); animation: progress 1.1s infinite ease-in-out; }
 @keyframes progress { from { transform: translateX(-110%); } to { transform: translateX(320%); } }
 #upload-source { position: relative; overflow: hidden; }
-#rtsp-source { align-items: end; }.full { width: 100%; }.privacy-note { margin-bottom: 7px !important; }
-.form-row { display: grid; grid-template-columns: 1.5fr .7fr; gap: 12px; }
+#rtsp-source, #http-source { align-items: end; }.full { width: 100%; }.privacy-note { margin-bottom: 7px !important; }
+.form-row { display: grid; grid-template-columns: 1.3fr .7fr .8fr; gap: 12px; }
 .input-suffix { position: relative; }.input-suffix input { padding-right: 42px; }.input-suffix b { position: absolute; right: 11px; top: 14px; color: #64706f; font: 9px 'DM Mono', monospace; }
 .toggle-row { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 .toggle-row strong, .toggle-row small { display: block; }.toggle-row strong { font-size: 12px; }.toggle-row small { margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.4; max-width: 340px; }

@@ -21,14 +21,18 @@ pub enum ResolvedSource {
     Sample,
     Upload(PathBuf),
     Rtsp(String),
+    Http(String),
 }
 
 impl ResolvedSource {
     fn detector_value(&self) -> anyhow::Result<String> {
         match self {
-            Self::Sample => bail!("the YOLO26 command backend needs an upload or RTSP source"),
+            Self::Sample => {
+                bail!("the YOLO26 command backend needs an upload or network stream source")
+            }
             Self::Upload(path) => Ok(path.to_string_lossy().into_owned()),
             Self::Rtsp(uri) => Ok(uri.clone()),
+            Self::Http(uri) => Ok(uri.clone()),
         }
     }
 }
@@ -154,7 +158,7 @@ impl PipelineService {
         } else if matches!(source, ResolvedSource::Sample) {
             sample_observations()
         } else {
-            bail!("simulator mode requires manual observations for uploaded or RTSP sources");
+            bail!("simulator mode requires manual observations for uploaded or stream sources");
         };
         Ok(DetectorOutput {
             model: "phase0-deterministic-simulator".to_owned(),
@@ -178,7 +182,7 @@ impl PipelineService {
             .arg("--fps")
             .arg(request.detector_fps.to_string())
             .arg("--max-seconds")
-            .arg(self.config.max_analysis_secs.to_string())
+            .arg(request.monitor_duration_secs.to_string())
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -200,13 +204,45 @@ impl PipelineService {
             .await
             .context("wait for YOLO26 runner")?;
         if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr)
+                .replace(&source, redacted_source_label(&source));
             bail!(
                 "YOLO26 runner failed with {}: {}",
                 output.status,
-                String::from_utf8_lossy(&output.stderr).trim()
+                stderr.trim()
             );
         }
-        serde_json::from_slice(&output.stdout).context("decode YOLO26 runner output")
+        decode_detector_output(&output.stdout)
+    }
+}
+
+fn decode_detector_output(stdout: &[u8]) -> anyhow::Result<DetectorOutput> {
+    const PREFIX: &str = "VISN_DETECTOR_JSON:";
+    let text = String::from_utf8_lossy(stdout);
+    if let Some(payload) = text
+        .lines()
+        .rev()
+        .find_map(|line| line.trim().strip_prefix(PREFIX))
+    {
+        return serde_json::from_str(payload).context("decode framed YOLO26 detector output JSON");
+    }
+
+    serde_json::from_slice(stdout).context(
+        "decode YOLO26 detector output JSON (runner returned no framed result; check that VISN_DETECTOR_ARGS points to the current tools/yolo26_runner.py)",
+    )
+}
+
+fn redacted_source_label(source: &str) -> &'static str {
+    if source.starts_with("https://") {
+        "https://***"
+    } else if source.starts_with("http://") {
+        "http://***"
+    } else if source.starts_with("rtsps://") {
+        "rtsps://***"
+    } else if source.starts_with("rtsp://") {
+        "rtsp://***"
+    } else {
+        "<local-video>"
     }
 }
 

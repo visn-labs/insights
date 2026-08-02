@@ -7,7 +7,7 @@ This phase concentrates on the video-processing application boundary. MongoDB re
 ```text
 Browser UI
    -> Rust Axum API
-      -> local upload / sample / RTSP reference
+      -> local upload / sample / HTTP(S) or RTSP reference
       -> DetectorBackend
            -> deterministic simulator
            -> YOLO26 development command
@@ -25,7 +25,7 @@ Browser UI
 ### Rust service
 
 - `src/api.rs`: HTTP routes, bounded streaming multipart upload, SHA-256 metadata, static UI, media serving, and consistent JSON errors.
-- `src/store.rs`: in-memory job/upload catalogue, async execution, source resolution, request validation, and RTSP credential redaction.
+- `src/store.rs`: in-memory job/upload catalogue, async execution, source resolution, request validation, and network-source credential redaction.
 - `src/pipeline.rs`: backend selection, bounded external process execution, observation validation, rules, reporting, Gemma fallback, and sink publication.
 - `src/event_engine.rs`: confirmation threshold, deterministic grouping, point-in-polygon zones, directional line crossings, dwell events, stable UUIDv5 event IDs, track summaries, and fact reports.
 - `src/gemma.rs`: LM Studio `/v1/models` discovery and `/v1/chat/completions`, strict report JSON, event-reference validation, numeric-claim validation, and bounded timeout.
@@ -37,7 +37,8 @@ Browser UI
 The UI is compiled into the Rust binary and requires no Node/npm build. It provides:
 
 - Service, Gemma, Kafka, and detector capability status.
-- Built-in sample, video upload/drop, and RTSP source modes.
+- Built-in sample, video upload/drop, HTTP/HTTPS, and RTSP source modes.
+- Per-job stream monitoring duration followed by automatic insight generation.
 - Simulator/YOLO26 backend selection and detector cadence.
 - Editable detector observations and analytics policy JSON.
 - Job status polling, video preview, metrics, grounded report, fallback reason, event timeline, confirmed-track table, raw JSON, and run history.
@@ -45,7 +46,7 @@ The UI is compiled into the Rust binary and requires no Node/npm build. It provi
 
 ### Model adapters
 
-- `tools/yolo26_runner.py` runs YOLO26 tracking over a file or bounded RTSP interval and emits normalized observations.
+- `tools/yolo26_runner.py` runs YOLO26 tracking over a file or bounded HTTP(S)/RTSP interval and emits normalized observations. HTTP(S) uses an isolated bundled FFmpeg process; the detector result is emitted as a framed record so third-party console output cannot corrupt the Rust/JSON boundary.
 - `tools/export_yolo26.py` exports ONNX/TensorRT artifacts and writes an artifact manifest/hash.
 - `runtime/deepstream/` documents the production graph and contains initial `nvinfer` and NvDCF templates.
 - Gemma calls the user's LM Studio server directly. The preferred model ID is discovered rather than hard-coded because LM Studio model identifiers depend on the loaded artifact.
@@ -112,9 +113,8 @@ This is intentionally an integration-ready placeholder. Once the backend service
 - Jobs and their results are in memory. Restarting the service clears the catalogue; uploaded files remain in `VISN_DATA_DIR` and can be cleaned manually. Mongo persistence waits for the backend contract.
 - The development YOLO runner is Python/Ultralytics. The production online path still needs the target-host DeepStream metadata adapter and validated YOLO26 custom parser.
 - Evidence frame/crop extraction, an encoded NVMe ring buffer, clip remuxing, multi-stream batching, and pipeline-group isolation belong to the NVIDIA-host follow-on slice.
-- The current job API is a bounded batch/RTSP validation flow, not a long-lived camera supervisor.
+- The current job API is a bounded batch/network-stream validation flow, not a long-lived camera supervisor.
 - The simulator proves rules and UI plumbing; it is not a detector accuracy test.
 - Kafka payloads remain provisional until the backend team freezes the contract.
 
 These limitations are surfaced rather than hidden behind untested GPU code. The immediate next gate is to run the same detector-output contract on the selected NVIDIA Linux host and retain this local path for deterministic regression tests.
-

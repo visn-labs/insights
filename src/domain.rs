@@ -10,6 +10,7 @@ pub enum SourceSpec {
     Sample,
     Upload { upload_id: Uuid },
     Rtsp { uri: String },
+    Http { uri: String },
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
@@ -27,6 +28,8 @@ pub struct JobRequest {
     pub backend: BackendKind,
     #[serde(default = "default_detector_fps")]
     pub detector_fps: f32,
+    #[serde(default = "default_monitor_duration_secs")]
+    pub monitor_duration_secs: u64,
     #[serde(default)]
     pub gemma_enabled: bool,
     #[serde(default)]
@@ -41,6 +44,10 @@ fn default_backend() -> BackendKind {
 
 fn default_detector_fps() -> f32 {
     5.0
+}
+
+fn default_monitor_duration_secs() -> u64 {
+    120
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -211,6 +218,8 @@ pub struct CapabilityResponse {
     pub local_state: String,
     pub simulator: bool,
     pub yolo26_command: bool,
+    pub stream_protocols: Vec<String>,
+    pub max_analysis_secs: u64,
     pub gemma_endpoint: String,
     pub kafka_compiled: bool,
     pub kafka_enabled: bool,

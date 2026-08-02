@@ -62,7 +62,7 @@ impl AppState {
     }
 
     pub async fn submit(&self, request: JobRequest) -> anyhow::Result<JobRecord> {
-        validate_request(&request)?;
+        validate_request(&request, self.config.max_analysis_secs)?;
         let source = match &request.source {
             SourceSpec::Sample => ResolvedSource::Sample,
             SourceSpec::Upload { upload_id } => {
@@ -76,6 +76,7 @@ impl AppState {
                 ResolvedSource::Upload(upload.path)
             }
             SourceSpec::Rtsp { uri } => ResolvedSource::Rtsp(uri.clone()),
+            SourceSpec::Http { uri } => ResolvedSource::Http(uri.clone()),
         };
 
         let id = Uuid::now_v7();
@@ -111,7 +112,7 @@ impl AppState {
                     Err(error) => {
                         error!(%id, error = %error, "pipeline job failed");
                         job.status = JobStatus::Failed;
-                        job.error = Some(error.to_string());
+                        job.error = Some(format!("{error:#}"));
                     }
                 }
             }
@@ -121,12 +122,15 @@ impl AppState {
     }
 }
 
-fn validate_request(request: &JobRequest) -> anyhow::Result<()> {
+fn validate_request(request: &JobRequest, max_analysis_secs: u64) -> anyhow::Result<()> {
     if request.name.trim().is_empty() || request.name.len() > 120 {
         bail!("name must contain 1 to 120 characters");
     }
     if !(0.1..=60.0).contains(&request.detector_fps) {
         bail!("detector_fps must be between 0.1 and 60");
+    }
+    if !(1..=max_analysis_secs).contains(&request.monitor_duration_secs) {
+        bail!("monitor_duration_secs must be between 1 and {max_analysis_secs}");
     }
     if let SourceSpec::Rtsp { uri } = &request.source {
         if !uri.starts_with("rtsp://") && !uri.starts_with("rtsps://") {
@@ -134,6 +138,14 @@ fn validate_request(request: &JobRequest) -> anyhow::Result<()> {
         }
         if uri.chars().any(char::is_whitespace) {
             bail!("RTSP source must not contain whitespace");
+        }
+    }
+    if let SourceSpec::Http { uri } = &request.source {
+        if !uri.starts_with("http://") && !uri.starts_with("https://") {
+            bail!("HTTP source must start with http:// or https://");
+        }
+        if uri.chars().any(char::is_whitespace) {
+            bail!("HTTP source must not contain whitespace");
         }
     }
     for zone in &request.policy.zones {
@@ -165,6 +177,13 @@ fn validate_points(points: &[[f32; 2]]) -> anyhow::Result<()> {
 fn redact_job(mut job: JobRecord) -> JobRecord {
     if let SourceSpec::Rtsp { uri } = &mut job.request.source {
         *uri = "rtsp://***".to_owned();
+    }
+    if let SourceSpec::Http { uri } = &mut job.request.source {
+        *uri = if uri.starts_with("https://") {
+            "https://***".to_owned()
+        } else {
+            "http://***".to_owned()
+        };
     }
     job
 }

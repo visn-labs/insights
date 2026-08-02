@@ -3,7 +3,7 @@
 A self-contained Phase 0 implementation of the video analytics service. It is intentionally usable before MongoDB and Kafka contracts are available:
 
 - Rust/Axum service and embedded operator UI.
-- File upload, RTSP, built-in sample, and manually supplied detector facts.
+- File upload, HTTP/HTTPS stream, RTSP, built-in sample, and manually supplied detector facts.
 - Deterministic tracking summaries, normalized zone/line rules, stable event IDs, and reports.
 - YOLO26 local development adapter.
 - LM Studio integration for `gemma-4-26B-a4B-QAT` through its OpenAI-compatible API.
@@ -50,6 +50,8 @@ python3 -m pip install -r tools/requirements-yolo.txt
 VISN_DETECTOR_EXECUTABLE=.venv/bin/python cargo run
 ```
 
+When the project-local `.venv/bin/python` exists, the service detects and uses it automatically, so after the setup above a plain `cargo run` is sufficient. `VISN_DETECTOR_EXECUTABLE` remains available as an explicit override.
+
 In the UI:
 
 1. Select **Upload** and choose an MP4/MKV/MOV file.
@@ -61,7 +63,11 @@ In the UI:
 
 The first use may retrieve `yolo26s.pt` through Ultralytics. Set `VISN_YOLO_MODEL` to an approved local checkpoint path to avoid implicit downloads and to preserve release lineage.
 
-RTSP uses the same YOLO26 command adapter. Phase 0 bounds each run with `VISN_MAX_ANALYSIS_SECS` (default 120 seconds) so a UI job cannot consume an endless stream.
+HTTP and HTTPS are both first-class inputs to the YOLO26 command adapter. In the UI, select **HTTP(S)**, enter the stream URL, and choose **Monitor duration**. HTTP streams are decoded by the bundled, isolated FFmpeg executable; RTSP and local files use OpenCV. This avoids TLS assumptions and avoids loading two FFmpeg library copies into the detector process. HLS, MJPEG, MPEG-TS, and direct HTTP video work when FFmpeg can identify the media format.
+
+`monitor_duration_secs` is set per job (120 seconds in the UI by default). `VISN_MAX_ANALYSIS_SECS` is the server-side safety ceiling and defaults to 3600 seconds. Temporary network read failures are retried until the requested duration expires, after which the accumulated observations are analyzed.
+
+The HTTP value must be a direct media URL, not a webpage containing a player. If a job fails, the Run inspector now includes the complete decoder error chain. A `401` or `403` means the stream requires credentials; `Invalid data found when processing input` usually means the URL returned HTML/JSON rather than video.
 
 ## Configuration
 
@@ -75,10 +81,10 @@ See [.env.example](.env.example). The service reads environment variables direct
 | `VISN_GEMMA_BASE_URL` | `http://127.0.0.1:1234/v1` | LM Studio API base |
 | `VISN_GEMMA_MODEL` | auto-discovered | Exact loaded model ID |
 | `VISN_GEMMA_TIMEOUT_SECS` | `120` | Model-call deadline |
-| `VISN_DETECTOR_EXECUTABLE` | `python3` | Development detector executable |
+| `VISN_DETECTOR_EXECUTABLE` | `.venv/bin/python` if present, otherwise `python3` | Development detector executable |
 | `VISN_DETECTOR_ARGS` | `tools/yolo26_runner.py` | Detector command arguments |
 | `VISN_YOLO_MODEL` | `yolo26s.pt` | Approved checkpoint/path |
-| `VISN_MAX_ANALYSIS_SECS` | `120` | Maximum file/RTSP analysis interval |
+| `VISN_MAX_ANALYSIS_SECS` | `3600` | Maximum permitted per-job monitoring interval |
 | `VISN_KAFKA_ENABLED` | `false` | Enable Kafka only in a Kafka-feature build |
 
 ## Verification

@@ -50,6 +50,7 @@ Built-in sample request:
   "source": "sample",
   "backend": "simulator",
   "detector_fps": 5.0,
+  "monitor_duration_secs": 120,
   "gemma_enabled": false,
   "observations": [],
   "policy": {}
@@ -68,7 +69,26 @@ RTSP source:
 {"source":{"rtsp":{"uri":"rtsp://user:password@host/live"}}}
 ```
 
-RTSP credentials are used only by the execution task. Job/list responses replace the URI with `rtsp://***`, and the command adapter passes the URI over standard input rather than exposing it in process arguments.
+HTTP/HTTPS stream source (for example HLS or MJPEG):
+
+```json
+{
+  "name": "HTTP camera window",
+  "source": {"http": {"uri": "https://camera.example/live.m3u8?token=secret"}},
+  "backend": "yolo26_command",
+  "detector_fps": 5,
+  "monitor_duration_secs": 300,
+  "gemma_enabled": true,
+  "observations": [],
+  "policy": {}
+}
+```
+
+`monitor_duration_secs` controls the wall-clock monitoring window for HTTP/HTTPS and RTSP streams. It must be between 1 and the service's `VISN_MAX_ANALYSIS_SECS` ceiling. When the window ends, detection output is analyzed and the deterministic/Gemma insight report is generated.
+
+The `uri` must return decodable video bytes directly. Plain `http://` and TLS-backed `https://` are handled identically by the API; HTTP media is decoded by the bundled FFmpeg runtime rather than by the Rust HTTP client.
+
+Network credentials and query tokens are used only by the execution task. Job/list responses replace the URI with its scheme plus `***`, and the command adapter passes the URI over standard input rather than exposing it in process arguments.
 
 ### `GET /api/v1/jobs`
 
