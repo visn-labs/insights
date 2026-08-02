@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Local operator console for the Visn Phase 0 video analytics pipeline">
+  <title>Visn Pipeline Lab</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div><strong>VISN</strong><small>Pipeline Lab</small></div>
+      </div>
+
+      <nav aria-label="Primary navigation">
+        <button class="nav-item active" data-view="workspace"><span class="nav-icon">⌁</span>Workspace</button>
+        <button class="nav-item" data-view="runs"><span class="nav-icon">◫</span>Runs <span id="run-count" class="nav-count">0</span></button>
+        <button class="nav-item" data-view="system"><span class="nav-icon">◇</span>System</button>
+      </nav>
+
+      <div class="sidebar-status">
+        <div class="eyebrow">Service</div>
+        <div class="status-line"><span id="service-dot" class="status-dot pending"></span><span id="service-status">Connecting</span></div>
+        <div class="status-line"><span id="gemma-dot" class="status-dot pending"></span><span id="gemma-status">Checking Gemma</span></div>
+        <p id="service-version" class="muted">Phase 0</p>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">VIDEO ANALYTICS / PHASE 0</p>
+          <h1 id="page-title">Pipeline workspace</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="local-pill"><span></span>Local-first</span>
+          <button id="refresh-button" class="icon-button" title="Refresh data" aria-label="Refresh data">↻</button>
+        </div>
+      </header>
+
+      <section id="workspace-view" class="view active">
+        <div class="workspace-grid">
+          <section class="panel setup-panel">
+            <div class="panel-heading">
+              <div><p class="step">01 / INPUT</p><h2>Configure a run</h2></div>
+              <span class="badge neutral">No DB required</span>
+            </div>
+
+            <form id="job-form">
+              <label class="field">
+                <span>Run name</span>
+                <input id="job-name" maxlength="120" value="Entrance validation" required>
+              </label>
+
+              <fieldset class="source-fieldset">
+                <legend>Video source</legend>
+                <div class="segmented" role="radiogroup" aria-label="Video source">
+                  <label><input type="radio" name="source" value="sample" checked><span>Sample</span></label>
+                  <label><input type="radio" name="source" value="upload"><span>Upload</span></label>
+                  <label><input type="radio" name="source" value="rtsp"><span>RTSP</span></label>
+                </div>
+              </fieldset>
+
+              <div id="sample-source" class="source-card active">
+                <div class="source-symbol">◎</div>
+                <div><strong>Built-in crossing scenario</strong><p>Two tracks, one entry line, and a restricted zone. Ideal for a first smoke test.</p></div>
+              </div>
+
+              <div id="upload-source" class="source-card">
+                <label id="drop-zone" class="drop-zone">
+                  <input id="video-file" type="file" accept="video/*,.mkv,.mp4,.mov,.avi,.ts">
+                  <span class="upload-icon">↑</span>
+                  <strong>Choose or drop a video</strong>
+                  <small id="upload-help">The file stays on this machine.</small>
+                </label>
+                <div id="upload-progress" class="progress hidden"><span></span></div>
+              </div>
+
+              <div id="rtsp-source" class="source-card">
+                <label class="field full"><span>RTSP address</span><input id="rtsp-uri" type="url" placeholder="rtsp://camera.example/live"></label>
+                <p class="privacy-note">Credentials are accepted for execution but redacted from API responses and logs.</p>
+              </div>
+
+              <div class="form-row">
+                <label class="field">
+                  <span>Detector backend</span>
+                  <select id="backend">
+                    <option value="simulator">Deterministic simulator</option>
+                    <option value="yolo26_command">YOLO26 local runner</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Detector rate</span>
+                  <div class="input-suffix"><input id="detector-fps" type="number" min="0.1" max="60" step="0.1" value="5"><b>FPS</b></div>
+                </label>
+              </div>
+
+              <label class="toggle-row">
+                <span><strong>Gemma enrichment</strong><small>Use the loaded LM Studio model; deterministic fallback remains enabled.</small></span>
+                <input id="gemma-enabled" type="checkbox" checked><i></i>
+              </label>
+
+              <details class="advanced">
+                <summary>Manual facts and analytics policy <span>JSON</span></summary>
+                <p>Simulator input uses normalized bounding boxes: <code>[x, y, width, height]</code>. Edit these values to test without a detector, DB, or Kafka.</p>
+                <label class="field"><span>Detector observations</span><textarea id="observations-json" spellcheck="false"></textarea></label>
+                <label class="field"><span>Zones and lines</span><textarea id="policy-json" spellcheck="false"></textarea></label>
+                <div class="editor-actions"><button id="format-json" class="text-button" type="button">Format JSON</button><button id="reset-sample" class="text-button" type="button">Reset sample</button></div>
+              </details>
+
+              <div id="form-error" class="inline-error hidden" role="alert"></div>
+              <button id="run-button" class="primary-button" type="submit"><span>Run pipeline</span><b>→</b></button>
+            </form>
+          </section>
+
+          <section class="panel inspector-panel">
+            <div id="empty-inspector" class="empty-state">
+              <div class="radar"><span></span><i></i></div>
+              <h2>Ready for a run</h2>
+              <p>Choose the built-in sample for a zero-dependency test, or provide your own video and observations.</p>
+              <div class="flow"><span>VIDEO</span><b>→</b><span>YOLO26</span><b>→</b><span>RULES</span><b>→</b><span>GEMMA</span></div>
+            </div>
+
+            <div id="job-inspector" class="job-inspector hidden">
+              <div class="inspector-heading">
+                <div><p id="job-kicker" class="step">RUN</p><h2 id="job-title">—</h2></div>
+                <span id="job-status" class="badge neutral">queued</span>
+              </div>
+
+              <div id="job-error" class="inline-error hidden"></div>
+              <div id="processing-state" class="processing hidden"><span class="spinner"></span><div><strong>Pipeline is running</strong><small>Results update automatically.</small></div></div>
+
+              <video id="video-preview" class="video-preview hidden" controls preload="metadata"></video>
+
+              <div id="result-content" class="hidden">
+                <div class="metric-grid">
+                  <article><span>Observations</span><strong id="metric-observations">0</strong></article>
+                  <article><span>Tracks</span><strong id="metric-tracks">0</strong></article>
+                  <article><span>Events</span><strong id="metric-events">0</strong></article>
+                  <article><span>Duration</span><strong id="metric-duration">0s</strong></article>
+                </div>
+
+                <div class="report-card">
+                  <div class="report-meta"><span>GROUNDED REPORT</span><span id="report-model">Deterministic</span></div>
+                  <h3 id="report-headline">—</h3>
+                  <p id="report-summary">—</p>
+                  <div id="report-notes" class="report-notes"></div>
+                </div>
+
+                <div class="result-section">
+                  <div class="section-heading"><h3>Event timeline</h3><span id="event-total">0 events</span></div>
+                  <div id="event-list" class="event-list"></div>
+                </div>
+
+                <div class="result-section">
+                  <div class="section-heading"><h3>Confirmed tracks</h3><span>Deterministic</span></div>
+                  <div class="table-wrap"><table><thead><tr><th>Track</th><th>Class</th><th>Duration</th><th>Confidence</th><th>Zones</th></tr></thead><tbody id="track-list"></tbody></table></div>
+                </div>
+
+                <details class="raw-result"><summary>Raw pipeline result</summary><pre id="raw-json"></pre></details>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="runs-view" class="view">
+        <section class="panel wide-panel">
+          <div class="panel-heading"><div><p class="step">HISTORY</p><h2>Pipeline runs</h2></div><button id="new-run-button" class="secondary-button">New run</button></div>
+          <div id="runs-list" class="runs-list"><div class="empty-row">No runs yet.</div></div>
+        </section>
+      </section>
+
+      <section id="system-view" class="view">
+        <div class="system-grid">
+          <section class="panel"><div class="panel-heading"><div><p class="step">RUNTIME</p><h2>Capabilities</h2></div></div><dl id="capability-list" class="definition-list"></dl></section>
+          <section class="panel"><div class="panel-heading"><div><p class="step">LM STUDIO</p><h2>Loaded models</h2></div></div><div id="models-list" class="models-list"></div></section>
+          <section class="panel system-note"><p class="step">BOUNDARY</p><h2>Intentionally local</h2><p>Jobs live in memory and uploaded media lives under the configured local data directory. Kafka is optional. No MongoDB or backend service is required for this phase.</p></section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
+

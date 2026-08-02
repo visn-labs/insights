@@ -1,0 +1,24 @@
+# Phase 0 template. Replace paths and output parser settings with the artefact
+# produced and validated on the target NVIDIA/DeepStream host.
+[property]
+gpu-id=0
+model-engine-file=/models/yolo26s-b16-fp16.engine
+labelfile-path=/models/labels.txt
+batch-size=16
+network-mode=2
+network-type=0
+num-detected-classes=80
+interval=4
+gie-unique-id=1
+process-mode=1
+cluster-mode=4
+maintain-aspect-ratio=1
+symmetric-padding=1
+net-scale-factor=0.00392156862745098
+infer-dims=3;640;640
+
+# YOLO26 one-to-one is NMS-free. The parser library and function must match the
+# exact exported tensor contract and are deliberately not guessed here.
+# custom-lib-path=/opt/visn/lib/libnvdsinfer_custom_yolo26.so
+# parse-bbox-func-name=NvDsInferParseYolo26
+
