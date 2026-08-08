@@ -8,6 +8,51 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+  <section id="town-intro" class="town-intro" data-state="loading" role="dialog" aria-modal="true" aria-labelledby="intro-title" aria-describedby="intro-description">
+    <canvas id="town-canvas" aria-hidden="true"></canvas>
+    <div class="intro-paper-grain" aria-hidden="true"></div>
+    <div class="intro-vignette" aria-hidden="true"></div>
+
+    <header class="intro-masthead intro-reveal">
+      <div class="intro-seal"><span></span><span></span><span></span></div>
+      <div><strong>VISN</strong><small>Town Observation Office</small></div>
+      <span class="intro-edition">Est. 1887 · Local edition</span>
+    </header>
+
+    <div class="intro-copy">
+      <p class="intro-kicker intro-reveal"><span></span> A curious view across time</p>
+      <h1 id="intro-title" class="intro-reveal">Every street<br>holds a story.</h1>
+      <p id="intro-description" class="intro-description intro-reveal">A quiet old town moves through its day—merchants trade, neighbours wander, and a rather modern network watches from the eaves.</p>
+      <div class="intro-actions intro-reveal">
+        <button id="intro-enter" class="intro-enter" type="button" disabled><span>Enter the observation room</span><b>→</b></button>
+        <button id="intro-skip" class="intro-skip" type="button">Skip introduction</button>
+      </div>
+    </div>
+
+    <aside class="intro-observer-card intro-reveal" aria-label="Scene activity">
+      <div class="intro-network-head">
+        <span class="intro-network-pulse" aria-hidden="true"></span>
+        <div><small>Observation network</small><strong>Five cameras awake</strong></div>
+        <b>05</b>
+      </div>
+      <div class="intro-signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <p>Follow the green housings and their scanning light across the town.</p>
+      <div class="intro-legend" aria-label="Scene legend">
+        <span><i class="legend-camera"></i>Cameras</span>
+        <span><i class="legend-phone"></i>Pocket telegraphs</span>
+      </div>
+    </aside>
+
+    <div class="intro-look-cue intro-reveal" aria-hidden="true">
+      <span></span><small>Move to explore</small>
+    </div>
+
+    <footer class="intro-footer intro-reveal">
+      <p id="intro-status"><span class="intro-loading-dot"></span> Preparing the town...</p>
+      <p>Rendered locally in real time · Esc to skip</p>
+    </footer>
+  </section>
+
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
@@ -17,6 +62,7 @@
 
       <nav aria-label="Primary navigation">
         <button class="nav-item active" data-view="workspace"><span class="nav-icon">⌁</span>Workspace</button>
+        <button class="nav-item" data-view="memory"><span class="nav-icon">⌕</span>Memory <span id="memory-count" class="nav-count">0</span></button>
         <button class="nav-item" data-view="runs"><span class="nav-icon">◫</span>Runs <span id="run-count" class="nav-count">0</span></button>
         <button class="nav-item" data-view="system"><span class="nav-icon">◇</span>System</button>
       </nav>
@@ -24,7 +70,7 @@
       <div class="sidebar-status">
         <div class="eyebrow">Service</div>
         <div class="status-line"><span id="service-dot" class="status-dot pending"></span><span id="service-status">Connecting</span></div>
-        <div class="status-line"><span id="gemma-dot" class="status-dot pending"></span><span id="gemma-status">Checking Gemma</span></div>
+        <div class="status-line"><span id="gemma-dot" class="status-dot pending"></span><span id="gemma-status">Checking VLMs</span></div>
         <p id="service-version" class="muted">Phase 0</p>
       </div>
     </aside>
@@ -32,11 +78,12 @@
     <main>
       <header class="topbar">
         <div>
-          <p class="eyebrow">VIDEO ANALYTICS / PHASE 0</p>
+          <p class="eyebrow">VIDEO ANALYTICS / LOCAL V1</p>
           <h1 id="page-title">Pipeline workspace</h1>
         </div>
         <div class="topbar-actions">
           <span class="local-pill"><span></span>Local-first</span>
+          <button id="replay-intro" class="icon-button replay-intro" title="Replay town introduction" aria-label="Replay town introduction">♜</button>
           <button id="refresh-button" class="icon-button" title="Refresh data" aria-label="Refresh data">↻</button>
         </div>
       </header>
@@ -62,6 +109,7 @@
                   <label><input type="radio" name="source" value="upload"><span>Upload</span></label>
                   <label><input type="radio" name="source" value="rtsp"><span>RTSP</span></label>
                   <label><input type="radio" name="source" value="http"><span>HTTP(S)</span></label>
+                  <label><input type="radio" name="source" value="cluster"><span>Cluster</span></label>
                 </div>
               </fieldset>
 
@@ -90,6 +138,20 @@
                 <p class="privacy-note">Supports streams OpenCV/FFmpeg can decode, including HLS and MJPEG. Credentials and query tokens are redacted from job responses.</p>
               </div>
 
+              <div id="cluster-source" class="source-card cluster-source-card">
+                <div class="cluster-grid">
+                  <label class="field"><span>Cluster ID</span><input id="cluster-id" maxlength="120" value="entrance-cluster" placeholder="entrance-cluster"></label>
+                  <label class="field"><span>Cross-camera mode</span><select id="cluster-mode"><option value="independent">Camera-wise only (safe default)</option><option value="overlap">Synchronized overlapping views</option><option value="topology">Directed topology edges</option></select></label>
+                </div>
+                <label class="field full"><span>HTTP cameras — one per line</span><textarea id="cluster-cameras" class="compact-editor" spellcheck="false" placeholder="camera-a | Main entrance | http://camera-a/live.m3u8&#10;camera-b | Side entrance | http://camera-b/live.m3u8"></textarea></label>
+                <p class="privacy-note">Format: <code>camera-id | label | direct-http-url</code>. Cluster processing is concurrent and a failed camera does not discard successful camera results.</p>
+                <details id="cluster-topology-details" class="advanced compact-advanced">
+                  <summary>Directed topology edges <span>JSON</span></summary>
+                  <p>Required only for non-overlapping handovers. Reverse travel requires a separate edge.</p>
+                  <textarea id="cluster-topology" class="compact-editor" spellcheck="false">[]</textarea>
+                </details>
+              </div>
+
               <div class="form-row">
                 <label class="field">
                   <span>Detector backend</span>
@@ -109,8 +171,13 @@
               </div>
 
               <label class="toggle-row">
-                <span><strong>Gemma enrichment</strong><small>Use the loaded LM Studio model; deterministic fallback remains enabled.</small></span>
+                <span><strong>VLM view description and report</strong><small>Describe a representative frame and enrich the grounded report; deterministic fallback remains enabled.</small></span>
                 <input id="gemma-enabled" type="checkbox" checked><i></i>
+              </label>
+
+              <label class="field">
+                <span>Vision-language model</span>
+                <select id="vlm-model"></select>
               </label>
 
               <details class="advanced">
@@ -160,14 +227,26 @@
                   <div id="report-notes" class="report-notes"></div>
                 </div>
 
+                <div class="view-description-card">
+                  <div class="report-meta"><span>VIEW DESCRIPTION</span><span id="view-description-source">—</span></div>
+                  <h3 id="view-scene-type">—</h3>
+                  <p id="view-description-text">—</p>
+                  <div id="view-description-details" class="view-description-details"></div>
+                </div>
+
                 <div class="result-section">
-                  <div class="section-heading"><h3>Event timeline</h3><span id="event-total">0 events</span></div>
+                  <div class="section-heading"><h3 id="event-section-title">Event timeline</h3><span id="event-total">0 events</span></div>
                   <div id="event-list" class="event-list"></div>
                 </div>
 
                 <div class="result-section">
-                  <div class="section-heading"><h3>Confirmed tracks</h3><span>Deterministic</span></div>
+                  <div class="section-heading"><h3 id="track-section-title">Confirmed tracks</h3><span>Deterministic</span></div>
                   <div class="table-wrap"><table><thead><tr><th>Track</th><th>Class</th><th>Duration</th><th>Confidence</th><th>Zones</th></tr></thead><tbody id="track-list"></tbody></table></div>
+                </div>
+
+                <div id="cluster-camera-section" class="result-section hidden">
+                  <div class="section-heading"><h3>Camera-wise insights</h3><span id="cluster-camera-total">0 cameras</span></div>
+                  <div id="cluster-camera-results" class="camera-result-grid"></div>
                 </div>
 
                 <details class="raw-result"><summary>Raw pipeline result</summary><pre id="raw-json"></pre></details>
@@ -175,6 +254,78 @@
             </div>
           </section>
         </div>
+      </section>
+
+      <section id="memory-view" class="view">
+        <div class="memory-layout">
+          <section class="panel memory-control-panel">
+            <div class="panel-heading">
+              <div><p class="step">V1 / INDEX</p><h2>Build searchable camera memory</h2></div>
+              <span class="badge neutral">Retrieval first</span>
+            </div>
+            <form id="memory-job-form">
+              <div class="memory-form-grid">
+                <label class="field"><span>Index run name</span><input id="memory-job-name" maxlength="120" value="Authorized camera memory test" required></label>
+                <label class="field"><span>Cluster ID (optional)</span><input id="memory-cluster-id" maxlength="120" value="local-test-cluster" placeholder="local-test-cluster"></label>
+                <label class="field"><span>Monitor duration</span><div class="input-suffix"><input id="memory-duration" type="number" min="1" max="3600" value="15"><b>SEC</b></div></label>
+                <label class="field"><span>Observer rate</span><div class="input-suffix"><input id="memory-observer-fps" type="number" min="0.1" max="5" step="0.1" value="1"><b>FPS</b></div></label>
+              </div>
+              <label class="toggle-row memory-toggle">
+                <span><strong>Enrich highest-priority events with the selected VLM</strong><small>The lightweight observer indexes every interval. VLM calls are capped and failures use metadata-only descriptions.</small></span>
+                <input id="memory-vlm-enabled" type="checkbox" checked><i></i>
+              </label>
+              <label class="field"><span>Vision-language model for indexing and queries</span><select id="memory-vlm-model"></select></label>
+              <label class="field"><span>Backend camera payloads</span><textarea id="memory-cameras-json" class="memory-json-editor" spellcheck="false" placeholder='[{"liveurl":"http://camera/mjpg/video.mjpg","Country":"...","description":"..."}]'></textarea></label>
+              <div class="preset-row">
+                <button class="secondary-button memory-preset" type="button" data-preset="cluster-a">Cluster A</button>
+                <button class="secondary-button memory-preset" type="button" data-preset="cluster-b">Cluster B</button>
+                <button class="secondary-button memory-preset" type="button" data-preset="movement">High movement</button>
+                <button id="format-memory-json" class="text-button" type="button">Format JSON</button>
+              </div>
+              <p class="privacy-note">The textarea accepts the backend field names exactly as supplied. Exact duplicate live URLs are rejected to avoid processing one physical stream twice.</p>
+              <div id="memory-form-error" class="inline-error hidden" role="alert"></div>
+              <button id="memory-run-button" class="primary-button" type="submit"><span>Record and index</span><b>→</b></button>
+            </form>
+          </section>
+
+          <section class="panel memory-results-panel">
+            <div class="panel-heading">
+              <div><p class="step">V1 / EVIDENCE</p><h2>Indexed events</h2></div>
+              <span id="memory-job-status" class="badge neutral">idle</span>
+            </div>
+            <div id="memory-empty" class="memory-empty"><p>Load a verified camera preset or paste backend camera metadata, then record a short bounded interval.</p></div>
+            <div id="memory-processing" class="processing hidden"><span class="spinner"></span><div><strong>Recording and indexing cameras</strong><small>Source evidence is retained before sparse event analysis.</small></div></div>
+            <div id="memory-job-error" class="inline-error hidden"></div>
+            <div id="memory-result" class="hidden">
+              <div class="metric-grid">
+                <article><span>Cameras</span><strong id="memory-metric-cameras">0</strong></article>
+                <article><span>Events</span><strong id="memory-metric-events">0</strong></article>
+                <article><span>Decoded</span><strong id="memory-metric-frames">0</strong></article>
+                <article><span>Duration</span><strong id="memory-metric-duration">0s</strong></article>
+              </div>
+              <div id="memory-camera-results" class="memory-camera-results"></div>
+              <details class="raw-result"><summary>Raw memory result</summary><pre id="memory-raw-json"></pre></details>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel memory-query-panel">
+          <div class="panel-heading">
+            <div><p class="step">V1 / RETRIEVE</p><h2>Search indexed camera evidence</h2></div>
+            <span class="badge neutral">Evidence linked</span>
+          </div>
+          <form id="memory-query-form" class="memory-query-form">
+            <label class="field memory-query-input"><span>Question or visual search</span><input id="memory-query-text" maxlength="1000" value="Show the periods with the most movement and describe what is visible" required></label>
+            <label class="field"><span>Cluster filter</span><input id="memory-query-cluster" maxlength="120" value="local-test-cluster" placeholder="Leave empty for all"></label>
+            <label class="toggle-row compact-toggle"><span><strong>VLM synthesis</strong><small>Rerank and summarize the local candidates.</small></span><input id="memory-query-vlm" type="checkbox" checked><i></i></label>
+            <button id="memory-query-button" class="primary-button" type="submit"><span>Search memory</span><b>⌕</b></button>
+          </form>
+          <div id="memory-query-error" class="inline-error hidden"></div>
+          <div id="memory-query-result" class="hidden">
+            <div class="report-card memory-answer-card"><div class="report-meta"><span>RETRIEVAL ANSWER</span><span id="memory-query-mode">—</span></div><h3 id="memory-query-title">—</h3><p id="memory-query-summary">—</p><div id="memory-query-notes" class="report-notes"></div></div>
+            <div id="memory-query-matches" class="memory-event-grid"></div>
+          </div>
+        </section>
       </section>
 
       <section id="runs-view" class="view">
@@ -187,7 +338,7 @@
       <section id="system-view" class="view">
         <div class="system-grid">
           <section class="panel"><div class="panel-heading"><div><p class="step">RUNTIME</p><h2>Capabilities</h2></div></div><dl id="capability-list" class="definition-list"></dl></section>
-          <section class="panel"><div class="panel-heading"><div><p class="step">LM STUDIO</p><h2>Loaded models</h2></div></div><div id="models-list" class="models-list"></div></section>
+          <section class="panel"><div class="panel-heading"><div><p class="step">LM STUDIO</p><h2>VLM availability</h2></div></div><div id="models-list" class="models-list"></div></section>
           <section class="panel system-note"><p class="step">BOUNDARY</p><h2>Intentionally local</h2><p>Jobs live in memory and uploaded media lives under the configured local data directory. Kafka is optional. No MongoDB or backend service is required for this phase.</p></section>
         </div>
       </section>
@@ -195,6 +346,8 @@
   </div>
 
   <div id="toast" class="toast" role="status"></div>
+  <script src="/vendor/anime.umd.min.js"></script>
+  <script type="module" src="/intro.js"></script>
   <script src="/app.js" defer></script>
 </body>
 </html>

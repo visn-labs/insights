@@ -1,8 +1,10 @@
 mod api;
+mod cluster;
 mod config;
 mod domain;
 mod event_engine;
 mod gemma;
+mod memory;
 mod pipeline;
 mod sink;
 mod store;
@@ -13,10 +15,12 @@ use std::{net::SocketAddr, sync::Arc};
 use anyhow::Context;
 use config::Config;
 use gemma::GemmaClient;
+use memory::MemoryService;
 use pipeline::PipelineService;
 use sink::build_sink;
 use store::AppState;
 use tokio::net::TcpListener;
+use tokio::sync::Semaphore;
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -29,17 +33,26 @@ async fn main() -> anyhow::Result<()> {
         .await
         .context("create upload data directory")?;
 
-    let gemma = GemmaClient::new(config.clone())?;
+    let media_worker_gate = Arc::new(Semaphore::new(config.max_concurrent_cameras));
+    let gemma = GemmaClient::new(config.clone(), media_worker_gate.clone())?;
+    let memory = MemoryService::new(config.clone(), gemma.clone(), media_worker_gate.clone());
     let sink = build_sink(config.clone())?;
-    let pipeline = PipelineService::new(config.clone(), gemma, sink);
-    let state = AppState::new(config.clone(), pipeline);
+    let pipeline = PipelineService::new(config.clone(), gemma, sink, media_worker_gate);
+    let state = AppState::new(config.clone(), pipeline, memory);
     let app = api::router(state);
 
     let address: SocketAddr = config.bind.parse().context("parse VISN_BIND")?;
     let listener = TcpListener::bind(address)
         .await
         .context("bind HTTP listener")?;
-    info!(%address, "visn Phase 0 service ready");
+    info!(
+        %address,
+        media_workers = config.max_concurrent_cameras,
+        detector_threads = config.detector_threads,
+        vlm_context_length = config.vlm_context_length,
+        vlm_exclusive_media = config.vlm_exclusive_media,
+        "visn Phase 0 service ready"
+    );
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal())
         .await

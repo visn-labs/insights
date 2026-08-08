@@ -20,10 +20,14 @@ use tower_http::{
 use uuid::Uuid;
 
 use crate::{
-    domain::{CapabilityResponse, JobRequest, UploadRecord},
+    domain::{
+        CapabilityResponse, ClusterJobRequest, JobRequest, MemoryJobRequest, MemoryQueryRequest,
+        UploadRecord,
+    },
+    gemma::known_vlm_models,
     pipeline::{sample_observations, sample_policy},
     store::AppState,
-    ui::{APP_JS, INDEX_HTML, STYLES_CSS},
+    ui::{ANIME_JS, APP_JS, INDEX_HTML, INTRO_JS, STYLES_CSS, THREE_CORE_JS, THREE_JS},
 };
 
 pub fn router(state: AppState) -> Router {
@@ -31,6 +35,10 @@ pub fn router(state: AppState) -> Router {
     Router::new()
         .route("/", get(index))
         .route("/app.js", get(app_js))
+        .route("/intro.js", get(intro_js))
+        .route("/vendor/three.module.min.js", get(three_js))
+        .route("/vendor/three.core.min.js", get(three_core_js))
+        .route("/vendor/anime.umd.min.js", get(anime_js))
         .route("/styles.css", get(styles))
         .route("/healthz", get(health))
         .route("/api/v1/capabilities", get(capabilities))
@@ -40,6 +48,18 @@ pub fn router(state: AppState) -> Router {
         .route("/api/v1/uploads/{id}/content", get(upload_content))
         .route("/api/v1/jobs", post(create_job).get(list_jobs))
         .route("/api/v1/jobs/{id}", get(get_job))
+        .route(
+            "/api/v1/cluster-jobs",
+            post(create_cluster_job).get(list_cluster_jobs),
+        )
+        .route("/api/v1/cluster-jobs/{id}", get(get_cluster_job))
+        .route(
+            "/api/v1/memory-jobs",
+            post(create_memory_job).get(list_memory_jobs),
+        )
+        .route("/api/v1/memory-jobs/{id}", get(get_memory_job))
+        .route("/api/v1/memory-events/{id}/{kind}", get(memory_artifact))
+        .route("/api/v1/memory-query", post(memory_query))
         .layer(DefaultBodyLimit::max(max_upload))
         .layer(
             CorsLayer::new()
@@ -65,6 +85,32 @@ async fn app_js() -> impl IntoResponse {
     )
 }
 
+async fn intro_js() -> impl IntoResponse {
+    javascript(INTRO_JS)
+}
+
+async fn three_js() -> impl IntoResponse {
+    javascript(THREE_JS)
+}
+
+async fn three_core_js() -> impl IntoResponse {
+    javascript(THREE_CORE_JS)
+}
+
+async fn anime_js() -> impl IntoResponse {
+    javascript(ANIME_JS)
+}
+
+fn javascript(body: &'static str) -> impl IntoResponse {
+    (
+        [(
+            header::CONTENT_TYPE,
+            "application/javascript; charset=utf-8",
+        )],
+        body,
+    )
+}
+
 async fn styles() -> impl IntoResponse {
     (
         [(header::CONTENT_TYPE, "text/css; charset=utf-8")],
@@ -86,6 +132,9 @@ async fn capabilities(State(state): State<AppState>) -> Json<CapabilityResponse>
         local_state: "memory + local uploads; no database required".to_owned(),
         simulator: true,
         yolo26_command: true,
+        multi_camera_clusters: true,
+        retrieval_memory_v1: true,
+        max_cluster_cameras: state.config.max_cluster_cameras,
         stream_protocols: vec![
             "http".to_owned(),
             "https".to_owned(),
@@ -94,16 +143,23 @@ async fn capabilities(State(state): State<AppState>) -> Json<CapabilityResponse>
         ],
         max_analysis_secs: state.config.max_analysis_secs,
         gemma_endpoint: state.config.gemma_base_url.clone(),
+        lmstudio_api_endpoint: state.config.lmstudio_api_base_url.clone(),
         kafka_compiled: cfg!(feature = "kafka"),
         kafka_enabled: state.config.kafka_enabled,
     })
 }
 
 async fn models(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let configured_vlms = known_vlm_models();
     match state.pipeline_models().await {
-        Ok(models) => Json(serde_json::json!({"available": true, "models": models})),
+        Ok(models) => Json(serde_json::json!({
+            "available": true,
+            "configured_vlms": configured_vlms,
+            "models": models
+        })),
         Err(error) => Json(serde_json::json!({
             "available": false,
+            "configured_vlms": configured_vlms,
             "models": [],
             "error": error.to_string()
         })),
@@ -219,6 +275,86 @@ async fn get_job(
         .await
         .map(Json)
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "job not found"))
+}
+
+async fn create_cluster_job(
+    State(state): State<AppState>,
+    Json(request): Json<ClusterJobRequest>,
+) -> Result<(StatusCode, Json<crate::domain::ClusterJobRecord>), ApiError> {
+    let record = state.submit_cluster(request).await?;
+    Ok((StatusCode::ACCEPTED, Json(record)))
+}
+
+async fn list_cluster_jobs(
+    State(state): State<AppState>,
+) -> Json<Vec<crate::domain::ClusterJobRecord>> {
+    Json(state.cluster_jobs().await)
+}
+
+async fn get_cluster_job(
+    State(state): State<AppState>,
+    AxumPath(id): AxumPath<Uuid>,
+) -> Result<Json<crate::domain::ClusterJobRecord>, ApiError> {
+    state
+        .cluster_job(id)
+        .await
+        .map(Json)
+        .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "cluster job not found"))
+}
+
+async fn create_memory_job(
+    State(state): State<AppState>,
+    Json(request): Json<MemoryJobRequest>,
+) -> Result<(StatusCode, Json<crate::domain::MemoryJobRecord>), ApiError> {
+    let record = state.submit_memory(request).await?;
+    Ok((StatusCode::ACCEPTED, Json(record)))
+}
+
+async fn list_memory_jobs(
+    State(state): State<AppState>,
+) -> Json<Vec<crate::domain::MemoryJobRecord>> {
+    Json(state.memory_jobs().await)
+}
+
+async fn get_memory_job(
+    State(state): State<AppState>,
+    AxumPath(id): AxumPath<Uuid>,
+) -> Result<Json<crate::domain::MemoryJobRecord>, ApiError> {
+    state
+        .memory_job(id)
+        .await
+        .map(Json)
+        .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "memory job not found"))
+}
+
+async fn memory_artifact(
+    State(state): State<AppState>,
+    AxumPath((id, kind)): AxumPath<(Uuid, String)>,
+    request: Request<Body>,
+) -> Result<Response, ApiError> {
+    if !matches!(kind.as_str(), "thumbnail" | "clip" | "source") {
+        return Err(ApiError::new(
+            StatusCode::NOT_FOUND,
+            "memory artifact not found",
+        ));
+    }
+    let path = state
+        .memory_event_artifact(id, &kind)
+        .await
+        .filter(|path| path.is_file())
+        .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "memory artifact not found"))?;
+    ServeFile::new(path)
+        .oneshot(request)
+        .await
+        .map(IntoResponse::into_response)
+        .map_err(|error| ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, error.to_string()))
+}
+
+async fn memory_query(
+    State(state): State<AppState>,
+    Json(request): Json<MemoryQueryRequest>,
+) -> Result<Json<crate::domain::MemoryQueryResponse>, ApiError> {
+    Ok(Json(state.query_memory(request).await?))
 }
 
 #[derive(Debug)]

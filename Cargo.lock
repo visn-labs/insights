@@ -1771,6 +1771,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "axum",
+ "base64",
  "bytes",
  "futures-util",
  "rdkafka",

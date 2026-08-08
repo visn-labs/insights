@@ -13,12 +13,20 @@ Browser UI
            -> YOLO26 development command
            -> future DeepStream/TensorRT worker (same output contract)
       -> deterministic track and event engine
+      -> bounded representative-frame selection
+      -> LM Studio visual scene description
       -> immutable fact report
       -> LM Studio Gemma 4 enrichment
            -> strict JSON parse and factual validation
            -> deterministic fallback on any failure
       -> no-op sink (default) or Kafka sink (optional)
 ```
+
+## Local V1 retrieval-memory extension
+
+The retrieval-memory extension runs beside the Phase 0 YOLO path. `tools/event_memory_runner.py` first records a bounded encoded source artifact, retrieves analysis frames at `observer_fps`, uses adaptive luma/histogram novelty plus maximum-duration boundaries, and creates event thumbnails and optional MP4 evidence derivatives. Inter-frame codecs may still require work to advance across skipped frames. `src/memory.rs` enriches a bounded, visually diverse set of high-priority events through LM Studio and provides local recall plus optional VLM synthesis.
+
+Completed manifests live under `VISN_DATA_DIR/memory/manifests`; evidence lives under `VISN_DATA_DIR/memory/<job>/<camera>`. The local manifest is disposable development persistence. It does not define the future MongoDB contract.
 
 ## What was built
 
@@ -28,7 +36,7 @@ Browser UI
 - `src/store.rs`: in-memory job/upload catalogue, async execution, source resolution, request validation, and network-source credential redaction.
 - `src/pipeline.rs`: backend selection, bounded external process execution, observation validation, rules, reporting, Gemma fallback, and sink publication.
 - `src/event_engine.rs`: confirmation threshold, deterministic grouping, point-in-polygon zones, directional line crossings, dwell events, stable UUIDv5 event IDs, track summaries, and fact reports.
-- `src/gemma.rs`: LM Studio `/v1/models` discovery and `/v1/chat/completions`, strict report JSON, event-reference validation, numeric-claim validation, and bounded timeout.
+- `src/gemma.rs`: LM Studio native model discovery/loading, OpenAI-compatible `/v1/chat/completions`, multimodal representative-frame descriptions, strict report JSON, event-reference validation, numeric-claim validation, and bounded timeout.
 - `src/sink.rs`: default no-op implementation and optional idempotent `rust-rdkafka` producer.
 - `src/domain.rs`: API/pipeline contracts with normalized geometry.
 
@@ -36,9 +44,12 @@ Browser UI
 
 The UI is compiled into the Rust binary and requires no Node/npm build. It provides:
 
-- Service, Gemma, Kafka, and detector capability status.
+- Service, VLM, Kafka, and detector capability status.
 - Built-in sample, video upload/drop, HTTP/HTTPS, and RTSP source modes.
 - Per-job stream monitoring duration followed by automatic insight generation.
+- Multi-camera HTTP cluster jobs with bounded concurrency and partial-failure isolation.
+- Camera-wise physical-scene descriptions and an aggregated cluster view summary.
+- Person tracklet appearance prototypes, explicit overlap/topology gates, Hungarian one-to-one assignment, ambiguity preservation and deterministic global IDs.
 - Simulator/YOLO26 backend selection and detector cadence.
 - Editable detector observations and analytics policy JSON.
 - Job status polling, video preview, metrics, grounded report, fallback reason, event timeline, confirmed-track table, raw JSON, and run history.
@@ -47,9 +58,10 @@ The UI is compiled into the Rust binary and requires no Node/npm build. It provi
 ### Model adapters
 
 - `tools/yolo26_runner.py` runs YOLO26 tracking over a file or bounded HTTP(S)/RTSP interval and emits normalized observations. HTTP(S) uses an isolated bundled FFmpeg process; the detector result is emitted as a framed record so third-party console output cannot corrupt the Rust/JSON boundary.
-- `tools/export_yolo26.py` exports ONNX/TensorRT artifacts and writes an artifact manifest/hash.
+- `src/cluster.rs` implements the local V1 multi-camera association engine. It does not infer topology and never permits Gemma to change identity state.
+- `tools/export_yolo26.py` exports static-by-default Core ML, LiteRT/TFLite, ONNX, OpenVINO, and TensorRT artifacts with precision compatibility checks, streaming hashes, and reproducibility manifests. `tools/compare_yolo26_backends.py` measures isolated peak RSS/latency and same-frame agreement, with optional labeled mAP validation. See [the backend optimization guide](BACKEND_INFERENCE_OPTIMIZATION.md).
 - `runtime/deepstream/` documents the production graph and contains initial `nvinfer` and NvDCF templates.
-- Gemma calls the user's LM Studio server directly. The preferred model ID is discovered rather than hard-coded because LM Studio model identifiers depend on the loaded artifact.
+- VLM calls go to the user's LM Studio server directly. The UI supports `prism-ml/bonsai-27b`, `moondream2`, `qwen/qwen3.6-35b-a3b`, `google/gemma-4-26b-a4b-qat`, and `zai-org/glm-4.6v-flash`. For explicit selections, the service calls LM Studio's native `/api/v1/models/load` endpoint and then uses the same ID with the OpenAI-compatible chat endpoint.
 
 ## Core data contract
 
@@ -95,6 +107,8 @@ The report prompt supplies only the deterministic report and allowed event IDs. 
 - Every numeric token in Gemma's headline/summary exists in the authoritative headline/summary.
 
 Any connection, timeout, model, JSON, reference, or claim-validation failure returns the deterministic report and records `gemma.fallback_reason`. A model outage therefore cannot fail the video job.
+
+View description uses one representative JPEG selected from sampled frames using sharpness, contrast and exposure quality. The frame is resized to at most 960 pixels on its longest side, remains in process memory, and is not returned by the API. The multimodal prompt is limited to the visible setting and persistent layout and explicitly forbids identity, intent, event and object-count claims. Unsupported vision input or invalid JSON produces an explicit detector-context fallback without failing the camera pipeline.
 
 ## Kafka integration boundary
 

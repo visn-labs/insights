@@ -1,0 +1,11 @@
+# Install only in a separate CPython 3.11 or 3.12 environment. Do not install
+# these exporter stacks into the service's existing Python 3.9 runtime.
+#
+# export-base: ONNX, ONNX Runtime, OpenVINO and NNCF
+# export-coreml: Core ML Tools (Apple Silicon/macOS is the intended target)
+# export-litert: LiteRT Torch, LiteRT runtime and quantizer
+ultralytics[export-base,export-coreml,export-litert]>=8.4.115,<9
+imageio-ffmpeg>=0.6,<1
+
+# TensorRT is intentionally absent. Build .engine files on the target NVIDIA
+# class with CUDA/TensorRT versions matched to that deployment host.

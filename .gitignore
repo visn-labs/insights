@@ -1,9 +1,16 @@
 /target/
 /data/
 /.venv/
+/.venv-export/
 /.env
+/artifacts/
 *.engine
 *.onnx
+*.onnx.data
 *.pt
+*.mlmodel
+*.mlpackage/
+*.tflite
+*_openvino_model/
 __pycache__/
 *.pyc
