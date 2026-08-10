@@ -21,8 +21,17 @@ pub struct Config {
     pub vlm_exclusive_media: bool,
     pub detector_executable: String,
     pub detector_args: Vec<String>,
+    pub detector_worker_args: Vec<String>,
     pub memory_runner_args: Vec<String>,
     pub yolo_model: String,
+    pub persistent_detector: bool,
+    pub persistent_detector_fallback: bool,
+    pub detector_batch_size: usize,
+    pub detector_batch_wait_ms: u64,
+    pub detector_worker_idle_secs: u64,
+    pub detector_image_size: usize,
+    pub detector_device: Option<String>,
+    pub detector_warmup: bool,
     pub detector_threads: usize,
     pub appearance_interval_secs: f32,
     pub max_analysis_secs: u64,
@@ -66,6 +75,23 @@ impl Config {
         } else {
             "python3"
         };
+        let yolo_model = value("VISN_YOLO_MODEL", "yolo26s.pt");
+        let detector_batch_size = match optional("VISN_DETECTOR_BATCH_SIZE") {
+            Some(raw) => raw
+                .parse::<usize>()
+                .context("VISN_DETECTOR_BATCH_SIZE must be a positive integer")?,
+            None if yolo_model.to_ascii_lowercase().ends_with(".pt") => {
+                max_concurrent_cameras.min(4)
+            }
+            None => 1,
+        };
+        if detector_batch_size == 0 || detector_batch_size > max_concurrent_cameras {
+            bail!("VISN_DETECTOR_BATCH_SIZE must be between 1 and VISN_MAX_CONCURRENT_CAMERAS");
+        }
+        let detector_batch_wait_ms = nonnegative_u64("VISN_DETECTOR_BATCH_WAIT_MS", "12")?;
+        if detector_batch_wait_ms > 1_000 {
+            bail!("VISN_DETECTOR_BATCH_WAIT_MS must not exceed 1000");
+        }
 
         Ok(Self {
             bind: value("VISN_BIND", "127.0.0.1:8080"),
@@ -100,11 +126,23 @@ impl Config {
                 .split_whitespace()
                 .map(ToOwned::to_owned)
                 .collect(),
+            detector_worker_args: value("VISN_DETECTOR_WORKER_ARGS", "tools/yolo26_worker.py")
+                .split_whitespace()
+                .map(ToOwned::to_owned)
+                .collect(),
             memory_runner_args: value("VISN_MEMORY_RUNNER_ARGS", "tools/event_memory_runner.py")
                 .split_whitespace()
                 .map(ToOwned::to_owned)
                 .collect(),
-            yolo_model: value("VISN_YOLO_MODEL", "yolo26s.pt"),
+            yolo_model,
+            persistent_detector: bool_value("VISN_PERSISTENT_DETECTOR", true)?,
+            persistent_detector_fallback: bool_value("VISN_PERSISTENT_DETECTOR_FALLBACK", true)?,
+            detector_batch_size,
+            detector_batch_wait_ms,
+            detector_worker_idle_secs: nonnegative_u64("VISN_DETECTOR_WORKER_IDLE_SECS", "30")?,
+            detector_image_size: positive_usize("VISN_DETECTOR_IMGSZ", "640")?,
+            detector_device: optional("VISN_DETECTOR_DEVICE"),
+            detector_warmup: bool_value("VISN_DETECTOR_WARMUP", true)?,
             detector_threads: positive_usize("VISN_DETECTOR_THREADS", "1")?,
             appearance_interval_secs: nonnegative_f32("VISN_APPEARANCE_INTERVAL_SECS", "1.0")?,
             max_analysis_secs,
@@ -129,6 +167,10 @@ impl Config {
 
     pub fn upload_dir(&self) -> PathBuf {
         self.data_dir.join("uploads")
+    }
+
+    pub fn detector_worker_idle_duration(&self) -> std::time::Duration {
+        std::time::Duration::from_secs(self.detector_worker_idle_secs)
     }
 }
 
@@ -158,6 +200,12 @@ fn nonnegative_f32(name: &str, default: &str) -> anyhow::Result<f32> {
         bail!("{name} must be finite and zero or greater");
     }
     Ok(parsed)
+}
+
+fn nonnegative_u64(name: &str, default: &str) -> anyhow::Result<u64> {
+    value(name, default)
+        .parse::<u64>()
+        .with_context(|| format!("{name} must be a non-negative integer"))
 }
 
 fn value(name: &str, default: &str) -> String {

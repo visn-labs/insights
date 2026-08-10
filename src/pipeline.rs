@@ -16,6 +16,7 @@ use uuid::Uuid;
 
 use crate::{
     config::Config,
+    detector_worker::{DetectorRequest, DetectorWorker, DetectorWorkerEvent},
     domain::{
         AnalyticsPolicy, BackendKind, DetectorOutput, GemmaRun, JobRequest, Line, Observation,
         PipelineResult, RepresentativeFrame, ViewDescription, Zone,
@@ -53,6 +54,11 @@ struct ProcessedDetection {
     analysis: Analysis,
 }
 
+struct PersistentDetectionFailure {
+    error: anyhow::Error,
+    observations_processed: usize,
+}
+
 struct CapturedStderr {
     bytes: Vec<u8>,
     truncated: bool,
@@ -85,6 +91,7 @@ pub struct PipelineService {
     gemma: GemmaClient,
     sink: Arc<dyn EventSink>,
     detector_gate: Arc<Semaphore>,
+    detector_worker: DetectorWorker,
 }
 
 impl PipelineService {
@@ -93,9 +100,11 @@ impl PipelineService {
         gemma: GemmaClient,
         sink: Arc<dyn EventSink>,
         detector_gate: Arc<Semaphore>,
+        detector_worker: DetectorWorker,
     ) -> Self {
         Self {
             detector_gate,
+            detector_worker,
             config,
             gemma,
             sink,
@@ -370,6 +379,114 @@ impl PipelineService {
             .await
             .context("acquire global detector-process gate")?;
         let source = source.detector_value()?;
+        if self.detector_worker.enabled() {
+            match self
+                .run_yolo26_persistent(job_id, request, &source, policy, appearance_mode)
+                .await
+            {
+                Ok(result) => return Ok(result),
+                Err(failure)
+                    if self.config.persistent_detector_fallback
+                        && failure.observations_processed == 0 =>
+                {
+                    warn!(
+                        %job_id,
+                        error = %failure.error,
+                        "persistent detector failed before producing observations; using isolated runner fallback"
+                    );
+                }
+                Err(failure) => return Err(failure.error),
+            }
+        }
+        self.run_yolo26_subprocess(job_id, request, &source, policy, appearance_mode)
+            .await
+    }
+
+    async fn run_yolo26_persistent(
+        &self,
+        job_id: Uuid,
+        request: &JobRequest,
+        source: &str,
+        policy: &AnalyticsPolicy,
+        appearance_mode: DetectorAppearanceMode,
+    ) -> Result<ProcessedDetection, PersistentDetectionFailure> {
+        let mut session = self
+            .detector_worker
+            .start(DetectorRequest {
+                source: source.to_owned(),
+                fps: request.detector_fps,
+                max_seconds: request.monitor_duration_secs,
+                confidence: 0.25,
+                appearance_mode: appearance_mode.as_str(),
+                appearance_interval_secs: self.config.appearance_interval_secs,
+            })
+            .await
+            .map_err(|error| PersistentDetectionFailure {
+                error,
+                observations_processed: 0,
+            })?;
+        let mut analyzer = StreamingAnalyzer::new(job_id, policy);
+        let mut detected_classes = BTreeSet::new();
+
+        while let Some(event) = session.recv().await {
+            match event {
+                DetectorWorkerEvent::Observations(observations) => {
+                    if let Err(error) = validate_observations(&observations) {
+                        return Err(PersistentDetectionFailure {
+                            error: error.context("validate persistent YOLO26 observations"),
+                            observations_processed: analyzer.observation_count(),
+                        });
+                    }
+                    for observation in &observations {
+                        detected_classes.insert(observation.class_name.clone());
+                        if let Err(error) = analyzer.observe(observation) {
+                            return Err(PersistentDetectionFailure {
+                                error: error.context("aggregate persistent YOLO26 observation"),
+                                observations_processed: analyzer.observation_count(),
+                            });
+                        }
+                    }
+                }
+                DetectorWorkerEvent::Complete(mut output) => {
+                    if !output.observations.is_empty() {
+                        return Err(PersistentDetectionFailure {
+                            error: anyhow::anyhow!(
+                                "persistent YOLO26 worker mixed observations into its final result"
+                            ),
+                            observations_processed: analyzer.observation_count(),
+                        });
+                    }
+                    let observations_processed = analyzer.observation_count();
+                    return Ok(ProcessedDetection {
+                        model: output.model,
+                        representative_frame: output.representative_frame.take(),
+                        observations_processed,
+                        detected_classes: detected_classes.into_iter().collect(),
+                        analysis: analyzer.finish(),
+                    });
+                }
+                DetectorWorkerEvent::Error(message) => {
+                    return Err(PersistentDetectionFailure {
+                        error: anyhow::anyhow!(message),
+                        observations_processed: analyzer.observation_count(),
+                    });
+                }
+            }
+        }
+        Err(PersistentDetectionFailure {
+            error: anyhow::anyhow!("persistent YOLO26 worker ended without a final result"),
+            observations_processed: analyzer.observation_count(),
+        })
+    }
+
+    async fn run_yolo26_subprocess(
+        &self,
+        job_id: Uuid,
+        request: &JobRequest,
+        source: &str,
+        policy: &AnalyticsPolicy,
+        appearance_mode: DetectorAppearanceMode,
+    ) -> anyhow::Result<ProcessedDetection> {
         let mut command = Command::new(&self.config.detector_executable);
         command
             .args(&self.config.detector_args)
@@ -381,6 +498,8 @@ impl PipelineService {
             .arg(request.detector_fps.to_string())
             .arg("--max-seconds")
             .arg(request.monitor_duration_secs.to_string())
+            .arg("--imgsz")
+            .arg(self.config.detector_image_size.to_string())
             .arg("--stream-output")
             .arg("--appearance-mode")
             .arg(appearance_mode.as_str())
@@ -392,6 +511,9 @@ impl PipelineService {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .kill_on_drop(true);
+        if let Some(device) = &self.config.detector_device {
+            command.arg("--device").arg(device);
+        }
         let mut child = command
             .spawn()
             .with_context(|| format!("launch {}", self.config.detector_executable))?;
@@ -480,7 +602,7 @@ impl PipelineService {
         if !status.success() {
             let stderr = captured_stderr
                 .render()
-                .replace(&source, redacted_source_label(&source));
+                .replace(source, redacted_source_label(source));
             bail!("YOLO26 runner failed with {}: {}", status, stderr.trim());
         }
 

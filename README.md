@@ -84,6 +84,8 @@ VISN_DETECTOR_EXECUTABLE=.venv/bin/python cargo run
 
 When the project-local `.venv/bin/python` exists, the service detects and uses it automatically, so after the setup above a plain `cargo run` is sufficient. `VISN_DETECTOR_EXECUTABLE` remains available as an explicit override.
 
+By default the backend starts `tools/yolo26_worker.py` lazily, loads YOLO once, and shares that model across the currently active cameras. Live cameras have a one-frame latest-value buffer, uploaded files are backpressured instead of dropping sampled frames, and each camera owns a separate ByteTrack state. Frames that arrive within the short batch window are inferred together. If the worker fails before emitting an observation, the service automatically retries that request through the isolated `tools/yolo26_runner.py` path. Set `VISN_PERSISTENT_DETECTOR=false` to force the older path while diagnosing a runtime-specific problem.
+
 In the UI:
 
 1. Select **Upload** and choose an MP4/MKV/MOV file.
@@ -143,7 +145,16 @@ See [.env.example](.env.example). The service reads environment variables direct
 | `VISN_VLM_EXCLUSIVE_MEDIA` | `true` | Pause local detector/observer workers during each VLM call |
 | `VISN_DETECTOR_EXECUTABLE` | `.venv/bin/python` if present, otherwise `python3` | Development detector executable |
 | `VISN_DETECTOR_ARGS` | `tools/yolo26_runner.py` | Detector command arguments |
+| `VISN_PERSISTENT_DETECTOR` | `true` | Load one YOLO model for all concurrently active camera sessions |
+| `VISN_PERSISTENT_DETECTOR_FALLBACK` | `true` | Retry through the isolated runner only if the shared worker produced no observations |
+| `VISN_DETECTOR_WORKER_ARGS` | `tools/yolo26_worker.py` | Persistent detector worker command arguments |
 | `VISN_YOLO_MODEL` | `yolo26s.pt` | Approved checkpoint/path |
+| `VISN_DETECTOR_BATCH_SIZE` | min(camera limit, 4) for `.pt`, otherwise `1` | Maximum simultaneous frames per inference call |
+| `VISN_DETECTOR_BATCH_WAIT_MS` | `12` | Maximum wait used to assemble a camera batch |
+| `VISN_DETECTOR_WORKER_IDLE_SECS` | `30` | Unload an unused YOLO worker after this interval |
+| `VISN_DETECTOR_IMGSZ` | `640` | Detector input size shared by worker and fallback |
+| `VISN_DETECTOR_DEVICE` | auto | Optional Ultralytics device selection |
+| `VISN_DETECTOR_WARMUP` | `true` | Run one batch-1 synthetic inference before accepting cameras |
 | `VISN_DETECTOR_THREADS` | `1` | OpenCV/PyTorch threads per detector process |
 | `VISN_APPEARANCE_INTERVAL_SECS` | `1.0` | Cluster person-appearance sampling interval |
 | `VISN_MAX_ANALYSIS_SECS` | `3600` | Maximum permitted per-job monitoring interval |

@@ -7,6 +7,8 @@ This guide covers backend workflow optimization, detector conversion, and qualit
 The backend now removes avoidable work before changing model accuracy:
 
 - The YOLO runner emits one compact `VISN_OBSERVATIONS_JSON` record per inference frame. Rust consumes it immediately and maintains only per-track rule state, confidence, zone/line state, and a weighted appearance prototype. It no longer retains every observation in Python, duplicates the full JSON in Rust stdout, or stores the observation history for post-processing.
+- The default detector path is now a persistent multi-camera worker. It loads one YOLO model for all active cameras, batches frames that become ready within a bounded wait, and retains one independent ByteTrack instance and appearance schedule per camera. This removes the previous model copy and Python/Torch runtime copy for every concurrent camera.
+- Every live camera owns only one pending full-resolution frame; a newer live frame replaces a stale unprocessed frame. Uploaded files use backpressure so sampled evidence frames are not silently dropped. The Rust media semaphore still bounds the total active sessions.
 - Detector stderr is drained concurrently and retains only its newest 128 KiB. A noisy FFmpeg/Ultralytics process can no longer grow the service response buffer without a bound.
 - HTTP decoding applies the requested detector FPS inside FFmpeg, before raw BGR frames cross into Python. Local-file and RTSP skip paths use `grab()` so skipped frames are not converted into Python arrays.
 - Ordinary single-camera jobs disable appearance extraction because their API result does not use it. Cluster jobs calculate appearance for people only, retain the first sample, and then sample each track at `VISN_APPEARANCE_INTERVAL_SECS` instead of recomputing a nearly identical 62-float vector every frame.
@@ -15,6 +17,7 @@ The backend now removes avoidable work before changing model accuracy:
 - If a cluster camera waits for a permit, its real processing-start offset is carried into cross-camera temporal association. Queued intervals are no longer compared as though all of them began at timestamp zero.
 - Representative frames are quality-scored on a small image and retained at no more than 960 pixels, avoiding a persistent full-resolution copy per camera.
 - The retrieval-memory runner uses a zero-copy hard link for local evidence when the filesystem permits it (streaming copy fallback), bounded activity history, cached histograms, `CV_32F` sharpness on a reduced image, and `grab()` for unsampled frames. It returns thumbnail paths and metadata rather than base64-copying every event JPEG through stdout. Rust base64-encodes only VLM-selected frames, one at a time.
+- Sparse-memory runner stdout is capped at 2 MiB and stderr retains only its newest 128 KiB while both pipes are drained concurrently. Before starting, it reaps a warm shared detector if and only if no camera session is active.
 - Memory clips first attempt codec stream-copy. `VISN_MEMORY_CLIP_MODE=reference` removes all duplicate event clips; `transcode` remains available when browser-compatible H.264 derivatives are required.
 - LM Studio model selection, switching, and completion are serialized by one shared gate. By default a VLM call temporarily owns the complete local media-worker budget, so large VLM allocation/generation does not overlap YOLO or observer processes. The selected instance is cached, load requests have bounded context/evaluation settings with Flash Attention, prompts use compact JSON, and every completion has an explicit output-token ceiling.
 - Local retrieval ranks borrowed event records and clones only the final top matches. Completed ephemeral YOLO/cluster job histories are capped by `VISN_MAX_EPHEMERAL_JOBS`.
@@ -26,6 +29,13 @@ These changes preserve the `yolo26s` checkpoint, 640-pixel detector input, confi
 | Variable | Default | Effect |
 |---|---:|---|
 | `VISN_MAX_CONCURRENT_CAMERAS` | `4` | Global combined YOLO/sparse-observer process cap |
+| `VISN_PERSISTENT_DETECTOR` | `true` | Use the single-model multi-camera worker |
+| `VISN_PERSISTENT_DETECTOR_FALLBACK` | `true` | Use the isolated runner only after a pre-observation worker failure |
+| `VISN_DETECTOR_BATCH_SIZE` | min(camera cap, 4) for `.pt`; `1` for exported artifacts | Maximum frames in one inference call |
+| `VISN_DETECTOR_BATCH_WAIT_MS` | `12` | Bounded latency used to assemble a multi-camera batch |
+| `VISN_DETECTOR_WORKER_IDLE_SECS` | `30` | Reap an unused shared model after this period |
+| `VISN_DETECTOR_IMGSZ` | `640` | Common worker/fallback inference size |
+| `VISN_DETECTOR_WARMUP` | `true` | Pay one batch-1 warm-up before accepting live frames |
 | `VISN_DETECTOR_THREADS` | `1` | OpenCV and PyTorch threads per YOLO process |
 | `VISN_APPEARANCE_INTERVAL_SECS` | `1.0` | Person appearance resampling period; first sample is immediate |
 | `VISN_VLM_CONTEXT_LENGTH` | `4096` | LM Studio context allocated when this service loads a VLM |
@@ -37,7 +47,9 @@ These changes preserve the `yolo26s` checkpoint, 640-pixel detector input, confi
 | `VISN_MEMORY_CLIP_MODE` | `copy` | `copy`, `transcode`, or source-only `reference` evidence |
 | `VISN_MAX_EPHEMERAL_JOBS` | `128` | Completed non-persistent results retained in RAM |
 
-For cameras covering the same space, keep `VISN_MAX_CONCURRENT_CAMERAS` at least as large as the number of streams that must observe the same wall-clock interval. A lower value now keeps association timestamps truthful, but cameras still monitor in waves and therefore cover different intervals. The next large architecture step is one persistent, camera-keyed detector worker with simultaneous bounded ingress and batched inference; the current implementation deliberately does not fake that behavior by mixing tracker state across cameras.
+For cameras covering the same space, keep `VISN_MAX_CONCURRENT_CAMERAS` at least as large as the number of streams that must observe the same wall-clock interval. A lower value keeps association timestamps truthful, but cameras monitor in waves and therefore cover different intervals. The persistent worker batches only frames currently ready and never changes camera order into tracker identity: every request has its own ByteTrack object. The short batch window is therefore a throughput optimization rather than a synchronization claim.
+
+`VISN_VLM_EXCLUSIVE_MEDIA=true` first acquires the complete media permit budget, waits for active camera sessions, then shuts down and reaps the persistent detector before LM Studio model loading/generation. This prevents a reusable idle YOLO allocation from undoing the VLM peak-memory isolation. When VLM is disabled, the worker stays warm until `VISN_DETECTOR_WORKER_IDLE_SECS` expires.
 
 ### Focused verification
 
@@ -48,11 +60,23 @@ cargo check
 cargo test event_engine::tests
 PYTHONPYCACHEPREFIX=/tmp/visn-pycache \
   .venv/bin/python -m py_compile \
-  tools/yolo26_runner.py tools/event_memory_runner.py \
+  tools/yolo26_worker.py tools/yolo26_runner.py tools/event_memory_runner.py \
   tools/export_yolo26.py tools/compare_yolo26_backends.py
 ```
 
 Use the comparison tool below for performance/quality measurements only when you are ready to run model inference manually. Structural changes above do not by themselves prove a speedup on every codec and host.
+
+### Manual shared-worker check
+
+Start the service normally and use the unchanged UI. With VLM disabled, submit two cameras in one cluster and watch the structured service log:
+
+1. One `persistent detector worker launched` and one `persistent detector worker ready` message should appear for the cluster, rather than one Python/model load per camera.
+2. Both camera results should retain independent track IDs and their requested monitoring intervals.
+3. Submit another non-VLM job within 30 seconds; it should reuse the warm worker. After 30 idle seconds the worker is reaped.
+4. Enable VLM and repeat. Once detector sessions finish, `persistent detector worker stopped` should appear before LM Studio generation begins.
+5. Set `VISN_PERSISTENT_DETECTOR=false` and restart only when comparing against the isolated legacy behavior. Set `VISN_DETECTOR_BATCH_SIZE=1` to isolate sharing from batching without duplicating the model.
+
+Do not infer batch efficiency from wall time alone. For a release comparison, save an authorized local clip and use the same-frame benchmark later in this guide. Tracking continuity must also be inspected because detector agreement does not validate identity persistence.
 
 ## Quality-first deployment rule
 

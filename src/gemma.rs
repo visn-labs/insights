@@ -15,6 +15,7 @@ use uuid::Uuid;
 
 use crate::{
     config::Config,
+    detector_worker::DetectorWorker,
     domain::{
         CameraProfile, MemoryEventDescription, MemoryQueryMatch, Report, RepresentativeFrame,
     },
@@ -26,6 +27,7 @@ pub struct GemmaClient {
     client: Client,
     inference_gate: Arc<Semaphore>,
     media_worker_gate: Arc<Semaphore>,
+    detector_worker: DetectorWorker,
     loaded_model: Arc<Mutex<Option<LoadedModel>>>,
 }
 
@@ -124,7 +126,11 @@ pub struct MemoryQuerySynthesisCandidate {
 }
 
 impl GemmaClient {
-    pub fn new(config: Arc<Config>, media_worker_gate: Arc<Semaphore>) -> anyhow::Result<Self> {
+    pub fn new(
+        config: Arc<Config>,
+        media_worker_gate: Arc<Semaphore>,
+        detector_worker: DetectorWorker,
+    ) -> anyhow::Result<Self> {
         let client = Client::builder()
             .timeout(Duration::from_secs(config.gemma_timeout_secs))
             .build()
@@ -134,6 +140,7 @@ impl GemmaClient {
             client,
             inference_gate: Arc::new(Semaphore::new(1)),
             media_worker_gate,
+            detector_worker,
             loaded_model: Arc::new(Mutex::new(None)),
         })
     }
@@ -577,11 +584,18 @@ impl GemmaClient {
         }
         let permits = u32::try_from(self.config.max_concurrent_cameras)
             .context("media-worker limit exceeds semaphore permit range")?;
-        self.media_worker_gate
+        let permit = self
+            .media_worker_gate
             .acquire_many(permits)
             .await
-            .map(Some)
-            .context("acquire exclusive media budget for VLM call")
+            .context("acquire exclusive media budget for VLM call")?;
+        if let Err(error) = self.detector_worker.shutdown_when_idle().await {
+            warn!(
+                %error,
+                "could not explicitly drain the persistent detector before VLM execution"
+            );
+        }
+        Ok(Some(permit))
     }
 
     /// Ensures that the requested model is actively loaded in LM Studio.

@@ -35,6 +35,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fps", type=float, default=5.0)
     parser.add_argument("--max-seconds", type=float, default=120.0)
     parser.add_argument("--confidence", type=float, default=0.25)
+    parser.add_argument("--imgsz", type=int, default=640)
     parser.add_argument("--device", default=None)
     parser.add_argument(
         "--stream-output",
@@ -293,6 +294,8 @@ def main() -> None:
         fail("--appearance-interval-secs must be finite and zero or greater")
     if args.threads is not None and args.threads <= 0:
         fail("--threads must be greater than zero")
+    if args.imgsz <= 0:
+        fail("--imgsz must be greater than zero")
 
     if args.threads is not None:
         thread_count = str(args.threads)
@@ -433,6 +436,7 @@ def main() -> None:
                     verbose=False,
                     conf=args.confidence,
                     device=args.device,
+                    imgsz=args.imgsz,
                 )
             result = results[0]
             boxes = result.boxes

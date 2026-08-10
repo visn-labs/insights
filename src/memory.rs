@@ -1,6 +1,6 @@
 use std::{
     cmp::Ordering,
-    collections::{BTreeSet, HashMap, HashSet},
+    collections::{BTreeSet, HashMap, HashSet, VecDeque},
     path::{Path, PathBuf},
     process::Stdio,
     sync::Arc,
@@ -9,12 +9,17 @@ use std::{
 use anyhow::{bail, Context};
 use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine as _};
 use serde::Deserialize;
-use tokio::{io::AsyncWriteExt, process::Command, sync::Semaphore};
+use tokio::{
+    io::{AsyncRead, AsyncReadExt, AsyncWriteExt},
+    process::Command,
+    sync::Semaphore,
+};
 use tracing::warn;
 use uuid::Uuid;
 
 use crate::{
     config::Config,
+    detector_worker::DetectorWorker,
     domain::{
         CameraProfile, MemoryCameraResult, MemoryEvent, MemoryEventDescription, MemoryQueryMatch,
         MemoryQueryRequest, RepresentativeFrame,
@@ -23,12 +28,15 @@ use crate::{
 };
 
 const OUTPUT_PREFIX: &str = "VISN_MEMORY_JSON:";
+const MAX_RUNNER_STDOUT_BYTES: usize = 2 * 1024 * 1024;
+const MAX_RUNNER_STDERR_BYTES: usize = 128 * 1024;
 
 #[derive(Clone)]
 pub struct MemoryService {
     config: Arc<Config>,
     gemma: GemmaClient,
     observer_gate: Arc<Semaphore>,
+    detector_worker: DetectorWorker,
 }
 
 #[derive(Debug, Deserialize)]
@@ -67,9 +75,15 @@ struct RunnerRepresentativeFrame {
 }
 
 impl MemoryService {
-    pub fn new(config: Arc<Config>, gemma: GemmaClient, observer_gate: Arc<Semaphore>) -> Self {
+    pub fn new(
+        config: Arc<Config>,
+        gemma: GemmaClient,
+        observer_gate: Arc<Semaphore>,
+        detector_worker: DetectorWorker,
+    ) -> Self {
         Self {
             observer_gate,
+            detector_worker,
             config,
             gemma,
         }
@@ -231,6 +245,9 @@ impl MemoryService {
             .acquire()
             .await
             .context("acquire global sparse-observer gate")?;
+        if let Err(error) = self.detector_worker.shutdown_if_idle().await {
+            warn!(%error, "could not release an idle detector before sparse observation");
+        }
         let mut command = Command::new(&self.config.detector_executable);
         command
             .args(&self.config.memory_runner_args)
@@ -261,19 +278,34 @@ impl MemoryService {
             .await
             .context("write source to memory runner")?;
         drop(stdin);
-        let process = child
-            .wait_with_output()
+        let stdout = child.stdout.take().context("open memory runner stdout")?;
+        let stderr = child.stderr.take().context("open memory runner stderr")?;
+        let stdout_task = tokio::spawn(capture_bounded_head(stdout, MAX_RUNNER_STDOUT_BYTES));
+        let stderr_task = tokio::spawn(capture_bounded_tail(stderr, MAX_RUNNER_STDERR_BYTES));
+        let status = child.wait().await.context("wait for memory runner")?;
+        let stdout = stdout_task
             .await
-            .context("wait for memory runner")?;
-        if !process.status.success() {
-            let stderr = String::from_utf8_lossy(&process.stderr).replace(source, "http://***");
+            .context("join memory runner stdout task")??;
+        let stderr = stderr_task
+            .await
+            .context("join memory runner stderr task")??;
+        if !status.success() {
+            let stderr = stderr
+                .render()
+                .replace(source, redacted_source_label(source));
             bail!(
                 "event-memory runner failed with {}: {}",
-                process.status,
+                status,
                 stderr.trim()
             );
         }
-        decode_runner_output(&process.stdout)
+        if stdout.truncated {
+            bail!(
+                "event-memory runner output exceeded the {} byte limit",
+                MAX_RUNNER_STDOUT_BYTES
+            );
+        }
+        decode_runner_output(&stdout.bytes)
     }
 
     pub async fn synthesize_query(
@@ -471,6 +503,87 @@ fn signature_distance(left: &[f32], right: &[f32]) -> f32 {
         .map(|(left, right)| left * right)
         .sum();
     (1.0 - similarity).clamp(0.0, 1.0)
+}
+
+struct CapturedHead {
+    bytes: Vec<u8>,
+    truncated: bool,
+}
+
+struct CapturedTail {
+    bytes: Vec<u8>,
+    truncated: bool,
+}
+
+impl CapturedTail {
+    fn render(&self) -> String {
+        let body = String::from_utf8_lossy(&self.bytes);
+        if self.truncated {
+            format!("[earlier runner diagnostics truncated]\n{body}")
+        } else {
+            body.into_owned()
+        }
+    }
+}
+
+async fn capture_bounded_head<R>(mut reader: R, limit: usize) -> std::io::Result<CapturedHead>
+where
+    R: AsyncRead + Unpin,
+{
+    let mut bytes = Vec::with_capacity(limit.min(64 * 1024));
+    let mut truncated = false;
+    let mut buffer = [0_u8; 8 * 1024];
+    loop {
+        let count = reader.read(&mut buffer).await?;
+        if count == 0 {
+            break;
+        }
+        let remaining = limit.saturating_sub(bytes.len());
+        bytes.extend_from_slice(&buffer[..count.min(remaining)]);
+        if count > remaining {
+            truncated = true;
+        }
+    }
+    Ok(CapturedHead { bytes, truncated })
+}
+
+async fn capture_bounded_tail<R>(mut reader: R, limit: usize) -> std::io::Result<CapturedTail>
+where
+    R: AsyncRead + Unpin,
+{
+    let mut bytes = VecDeque::with_capacity(limit);
+    let mut truncated = false;
+    let mut buffer = [0_u8; 8 * 1024];
+    loop {
+        let count = reader.read(&mut buffer).await?;
+        if count == 0 {
+            break;
+        }
+        bytes.extend(&buffer[..count]);
+        if bytes.len() > limit {
+            let excess = bytes.len() - limit;
+            bytes.drain(..excess);
+            truncated = true;
+        }
+    }
+    Ok(CapturedTail {
+        bytes: bytes.into_iter().collect(),
+        truncated,
+    })
+}
+
+fn redacted_source_label(source: &str) -> &'static str {
+    if source.starts_with("https://") {
+        "https://***"
+    } else if source.starts_with("http://") {
+        "http://***"
+    } else if source.starts_with("rtsps://") {
+        "rtsps://***"
+    } else if source.starts_with("rtsp://") {
+        "rtsp://***"
+    } else {
+        "<local-video>"
+    }
 }
 
 fn decode_runner_output(stdout: &[u8]) -> anyhow::Result<RunnerOutput> {

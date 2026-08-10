@@ -1,6 +1,7 @@
 mod api;
 mod cluster;
 mod config;
+mod detector_worker;
 mod domain;
 mod event_engine;
 mod gemma;
@@ -14,6 +15,7 @@ use std::{net::SocketAddr, sync::Arc};
 
 use anyhow::Context;
 use config::Config;
+use detector_worker::DetectorWorker;
 use gemma::GemmaClient;
 use memory::MemoryService;
 use pipeline::PipelineService;
@@ -34,10 +36,26 @@ async fn main() -> anyhow::Result<()> {
         .context("create upload data directory")?;
 
     let media_worker_gate = Arc::new(Semaphore::new(config.max_concurrent_cameras));
-    let gemma = GemmaClient::new(config.clone(), media_worker_gate.clone())?;
-    let memory = MemoryService::new(config.clone(), gemma.clone(), media_worker_gate.clone());
+    let detector_worker = DetectorWorker::new(config.clone());
+    let gemma = GemmaClient::new(
+        config.clone(),
+        media_worker_gate.clone(),
+        detector_worker.clone(),
+    )?;
+    let memory = MemoryService::new(
+        config.clone(),
+        gemma.clone(),
+        media_worker_gate.clone(),
+        detector_worker.clone(),
+    );
     let sink = build_sink(config.clone())?;
-    let pipeline = PipelineService::new(config.clone(), gemma, sink, media_worker_gate);
+    let pipeline = PipelineService::new(
+        config.clone(),
+        gemma,
+        sink,
+        media_worker_gate,
+        detector_worker,
+    );
     let state = AppState::new(config.clone(), pipeline, memory);
     let app = api::router(state);
 
@@ -49,6 +67,8 @@ async fn main() -> anyhow::Result<()> {
         %address,
         media_workers = config.max_concurrent_cameras,
         detector_threads = config.detector_threads,
+        persistent_detector = config.persistent_detector,
+        detector_batch_size = config.detector_batch_size,
         vlm_context_length = config.vlm_context_length,
         vlm_exclusive_media = config.vlm_exclusive_media,
         "visn Phase 0 service ready"

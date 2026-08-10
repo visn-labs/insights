@@ -10,7 +10,10 @@ Browser UI
       -> local upload / sample / HTTP(S) or RTSP reference
       -> DetectorBackend
            -> deterministic simulator
-           -> YOLO26 development command
+           -> persistent YOLO26 multi-camera worker
+                -> one shared model, bounded latest-frame ingress
+                -> batched inference, camera-isolated ByteTrack state
+           -> isolated YOLO26 command fallback
            -> future DeepStream/TensorRT worker (same output contract)
       -> deterministic track and event engine
       -> bounded representative-frame selection
@@ -35,6 +38,7 @@ Completed manifests live under `VISN_DATA_DIR/memory/manifests`; evidence lives 
 - `src/api.rs`: HTTP routes, bounded streaming multipart upload, SHA-256 metadata, static UI, media serving, and consistent JSON errors.
 - `src/store.rs`: in-memory job/upload catalogue, async execution, source resolution, request validation, and network-source credential redaction.
 - `src/pipeline.rs`: backend selection, bounded external process execution, observation validation, rules, reporting, Gemma fallback, and sink publication.
+- `src/detector_worker.rs`: lifecycle supervision and restart of the shared YOLO worker, bounded per-session event channels, request cancellation, protocol validation, credential-safe diagnostics, idle reaping, and pre-VLM model draining.
 - `src/event_engine.rs`: confirmation threshold, deterministic grouping, point-in-polygon zones, directional line crossings, dwell events, stable UUIDv5 event IDs, track summaries, and fact reports.
 - `src/gemma.rs`: LM Studio native model discovery/loading, OpenAI-compatible `/v1/chat/completions`, multimodal representative-frame descriptions, strict report JSON, event-reference validation, numeric-claim validation, and bounded timeout.
 - `src/sink.rs`: default no-op implementation and optional idempotent `rust-rdkafka` producer.
@@ -57,7 +61,7 @@ The UI is compiled into the Rust binary and requires no Node/npm build. It provi
 
 ### Model adapters
 
-- `tools/yolo26_runner.py` runs YOLO26 tracking over a file or bounded HTTP(S)/RTSP interval and emits normalized observations. HTTP(S) uses an isolated bundled FFmpeg process; the detector result is emitted as a framed record so third-party console output cannot corrupt the Rust/JSON boundary.
+- `tools/yolo26_worker.py` is the default local path. It loads YOLO once, decodes cameras concurrently, retains one live pending frame per camera, batches ready frames, and uses a dedicated ByteTrack instance per camera. `tools/yolo26_runner.py` is the isolated fallback. HTTP(S) uses bundled FFmpeg subprocesses; framed records keep third-party output outside the Rust/JSON protocol.
 - `src/cluster.rs` implements the local V1 multi-camera association engine. It does not infer topology and never permits Gemma to change identity state.
 - `tools/export_yolo26.py` exports static-by-default Core ML, LiteRT/TFLite, ONNX, OpenVINO, and TensorRT artifacts with precision compatibility checks, streaming hashes, and reproducibility manifests. `tools/compare_yolo26_backends.py` measures isolated peak RSS/latency and same-frame agreement, with optional labeled mAP validation. See [the backend optimization guide](BACKEND_INFERENCE_OPTIMIZATION.md).
 - `runtime/deepstream/` documents the production graph and contains initial `nvinfer` and NvDCF templates.
@@ -126,7 +130,7 @@ This is intentionally an integration-ready placeholder. Once the backend service
 
 - Jobs and their results are in memory. Restarting the service clears the catalogue; uploaded files remain in `VISN_DATA_DIR` and can be cleaned manually. Mongo persistence waits for the backend contract.
 - The development YOLO runner is Python/Ultralytics. The production online path still needs the target-host DeepStream metadata adapter and validated YOLO26 custom parser.
-- Evidence frame/crop extraction, an encoded NVMe ring buffer, clip remuxing, multi-stream batching, and pipeline-group isolation belong to the NVIDIA-host follow-on slice.
+- An encoded NVMe ring buffer and target-specific DeepStream pipeline-group isolation belong to the NVIDIA-host follow-on slice. The local worker now provides bounded multi-stream batching, while the production graph must reproduce and validate that behavior with GPU-native decode and metadata.
 - The current job API is a bounded batch/network-stream validation flow, not a long-lived camera supervisor.
 - The simulator proves rules and UI plumbing; it is not a detector accuracy test.
 - Kafka payloads remain provisional until the backend team freezes the contract.
