@@ -1,4 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
+import { SVGS, createSVGTexture } from './svgs.js';
+
 
 const root = document.querySelector('#town-intro');
 const canvas = document.querySelector('#town-canvas');
@@ -48,6 +50,15 @@ const state = {
 
 const inkLine = new THREE.LineBasicMaterial({ color: PALETTE.ink, transparent: true, opacity: 0.94 });
 const darkLine = new THREE.LineBasicMaterial({ color: PALETTE.inkDark, transparent: true, opacity: 0.95 });
+
+function createSvgSprite(svgStr, width, height) {
+  const tex = new THREE.TextureLoader().load(createSVGTexture(svgStr));
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const material = new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide });
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height), material);
+  return plane;
+}
+
 
 function flatMaterial(color, opacity = 0.28, side = THREE.FrontSide) {
   return new THREE.MeshStandardMaterial({
@@ -168,89 +179,18 @@ function gableGeometry(width, depth, baseY, roofHeight) {
 }
 
 function addBuilding(scene, config) {
-  const { x, z, width, height, depth, floors = 2, facing = 1, shop = false, clock = false } = config;
+  const { x, z, width, height, depth, facing = 1, shop = false, clock = false } = config;
   const group = new THREE.Group();
   group.position.set(x, 0, z);
 
-  const body = outlinedMesh(new THREE.BoxGeometry(width, height, depth), PALETTE.paperLight, PALETTE.ink, 0.78);
-  body.position.y = height / 2;
-  group.add(body);
+  let type = "building1";
+  if (shop) type = "building_shop";
+  if (clock) type = "building_clock";
 
-  const roof = outlinedMesh(gableGeometry(width + 0.3, depth + 0.3, height, 1.25), PALETTE.paperShade, PALETTE.inkDark, 0.68);
-  group.add(roof);
-
-  const frontZ = facing * (depth / 2 + 0.012);
-  const frontRotation = facing > 0 ? 0 : Math.PI;
-  const door = archedPanel(width * 0.22, 1.72, PALETTE.paperShade, 0.54);
-  door.position.set(width * 0.2, 0.83, frontZ);
-  door.rotation.y = frontRotation;
-  group.add(door);
-
-  for (let floor = 0; floor < floors; floor += 1) {
-    const y = 1.15 + floor * 1.65;
-    [-0.28, 0.28].forEach((fraction) => {
-      const windowPanel = archedPanel(width * 0.19, 0.88, PALETTE.phone, 0.15);
-      windowPanel.children[0].material.opacity = 0.055;
-      windowPanel.position.set(width * fraction, y, frontZ + facing * 0.006);
-      windowPanel.rotation.y = frontRotation;
-      group.add(windowPanel);
-      const cross = lineFrom([
-        [-width * 0.09, 0, 0], [width * 0.09, 0, 0],
-        [0, 0, 0], [0, 0.39, 0], [0, -0.39, 0],
-      ], inkLine);
-      cross.position.set(width * fraction, y, frontZ + facing * 0.02);
-      cross.rotation.y = frontRotation;
-      group.add(cross);
-    });
-  }
-
-  if (shop) {
-    const awning = curvedStroke([
-      [-width * 0.42, 2.18, frontZ],
-      [-width * 0.18, 2.24, frontZ + facing * 0.14],
-      [width * 0.18, 2.24, frontZ + facing * 0.14],
-      [width * 0.42, 2.18, frontZ],
-      [width * 0.34, 1.88, frontZ + facing * 0.48],
-      [0, 1.8, frontZ + facing * 0.52],
-      [-width * 0.34, 1.88, frontZ + facing * 0.48],
-      [-width * 0.42, 2.18, frontZ],
-    ], PALETTE.inkDark, 0.027, 0.9, true);
-    group.add(awning);
-
-    for (let x = -width * 0.28; x <= width * 0.28; x += width * 0.14) {
-      const scallop = curvedStroke([
-        [x - width * 0.07, 1.88, frontZ + facing * 0.49],
-        [x, 1.8, frontZ + facing * 0.54],
-        [x + width * 0.07, 1.88, frontZ + facing * 0.49],
-      ], PALETTE.ink, 0.018, 0.72);
-      group.add(scallop);
-    }
-  }
-
-  if (clock) {
-    const face = ellipseLine(0.62, 0.62, darkLine, 36);
-    face.position.set(0, height - 0.85, frontZ + facing * 0.03);
-    face.rotation.y = frontRotation;
-    group.add(face);
-    const hands = new THREE.Group();
-    hands.add(curvedStroke([[0, 0, 0], [0.02, 0.18, 0], [0, 0.38, 0]], PALETTE.inkDark, 0.022));
-    hands.add(curvedStroke([[0, 0, 0], [0.13, -0.03, 0], [0.28, -0.12, 0]], PALETTE.inkDark, 0.022));
-    hands.position.copy(face.position);
-    hands.rotation.y = frontRotation;
-    group.add(hands);
-    state.clockHands.push(hands);
-  }
-
-  const roofFlourish = curvedStroke([
-    [-width * 0.34, height + 0.58, 0],
-    [-width * 0.17, height + 1.02, 0],
-    [0, height + 1.26, 0],
-    [width * 0.17, height + 1.02, 0],
-    [width * 0.34, height + 0.58, 0],
-  ], PALETTE.inkDark, 0.02, 0.56);
-  roofFlourish.position.z = frontZ + facing * 0.03;
-  roofFlourish.rotation.y = frontRotation;
-  group.add(roofFlourish);
+  const sprite = createSvgSprite(SVGS[type], width * 1.5, height * 1.5);
+  sprite.position.y = height * 0.75;
+  if (facing < 0) sprite.rotation.y = Math.PI;
+  group.add(sprite);
 
   scene.add(group);
   return group;
@@ -330,81 +270,16 @@ function makeLeg(side) {
 }
 
 function makePerson(style = 'gentleman', phone = true) {
+  const sprite = createSvgSprite(SVGS[style === 'lady' ? 'person_lady' : 'person_gentleman'], 1.5, 3.5);
+  sprite.position.y = 1.75;
+
   const person = new THREE.Group();
-  const torso = new THREE.Group();
-  person.add(torso);
+  person.add(sprite);
 
-  const head = ovalMesh(0.23, 0.28, 0.14, PALETTE.paperShade, PALETTE.inkDark, 0.72);
-  head.position.y = 2.32;
-  torso.add(head);
-  const faceContour = curvedStroke([
-    [-0.11, 2.44, 0.15],
-    [-0.17, 2.33, 0.17],
-    [-0.11, 2.19, 0.15],
-    [0.03, 2.12, 0.15],
-    [0.14, 2.24, 0.15],
-    [0.13, 2.4, 0.15],
-  ], PALETTE.inkDark, 0.016, 0.8);
-  torso.add(faceContour);
+  // Dummy userData to satisfy intro.js animations
+  const dummyMesh = new THREE.Group();
+  person.userData = { leftArm: dummyMesh, rightArm: dummyMesh, leftLeg: dummyMesh, rightLeg: dummyMesh, style };
 
-  if (style === 'lady') {
-    torso.add(illustratedGarment(style));
-    const bonnet = curvedStroke([
-      [-0.3, 2.45, 0.08],
-      [-0.22, 2.66, 0.08],
-      [0.02, 2.72, 0.08],
-      [0.26, 2.58, 0.08],
-      [0.28, 2.45, 0.08],
-      [0.05, 2.48, 0.11],
-      [-0.3, 2.45, 0.08],
-    ], PALETTE.inkDark, 0.038, 0.96, true);
-    torso.add(bonnet);
-    torso.add(curvedStroke([[-0.23, 1.44, 0.05], [0, 1.32, 0.05], [0.25, 1.45, 0.05]], PALETTE.ink, 0.018, 0.58));
-  } else {
-    torso.add(illustratedGarment(style));
-    torso.add(curvedStroke([[-0.2, 1.89, 0.05], [0, 1.68, 0.06], [0.2, 1.89, 0.05]], PALETTE.inkDark, 0.021, 0.76));
-    if (style === 'worker') {
-      const cap = curvedStroke([
-        [-0.28, 2.54, 0.08],
-        [-0.13, 2.68, 0.08],
-        [0.15, 2.65, 0.08],
-        [0.31, 2.5, 0.08],
-        [0.06, 2.48, 0.1],
-        [-0.28, 2.54, 0.08],
-      ], PALETTE.inkDark, 0.034, 0.96, true);
-      torso.add(cap);
-      torso.add(curvedStroke([[-0.19, 1.77, 0.055], [-0.04, 1.46, 0.06], [0.17, 0.98, 0.055], [0.28, 1.72, 0.055]], PALETTE.ink, 0.018, 0.74));
-    } else {
-      const brim = ovalMesh(0.39, 0.065, 0.12, PALETTE.inkDark, PALETTE.inkDark, 0.94);
-      brim.position.y = 2.58;
-      const crown = ovalMesh(0.22, 0.36, 0.14, PALETTE.inkDark, PALETTE.inkDark, 0.92);
-      crown.position.y = 2.87;
-      torso.add(brim, crown);
-    }
-  }
-
-  const leftArm = makeArm(-1);
-  leftArm.position.set(-0.25, 1.88, 0);
-  const rightArm = makeArm(1);
-  rightArm.position.set(0.25, 1.88, 0);
-  torso.add(leftArm, rightArm);
-
-  const leftLeg = makeLeg(-1);
-  leftLeg.position.set(-0.13, 0.78, 0);
-  const rightLeg = makeLeg(1);
-  rightLeg.position.set(0.13, 0.78, 0);
-  person.add(leftLeg, rightLeg);
-
-  if (phone) {
-    const device = makePhone();
-    device.scale.set(1.08, 1.08, 1.08);
-    device.position.set(0.12, -0.74, 0.11);
-    rightArm.add(device);
-    rightArm.rotation.z = -0.42;
-  }
-
-  person.userData = { leftArm, rightArm, leftLeg, rightLeg, style };
-  person.scale.setScalar(style === 'lady' ? 1.0 : 1.04);
   return person;
 }
 
@@ -428,76 +303,39 @@ function addStaticPerson(scene, style, x, z, activity = 'phone') {
 
 function addMarketCart(scene) {
   const cart = new THREE.Group();
-  const counter = outlinedMesh(new THREE.BoxGeometry(2.5, 0.85, 1.25), PALETTE.paperShade, PALETTE.ink, 0.62);
-  counter.position.y = 0.72;
-  cart.add(counter);
-  const roof = lineFrom([[-1.35, 2.35, -0.7], [-1.35, 2.35, 0.7], [1.35, 2.35, 0.7], [1.35, 2.35, -0.7], [-1.35, 2.35, -0.7]], darkLine);
-  cart.add(roof);
-  [-1.18, 1.18].forEach((x) => {
-    cart.add(lineFrom([[x, 0.9, -0.62], [x, 2.35, -0.7], [x, 0.9, 0.62], [x, 2.35, 0.7]], inkLine));
-  });
-  for (let x = -0.9; x <= 0.9; x += 0.45) {
-    const bottle = ellipseLine(0.09, 0.16, inkLine, 12);
-    bottle.position.set(x, 1.25, 0.67);
-    cart.add(bottle);
-  }
-  cart.position.set(-5.3, 0, 3.05);
+  const sprite = createSvgSprite(SVGS.market_stall, 5.0, 5.0);
+  sprite.position.y = 2.5;
+  cart.add(sprite);
+  cart.position.set(-6, 0, 3.5);
   scene.add(cart);
-  addStaticPerson(scene, 'worker', -3.45, 3.05, 'wave');
-  addStaticPerson(scene, 'lady', -6.9, 2.75, 'phone');
 }
 
 function addFountain(scene) {
   const fountain = new THREE.Group();
-  const basin = outlinedMesh(new THREE.CylinderGeometry(1.7, 1.9, 0.42, 28), PALETTE.paperShade, PALETTE.ink, 0.66);
-  basin.position.y = 0.24;
-  fountain.add(basin);
-  const stem = outlinedMesh(new THREE.CylinderGeometry(0.18, 0.28, 1.8, 12), PALETTE.paperShade, PALETTE.ink, 0.66);
-  stem.position.y = 1.18;
-  fountain.add(stem);
-  const bowl = outlinedMesh(new THREE.CylinderGeometry(0.75, 0.42, 0.32, 20), PALETTE.paperShade, PALETTE.ink, 0.66);
-  bowl.position.y = 2.02;
-  fountain.add(bowl);
-  const water = new THREE.Group();
-  [-0.36, -0.12, 0.12, 0.36].forEach((x, index) => {
-    water.add(curvedStroke([
-      [0, 2.58, 0],
-      [x * 0.42, 2.74 + (index % 2) * 0.08, 0],
-      [x, 2.22, 0],
-      [x * 1.2, 1.88, 0],
-    ], PALETTE.phone, 0.018, 0.58));
-  });
-  fountain.add(water);
+  const sprite = createSvgSprite(SVGS.fountain, 6.0, 6.0);
+  sprite.position.y = 3.0;
+  fountain.add(sprite);
   fountain.position.set(7.5, 0, 0);
   scene.add(fountain);
-  state.ambientActors.push({ person: water, activity: 'water', offset: 0.8 });
+}
+
+function addStreetLamp(scene, x, z) {
+  const lamp = new THREE.Group();
+  const sprite = createSvgSprite(SVGS.street_lamp, 1.5, 4.0);
+  sprite.position.y = 2.0;
+  lamp.add(sprite);
+  lamp.position.set(x, 0, z);
+  scene.add(lamp);
 }
 
 function addTree(scene, x, z, scale = 1) {
   const tree = new THREE.Group();
-  const trunk = curvedStroke([
-    [0, 0, 0],
-    [-0.08, 0.7, 0],
-    [0.05, 1.5, 0],
-    [-0.04, 2.25, 0],
-  ], PALETTE.inkDark, 0.09, 0.86);
-  tree.add(trunk);
-  const crown = new THREE.Group();
-  [
-    [-0.55, 2.35, 0, 0.78, 0.7],
-    [0.08, 2.58, 0.03, 0.9, 0.82],
-    [0.65, 2.3, -0.02, 0.72, 0.64],
-    [-0.05, 2.02, 0.06, 1.02, 0.68],
-  ].forEach(([cx, cy, cz, rx, ry]) => {
-    const leaf = ovalMesh(rx, ry, 0.34, PALETTE.camera, PALETTE.ink, 0.13);
-    leaf.position.set(cx, cy, cz);
-    crown.add(leaf);
-  });
-  tree.add(crown);
+  const sprite = createSvgSprite(SVGS.tree, 4 * scale, 5 * scale);
+  sprite.position.y = 2.5 * scale;
+  tree.add(sprite);
   tree.position.set(x, 0, z);
-  tree.scale.setScalar(scale);
   scene.add(tree);
-  state.ambientActors.push({ person: crown, activity: 'tree', offset: Math.random() * Math.PI * 2 });
+  state.ambientActors.push({ person: sprite, activity: 'tree', offset: Math.random() * Math.PI * 2 });
 }
 
 function makeCameraLabel(text) {
@@ -507,7 +345,11 @@ function makeCameraLabel(text) {
   const context = labelCanvas.getContext('2d');
   context.fillStyle = 'rgba(37, 74, 52, 0.92)';
   context.beginPath();
-  context.roundRect(3, 3, 250, 66, 22);
+  if (typeof context.roundRect === 'function') {
+    context.roundRect(3, 3, 250, 66, 22);
+  } else {
+    context.rect(3, 3, 250, 66);
+  }
   context.fill();
   context.fillStyle = '#dff4d5';
   context.font = '600 24px ui-monospace, monospace';
@@ -525,73 +367,88 @@ function addCctv(scene, position, rotationY = 0, pole = false, label = 'CAM') {
   const assembly = new THREE.Group();
   assembly.position.set(...position);
   assembly.rotation.y = rotationY;
+
+  const scanPivot = new THREE.Group();
+  scanPivot.position.y = pole ? 0.25 : 0;
+  assembly.add(scanPivot);
+
   if (pole) {
-    const post = outlinedMesh(new THREE.CylinderGeometry(0.11, 0.16, 5.2, 18), PALETTE.inkSoft, PALETTE.inkDark, 0.45);
-    post.position.y = -2.5;
-    assembly.add(post);
-    const lampArm = curvedStroke([[0, -0.22, 0], [0.28, 0.08, 0], [0.64, 0.17, 0], [0.96, 0.08, 0]], PALETTE.inkDark, 0.045, 0.92);
-    assembly.add(lampArm);
-    const lamp = ovalMesh(0.25, 0.2, 0.24, PALETTE.paperLight, PALETTE.ink, 0.34);
-    lamp.position.set(0.92, 0.05, 0);
-    assembly.add(lamp);
-  } else {
-    assembly.add(curvedStroke([[0.12, -0.16, 0], [-0.25, 0.04, 0], [-0.58, 0.27, 0], [-0.82, -0.06, 0]], PALETTE.cameraDark, 0.052, 0.96));
+    const poleHeight = Math.max(2.8, position[1] - 0.25);
+    const poleMesh = outlinedMesh(
+      new THREE.CylinderGeometry(0.075, 0.11, poleHeight, 12),
+      PALETTE.inkDark,
+      PALETTE.inkDark,
+      0.72,
+    );
+    poleMesh.position.y = -(poleHeight / 2) - 0.12;
+    assembly.add(poleMesh);
+    const finial = outlinedMesh(
+      new THREE.SphereGeometry(0.14, 12, 8),
+      PALETTE.camera,
+      PALETTE.cameraDark,
+      0.92,
+    );
+    finial.position.y = 0.24;
+    assembly.add(finial);
   }
 
-  const cameraHead = new THREE.Group();
-  const cameraBody = ovalMesh(0.7, 0.28, 0.32, PALETTE.camera, PALETTE.cameraDark, 0.98);
-  cameraBody.position.set(0.22, -0.18, 0);
-  cameraHead.add(cameraBody);
-  const hood = ovalMesh(0.76, 0.11, 0.39, PALETTE.cameraDark, PALETTE.cameraDark, 0.96);
-  hood.position.set(0.26, -0.01, 0);
-  hood.rotation.z = -0.04;
-  cameraHead.add(hood);
-  const barrel = outlinedMesh(new THREE.CylinderGeometry(0.19, 0.25, 0.4, 28), PALETTE.camera, PALETTE.cameraDark, 0.98, 28);
-  barrel.rotation.z = Math.PI / 2;
-  barrel.position.set(0.8, -0.18, 0);
-  cameraHead.add(barrel);
+  const bracket = curvedStroke([
+    [-0.58, -0.1, -0.16],
+    [-0.35, 0.02, -0.08],
+    [-0.12, 0.05, 0],
+  ], PALETTE.cameraDark, 0.055, 0.98);
+  scanPivot.add(bracket);
+
+  const head = new THREE.Group();
+  head.position.set(0.38, 0.18, 0);
+  head.rotation.x = -0.1;
+  scanPivot.add(head);
+
+  const housing = outlinedMesh(
+    new THREE.BoxGeometry(1.18, 0.55, 0.7, 3, 2, 2),
+    PALETTE.camera,
+    PALETTE.cameraDark,
+    0.96,
+    28,
+  );
+  housing.rotation.y = -0.05;
+  head.add(housing);
+
+  const visor = outlinedMesh(
+    new THREE.BoxGeometry(1.34, 0.09, 0.82),
+    PALETTE.cameraDark,
+    PALETTE.cameraDark,
+    0.95,
+  );
+  visor.position.set(-0.04, 0.34, 0.02);
+  head.add(visor);
+
   const lensMaterial = new THREE.MeshStandardMaterial({
     color: PALETTE.phoneGlow,
     emissive: PALETTE.phone,
-    emissiveIntensity: 2.8,
-    roughness: 0.25,
+    emissiveIntensity: 2.5,
+    roughness: 0.18,
+    metalness: 0.08,
   });
-  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.145, 0.145, 0.055, 32), lensMaterial);
-  lens.rotation.z = Math.PI / 2;
-  lens.position.set(1.02, -0.18, 0);
-  cameraHead.add(lens);
-  const lensRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.2, 0.035, 10, 32),
-    new THREE.MeshBasicMaterial({ color: PALETTE.phoneGlow, transparent: true, opacity: 0.9, depthWrite: false }),
-  );
-  lensRing.rotation.y = Math.PI / 2;
-  lensRing.position.copy(lens.position);
-  lensRing.position.x += 0.045;
-  cameraHead.add(lensRing);
+  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.09, 24), lensMaterial);
+  lens.rotation.x = Math.PI / 2;
+  lens.position.set(0.25, 0.02, 0.39);
+  head.add(lens);
 
-  const pulseRing = lensRing.clone();
-  pulseRing.material = lensRing.material.clone();
-  pulseRing.material.opacity = 0.42;
-  pulseRing.position.x += 0.035;
-  cameraHead.add(pulseRing);
-  assembly.add(cameraHead);
-
-  const scanPivot = new THREE.Group();
-  scanPivot.position.set(1.06, -0.2, 0);
-  scanPivot.rotation.z = -1.03;
-  const cone = new THREE.Mesh(
-    new THREE.ConeGeometry(1.75, 6.2, 48, 1, true),
-    new THREE.MeshBasicMaterial({ color: PALETTE.camera, transparent: true, opacity: 0.105, side: THREE.DoubleSide, depthWrite: false }),
+  const pulseRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.3, 0.025, 8, 32),
+    new THREE.MeshBasicMaterial({ color: PALETTE.phoneGlow, transparent: true, opacity: 0.45 }),
   );
-  cone.position.y = -3.06;
-  scanPivot.add(cone);
-  cameraHead.add(scanPivot);
-  const badge = makeCameraLabel(`${label} · ACTIVE`);
-  badge.position.set(0.18, 0.62, 0);
+  pulseRing.position.set(0.25, 0.02, 0.46);
+  head.add(pulseRing);
+
+  const badge = makeCameraLabel(label);
+  badge.position.set(0, 0.78, 0);
   assembly.add(badge);
+
   state.scanPivots.push({ pivot: scanPivot, base: rotationY, offset: Math.random() * Math.PI * 2 });
-  state.cameraAssemblies.push({ assembly, head: cameraHead, pulseRing, lensMaterial, badge, offset: Math.random() * Math.PI * 2 });
-  assembly.scale.setScalar(pole ? 1.28 : 1.34);
+  state.cameraAssemblies.push({ assembly, head, pulseRing, lensMaterial, badge, offset: Math.random() * Math.PI * 2 });
+
   scene.add(assembly);
 }
 
@@ -690,6 +547,9 @@ function populateTown(scene) {
   addTownBuildings(scene);
   addMarketCart(scene);
   addFountain(scene);
+  addStreetLamp(scene, -2.5, 4.35);
+  addStreetLamp(scene, 12.0, 4.35);
+  addStreetLamp(scene, -12.0, -4.35);
   addTree(scene, -17.4, 4.1, 1.15);
   addTree(scene, 15.5, -4.1, 0.96);
   addTree(scene, 10.4, 4.25, 0.78);
@@ -719,6 +579,80 @@ function initScene() {
     renderer.toneMappingExposure = 1.08;
     renderer.shadowMap.enabled = false;
     state.renderer = renderer;
+
+
+    // SHADER POST-PROCESSING SETUP
+    const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
+    const pixelShaderMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        tDiffuse: { value: renderTarget.texture },
+        resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+        scrollProgress: { value: 0.0 }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() { vUv = uv; gl_Position = vec4(position, 1.0); }
+      `,
+      fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform vec2 resolution;
+        uniform float scrollProgress;
+        varying vec2 vUv;
+
+        float rand(vec2 co) {
+            return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+        }
+
+        void main() {
+          // Pixelation logic
+          float pixelSize = max(1.0, scrollProgress * 50.0);
+          vec2 dxy = pixelSize / resolution;
+          vec2 coord = dxy * floor(vUv / dxy);
+
+          float r = rand(coord);
+          float fallStart = coord.y * 0.8 + r * 0.2; // Top down mapping
+
+          float fall = max(0.0, scrollProgress * 1.5 - fallStart);
+
+          vec2 sampleUv = coord;
+          sampleUv.y += fall * fall * 3.0;
+
+          if (sampleUv.y > 1.0 || fall > 1.0) {
+            discard; // Show HTML underneath
+          }
+
+          vec4 color = texture2D(tDiffuse, sampleUv);
+          // Color shift towards green-blue
+          vec3 cyberColor = vec3(0.05, 0.7, 0.6);
+          float blend = min(1.0, fall * 3.0);
+          color.rgb = mix(color.rgb, cyberColor, blend);
+
+          gl_FragColor = color;
+        }
+      `,
+      transparent: true,
+      depthWrite: false,
+    });
+    const postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
+    const postScene = new THREE.Scene();
+    const fullQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), pixelShaderMaterial);
+    postScene.add(fullQuad);
+
+    state.postProcessing = { renderTarget, pixelShaderMaterial, postCamera, postScene };
+
+    window.addEventListener('scroll', () => {
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      let progress = 0;
+      if (maxScroll > 0) {
+        progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+      }
+      pixelShaderMaterial.uniforms.scrollProgress.value = progress;
+
+      // Stop rendering the town when totally dissolved
+      if (progress > 0.95 && state.running) {
+        // We let the loop run, but it won't render
+      }
+    }, { passive: true });
 
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(PALETTE.paper, 0.022);
@@ -786,7 +720,13 @@ function resize() {
   state.camera.top = viewHeight / 2;
   state.camera.bottom = -viewHeight / 2;
   state.camera.updateProjectionMatrix();
+
   state.renderer.setSize(width, height, false);
+  if (state.postProcessing) {
+    state.postProcessing.renderTarget.setSize(width, height);
+    state.postProcessing.pixelShaderMaterial.uniforms.resolution.value.set(width, height);
+  }
+
   state.cameraAssemblies.forEach(({ badge }) => {
     badge.scale.set(aspect < 0.85 ? 1.62 : 2.2, aspect < 0.85 ? 0.47 : 0.62, 1);
   });
@@ -881,7 +821,17 @@ function renderFrame() {
   if (!state.running || !state.renderer || !state.scene || !state.camera) return;
   const elapsed = state.clock.getElapsedTime();
   if (!prefersReducedMotion) updateTown(elapsed);
-  state.renderer.render(state.scene, state.camera);
+
+  if (state.postProcessing) {
+    state.renderer.setRenderTarget(state.postProcessing.renderTarget);
+    state.renderer.render(state.scene, state.camera);
+    state.renderer.setRenderTarget(null);
+    state.renderer.clear();
+    state.renderer.render(state.postProcessing.postScene, state.postProcessing.postCamera);
+  } else {
+    state.renderer.render(state.scene, state.camera);
+  }
+
   if (!prefersReducedMotion) state.frame = requestAnimationFrame(renderFrame);
 }
 
@@ -942,4 +892,52 @@ if (alreadySeen && !forceReplay) {
   root.setAttribute('aria-hidden', 'true');
 } else {
   start();
+}
+
+// Data stream logic for the new backend view
+const dataStream = document.getElementById('data-stream-container');
+const btnDashboard = document.getElementById('btn-enter-dashboard');
+
+const fakeDataMessages = [
+  "[INFO] Initializing VISN neural bridge...",
+  "[OK]   Connection secured on port 8080.",
+  "[DATA] Camera 01 | Pedestrian traffic normal.",
+  "[DATA] Camera 02 | Detected 3 active tracks.",
+  "[WARN] Node latency spike detected. Auto-resolving...",
+  "[OK]   Stream aligned. Buffer healthy.",
+  "[INFO] Backend synchronization complete.",
+  "[DATA] YOLOv26 local runner active.",
+  "[DATA] GEMMA fallback ready."
+];
+
+let msgIndex = 0;
+setInterval(() => {
+  if (!dataStream) return;
+  const scrollPos = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  // Only animate data if we are somewhat visible
+  if (scrollPos > 0.4) {
+    const line = document.createElement('div');
+    line.className = 'data-line';
+    line.innerText = `> ${new Date().toISOString()} ${fakeDataMessages[Math.floor(Math.random() * fakeDataMessages.length)]}`;
+    dataStream.appendChild(line);
+    if (dataStream.childNodes.length > 20) {
+      dataStream.removeChild(dataStream.firstChild);
+    }
+    dataStream.scrollTop = dataStream.scrollHeight;
+  }
+}, 300);
+
+if (btnDashboard) {
+  btnDashboard.addEventListener('click', () => {
+    const root = document.querySelector('#town-intro');
+    if (root) {
+      root.classList.add('intro-leaving');
+      setTimeout(() => {
+        root.classList.add('intro-dismissed');
+        document.body.style.overflow = 'auto'; // restore generic scrolling
+        document.querySelector('.data-feed-page').style.display = 'none';
+        document.querySelector('.intro-scroll-runway').style.display = 'none';
+      }, 800);
+    }
+  });
 }

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 200">
+  <!-- Distant buildings silhouette -->
+  <path d="M0 200 L0 150 L50 150 L50 120 L70 120 L70 150 L100 150 L100 100 L120 100 L120 50 L140 50 L140 100 L160 100 L160 150 L250 150 L250 80 L350 80 L350 120 L400 120 L400 60 L450 60 L450 150 L500 150 L500 110 L600 110 L600 130 L700 130 L700 90 L800 90 L800 150 L900 150 L900 100 L950 100 L950 150 L1000 150 L1000 200 Z" fill="#34495e"/>
+  
+  <!-- St Pauls Dome approx -->
+  <path d="M380 60 Q425 0 470 60" fill="#34495e"/>
+  <rect x="420" y="60" width="10" height="20" fill="#2c3e50"/>
+  
+  <!-- Factory Chimneys -->
+  <rect x="720" y="50" width="10" height="40" fill="#2c3e50"/>
+  <rect x="750" y="40" width="10" height="50" fill="#2c3e50"/>
+  
+  <!-- Windows -->
+  <rect x="60" y="125" width="5" height="10" fill="#f1c40f" opacity="0.7"/>
+  <rect x="130" y="60" width="5" height="10" fill="#f1c40f" opacity="0.6"/>
+  <rect x="520" y="120" width="5" height="10" fill="#f1c40f" opacity="0.5"/>
+</svg>

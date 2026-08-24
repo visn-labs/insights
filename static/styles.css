@@ -19,8 +19,16 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; min-height: 100vh; background: radial-gradient(circle at 75% -20%, #18251e 0, transparent 34rem), var(--bg); }
-body:has(.town-intro:not(.intro-dismissed)) { overflow: hidden; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--bg); }
+body { overflow-x: hidden; }
+.intro-scroll-runway { height: 250vh; width: 100%; position: absolute; z-index: 1; top: 0; }
+.data-feed-page { position: fixed; inset: 0; z-index: 900; background: #040d0b; color: #77d7cb; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; font-family: ui-monospace, monospace; }
+.data-feed-page h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #b9ff66; text-shadow: 0 0 15px rgba(185, 255, 102, 0.4); }
+.data-feed-page .data-stream { max-width: 800px; width: 100%; height: 300px; border: 1px solid #1a3a30; border-radius: 8px; background: rgba(0,0,0,0.5); padding: 1rem; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+.data-line { margin: 4px 0; font-size: 0.85rem; opacity: 0; animation: fadeData 4s forwards; }
+@keyframes fadeData { 0% { opacity: 0; transform: translateY(10px); } 10% { opacity: 1; transform: translateY(0); } 90% { opacity: 1; } 100% { opacity: 0.2; } }
+.enter-dashboard-btn { margin-top: 2rem; padding: 12px 24px; border: 1px solid #3fa8a2; background: rgba(63,168,162,0.1); color: #b9ff66; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.3s; }
+.enter-dashboard-btn:hover { background: rgba(63,168,162,0.3); box-shadow: 0 0 15px rgba(185, 255, 102, 0.2); }
 button, input, select, textarea { font: inherit; }
 button { color: inherit; }
 .hidden { display: none !important; }
@@ -29,6 +37,7 @@ button { color: inherit; }
 
 /* Procedural 1800s town introduction */
 .town-intro {
+  pointer-events: auto;
   --intro-paper: #f0ddba;
   --intro-paper-light: #fff1d3;
   --intro-ink: #70472f;
@@ -87,7 +96,9 @@ button { color: inherit; }
 .intro-footer p { margin: 0; }.intro-loading-dot { width: 6px; height: 6px; display: inline-block; margin-right: 7px; border-radius: 50%; background: var(--intro-green); box-shadow: 0 0 0 0 rgba(95,147,98,.5); animation: intro-pulse 1.5s infinite; }
 @keyframes intro-pulse { 50% { box-shadow: 0 0 0 7px rgba(95,147,98,0); } }
 .intro-reveal { opacity: 0; }.intro-reveal.revealed { opacity: 1; transform: none; transition: opacity .6s ease, transform .6s ease; }
-.intro-fallback::before { content: ''; position: absolute; inset: 20% 5% 8% 36%; opacity: .28; background: repeating-linear-gradient(90deg, transparent 0 70px, var(--intro-ink) 71px 72px, transparent 73px 105px), repeating-linear-gradient(0deg, transparent 0 55px, var(--intro-ink) 56px 57px); clip-path: polygon(0 30%, 8% 15%, 16% 30%, 27% 9%, 39% 30%, 50% 14%, 60% 30%, 73% 6%, 84% 30%, 93% 18%, 100% 30%, 100% 100%, 0 100%); }
+.town-intro[data-state="error"] .intro-reveal { opacity: 1; transform: none; }
+.intro-fallback::before { content: ''; position: absolute; z-index: 1; inset: 20% 5% 8% 36%; opacity: .38; background: repeating-linear-gradient(90deg, transparent 0 70px, var(--intro-ink) 71px 72px, transparent 73px 105px), repeating-linear-gradient(0deg, transparent 0 55px, var(--intro-ink) 56px 57px); clip-path: polygon(0 30%, 8% 15%, 16% 30%, 27% 9%, 39% 30%, 50% 14%, 60% 30%, 73% 6%, 84% 30%, 93% 18%, 100% 30%, 100% 100%, 0 100%); }
+.intro-fallback::after { content: ''; position: absolute; z-index: 2; right: 10%; top: 29%; width: 42%; height: 40%; pointer-events: none; opacity: .82; background: radial-gradient(circle at 13% 24%, var(--intro-phone) 0 5px, var(--intro-green) 6px 15px, transparent 16px), radial-gradient(circle at 53% 8%, var(--intro-phone) 0 5px, var(--intro-green) 6px 15px, transparent 16px), radial-gradient(circle at 89% 30%, var(--intro-phone) 0 5px, var(--intro-green) 6px 15px, transparent 16px); filter: drop-shadow(0 0 10px rgba(63,168,162,.42)); }
 .replay-intro { color: var(--accent); font-family: Georgia, serif; }
 
 @media (max-width: 900px) {

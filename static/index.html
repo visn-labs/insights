@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+  <div id="intro-scroll-runway" class="intro-scroll-runway"></div>
+  <section id="data-feed-page" class="data-feed-page">
+    <h1>VISN BACKEND DATA STREAM</h1>
+    <p style="margin-bottom: 2rem; opacity: 0.8;">Secure connection established. Routing camera feeds...</p>
+    <div class="data-stream" id="data-stream-container"></div>
+    <button class="enter-dashboard-btn" id="btn-enter-dashboard">ENTER DASHBOARD</button>
+  </section>
   <section id="town-intro" class="town-intro" data-state="loading" role="dialog" aria-modal="true" aria-labelledby="intro-title" aria-describedby="intro-description">
     <canvas id="town-canvas" aria-hidden="true"></canvas>
     <div class="intro-paper-grain" aria-hidden="true"></div>
@@ -348,6 +355,21 @@
   <div id="toast" class="toast" role="status"></div>
   <script src="/vendor/anime.umd.min.js"></script>
   <script type="module" src="/intro.js"></script>
+  <script>
+    window.setTimeout(function () {
+      var intro = document.getElementById('town-intro');
+      if (!intro || intro.dataset.state !== 'loading') return;
+      intro.dataset.state = 'error';
+      intro.classList.add('intro-fallback');
+      intro.querySelectorAll('.intro-reveal').forEach(function (element) {
+        element.classList.add('revealed');
+      });
+      var enter = document.getElementById('intro-enter');
+      if (enter) enter.disabled = false;
+      var status = document.getElementById('intro-status');
+      if (status) status.textContent = 'Illustrated fallback ready · reload to retry real-time rendering';
+    }, 2500);
+  </script>
   <script src="/app.js" defer></script>
 </body>
 </html>

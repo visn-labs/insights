@@ -27,7 +27,7 @@ use crate::{
     gemma::known_vlm_models,
     pipeline::{sample_observations, sample_policy},
     store::AppState,
-    ui::{ANIME_JS, APP_JS, INDEX_HTML, INTRO_JS, STYLES_CSS, THREE_CORE_JS, THREE_JS},
+    ui::{ANIME_JS, APP_JS, INDEX_HTML, INTRO_JS, STYLES_CSS, SVGS_JS, THREE_CORE_JS, THREE_JS},
 };
 
 pub fn router(state: AppState) -> Router {
@@ -36,6 +36,7 @@ pub fn router(state: AppState) -> Router {
         .route("/", get(index))
         .route("/app.js", get(app_js))
         .route("/intro.js", get(intro_js))
+        .route("/svgs.js", get(svgs_js))
         .route("/vendor/three.module.min.js", get(three_js))
         .route("/vendor/three.core.min.js", get(three_core_js))
         .route("/vendor/anime.umd.min.js", get(anime_js))
@@ -87,6 +88,10 @@ async fn app_js() -> impl IntoResponse {
 
 async fn intro_js() -> impl IntoResponse {
     javascript(INTRO_JS)
+}
+
+async fn svgs_js() -> impl IntoResponse {
+    javascript(SVGS_JS)
 }
 
 async fn three_js() -> impl IntoResponse {
