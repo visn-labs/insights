@@ -27,7 +27,10 @@ use crate::{
     gemma::known_vlm_models,
     pipeline::{sample_observations, sample_policy},
     store::AppState,
-    ui::{ANIME_JS, APP_JS, INDEX_HTML, INTRO_JS, STYLES_CSS, SVGS_JS, THREE_CORE_JS, THREE_JS},
+    ui::{
+        ANIME_JS, APP_JS, ENGINE_JS, INDEX_HTML, INTRO_JS, STYLES_CSS, SVGS_JS, THREE_CORE_JS,
+        THREE_JS,
+    },
 };
 
 pub fn router(state: AppState) -> Router {
@@ -35,12 +38,15 @@ pub fn router(state: AppState) -> Router {
     Router::new()
         .route("/", get(index))
         .route("/app.js", get(app_js))
+        .route("/engine.js", get(engine_js))
         .route("/intro.js", get(intro_js))
         .route("/svgs.js", get(svgs_js))
         .route("/vendor/three.module.min.js", get(three_js))
         .route("/vendor/three.core.min.js", get(three_core_js))
         .route("/vendor/anime.umd.min.js", get(anime_js))
         .route("/styles.css", get(styles))
+        .route("/assets/{filename}", get(serve_asset))
+        .route("/svgs/{filename}", get(serve_svg))
         .route("/healthz", get(health))
         .route("/api/v1/capabilities", get(capabilities))
         .route("/api/v1/models", get(models))
@@ -106,6 +112,10 @@ async fn anime_js() -> impl IntoResponse {
     javascript(ANIME_JS)
 }
 
+async fn engine_js() -> impl IntoResponse {
+    javascript(ENGINE_JS)
+}
+
 fn javascript(body: &'static str) -> impl IntoResponse {
     (
         [(
@@ -114,6 +124,40 @@ fn javascript(body: &'static str) -> impl IntoResponse {
         )],
         body,
     )
+}
+
+async fn serve_asset(
+    AxumPath(filename): AxumPath<String>,
+    request: Request<Body>,
+) -> Result<Response, ApiError> {
+    serve_static_file("static/assets", &filename, request).await
+}
+
+async fn serve_svg(
+    AxumPath(filename): AxumPath<String>,
+    request: Request<Body>,
+) -> Result<Response, ApiError> {
+    serve_static_file("static/svgs", &filename, request).await
+}
+
+async fn serve_static_file(
+    dir: &str,
+    filename: &str,
+    request: Request<Body>,
+) -> Result<Response, ApiError> {
+    // Prevent path traversal — only allow plain filenames with safe characters
+    if filename.contains('/') || filename.contains('\\') || filename.starts_with('.') {
+        return Err(ApiError::new(StatusCode::NOT_FOUND, "not found"));
+    }
+    let path = std::path::Path::new(dir).join(filename);
+    if !path.is_file() {
+        return Err(ApiError::new(StatusCode::NOT_FOUND, "asset not found"));
+    }
+    ServeFile::new(path)
+        .oneshot(request)
+        .await
+        .map(IntoResponse::into_response)
+        .map_err(|e| ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
 }
 
 async fn styles() -> impl IntoResponse {

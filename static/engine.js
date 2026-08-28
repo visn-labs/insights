@@ -1,12 +1,19 @@
-import * as THREE from 'three';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import * as THREE from './vendor/three.module.min.js';
 
-gsap.registerPlugin(ScrollTrigger);
+// Scroll-based camera parallax using native scroll events (no GSAP required)
+let scrollProgress = 0;
+window.addEventListener('scroll', () => {
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    scrollProgress = maxScroll > 0 ? Math.min(1, window.scrollY / maxScroll) : 0;
+}, { passive: true });
 
 class VictorianEnvironment3D {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
+        if (!this.container) {
+            console.warn(`VictorianEnvironment3D: container #${containerId} not found`);
+            return;
+        }
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x0a0c10);
         this.scene.fog = new THREE.FogExp2(0x0a0c10, 0.015);
@@ -15,9 +22,10 @@ class VictorianEnvironment3D {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
         this.camera.position.set(0, 10, 80);
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.autoClear = true;
         this.container.appendChild(this.renderer.domElement);
 
         this.clock = new THREE.Clock();
@@ -29,9 +37,12 @@ class VictorianEnvironment3D {
         this.frameDuration = 1.0 / this.targetFPS;
         this.timeAccumulator = 0.0;
 
+        this.cameraStartX = 0;
+        this.cameraStartZ = 80;
+
         this.initLighting();
         this.initParallaxEnvironment();
-        this.bindScrollTriggers();
+        this.bindScrollEvents();
 
         window.addEventListener('resize', this.onWindowResize.bind(this));
         this.renderLoop();
@@ -120,19 +131,12 @@ class VictorianEnvironment3D {
         });
     }
 
-    bindScrollTriggers() {
+    bindScrollEvents() {
         // Camera pushes slightly forward and pans right on scroll
-        gsap.to(this.camera.position, {
-            x: 60,
-            z: 60,
-            ease: "none",
-            scrollTrigger: {
-                trigger: "body",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1.5
-            }
-        });
+        window.addEventListener('scroll', () => {
+            this.camera.position.x = this.cameraStartX + scrollProgress * 60;
+            this.camera.position.z = this.cameraStartZ - scrollProgress * 20;
+        }, { passive: true });
     }
 
     calculateInteractions() {
@@ -230,10 +234,15 @@ class VictorianEnvironment3D {
     }
 }
 
-// Initialization Configuration
+// Initialization Configuration — only runs when the intro has been dismissed
+// and the main dashboard canvas is visible. The intro.js scene handles the
+// landing page; engine.js drives the persistent background in the dashboard.
 document.addEventListener('DOMContentLoaded', () => {
-    // Determine the target container
-    const engine = new VictorianEnvironment3D('canvas-container');
+    // Guard: only initialize if the canvas container exists
+    const container = document.getElementById('town-canvas');
+    if (!container) return;
+
+    const engine = new VictorianEnvironment3D('town-canvas');
 
     // Instantiate the Cast of Characters
     engine.spawnEntity({
@@ -256,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
         width: 45, height: 35, startX: -100, yOffset: 17.5, zDepth: -10, direction: 1, speed: 1.5, radius: 30
     });
 
-    // newly generated characters
     engine.spawnEntity({ id: 'seamstress_1', type: 'CIVILIAN', spriteSheetUrl: '/assets/seamstress.png', width: 15, height: 25, startX: 60, yOffset: 12.5, zDepth: 6, direction: -1, speed: 0.45, radius: 10 });
     engine.spawnEntity({ id: 'flower_girl_1', type: 'CIVILIAN', spriteSheetUrl: '/assets/flower_girl.png', width: 14, height: 22, startX: -40, yOffset: 11, zDepth: 4, direction: 1, speed: 0.4, radius: 10 });
     engine.spawnEntity({ id: 'chimney_sweep_1', type: 'URCHIN', spriteSheetUrl: '/assets/chimney_sweep.png', width: 13, height: 21, startX: -70, yOffset: 10.5, zDepth: 7, direction: 1, speed: 0.6, radius: 10 });
@@ -266,8 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
     engine.spawnEntity({ id: 'newsboy_1', type: 'URCHIN', spriteSheetUrl: '/assets/newsboy.png', width: 13, height: 20, startX: -10, yOffset: 10, zDepth: 9, direction: 1, speed: 0.8, radius: 10 });
     engine.spawnEntity({ id: 'aristocrat_1', type: 'CIVILIAN', spriteSheetUrl: '/assets/aristocrat.png', width: 17, height: 28, startX: -90, yOffset: 14, zDepth: 5, direction: 1, speed: 0.5, radius: 15 });
     engine.spawnEntity({ id: 'street_musician_1', type: 'CIVILIAN', spriteSheetUrl: '/assets/street_musician.png', width: 16, height: 25, startX: -45, yOffset: 12.5, zDepth: 3, direction: -1, speed: 0, radius: 15 });
-
-    // batch 2 characters
     engine.spawnEntity({ id: 'apple_seller_1', type: 'CIVILIAN', spriteSheetUrl: '/assets/apple_seller.png', width: 15, height: 24, startX: 20, yOffset: 12, zDepth: 2, direction: 1, speed: 0, radius: 10 });
     engine.spawnEntity({ id: 'pickpocket_1', type: 'URCHIN', spriteSheetUrl: '/assets/pickpocket.png', width: 14, height: 23, startX: 120, yOffset: 11.5, zDepth: 8, direction: -1, speed: 0.7, radius: 10 });
     engine.spawnEntity({ id: 'rat_catcher_1', type: 'CIVILIAN', spriteSheetUrl: '/assets/rat_catcher.png', width: 17, height: 26, startX: -130, yOffset: 13, zDepth: 4, direction: 1, speed: 0.5, radius: 15 });
