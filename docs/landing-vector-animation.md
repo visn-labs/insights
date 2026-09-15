@@ -1,3 +1,5 @@
+> Historical implementation: the sprite renderer described below has been replaced by the real 3D landing in [INTRO_3D.md](INTRO_3D.md). These retained source assets and conversion tools are not loaded by the landing page.
+
 # Landing vector animation
 
 The landing town uses a fixed 16 FPS simulation step (`62.5 ms`) and a 2D

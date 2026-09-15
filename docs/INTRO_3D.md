@@ -1,57 +1,55 @@
-# Procedural 3D Town Introduction
+# Living street landing page
 
-## Visual concept
+## Art direction
 
-The introduction deliberately combines two periods:
+A coffee-and-cream, cel-shaded nineteenth-century street junction seen from the southeast corner, looking along its 45-degree diagonal toward the centre. The two roads remain aligned to the world X and Z axes and meet at 90 degrees, with four square pavement corners visible in the desktop frame. Four street approaches remain open around timber and plaster shops. Pitched, tiled roofs, cornices, shutters, glazed storefronts, striped awnings, clocks, chimney smoke, market produce, a bench, trees, and gas lamps establish the period. Forty townspeople wear tailored coats, hats, aprons, and dresses, with facial details and jointed knees and elbows. Six walkers follow each corner pavement, eight use crossing routes, and eight local characters shop, read, converse, or sit. Two horse-drawn carriages have articulated horses, reins, drivers, and rotating spoked wheels; a porter pushes a loaded handcart, and ten pigeons peck and flutter. Recessed frames, iron balconies, masonry joints, individual roof joints, downpipes, scalloped awnings, leafy canopies, barrels, produce crates, and cafe tables refine the close-up artifacts. Modern CCTV cameras form the deliberate contemporary layer.
 
-- An isometric 1800s town drawn as a parchment-and-coffee-brown etched illustration.
-- Green CCTV cameras mounted on period lamp posts and building corners.
-- Blue-green mobile phones carried by people in top hats, bonnets, dresses, coats, caps, and aprons.
+The landing copy explains the product and leads directly to the existing workspace. Scene telemetry is explicitly labelled **DEMO**; it does not claim a real camera connection or successful backend inference.
 
-The town includes gabled buildings, arched shopfronts, a clock tower, market stall, fountain, horse-drawn carriage, road, pavement, trees, chimney smoke, birds, and animated townspeople. Camera scan cones move independently and pointer movement creates restrained scene parallax.
+## Files and rendering
 
-The focal illustration uses curve-first geometry. People use Bézier garment silhouettes, rounded heads and hats, and tube-rendered articulated limbs instead of straight line segments. Water, foliage, smoke, horse details, awnings, and architectural flourishes use curved strokes and rounded forms. The buildings remain deliberately geometric so the town still reads clearly from the isometric view.
+- `static/index.html`: landing, accessible controls, existing workspace, module-load fallback.
+- `static/styles.css`: scoped landing palette, responsive composition, existing dashboard styles.
+- `static/intro.js`: scene loading, story controls, pause/replay, reduced motion, visibility and workspace lifecycle.
+- `static/engine.js`: exported `TownScene`, actual Three.js geometry and animated scene. It has no independent auto-starting renderer.
+- `static/vendor/three.*.js`: pinned local Three.js modules. No CDN, build system, or new npm runtime dependency.
+- `src/ui.rs` and `src/api.rs`: existing embedded asset routes already serve both modules and styles. **Rebuild/restart the Rust service after changing embedded frontend files.**
 
-The five cameras are the strongest color accent. Each has a rounded green housing, emissive blue-green lens, animated focus ring, scanning cone, and floating active label. A compact observation card reinforces the camera count without competing with the primary entry action.
+## Signal journey
 
-## Runtime design
+The 18-second loop has three six-second chapters. Chapter buttons seek to their matching part of the loop; **Follow a signal** restarts it.
 
-- Three.js 0.185.1 renders the town through one local WebGL canvas.
-- Anime.js 4.5.0 choreographs the introductory text and action reveal.
-- Both libraries are pinned and served from `static/vendor`; the page makes no CDN request.
-- Geometry, people, buildings, cameras, phones, and motion are generated in `static/intro.js`; there are no stock scene assets.
-- The Rust binary embeds and serves all intro files through `src/ui.rs` and `src/api.rs`.
-- The entrance uses one primary pill-shaped action, a secondary skip action, a staged scene rise/zoom, and quiet status cues. This interaction hierarchy was informed by the restrained hero-to-product flow of the referenced Antigravity landing page, without reproducing its assets or branding.
+1. **See the moment:** four heads turn toward animated people. Frustums, ground rings, and tracking boxes show capture.
+2. **Connect the dots:** packets move from those same cameras along cubic curves. Paths become more prominent.
+3. **Find the story:** the streams converge above the roofs; packets shrink and fade toward the sky endpoint.
 
-Motion.dev was reviewed but not added because its DOM-animation role overlaps with Anime.js on this page. Keeping a single DOM animator avoids an unnecessary runtime and coordination layer.
+Each frame derives position from elapsed seconds. Long frame gaps are bounded. One animation loop owns the entire scene. The old sprite renderer, scroll runway, and fake backend-log interstitial are no longer mounted.
 
-## User behavior
+## Performance and accessibility
 
-1. The intro appears on the first page load of a browser-tab session.
-2. **Enter the observation room**, **Skip introduction**, or `Escape` dismisses it.
-3. The scene stops rendering after dismissal so it consumes no background GPU time.
-4. The rook-shaped header control replays the intro.
-5. `http://127.0.0.1:8080/?intro=1` forces it open for testing.
-6. Pointer devices receive parallax guidance; coarse-pointer devices receive touch-and-drag guidance and smaller camera labels.
-7. A page with `prefers-reduced-motion: reduce` renders one static town frame and removes transition duration.
-8. If WebGL initialization fails, the text and entry controls remain available over an illustrated CSS fallback.
+- Static architecture is batched by material; cobblestones use instanced geometry.
+- Moving figures and vehicles share instanced geometry by material; their rig transforms update instance matrices each frame. Reused sphere, cylinder, lathe, torus and rounded-box geometries, a capped pixel ratio, and one shadow-casting light limit GPU work.
+- Rendering stops when dismissed, paused, or the tab is hidden. Replay resumes the existing scene.
+- `prefers-reduced-motion` starts with a static tableau and suppresses pointer parallax. Users may explicitly play motion.
+- Story navigation remains available in the static state.
+- The underlying workspace is inert while the landing is visible. Entry moves focus into the workspace; replay focuses the entry button.
+- Narrow layouts retain the scene and all primary controls. Short screens can scroll.
+- WebGL failure and module-load failure retain workspace access. No low-quality substitute image is claimed as a rendered scene.
 
-## Manual test checklist
+## Verification
 
-- Desktop: verify title readability, staged scene arrival, parallax, natural walking cycles, fabric/limb movement, carriage movement, birds, smoke, water, blue-green phones, green cameras, active labels, lens pulses, and scan cones.
-- Narrow viewport: verify the copy moves below the town, camera labels become compact, the live-camera card is hidden, and all entry controls remain reachable.
-- Press `Escape`, then use the header replay button.
-- Refresh in the same tab and confirm the intro remains skipped; use `?intro=1` to force it.
-- Enable the operating system's reduced-motion preference and confirm the tableau is static.
-- Disable WebGL in the browser and confirm the fallback still allows entry.
+Run `cargo check --offline`, `node --check static/engine.js`, `node --check static/intro.js`, and `git diff --check`. Start `cargo run` and inspect `http://127.0.0.1:8080/`.
 
-## Palette
+Browser acceptance checks: visible changing frames; all three chapter controls; restart; pause/resume; workspace entry; existing workspace navigation; replay; Escape; reduced motion; 390px layout without horizontal overflow; WebGL-unavailable entry; and no uncaught runtime errors. Local review captures and results are stored in ignored `artifacts/landing/` when run. Browser results do not establish performance on every mobile GPU.
 
-| Purpose | Color |
-| --- | --- |
-| Parchment | `#f0ddba` |
-| Light paper | `#fff1d3` |
-| Coffee outline | `#70472f` |
-| Dark ink | `#4b3024` |
-| CCTV green | `#5f9362` |
-| Phone blue-green | `#3fa8a2` |
+The browser fixture additionally projects all four pavement corners through the real camera, checks the diagonal viewpoint, samples geometry transforms through 90 seconds of street activity, and reports renderer draw calls and triangle counts.
+
+### Repeat the browser acceptance test
+
+With the Rust server running and Playwright available:
+
+```sh
+VISN_PLAYWRIGHT_MODULE=/path/to/node_modules/playwright node tools/check_landing.cjs
+```
+
+Alternatively install Playwright in your normal tooling environment and run `node tools/check_landing.cjs`. `VISN_PREVIEW_URL` overrides the default local URL; `VISN_BROWSER_PATH` selects a browser executable. On macOS the script defaults to installed Google Chrome. On other platforms it uses Playwright's installed Chromium. The script checks the assets served by Rust directly and writes desktop/mobile screenshots and `verification.json` under `artifacts/landing/`.

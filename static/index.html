@@ -3,64 +3,57 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Local operator console for the Visn Phase 0 video analytics pipeline">
-  <title>Visn Pipeline Lab</title>
+  <meta name="description" content="Visn connects the moments in your camera feeds. Discover video analytics and searchable camera memory in a living, illustrated world.">
+  <title>Visn — See the story</title>
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
-  <div id="intro-scroll-runway" class="intro-scroll-runway"></div>
-  <section id="data-feed-page" class="data-feed-page">
-    <h1>VISN BACKEND DATA STREAM</h1>
-    <p style="margin-bottom: 2rem; opacity: 0.8;">Secure connection established. Routing camera feeds...</p>
-    <div class="data-stream" id="data-stream-container"></div>
-    <button class="enter-dashboard-btn" id="btn-enter-dashboard">ENTER DASHBOARD</button>
-  </section>
-  <section id="town-intro" class="town-intro" data-state="loading" role="dialog" aria-modal="true" aria-labelledby="intro-title" aria-describedby="intro-description">
-    <canvas id="town-canvas" aria-hidden="true"></canvas>
-    <div class="intro-paper-grain" aria-hidden="true"></div>
-    <div class="intro-vignette" aria-hidden="true"></div>
-
-    <header class="intro-masthead intro-reveal">
-      <div class="intro-seal"><span></span><span></span><span></span></div>
-      <div><strong>VISN</strong><small>Town Observation Office</small></div>
-      <span class="intro-edition">Est. 1887 · Local edition</span>
+<body class="landing-open">
+  <section id="town-intro" class="town-intro" data-state="loading" aria-labelledby="intro-title">
+    <div class="town-stage" id="town-stage">
+      <canvas id="town-canvas" role="img" aria-label="Animated nineteenth-century four-way street junction. Modern cameras observe passing people and send luminous data trails into the sky."></canvas>
+      <div class="scene-wash" aria-hidden="true"></div>
+      <div id="camera-labels" class="camera-labels" aria-hidden="true"></div>
+    </div>
+    <header class="landing-header">
+      <a class="landing-brand" href="#" aria-label="VISN home">visn<span class="brand-period">.</span><small>VISION, WITH CONTEXT.</small></a>
+      <nav class="landing-nav" aria-label="Landing navigation">
+        <button type="button" data-story="0">The vision</button>
+        <button type="button" data-story="1">How it works</button>
+        <button type="button" class="landing-workspace" data-enter>Open workspace <span aria-hidden="true">↗</span></button>
+      </nav>
     </header>
-
     <div class="intro-copy">
-      <p class="intro-kicker intro-reveal"><span></span> A curious view across time</p>
-      <h1 id="intro-title" class="intro-reveal">Every street<br>holds a story.</h1>
-      <p id="intro-description" class="intro-description intro-reveal">A quiet old town moves through its day—merchants trade, neighbours wander, and a rather modern network watches from the eaves.</p>
-      <div class="intro-actions intro-reveal">
-        <button id="intro-enter" class="intro-enter" type="button" disabled><span>Enter the observation room</span><b>→</b></button>
-        <button id="intro-skip" class="intro-skip" type="button">Skip introduction</button>
+      <p class="intro-kicker"><span></span> AN OLD WORLD. A NEW WAY TO SEE.</p>
+      <h1 id="intro-title">Life moves.<br>See the <em>story.</em></h1>
+      <p class="intro-description">A thousand little moments. One connected picture. Turn your camera feeds into context you can understand, search, and act on.</p>
+      <div class="intro-actions">
+        <button id="intro-enter" class="intro-enter" type="button" data-enter>Explore Visn <span aria-hidden="true">↗</span></button>
+        <button id="intro-tour" class="intro-tour" type="button"><span class="tour-play" aria-hidden="true">▶</span> Follow a signal</button>
       </div>
+      <p class="intro-caption">Built for the world in motion.</p>
     </div>
-
-    <aside class="intro-observer-card intro-reveal" aria-label="Scene activity">
-      <div class="intro-network-head">
-        <span class="intro-network-pulse" aria-hidden="true"></span>
-        <div><small>Observation network</small><strong>Five cameras awake</strong></div>
-        <b>05</b>
-      </div>
-      <div class="intro-signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-      <p>Follow the green housings and their scanning light across the town.</p>
-      <div class="intro-legend" aria-label="Scene legend">
-        <span><i class="legend-camera"></i>Cameras</span>
-        <span><i class="legend-phone"></i>Pocket telegraphs</span>
-      </div>
+    <aside class="scene-note" aria-label="Illustrative scene activity">
+      <div class="scene-note-heading"><span class="network-dot"></span><span>THE OBSERVATION NETWORK</span><small>DEMO</small></div>
+      <strong id="signal-title">Small moments. Clear signals.</strong>
+      <p id="signal-description">Four cameras. One street corner. A story taking shape.</p>
+      <div class="signal-route"><span id="signal-source">CAM 01</span><i></i><span id="signal-destination">VISN</span><b id="signal-state">CAPTURING</b></div>
     </aside>
-
-    <div class="intro-look-cue intro-reveal" aria-hidden="true">
-      <span></span><small>Move to explore</small>
+    <div class="scene-controls">
+      <span class="scene-place">THE CORNER OF THEN &amp; NOW <small>c. 1887 / A living illustration</small></span>
+      <button id="intro-motion" type="button" aria-pressed="false" aria-label="Pause scene animation">Pause motion <span aria-hidden="true">Ⅱ</span></button>
     </div>
-
-    <footer class="intro-footer intro-reveal">
-      <p id="intro-status"><span class="intro-loading-dot"></span> Preparing the town...</p>
-      <p>Rendered locally in real time · Esc to skip</p>
+    <footer class="landing-footer">
+      <div class="story-tabs" role="group" aria-label="Explore the signal journey">
+        <button type="button" class="story-tab active" data-story="0" aria-pressed="true"><span>01</span><div><strong>See the moment</strong><small>Every frame has a beginning.</small></div></button>
+        <button type="button" class="story-tab" data-story="1" aria-pressed="false"><span>02</span><div><strong>Connect the dots</strong><small>Movement becomes meaning.</small></div></button>
+        <button type="button" class="story-tab" data-story="2" aria-pressed="false"><span>03</span><div><strong>Find the story</strong><small>Insight, beyond the image.</small></div></button>
+      </div>
+      <p id="intro-status" role="status">Bringing the street to life…</p>
     </footer>
   </section>
 
-  <div class="app-shell">
+  <div class="app-shell" inert>
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -353,22 +346,22 @@
   </div>
 
   <div id="toast" class="toast" role="status"></div>
-  <script src="/vendor/anime.umd.min.js"></script>
   <script type="module" src="/intro.js"></script>
   <script>
+    // Keep workspace access available even if the scene module cannot load.
     window.setTimeout(function () {
       var intro = document.getElementById('town-intro');
       if (!intro || intro.dataset.state !== 'loading') return;
       intro.dataset.state = 'error';
-      intro.classList.add('intro-fallback');
-      intro.querySelectorAll('.intro-reveal').forEach(function (element) {
-        element.classList.add('revealed');
+      document.getElementById('intro-status').textContent = 'Scene unavailable. Your workspace is ready.';
+      document.querySelectorAll('[data-enter]').forEach(function (button) {
+        button.onclick = function () {
+          intro.hidden = true;
+          document.querySelector('.app-shell').inert = false;
+          document.body.classList.remove('landing-open');
+        };
       });
-      var enter = document.getElementById('intro-enter');
-      if (enter) enter.disabled = false;
-      var status = document.getElementById('intro-status');
-      if (status) status.textContent = 'Illustrated fallback ready · reload to retry real-time rendering';
-    }, 2500);
+    }, 10000);
   </script>
   <script src="/app.js" defer></script>
 </body>

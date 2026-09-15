@@ -28,11 +28,13 @@ The service now includes the first retrieval-first V1 slice from `docs/RETRIEVAL
 
 Open the **Memory** workspace in the UI to load authorized-camera presets, paste backend JSON payloads, inspect evidence, and search it. See [the V1 local guide](docs/V1_LOCAL_MEMORY.md) for exact steps and limitations.
 
-## 3D town introduction
+## 3D town landing page
 
-The locally served frontend opens with a procedural isometric 1800s town rendered in Three.js. Coffee-brown etched buildings and curve-drawn period townspeople are contrasted with prominent moss-green CCTV cameras and blue-green handheld phones. Townspeople walk with articulated motion, converse, tend a market stall, and pass a horse-drawn carriage while birds, trees, smoke, water, luminous camera lenses, and surveillance cones animate around them.
+The landing page opens onto a coffee-and-cream nineteenth-century four-way junction, viewed diagonally from the southeast corner toward the centre of two perpendicular streets. A locally served Three.js scene gives the town dimensional shopfronts, pitched roofs, shuttered windows, cobbles, trees, lamps, and forty detailed townspeople. Horse-drawn carriages, a delivery handcart, cafe activity, shopping groups, parasols, and pigeons bring the four corners to life. Four modern CCTV cameras follow the characters; visible capture areas and tracking boxes connect to curved packet streams that rise and dissolve above the rooftops.
 
-The introduction can be skipped with the button or `Escape`, is shown once per browser tab session, and can be replayed with the rook-shaped button in the application header. Add `?intro=1` to the URL to force it open. Reduced-motion preferences produce a static rendered tableau. See [the intro implementation guide](docs/INTRO_3D.md).
+The **See the moment**, **Connect the dots**, and **Find the story** controls explore the capture → transmission → insight sequence. **Follow a signal** restarts the journey. **Pause motion** and operating-system reduced-motion settings support a static scene. This is an illustrative product demo, not a live camera or backend status feed.
+
+**Explore Visn**, **Open workspace**, or `Escape` opens the existing pipeline workspace. The header replay button returns to the landing. The page appears on each fresh load, with no session-storage gate. Rendering stops while the workspace is open or the tab is hidden. WebGL failure keeps workspace entry available. See [the landing implementation guide](docs/INTRO_3D.md).
 
 ## Quick start: zero external services
 
