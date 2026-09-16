@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const root=require('node:path').resolve(__dirname,'..');
 const baseURL=process.env.VISN_PREVIEW_URL || 'http://127.0.0.1:8080/';
-fs.mkdirSync(root+'/artifacts/landing',{recursive:true});
+fs.mkdirSync(root+'/output/playwright',{recursive:true});
 async function captureSceneFrame(page) {
   // Screenshot the visible region without scrolling a deliberately cropped canvas.
   const clip=await page.evaluate(()=>{
@@ -28,7 +28,7 @@ async function captureSceneFrame(page) {
   await page.waitForTimeout(500);
   assert.ok((await captureSceneFrame(page))!==start,'Canvas must visibly change while playing');
   results.push('Animated WebGL frames change over time');
-  await page.screenshot({path:root+'/artifacts/landing/desktop.png'});
+  await page.screenshot({path:root+'/output/playwright/desktop.png'});
   for(let i=0;i<3;i++) {
     await page.locator('.story-tab').nth(i).click();
     assert.equal(await page.locator('.story-tab').nth(i).getAttribute('aria-pressed'),'true');
@@ -62,7 +62,7 @@ async function captureSceneFrame(page) {
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(700);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No mobile horizontal overflow');
-  await page.screenshot({path:root+'/artifacts/landing/mobile.png',fullPage:true});
+  await page.screenshot({path:root+'/output/playwright/mobile.png',fullPage:true});
   await page.locator('.story-tab').nth(1).click();
   assert.equal(await page.locator('#signal-state').textContent(),'TRANSMITTING');
   await page.locator('[data-enter]').first().click();
@@ -74,7 +74,7 @@ async function captureSceneFrame(page) {
   const still=await captureSceneFrame(page);
   await page.waitForTimeout(400);
   assert.ok((await captureSceneFrame(page))===still,'Reduced motion must freeze canvas');
-  await page.screenshot({path:root+'/artifacts/landing/reduced-motion.png',fullPage:true});
+  await page.screenshot({path:root+'/output/playwright/reduced-motion.png',fullPage:true});
   results.push('Reduced-motion preference produces a static scene');
   assert.deepEqual(errors,[],'No browser runtime exceptions');
   results.push('No browser runtime exceptions');
@@ -111,18 +111,43 @@ async function captureSceneFrame(page) {
       scene.scene.traverse(object=>{if(!object.matrixWorld.elements.every(Number.isFinite))finite=false;});
     }
     scene.time=6;scene.update(0);
-    const report={diagonal:Math.abs(scene.camera.position.x-scene.camera.position.z)<.001,cornersVisible:projections.every(([x,y,z])=>Math.abs(x)<1&&Math.abs(y)<1&&Math.abs(z)<1),projections,finite,people:scene.actors.length,carriages:scene.vehicles.length,trafficMoved:before.distanceTo(scene.vehicles[0].mesh.position)>1,drawCalls:scene.renderer.info.render.calls,triangles:scene.renderer.info.render.triangles,dynamicBatches:scene.dynamicBatches.length};
+    const adults=[...scene.actors,...scene.vehicles.map(v=>v.driver),scene.handcart.porter];
+    const anatomy=adults.every(actor=>{
+      const height=actor.anatomy.height*actor.mesh.scale.y;
+      const ratio=actor.anatomy.height/actor.anatomy.headHeight;
+      return height>1.7&&height<2&&ratio>7&&ratio<8&&actor.ankles.length===2&&actor.hands.length===2;
+    });
+    let gripError=0;
+    for(const actor of adults.filter(a=>a.role==='reader'||a.heldProp==='parasol'||a.grips)) {
+      scene.fitHands(actor);scene.scene.updateMatrixWorld(true);
+      const targets=actor.grips || (actor.role==='reader'?[[-.155,1.24,.37],[.155,1.24,.37]]:[null,[.35,1.2,.12]]);
+      targets.forEach((target,side)=>{
+        if(!target)return;
+        const hand=actor.hands[side].getWorldPosition(new THREE.Vector3());
+        const goal=actor.torso.localToWorld(new THREE.Vector3(...target));
+        gripError=Math.max(gripError,hand.distanceTo(goal));
+      });
+    }
+    const seatedFeet=[...scene.actors.filter(a=>a.seated),...scene.vehicles.map(v=>v.driver)].map(actor=>{
+      const expected=actor.role==='reader'?.23:scene.vehicles.find(v=>v.driver===actor).mesh.position.y+.8;
+      return Math.max(...actor.ankles.map(ankle=>Math.abs(ankle.localToWorld(new THREE.Vector3(0,-actor.anatomy.soleOffset,0)).y-expected)));
+    });
+    const report={anatomy,gripError,seatedFootError:Math.max(...seatedFeet),diagonal:Math.abs(scene.camera.position.x-scene.camera.position.z)<.001,cornersVisible:projections.every(([x,y,z])=>Math.abs(x)<1&&Math.abs(y)<1&&Math.abs(z)<1),projections,finite,people:scene.actors.length,carriages:scene.vehicles.length,trafficMoved:before.distanceTo(scene.vehicles[0].mesh.position)>1,drawCalls:scene.renderer.info.render.calls,triangles:scene.renderer.info.render.triangles,dynamicBatches:scene.dynamicBatches.length};
     return report;
   });
   assert.ok(sceneReport.diagonal && sceneReport.cornersVisible,'The corner viewpoint must show all four perpendicular pavement corners');
   assert.ok(sceneReport.finite,'Animated geometry remains finite across the full traffic cycle');
   assert.ok(sceneReport.people>=30 && sceneReport.carriages===2 && sceneReport.trafficMoved,'A populated town has actual moving carriage traffic');
+  assert.ok(sceneReport.anatomy,'All pedestrians, drivers and porters use adult proportions and complete hand/ankle rigs');
+  assert.ok(sceneReport.gripError<.001,'Readers, parasols, carriage reins and handcart grips fit the adult arm rigs');
+  assert.ok(sceneReport.seatedFootError<.001,'Seated feet rest on pavement or the carriage footboard');
   assert.ok(sceneReport.dynamicBatches>0,'Detailed moving models use instancing');
-  await geometryPage.screenshot({path:root+'/artifacts/landing/refined-street.png'});
+  await geometryPage.screenshot({path:root+'/output/playwright/refined-street.png'});
+  results.push('Adult proportions, prop grips and seated foot contact verified');
   results.push('Four square junction corners are in frame from a diagonal corner viewpoint');
   results.push('Detailed people and moving carriages remain valid over a 90-second scene sample');
   assert.deepEqual(errors,[],'No runtime errors in the larger animated town');
-  fs.writeFileSync(root+'/artifacts/landing/verification.json',JSON.stringify({results,errors,sceneReport},null,2));
+  fs.writeFileSync(root+'/output/playwright/verification.json',JSON.stringify({results,errors,sceneReport},null,2));
   console.log(JSON.stringify({results,errors,sceneReport},null,2));
   await browser.close();
 })().catch(e=>{console.error(e.stack);process.exit(1)});

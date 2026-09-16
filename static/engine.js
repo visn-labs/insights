@@ -479,77 +479,189 @@ export class TownScene {
     lines.forEach(line => this.scene.add(line));
   }
   person(index, role='walker') {
-    const g=new THREE.Group(), female=index%3===0;
+    // Adult landmarks in metres: sole 0, ankle .096, knee .516, hip .956,
+    // shoulder 1.435, chin 1.585, crown 1.835. Hats do not count as head height.
+    const g=new THREE.Group(),female=index%3===0;
     const coat=[0x655444,0x9b7857,0xb2a58c,0x6d7b6b,0x765647,0xd9c7a7][index%6];
     const skin=[0xdfb992,0xb88965,0xd4a57d,0xe5c3a1][index%4];
+    const hairColor=[0x392e27,0x584433,0x725a43,0x827366][index%4];
     const torso=new THREE.Group();g.add(torso);
-    this.lathe(torso,female?[[.31,.34],[.34,.4],[.26,.65],[.16,.95],[.18,1.15],[.21,1.25],[0,1.27]]:[[.22,.62],[.23,.73],[.18,1.0],[.25,1.21],[.19,1.27],[0,1.27]],coat);
-    this.cylinder(torso,0,1.32,0,.067,.08,.16,skin,12);
-    // Tailoring, collar, lapels, buttons and an apron give each person a purpose.
-    this.rounded(torso,0,1.08,.16,.13,.32,.055,0xe7d4b2,.02);
-    for(const side of [-1,1])this.rounded(torso,side*.09,1.12,.19,.065,.26,.035,coat,.01).rotation.z=side*.28;
-    for(let i=0;i<3;i++)this.orb(torso,.065,.89+i*.09,.19,.019,C.brass);
-    if(role==='vendor')this.rounded(torso,0,.83,.205,.32,.57,.035,0xe3d5b5,.025);
-    if(role==='porter')this.rounded(torso,0,1.1,.19,.16,.22,.035,0x785641,.02);
-    const head=new THREE.Group();head.position.y=1.5;torso.add(head);
-    this.ellipsoid(head,0,0,0,.145,.19,.14,skin);
-    this.ellipsoid(head,0,.075,-.03,.152,.15,.136,0x554437);
-    this.ellipsoid(head,0,.045,.078,.128,.115,.09,skin);
-    this.ellipsoid(head,0,-.025,.149,.035,.047,.045,skin);
-    for(const side of [-1,1]) {
-      this.ellipsoid(head,side*.146,-.015,0,.031,.051,.034,skin);
-      this.orb(head,side*.055,.016,.147,.012,0x392f29);
-    }
+    const body=this.lathe(torso,[[.15,.89],[.18,.98],[.155,1.1],[.175,1.28],[female?.195:.215,1.39],[female?.185:.20,1.44],[.135,1.49],[.07,1.51]],coat);
+    body.scale.z=.66;
+    let skirt,coatHem;
     if(female) {
-      this.ellipsoid(head,0,.025,-.14,.11,.1,.09,0x554437);
-      this.cylinder(head,0,.14,0,.29,.3,.035,0xb9a17a,24);
-      this.ellipsoid(head,0,.2,0,.17,.105,.16,0xcbb58e);
-      this.orb(head,.19,.17,.02,.046,0xe0c4a1);
-    } else if(role==='porter'||index%4===1) {
-      this.ellipsoid(head,0,.155,0,.18,.065,.18,coat);
-      this.ellipsoid(head,0,.13,.12,.16,.018,.13,coat);
+      skirt=this.lathe(g,[[.29,.14],[.305,.18],[.285,.37],[.245,.65],[.19,.9],[.15,1.1]],coat,28);skirt.scale.z=.8;
+      for(let i=0;i<14;i++) {
+        const a=i*TAU/14;
+        const fold=this.tube(g,[Math.sin(a)*.294,.18,Math.cos(a)*.235],[Math.sin(a)*.187,.88,Math.cos(a)*.15],.007,coat,.002);
+        fold.castShadow=false;
+      }
+      this.rounded(torso,0,1.1,.105,.28,.032,.035,C.timber,.01);
     } else {
-      this.cylinder(head,0,.17,0,.23,.235,.025,C.timber,24);
-      this.lathe(head,[[.135,.18],[.14,.23],[.13,.38],[.15,.4],[0,.4]],coat);
-      this.cylinder(head,0,.24,0,.142,.145,.055,0x3e342b,24);
+      coatHem=this.lathe(torso,[[.205,.76],[.207,.82],[.178,1.05],[.156,1.15]],coat);coatHem.scale.z=.72;
+      this.rounded(torso,0,1.27,.13,.17,.34,.028,0xc8bda5,.018);
+      this.rounded(torso,0,1.42,.15,.05,.15,.027,C.timber,.008);
     }
-    const limbs=[],knees=[],elbows=[];
+    this.cylinder(torso,0,1.555,0,.042,.051,.1,skin,14);
     for(const side of [-1,1]) {
-      const leg=new THREE.Group();leg.position.set(side*.105,.77,0);g.add(leg);
-      this.cylinder(leg,0,-.17,0,.083,.071,.35,0x4b4035,12);
-      const knee=new THREE.Group();knee.position.y=-.34;leg.add(knee);
-      this.ellipsoid(knee,0,0,0,.072,.08,.072,0x4b4035);
-      this.cylinder(knee,0,-.16,0,.07,.058,.32,0x4b4035,12);
-      this.rounded(knee,0,-.325,.06,.145,.13,.28,0x453329,.05);
-      const arm=new THREE.Group();arm.position.set(side*.215,1.21,0);torso.add(arm);arm.rotation.z=side*.06;
-      this.ellipsoid(arm,0,-.025,0,.092,.12,.09,coat);
-      this.cylinder(arm,0,-.14,0,.075,.057,.27,coat,12);
-      const elbow=new THREE.Group();elbow.position.y=-.27;arm.add(elbow);
-      this.cylinder(elbow,0,-.105,0,.059,.046,.21,coat,12);
-      this.ellipsoid(elbow,0,-.25,.008,.047,.069,.036,skin);
-      limbs.push(leg,arm);knees.push(knee);elbows.push(elbow);
+      this.rounded(torso,side*.065,1.466,.093,.088,.056,.032,0xe7d4b2,.013).rotation.z=side*.28;
+      this.rounded(torso,side*.10,1.355,.15,.058,.22,.025,coat,.012).rotation.z=side*.32;
+      this.rounded(torso,side*.132,1.027,.132,.095,.016,.028,0x6a5541,.004);
     }
-    if(index%5===1) {
-      this.rounded(limbs[3],0,-.61,0,.26,.28,.13,C.timber,.035);
-      this.torus(limbs[3],0,-.44,0,.07,.012,C.brass);
+    for(let i=0;i<4;i++)this.orb(torso,.043,1.095+i*.078,.153,.012,C.brass);
+    if(role==='vendor')this.rounded(torso,0,1.0,.17,.3,.5,.022,0xd9cbb0,.024);
+    if(role==='porter')this.rounded(torso,0,1.27,.16,.16,.18,.02,0x785641,.02);
+    const head=new THREE.Group();head.position.y=1.71;torso.add(head);
+    // A single tapered head surface avoids overlapping primitive seams at the jaw.
+    if(!this.geometryCache.has('adult-head')) {
+      const geometry=new THREE.SphereGeometry(1,24,18),position=geometry.attributes.position;
+      for(let i=0;i<position.count;i++) {
+        const y=position.getY(i),jaw=Math.max(0,-y);
+        position.setXYZ(i,position.getX(i)*.09*(1-jaw*.24),y*.125,position.getZ(i)*.097*(1-jaw*.12)+jaw*.012);
+      }
+      geometry.computeVertexNormals();this.geometryCache.set('adult-head',geometry);
+    }
+    const face=new THREE.Mesh(this.geometryCache.get('adult-head'),this.material(skin));face.castShadow=true;head.add(face);
+    this.ellipsoid(head,0,-.013,.094,.014,.03,.022,skin);
+    this.ellipsoid(head,0,-.049,.088,.022,.0028,.007,0x956953);
+    for(const side of [-1,1]) {
+      this.ellipsoid(head,side*.088,-.004,-.007,.015,.03,.019,skin);
+      this.ellipsoid(head,side*.034,.014,.09,.015,.006,.006,0xe8dec9);
+      this.orb(head,side*.034,.014,.095,.0045,0x392f29);
+      this.tube(head,[side*.019,.029,.095],[side*.05,.03,.082],.003,hairColor);
+    }
+    if(!female && index%4===0)this.ellipsoid(head,0,-.039,.092,.027,.005,.009,hairColor);
+    if(!this.geometryCache.has('adult-hair'))this.geometryCache.set('adult-hair',new THREE.SphereGeometry(1,16,10,0,TAU,0,Math.PI*.54));
+    const hair=new THREE.Mesh(this.geometryCache.get('adult-hair'),this.material(hairColor));
+    hair.scale.set(.092,.13,.102);hair.position.set(0,.002,-.014);head.add(hair);
+    for(let i=0;i<6;i++)this.ellipsoid(head,(i-2.5)*.025,.074,-.012+Math.sqrt(Math.max(0,.009-Math.pow((i-2.5)*.025,2))),.018,.034,.018,hairColor);
+    if(female) {
+      this.ellipsoid(head,0,-.005,-.106,.066,.057,.051,hairColor);
+      this.cylinder(head,0,.115,0,.205,.21,.022,0xb9a17a,28);
+      this.ellipsoid(head,0,.156,-.005,.112,.067,.105,0xcbb58e);
+      this.orb(head,.125,.143,.025,.025,0xe0c4a1);
+      this.tube(head,[-.087,.08,0],[-.052,-.117,.034],.009,0xb79b73);
+      this.tube(head,[.087,.08,0],[.052,-.117,.034],.009,0xb79b73);
+    } else if(role==='porter'||index%4===1) {
+      this.ellipsoid(head,0,.111,0,.11,.041,.12,coat);
+      this.ellipsoid(head,0,.089,.088,.104,.012,.079,coat);
+    } else {
+      this.cylinder(head,0,.115,0,.16,.165,.021,C.timber,28);
+      this.lathe(head,[[.093,.122],[.096,.155],[.09,.28],[.1,.294],[0,.294]],coat,24);
+      this.cylinder(head,0,.165,0,.098,.1,.035,0x3e342b,24);
+    }
+    const limbs=[],knees=[],elbows=[],ankles=[],hands=[],fingers=[];
+    for(const side of [-1,1]) {
+      const leg=new THREE.Group();leg.position.set(side*.097,.956,0);g.add(leg);
+      const thigh=this.lathe(leg,[[.058,-.43],[.072,-.35],[.084,-.12],[.081,0]],0x4b4035,16);thigh.scale.z=.89;
+      const knee=new THREE.Group();knee.position.y=-.44;leg.add(knee);
+      this.ellipsoid(knee,0,0,.003,.06,.068,.063,0x4b4035);
+      this.lathe(knee,[[.041,-.42],[.043,-.34],[.06,-.15],[.053,0]],0x4b4035,16);
+      this.rounded(knee,0,-.395,0,.09,.039,.095,0x574b3d,.012);
+      const ankle=new THREE.Group();ankle.position.y=-.42;knee.add(ankle);
+      this.rounded(ankle,0,-.037,.062,.115,.105,.26,0x453329,.037);
+      this.rounded(ankle,0,-.087,.062,.121,.018,.265,0x2d2823,.008);
+      this.rounded(ankle,0,-.062,-.025,.105,.061,.079,0x2d2823,.01);
+      for(let lace=0;lace<3;lace++)this.tube(ankle,[-.028,.006,.04+lace*.025],[.028,.006,.04+lace*.025],.003,C.timber);
+      const arm=new THREE.Group();arm.position.set(side*(female?.193:.213),1.435,0);arm.rotation.z=side*.045;torso.add(arm);
+      this.lathe(arm,[[.047,-.31],[.052,-.23],[.062,-.08],[.057,-.01],[.035,.035],[0,.048]],coat,20);
+      const elbow=new THREE.Group();elbow.position.y=-.31;elbow.rotation.x=-.07;arm.add(elbow);
+      this.orb(elbow,0,0,0,.049,coat);
+      this.lathe(elbow,[[.033,-.265],[.04,-.22],[.046,-.1],[.05,0]],coat,16);
+      this.cylinder(elbow,0,-.265,0,.036,.034,.026,0xe0cfb0,14);
+      const hand=new THREE.Group();hand.position.y=-.285;elbow.add(hand);
+      this.ellipsoid(hand,0,-.02,0,.034,.05,.023,skin);
+      const fingerJoints=[];
+      for(let finger=0;finger<4;finger++) {
+        const joint=new THREE.Group();joint.position.set((finger-1.5)*.014,-.059,0);hand.add(joint);
+        const length=finger===0||finger===3?.024:.03;
+        this.cylinder(joint,0,-length/2,0,.0068,.006,length,skin,6);
+        const tip=new THREE.Group();tip.position.y=-length;joint.add(tip);
+        this.orb(tip,0,0,0,.007,skin);
+        this.cylinder(tip,0,-.012,0,.006,.0048,.024,skin,6);
+        fingerJoints.push({joint,tip});
+      }
+      fingers.push(fingerJoints);
+      this.tube(hand,[side*.024,0,.006],[side*.045,-.036,.018],.01,skin,.008);
+      limbs.push(leg,arm);knees.push(knee);elbows.push(elbow);ankles.push(ankle);hands.push(hand);
+    }
+    let heldProp=null;
+    if(index%5===1 && role==='walker') {
+      this.rounded(elbows[1],0,-.56,0,.25,.27,.12,C.timber,.029);
+      this.torus(elbows[1],0,-.389,0,.077,.01,C.brass);heldProp='bag';
     }
     if(role==='reader') {
-      this.rounded(g,0,1.08,.36,.39,.025,.29,0xe9ddbf,.012).rotation.x=.35;
-      this.box(g,0,1.09,.36,.012,.026,.28,0x9b8667).rotation.x=.35;
+      this.rounded(torso,0,1.24,.37,.37,.012,.26,0xe9ddbf,.004).rotation.x=.32;
+      this.box(torso,0,1.247,.37,.007,.014,.255,0x9b8667).rotation.x=.32;
     }
     if(index%11===3 && role==='walker') {
-      const parasol=new THREE.Group();parasol.position.set(.36,0,.1);g.add(parasol);
-      this.cylinder(parasol,0,1.52,0,.014,.014,1.48,C.timber,10);
+      heldProp='parasol';
+      const parasol=new THREE.Group();parasol.position.set(.35,0,.12);torso.add(parasol);
+      this.cylinder(parasol,0,1.74,0,.012,.012,1.36,C.timber,10);
       for(let i=0;i<10;i++) {
-        const panel=new THREE.Mesh(new THREE.SphereGeometry(.69,6,6,i*TAU/10,TAU/10,0,Math.PI/2),this.material(i%2?0xd8c49f:0x9d8765));
-        panel.position.y=2.12;panel.scale.y=.36;parasol.add(panel);
+        const panel=new THREE.Mesh(new THREE.SphereGeometry(.63,6,6,i*TAU/10,TAU/10,0,Math.PI/2),this.material(i%2?0xd8c49f:0x9d8765));
+        panel.position.y=2.24;panel.scale.y=.32;parasol.add(panel);
         const a=i*TAU/10;
-        this.tube(parasol,[0,2.37,0],[Math.sin(a)*.67,2.13,Math.cos(a)*.67],.009,C.timber);
+        this.tube(parasol,[0,2.44,0],[Math.sin(a)*.61,2.25,Math.cos(a)*.61],.006,C.timber);
       }
-      this.orb(parasol,0,2.4,0,.035,C.brass);
+      this.orb(parasol,0,2.465,0,.026,C.brass);
     }
-    g.scale.setScalar(index%13===7?.68:.93+(index%4)*.025);
-    this.scene.add(g);return {mesh:g,torso,head,limbs,knees,elbows,role,phase:index*1.73};
+    // Shared rough materials soften facial contours and tailored fabric at close range.
+    g.traverse(mesh=>{
+      if(!mesh.isMesh)return;
+      if(mesh.geometry===this.sphereGeometry&&Math.max(mesh.scale.x,mesh.scale.y,mesh.scale.z)<.08) {
+        if(!this.geometryCache.has('small-detail'))this.geometryCache.set('small-detail',new THREE.SphereGeometry(1,10,8));
+        mesh.geometry=this.geometryCache.get('small-detail');
+      }
+      const color=mesh.material.color.getHex(),key=`person/${color}`;
+      if(!this.materials.has(key))this.materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.92}));
+      mesh.material=this.materials.get(key);
+    });
+    g.scale.setScalar(.96+(index%6)*.015);
+    this.scene.add(g);
+    return {mesh:g,torso,head,limbs,knees,elbows,ankles,hands,fingers,skirt,coatHem,heldProp,role,phase:index*1.73,
+      anatomy:{height:1.835,headHeight:.25,hip:.956,upperLeg:.44,lowerLeg:.42,soleOffset:.096,shoulder:1.435,upperArm:.31,lowerArm:.285}};
+  }
+  fitHands(actor) {
+    // Fit the adult arm chain to its prop; walk timing is handled separately.
+    const reach=(side,x,y,z)=>{
+      const arm=actor.limbs[side*2+1],elbow=actor.elbows[side];
+      const dx=x-arm.position.x,dz=z-arm.position.z,down=arm.position.y-y;
+      const horizontal=Math.hypot(dx,dz),a=actor.anatomy.upperArm,b=actor.anatomy.lowerArm;
+      const distance=THREE.MathUtils.clamp(Math.hypot(horizontal,down),Math.abs(a-b)+.001,a+b-.001);
+      arm.rotation.order='YXZ';arm.rotation.set(
+        Math.atan2(-horizontal,down)+Math.acos(THREE.MathUtils.clamp((a*a+distance*distance-b*b)/(2*a*distance),-1,1)),
+        Math.atan2(dx,dz),0,'YXZ');
+      elbow.rotation.x=-Math.PI+Math.acos(THREE.MathUtils.clamp((a*a+b*b-distance*distance)/(2*a*b),-1,1));
+    };
+    if(actor.role==='reader')for(const side of [0,1])reach(side,(side?1:-1)*.155,1.24,.37);
+    if(actor.heldProp==='parasol') {
+      reach(1,.35,1.2,.12);
+      const arm=actor.limbs[3];
+      actor.hands[1].rotation.set(-arm.rotation.x-actor.elbows[1].rotation.x,-arm.rotation.y,0);
+    }
+    if(actor.heldProp==='bag') {
+      actor.limbs[3].rotation.x=0;actor.elbows[1].rotation.x=-.04;
+    }
+    if(actor.grips)actor.grips.forEach(([x,y,z],side)=>reach(side,x,y,z));
+    for(const side of [0,1]) {
+      const holding=actor.grips||(side===1&&actor.heldProp);
+      actor.fingers[side].forEach(({joint,tip})=>{joint.rotation.x=holding?-.85:-.1;tip.rotation.x=holding?-.95:-.15;});
+    }
+  }
+  seatPerson(actor,height,footrest=.23) {
+    // The pelvis rests just above the seat; thighs extend forward, shins hang down.
+    actor.seated=true;
+    actor.mesh.position.y=height-(actor.anatomy.hip-.075)*actor.mesh.scale.y;
+    const scale=actor.mesh.scale.y;
+    const drop=(height+.075*scale-footrest)/scale-actor.anatomy.lowerLeg-actor.anatomy.soleOffset;
+    const thigh=-Math.acos(THREE.MathUtils.clamp(drop/actor.anatomy.upperLeg,-1,1));
+    for(let side=0;side<2;side++) {
+      actor.limbs[side*2].rotation.x=thigh;
+      actor.knees[side].rotation.x=-thigh;
+    }
+    // Fold the long coat above the seat instead of sending its hem through the wood.
+    if(actor.coatHem){actor.coatHem.scale.y=.5;actor.coatHem.position.y=.55;}
   }
   route(points) {
     let length=0;
@@ -578,10 +690,10 @@ export class TownScene {
       actor.route=this.route(axis?[[side*3.35,-8],[side*3.35,8]]:[[-8,side*3.35],[8,side*3.35]]);
       actor.crossing=axis;actor.offset=(i%4)*1.1;actor.speed=.7;this.actors.push(actor);
     }
-    const locals=[[-7.2,-5.85,0,'vendor'],[-8.5,-4.96,Math.PI,'reader'],[7,-5.35,Math.PI,'vendor'],[8.15,-5.1,-1.8,'walker'],[-5.2,7.2,1.3,'walker'],[-5.35,8.05,2.6,'walker'],[6.4,8.55,-Math.PI/2,'reader'],[5.65,6.3,-2.4,'walker']];
+    const locals=[[-7.2,-5.85,0,'vendor'],[-8.5,-4.96,Math.PI,'reader'],[7,-5.35,Math.PI,'vendor'],[8.15,-5.1,-1.8,'walker'],[-5.2,7.2,1.3,'walker'],[-5.35,8.05,2.6,'walker'],[6.62,8.55,Math.PI/2,'reader'],[5.65,6.3,-2.4,'walker']];
     locals.forEach(([x,z,rotation,role],i)=>{
       const actor=this.person(index++,role);actor.mesh.position.set(x,.23,z);actor.mesh.rotation.y=rotation;actor.idle=true;actor.seated=i===6;
-      if(actor.seated){actor.mesh.position.y=.2;actor.limbs[0].rotation.x=-1.3;actor.limbs[2].rotation.x=-1.3;actor.knees.forEach(k=>k.rotation.x=1.3);}
+      if(actor.seated)this.seatPerson(actor,.75);
       this.actors.push(actor);
     });
     this.buildCarriage(0);this.buildCarriage(1);this.buildHandcart();
@@ -605,7 +717,7 @@ export class TownScene {
     const hub=this.cylinder(wheel,0,0,0,.075,.075,.18,C.brass,14);hub.rotation.x=Math.PI/2;
     return wheel;
   }
-  horse(parent,x,z,color) {
+  horse(parent,x,z,color,driver) {
     const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
     this.ellipsoid(g,0,1.14,0,.33,.43,.73,color);
     this.ellipsoid(g,0,1.25,.48,.24,.37,.28,color);
@@ -630,7 +742,8 @@ export class TownScene {
     this.torus(g,0,1.18,.43,.34,.025,C.dark).scale.y=1.1;
     this.box(g,0,1.55,-.05,.58,.06,.17,C.dark);
     for(const side of [-1,1]) {
-      this.tube(g,[side*.18,1.89,1.03],[side*.33,1.08,-1.9],.011,C.dark);
+      const grip=parent.worldToLocal(driver.hands[side===-1?0:1].getWorldPosition(new THREE.Vector3()));
+      this.tube(g,[side*.18,1.89,1.03],[grip.x-x,grip.y,grip.z-z],.011,C.dark);
       this.tube(g,[side*.44,.89,.05],[side*.6,.72,-1.75],.035,C.timber);
     }
     return {mesh:g,legs,knees,tail};
@@ -651,13 +764,15 @@ export class TownScene {
       this.box(g,side*.79,.61,-.6,.32,.065,.7,C.dark);
     }
     this.rounded(g,0,1.14,.5,1.12,.25,.5,C.dark,.07);
+    this.rounded(g,0,.77,1,.98,.06,.42,C.timber,.02);
     this.rounded(g,0,1.43,.22,1.16,.38,.14,C.dark,.055);
     const wheels=[];
     for(const side of [-1,1])for(const end of [-1,1])wheels.push(this.wheel(g,side*.85,.6,end===1?.44:-1.4,end===1?.48:.59));
     for(const z of [.44,-1.4])this.tube(g,[-.85,.6,z],[.85,.6,z],.045,C.dark);
-    const horse=this.horse(g,0,2.3,index?0x9c7b58:0x6b5140);
-    const driver=this.person(45+index,'porter');driver.mesh.removeFromParent();g.add(driver.mesh);driver.mesh.position.set(0,.88,.5);driver.mesh.scale.setScalar(.83);
-    driver.limbs[0].rotation.x=driver.limbs[2].rotation.x=-1.5;driver.knees.forEach(k=>k.rotation.x=1.5);driver.limbs[1].rotation.x=driver.limbs[3].rotation.x=-.9;
+    const driver=this.person(46+index,'porter');driver.mesh.removeFromParent();g.add(driver.mesh);driver.mesh.position.set(0,0,.5);driver.mesh.scale.setScalar(.98);
+    this.seatPerson(driver,1.265,.8);driver.grips=[[-.18,1.19,.39],[.18,1.19,.39]];this.fitHands(driver);
+    g.updateMatrixWorld(true);
+    const horse=this.horse(g,0,2.3,index?0x9c7b58:0x6b5140,driver);
     this.vehicles.push({mesh:g,wheels,horse,axis:index,driver});
   }
   buildHandcart() {
@@ -665,10 +780,10 @@ export class TownScene {
     this.rounded(g,0,.66,0,.9,.22,1.25,C.timber,.035);
     for(const x of [-.46,.46])for(let y=.76;y<1.07;y+=.11)this.box(g,x,y,0,.05,.08,1.3,0xa2835b);
     for(const z of [-.64,.64])for(let y=.76;y<1.07;y+=.11)this.box(g,0,y,z,.96,.08,.05,0xa2835b);
-    for(const x of [-.4,.4])this.tube(g,[x,.63,-.2],[x,.9,-1.3],.025,C.timber);
+    for(const x of [-.4,.4])this.tube(g,[x,.63,-.2],[x,1.04,-1.3],.025,C.timber);
     const wheels=[this.wheel(g,-.57,.41,0,.39),this.wheel(g,.57,.41,0,.39)];
     for(let i=0;i<5;i++)this.rounded(g,(i%2-.5)*.38,1.1+Math.floor(i/2)*.18,((i%3)-1)*.3,.34,.25,.32,0xc1a47a,.025);
-    const porter=this.person(51,'porter');porter.mesh.removeFromParent();g.add(porter.mesh);porter.mesh.position.set(0,.2,-1.3);porter.limbs[1].rotation.x=porter.limbs[3].rotation.x=-.9;
+    const porter=this.person(51,'porter');porter.mesh.removeFromParent();g.add(porter.mesh);porter.mesh.position.set(0,0,-1.55);porter.grips=[-1,1].map(side=>[side*.4/porter.mesh.scale.x,1.04/porter.mesh.scale.y,.25/porter.mesh.scale.z]);this.fitHands(porter);
     this.handcart={mesh:g,wheels,porter};
   }
 
@@ -801,6 +916,7 @@ export class TownScene {
         actor.limbs[3].rotation.x=actor.role==='vendor'?-.7+Math.sin(t*1.9+actor.phase)*.22:actor.role==='reader'?-.82:-.15;
         actor.elbows.forEach(e=>e.rotation.x=-.25);
       }
+      this.fitHands(actor);
     }
     for(const vehicle of this.vehicles) {
       const phase=(t+10+(vehicle.axis?32:0))%64;

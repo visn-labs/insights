@@ -14,3 +14,5 @@
 *_openvino_model/
 __pycache__/
 *.pyc
+
+/output/playwright/
