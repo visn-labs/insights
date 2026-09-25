@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Visn connects the moments in your camera feeds. Discover video analytics and searchable camera memory in a living, illustrated world.">
+  <meta name="description" content="Explore how contributing your CCTV footage can help build a useful knowledge base. Prepare your first contribution with Visn.">
   <title>Visn — See the story</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/assets/contributor.css">
 </head>
 <body class="landing-open">
-  <section id="town-intro" class="town-intro" data-state="loading" aria-labelledby="intro-title">
+  <section id="town-intro" class="town-intro" role="main" data-state="loading" aria-labelledby="intro-title">
+    <div class="landing-hero">
     <div class="town-stage" id="town-stage">
       <canvas id="town-canvas" role="img" aria-label="Animated nineteenth-century four-way street junction. Modern cameras observe passing people and send luminous data trails into the sky."></canvas>
       <div class="scene-wash" aria-hidden="true"></div>
@@ -18,25 +20,25 @@
     <header class="landing-header">
       <a class="landing-brand" href="#" aria-label="VISN home">visn<span class="brand-period">.</span><small>VISION, WITH CONTEXT.</small></a>
       <nav class="landing-nav" aria-label="Landing navigation">
-        <button type="button" data-story="0">The vision</button>
-        <button type="button" data-story="1">How it works</button>
-        <button type="button" class="landing-workspace" data-enter>Open workspace <span aria-hidden="true">↗</span></button>
+        <button type="button" data-scroll="how-it-works">How it works</button>
+        <button type="button" data-scroll="sharing-control">Your choices</button>
+        <a href="#/home" class="landing-workspace">Contributor home <span aria-hidden="true">↗</span></a>
       </nav>
     </header>
     <div class="intro-copy">
-      <p class="intro-kicker"><span></span> AN OLD WORLD. A NEW WAY TO SEE.</p>
-      <h1 id="intro-title">Life moves.<br>See the <em>story.</em></h1>
-      <p class="intro-description">A thousand little moments. One connected picture. Turn your camera feeds into context you can understand, search, and act on.</p>
+      <p class="intro-kicker"><span></span> YOUR VIEW. SHARED VALUE.</p>
+      <h1 id="intro-title">Your view.<br><em>Shared value.</em></h1>
+      <p class="intro-description">Your camera sees a little of the world. Help turn those moments into useful knowledge—and explore a new way to be rewarded for your contribution.</p>
       <div class="intro-actions">
-        <button id="intro-enter" class="intro-enter" type="button" data-enter>Explore Visn <span aria-hidden="true">↗</span></button>
-        <button id="intro-tour" class="intro-tour" type="button"><span class="tour-play" aria-hidden="true">▶</span> Follow a signal</button>
+        <a id="intro-enter" class="intro-enter" href="#/contribute">Start contributing <span aria-hidden="true">↗</span></a>
+        <button id="intro-tour" class="intro-tour" type="button"><span class="tour-play" aria-hidden="true">▶</span> See how it works</button>
       </div>
-      <p class="intro-caption">Built for the world in motion.</p>
+      <p class="intro-caption">Contributor programme · Preview · Your footage stays with you.</p>
     </div>
     <aside class="scene-note" aria-label="Illustrative scene activity">
-      <div class="scene-note-heading"><span class="network-dot"></span><span>THE OBSERVATION NETWORK</span><small>DEMO</small></div>
-      <strong id="signal-title">Small moments. Clear signals.</strong>
-      <p id="signal-description">Four cameras. One street corner. A story taking shape.</p>
+      <div class="scene-note-heading"><span class="network-dot"></span><span>EVERY VIEW HAS A PLACE</span><small>DEMO</small></div>
+      <strong id="signal-title">It starts with your perspective.</strong>
+      <p id="signal-description">A small part of your world can help make the bigger picture clearer.</p>
       <div class="signal-route"><span id="signal-source">CAM 01</span><i></i><span id="signal-destination">VISN</span><b id="signal-state">CAPTURING</b></div>
     </aside>
     <div class="scene-controls">
@@ -45,15 +47,40 @@
     </div>
     <footer class="landing-footer">
       <div class="story-tabs" role="group" aria-label="Explore the signal journey">
-        <button type="button" class="story-tab active" data-story="0" aria-pressed="true"><span>01</span><div><strong>See the moment</strong><small>Every frame has a beginning.</small></div></button>
-        <button type="button" class="story-tab" data-story="1" aria-pressed="false"><span>02</span><div><strong>Connect the dots</strong><small>Movement becomes meaning.</small></div></button>
-        <button type="button" class="story-tab" data-story="2" aria-pressed="false"><span>03</span><div><strong>Find the story</strong><small>Insight, beyond the image.</small></div></button>
+        <button type="button" class="story-tab active" data-story="0" aria-pressed="true"><span>01</span><div><strong>Your perspective</strong><small>A camera. A point of view.</small></div></button>
+        <button type="button" class="story-tab" data-story="1" aria-pressed="false"><span>02</span><div><strong>A shared understanding</strong><small>Moments become knowledge.</small></div></button>
+        <button type="button" class="story-tab" data-story="2" aria-pressed="false"><span>03</span><div><strong>Value comes back</strong><small>A programme built for contributors.</small></div></button>
       </div>
       <p id="intro-status" role="status">Bringing the street to life…</p>
     </footer>
+    </div>
+    <section class="contributor-story" id="how-it-works" aria-labelledby="story-heading">
+      <div class="story-intro"><p class="folio">A SMALL CONTRIBUTION. A BIGGER PICTURE.</p><h2 id="story-heading">There’s value in<br>your point of <em>view.</em></h2><p>Your camera captures everyday life. With your permission, those moments can help build a knowledge base that people turn to for useful insights.</p></div>
+      <div class="journey-row"><div class="journey-number">01</div><div><p class="folio">IT STARTS WITH YOU</p><h3>A view only you can share.</h3><p>A shop entrance. A loading bay. A busy forecourt. Start with footage from a camera you own or are authorised to share.</p><a href="#/contribute" class="text-link">Tell us about your camera <span aria-hidden="true">↗</span></a></div><div class="story-art camera-art" aria-hidden="true"><div class="camera-body"><i></i><b></b></div><div class="camera-arm"></div><span>YOUR CAMERA · YOUR CHOICE</span></div></div>
+      <div class="journey-row"><div class="journey-number">02</div><div><p class="folio">CHOOSE YOUR PART OF THE STORY</p><h3>A clip. A clear choice.</h3><p>Choose a recording, preview the part you want to contribute, and review its details. Preparing a draft does not upload footage or connect a live camera.</p><a href="#sharing-control" data-scroll="sharing-control" class="text-link">Understand your choices <span aria-hidden="true">↓</span></a></div><div class="story-art clip-art" aria-hidden="true"><div class="clip-frame"><span>YOUR SELECTED MOMENT</span><div class="clip-street"><i></i><i></i><i></i><i></i></div><b>▶</b></div><div class="clip-timeline"><span></span><i></i></div><small>Review before you share.</small></div></div>
+      <div class="journey-row"><div class="journey-number">03</div><div><p class="folio">MAKE YOUR CONTRIBUTION COUNT</p><h3>Useful moments.<br>Shared value.</h3><p>Our aim is simple: reward people who contribute footage that helps build the knowledge base. See your drafts and follow the next steps in your contributor home.</p><p class="program-note">The reward programme is being developed. Eligibility, rates and payout timing are not yet available in this preview.</p></div><div class="story-art reward-art" aria-hidden="true"><div class="reward-seal">v<span>CONTRIBUTOR</span></div><p>Your perspective<br>has a place here.</p></div></div>
+    </section>
+    <section class="sharing-section" id="sharing-control" aria-labelledby="control-title"><div><p class="folio">A LITTLE CLARITY GOES A LONG WAY</p><h2 id="control-title">Your contribution.<br><em>Your decision.</em></h2><p>A useful network starts with people who understand what they’re sharing.</p></div><div class="sharing-answers"><details open><summary>What am I contributing?</summary><p>A CCTV recording you are authorised to share. You choose the camera context and a segment to review. This preview saves the draft details on your device; it does not publish or upload your video.</p></details><details><summary>How would I earn rewards?</summary><p>Visn’s contributor model is designed around rewards for accepted footage. Reward amounts, review criteria and payout methods have not been finalised. No balance or payout is created by this preview.</p></details><details><summary>Who uses the knowledge base?</summary><p>The second side of Visn is for people who pay to get information from the insights knowledge base. This experience focuses on helping footage contributors get started.</p></details><details><summary>Do I need to connect a live camera?</summary><p>No. Start with a recorded clip. We do not ask for camera passwords or open a live connection during onboarding.</p></details></div></section>
+    <section class="contributor-invitation"><p class="folio">EVERY BIGGER PICTURE STARTS SOMEWHERE.</p><h2>Let’s start with<br><em>your corner of the world.</em></h2><a class="warm-button" href="#/contribute">Start my contribution <span aria-hidden="true">↗</span></a><p>A guided preview. No upload or payout commitment.</p></section>
+    <footer class="site-footer"><a class="landing-brand" href="#/">visn<span class="brand-period">.</span></a><span>Small moments. Shared understanding.</span><a href="#/home">Contributor home</a><a href="#/workspace">Analysis workspace ↗</a></footer>
+  </section>
+  <section id="contributor-shell" class="contributor-shell" hidden>
+    <header class="contributor-header"><a class="landing-brand" href="#/" aria-label="Visn home">visn<span class="brand-period">.</span><small>YOUR VIEW. SHARED VALUE.</small></a><nav aria-label="Contributor navigation"><a href="#/home">Contributor home</a><a href="#/contribute" class="warm-button small">New contribution <span aria-hidden="true">+</span></a></nav></header>
+    <main id="onboarding-page" class="onboarding-page">
+      <aside class="onboarding-aside"><p class="folio">THE CONTRIBUTOR PREVIEW</p><h1 id="onboarding-title" tabindex="-1">A little of your world.<br>A lot of <em>possibility.</em></h1><p>Let’s prepare your first contribution, one thoughtful step at a time.</p><ol id="onboarding-progress"><li data-step-label="0" aria-current="step"><span>01</span><div>Your point of view<small>A little camera context</small></div></li><li data-step-label="1"><span>02</span><div>Choose a moment<small>Select and preview a clip</small></div></li><li data-step-label="2"><span>03</span><div>Make it yours<small>Choose the segment</small></div></li><li data-step-label="3"><span>04</span><div>One last look<small>Review and save your draft</small></div></li></ol><div class="draft-explainer"><span aria-hidden="true">◇</span><p><strong>You’re in control.</strong><br>This preview saves details on this device. Your video is not uploaded. No account or reward is created.</p></div></aside>
+      <div class="onboarding-form-wrap"><p class="folio" id="step-counter">01 / 04</p><form id="contribution-form" novalidate>
+        <fieldset data-onboarding-step="0"><legend>Where does your story begin?</legend><p class="step-description">Give your camera a name you’ll recognise.</p><label class="warm-field">Camera name<input id="contribution-camera" maxlength="80" required placeholder="e.g. The corner shop entrance" autocomplete="off"></label><label class="warm-field">What does it overlook?<select id="contribution-context" required><option value="">Choose a setting</option><option>Shop or business entrance</option><option>Forecourt or parking area</option><option>Loading bay or warehouse</option><option>Building entrance</option><option>Another authorised location</option></select></label><label class="warm-field">City or area <span class="optional">Optional · no exact address needed</span><input id="contribution-area" maxlength="100" placeholder="e.g. Bengaluru" autocomplete="address-level2"></label><label class="warm-check"><input id="contribution-authority" type="checkbox" required><span>I own this footage or have permission to contribute it.</span></label></fieldset>
+        <fieldset data-onboarding-step="1" hidden><legend>Choose a moment to contribute.</legend><p class="step-description">Start with a recorded clip. It stays on your device in this preview.</p><label class="contribution-drop" for="contribution-file"><span aria-hidden="true">↥</span><strong>Choose a CCTV recording</strong><small>MP4, WebM, MOV · up to 500 MB</small><input id="contribution-file" type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"></label><p id="contribution-file-status" role="status">No clip selected.</p><button type="button" id="use-example" class="text-button">Just exploring? Use an example draft ↗</button><div id="example-note" class="warm-notice" hidden>This is an example record for trying the flow. It contains no video and cannot earn rewards.</div></fieldset>
+        <fieldset data-onboarding-step="2" hidden><legend>Choose the part you want to share.</legend><p class="step-description">Review the recording and set a segment. The original file is unchanged.</p><video id="contribution-preview" controls playsinline preload="metadata" hidden></video><div id="example-preview" class="example-preview" hidden><span>EXAMPLE RECORD · NO VIDEO</span><strong>A moment at the shop entrance.</strong><small>Imagine a 30-second recording of arrivals and departures.</small></div><div class="segment-fields"><label class="warm-field">Start (seconds)<input id="segment-start" type="number" min="0" step="0.1" value="0" required></label><label class="warm-field">End (seconds)<input id="segment-end" type="number" min="0.1" step="0.1" required></label></div><button id="preview-segment" type="button" class="text-button">Play selected segment ▶</button><label class="warm-check"><input id="contribution-reviewed" type="checkbox" required><span>I’ve reviewed the selected segment and the permission needed to share it.</span></label><p class="field-help">No face blurring, redaction, or upload has been performed. Only draft details are saved.</p></fieldset>
+        <fieldset data-onboarding-step="3" hidden><legend>A clear picture of your contribution.</legend><p class="step-description">Check these details before saving your draft.</p><dl id="contribution-review" class="review-list"></dl><div class="warm-notice"><strong>What happens next?</strong><p>Your draft appears in contributor home. Submission, eligibility review and rewards will become available when the programme is ready. Saving this draft does not send footage to Visn.</p></div><label class="warm-check"><input id="contribution-draft-consent" type="checkbox" required><span>Save these draft details in this browser on this device.</span></label></fieldset>
+        <p id="contribution-error" class="warm-error" role="alert" hidden></p><div class="onboarding-actions"><button id="contribution-back" type="button" class="text-button" hidden>← Back</button><button id="contribution-next" class="warm-button" type="submit">Continue <span aria-hidden="true">→</span></button></div>
+      </form></div>
+    </main>
+    <main id="contributor-home" class="contributor-home" hidden><div class="home-heading"><div><p class="folio">YOUR CONTRIBUTOR HOME</p><h1 id="contributor-home-title" tabindex="-1">Every view adds<br>to the <em>picture.</em></h1><p>A place for your contributions, their progress, and what comes next.</p></div><a class="warm-button" href="#/contribute">Prepare a contribution <span aria-hidden="true">↗</span></a></div><p id="contribution-saved" class="warm-notice" role="status" hidden>Your draft is saved on this device. Your video has not been uploaded.</p><div class="contributor-summary"><article><span>YOUR DRAFTS</span><strong id="contributor-draft-count">0</strong><p>Prepared on this device</p></article><article><span>FOOTAGE SHARED</span><strong>—</strong><p>Submissions are not open yet</p></article><article><span>YOUR REWARDS</span><strong>Coming next</strong><p>Rates and payouts are not active</p></article></div><section class="contribution-ledger"><div class="ledger-heading"><h2>Your contributions</h2><span>LOCAL DRAFTS</span></div><div id="contribution-empty"><div class="empty-camera" aria-hidden="true">⌁</div><h3>Your first perspective belongs here.</h3><p>Choose a clip and save its details. We’ll keep your next step clear.</p><a href="#/contribute" class="text-link">Prepare my first contribution ↗</a></div><div id="contribution-list"></div></section><section class="home-next"><p class="folio">ON THE HORIZON</p><h2>From a draft to a contribution.</h2><p>The next step is a contributor programme with clear review criteria and reward terms. You’ll be able to decide whether to submit once those details are available.</p><a href="#/" class="text-link">Revisit the story ↗</a></section></main>
+    <footer class="site-footer"><span>visn. · Your view. Shared value.</span><a href="#/">Back to the street</a><a href="#/workspace">Analysis workspace ↗</a></footer>
   </section>
 
-  <div class="app-shell" inert>
+  <div class="app-shell" inert hidden>
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -347,22 +374,6 @@
 
   <div id="toast" class="toast" role="status"></div>
   <script type="module" src="/intro.js"></script>
-  <script>
-    // Keep workspace access available even if the scene module cannot load.
-    window.setTimeout(function () {
-      var intro = document.getElementById('town-intro');
-      if (!intro || intro.dataset.state !== 'loading') return;
-      intro.dataset.state = 'error';
-      document.getElementById('intro-status').textContent = 'Scene unavailable. Your workspace is ready.';
-      document.querySelectorAll('[data-enter]').forEach(function (button) {
-        button.onclick = function () {
-          intro.hidden = true;
-          document.querySelector('.app-shell').inert = false;
-          document.body.classList.remove('landing-open');
-        };
-      });
-    }, 10000);
-  </script>
   <script src="/app.js" defer></script>
 </body>
 </html>

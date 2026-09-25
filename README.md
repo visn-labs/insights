@@ -32,9 +32,11 @@ Open the **Memory** workspace in the UI to load authorized-camera presets, paste
 
 The landing page opens onto a coffee-and-cream nineteenth-century four-way junction, viewed diagonally from the southeast corner toward the centre of two perpendicular streets. A locally served Three.js scene gives the town dimensional shopfronts, pitched roofs, shuttered windows, cobbles, trees, lamps, and forty detailed townspeople. Horse-drawn carriages, a delivery handcart, cafe activity, shopping groups, parasols, and pigeons bring the four corners to life. Four modern CCTV cameras follow the characters; visible capture areas and tracking boxes connect to curved packet streams that rise and dissolve above the rooftops.
 
-The **See the moment**, **Connect the dots**, and **Find the story** controls explore the capture → transmission → insight sequence. **Follow a signal** restarts the journey. **Pause motion** and operating-system reduced-motion settings support a static scene. This is an illustrative product demo, not a live camera or backend status feed.
+The homepage now tells the contributor story: share an authorised perspective, prepare a clip, and understand the intended reward programme. **Start contributing** opens a four-step onboarding flow at `/#/contribute`; `/#/home` shows locally saved contribution drafts. The coffee-and-cream palette continues into the contributor home and the existing analysis workspace at `/#/workspace`.
 
-**Explore Visn**, **Open workspace**, or `Escape` opens the existing pipeline workspace. The header replay button returns to the landing. The page appears on each fresh load, with no session-storage gate. Rendering stops while the workspace is open or the tab is hidden. WebGL failure keeps workspace entry available. See [the landing implementation guide](docs/INTRO_3D.md).
+This is a contributor **preview**. Recordings can be selected and played locally, with a selected start/end segment. Only draft metadata is saved in browser local storage; video files are not uploaded or persisted. Accounts, eligibility review, reward rates and payouts are not implemented or implied. The labelled example lets users try the flow without a video.
+
+The scene uses distance-driven walking with world-space planted feet, heel-to-toe roll, knee/ankle solving, weight shifts and rounded turns. Story navigation no longer rewinds street activity. Pause and reduced-motion preferences freeze the illustration; rendering stops offscreen and on other pages. See [the landing implementation guide](docs/INTRO_3D.md) for verification and the close-up walking preview.
 
 ## Quick start: zero external services
 

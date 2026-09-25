@@ -28,8 +28,8 @@ use crate::{
     pipeline::{sample_observations, sample_policy},
     store::AppState,
     ui::{
-        ANIME_JS, APP_JS, ENGINE_JS, INDEX_HTML, INTRO_JS, STYLES_CSS, SVGS_JS, THREE_CORE_JS,
-        THREE_JS,
+        ANIME_JS, APP_JS, CONTRIBUTOR_CSS, CONTRIBUTOR_JS, ENGINE_JS, INDEX_HTML, INTRO_JS,
+        STYLES_CSS, SVGS_JS, THREE_CORE_JS, THREE_JS, WALKING_JS,
     },
 };
 
@@ -45,6 +45,9 @@ pub fn router(state: AppState) -> Router {
         .route("/vendor/three.core.min.js", get(three_core_js))
         .route("/vendor/anime.umd.min.js", get(anime_js))
         .route("/styles.css", get(styles))
+        .route("/assets/walking.js", get(walking_js))
+        .route("/assets/contributor.js", get(contributor_js))
+        .route("/assets/contributor.css", get(contributor_css))
         .route("/assets/{filename}", get(serve_asset))
         .route("/svgs/{filename}", get(serve_svg))
         .route("/healthz", get(health))
@@ -114,6 +117,19 @@ async fn anime_js() -> impl IntoResponse {
 
 async fn engine_js() -> impl IntoResponse {
     javascript(ENGINE_JS)
+}
+
+async fn walking_js() -> impl IntoResponse {
+    javascript(WALKING_JS)
+}
+async fn contributor_js() -> impl IntoResponse {
+    javascript(CONTRIBUTOR_JS)
+}
+async fn contributor_css() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "text/css; charset=utf-8")],
+        CONTRIBUTOR_CSS,
+    )
 }
 
 fn javascript(body: &'static str) -> impl IntoResponse {

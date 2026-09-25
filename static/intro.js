@@ -1,3 +1,4 @@
+import {renderContributor} from './assets/contributor.js';
 const root = document.querySelector('#town-intro');
 const canvas = document.querySelector('#town-canvas');
 const app = document.querySelector('.app-shell');
@@ -6,9 +7,9 @@ const motion = document.querySelector('#intro-motion');
 const status = document.querySelector('#intro-status');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const stories = [
-  ['Small moments. Clear signals.', 'Four cameras follow movement across the junction.', 'CAPTURING'],
-  ['Every moment, connected.', 'Captured moments travel together as a stream of useful context.', 'TRANSMITTING'],
-  ['The street becomes a story.', 'Signals rise beyond the rooftops. Find the moments that matter in your workspace.', 'DELIVERING'],
+  ['It starts with your perspective.', 'Your camera sees a small part of the world. You choose the moment to contribute.', 'YOUR VIEW'],
+  ['A shared understanding.', 'Contributed moments can help build a useful, searchable knowledge base.', 'KNOWLEDGE'],
+  ['Value comes back to you.', 'A contributor programme designed around rewards. Explore the preview to see how sharing could work.', 'SHARED VALUE'],
 ];
 let scene, dismissed = false, userPaused = reducedMotion.matches;
 let initPromise;
@@ -31,16 +32,23 @@ function motionLabel() {
   motion.innerHTML = userPaused ? 'Play motion <span aria-hidden="true">▶</span>' : 'Pause motion <span aria-hidden="true">Ⅱ</span>';
   if (scene) status.textContent = userPaused ? 'A quiet moment · Animation paused' : 'A living illustration · Move your pointer to explore';
 }
-function enter() {
-  dismissed = true;
-  scene?.stop();
-  root.hidden = true;
-  app.inert = false;
-  document.body.classList.remove('landing-open');
-  window.scrollTo(0, 0);
-  document.querySelector('#page-title').setAttribute('tabindex', '-1');
-  document.querySelector('#page-title').focus({ preventScroll: true });
+function enter(){location.hash='/workspace';}
+function route() {
+  const page=location.hash.replace(/^#\/?/,'').split('?')[0];
+  const contributor=page==='home'||page==='contribute',workspace=page==='workspace';
+  dismissed=contributor||workspace;
+  document.querySelector('#contribution-preview').pause();
+  root.hidden=dismissed;app.hidden=!workspace;app.inert=!workspace;
+  document.querySelector('#contributor-shell').hidden=!contributor;
+  document.body.classList.toggle('landing-open',!dismissed);
+  if(dismissed)scene?.stop();else if(scene){scene.resize();if(heroVisible)scene.start();}else initialize();
+  if(contributor)renderContributor(page);
+  document.title=contributor?(page==='home'?'Visn — Contributor home':'Visn — Your first contribution'):workspace?'Visn — Analysis workspace':'Visn — Your view. Shared value.';
+  window.scrollTo(0,0);
+  const target=contributor?document.querySelector(page==='home'?'#contributor-home-title':'#onboarding-title'):workspace?document.querySelector('#page-title'):document.querySelector('#intro-enter');
+  if(target.tagName==='H1')target.setAttribute('tabindex','-1');target.focus({preventScroll:true});
 }
+let heroVisible=true;
 async function initialize() {
   if (scene || initPromise) return initPromise;
   initPromise = (async () => {
@@ -48,6 +56,7 @@ async function initialize() {
       const { TownScene } = await import('./engine.js');
       scene = new TownScene(canvas, document.querySelector('#camera-labels'), showStory);
       scene.reduced = reducedMotion.matches;
+      showStory(scene.stage);
       root.dataset.state = 'ready';
       scene.paused = userPaused;
       if (!dismissed) scene.start();
@@ -62,20 +71,14 @@ async function initialize() {
   })();
   return initPromise;
 }
-function show() {
-  dismissed = false; root.hidden = false; app.inert = true;
-  document.body.classList.add('landing-open');
-  window.scrollTo(0, 0);
-  if (scene) { scene.resize(); scene.start(); } else initialize();
-}
-
 document.querySelectorAll('[data-enter]').forEach(button => button.addEventListener('click', enter));
-replay.addEventListener('click', () => { show(); document.querySelector('#intro-enter').focus({ preventScroll: true }); });
-document.querySelector('.landing-brand').addEventListener('click', event => { event.preventDefault(); scene?.setStage(0); });
+replay.addEventListener('click',()=>{location.hash='/';});
+document.querySelector('.landing-brand').addEventListener('click', event => { event.preventDefault(); root.scrollTo({top:0,behavior:reducedMotion.matches?'auto':'smooth'});scene?.setStage(0); });
 document.querySelectorAll('[data-story]').forEach(button => button.addEventListener('click', () => {
   const index = Number(button.dataset.story); showStory(index); scene?.setStage(index);
 }));
 document.querySelector('#intro-tour').addEventListener('click', () => {
+  document.querySelector('#how-it-works').scrollIntoView({behavior:reducedMotion.matches?'auto':'smooth'});
   scene?.setStage(0);
   if (!reducedMotion.matches) { userPaused = false; scene?.setPaused(false); motionLabel(); }
   else { showStory(1); scene?.setStage(1); }
@@ -86,12 +89,13 @@ root.addEventListener('pointermove', event => {
   scene.pointer.set((event.clientX / innerWidth - .5) * 2, (event.clientY / innerHeight - .5) * 2);
 }, { passive: true });
 root.addEventListener('pointerleave', () => scene?.pointer.set(0, 0));
-window.addEventListener('keydown', event => { if (event.key === 'Escape' && !dismissed) enter(); });
+window.addEventListener('hashchange',route);
+document.querySelectorAll('[data-scroll]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();document.getElementById(link.dataset.scroll).scrollIntoView({behavior:reducedMotion.matches?'auto':'smooth'});}));
 window.addEventListener('resize', () => { if (!dismissed) scene?.resize(); });
 // Recompute label offsets when a short mobile viewport scrolls the landing.
-window.addEventListener('scroll', () => { if (!dismissed && scene) { scene.rect = canvas.getBoundingClientRect(); if (userPaused) scene.update(0); } }, { passive: true });
+root.addEventListener('scroll', () => { if (!dismissed && scene) { scene.rect = canvas.getBoundingClientRect(); if (userPaused) scene.update(0); } }, { passive: true });
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) scene?.stop(); else if (!dismissed) scene?.start();
+  if (document.hidden) scene?.stop(); else if (!dismissed&&heroVisible) scene?.start();
 });
 reducedMotion.addEventListener('change', event => {
   userPaused = event.matches;
@@ -103,6 +107,7 @@ canvas.addEventListener('webglcontextlost', event => {
   status.textContent = 'Scene interrupted. Reload to restore it, or open your workspace.';
 });
 window.addEventListener('pagehide', () => scene?.stop());
-window.addEventListener('pageshow', () => { if (!dismissed) scene?.start(); });
+window.addEventListener('pageshow', () => { if (!dismissed&&heroVisible) scene?.start(); });
+new IntersectionObserver(entries=>{heroVisible=entries[0].isIntersecting;if(scene){if(heroVisible&&!dismissed)scene.start();else scene.stop();}},{threshold:.05}).observe(document.querySelector('.landing-hero'));
 motionLabel();
-show();
+route();

@@ -1,91 +1,40 @@
-// Run with Playwright installed externally; the application itself has no npm dependency.
-const {chromium}=require(process.env.VISN_PLAYWRIGHT_MODULE || 'playwright');
-const assert=require('node:assert/strict');
-const fs=require('node:fs');
-const root=require('node:path').resolve(__dirname,'..');
-const baseURL=process.env.VISN_PREVIEW_URL || 'http://127.0.0.1:8080/';
-fs.mkdirSync(root+'/output/playwright',{recursive:true});
-async function captureSceneFrame(page) {
-  // Screenshot the visible region without scrolling a deliberately cropped canvas.
-  const clip=await page.evaluate(()=>{
-    const r=document.querySelector('#town-canvas').getBoundingClientRect();
-    const x=Math.max(0,r.left),y=Math.max(0,r.top);
-    return {x:x+scrollX,y:y+scrollY,width:Math.min(innerWidth,r.right)-x,height:Math.min(innerHeight,r.bottom)-y};
-  });
-  return (await page.screenshot({clip})).toString('base64');
-}
-
+// npm is needed only for this external browser check, not by the application.
+const {chromium}=require(process.env.VISN_PLAYWRIGHT_MODULE||'playwright');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),out=root+'/output/playwright';fs.mkdirSync(out,{recursive:true});
+const baseURL=process.env.VISN_PREVIEW_URL||'http://127.0.0.1:8080/';
+async function frame(page){const clip=await page.locator('#town-canvas').evaluate(e=>{const r=e.getBoundingClientRect(),x=Math.max(r.left,0),y=Math.max(r.top,0);return{x,y,width:Math.min(innerWidth,r.right)-x,height:Math.min(innerHeight,r.bottom)-y};});return(await page.screenshot({clip})).toString('base64');}
 (async()=>{
-  const browser=await chromium.launch({executablePath:process.env.VISN_BROWSER_PATH || (process.platform==='darwin'?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':undefined),headless:true,args:['--no-sandbox']});
-  const results=[], errors=[];
-  const context=await browser.newContext({viewport:{width:1440,height:960},deviceScaleFactor:1});
-  const page=await context.newPage();
-  page.on('pageerror',e=>errors.push(e.stack));
-  await page.goto(baseURL);
-  await page.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='ready');
-  await page.waitForTimeout(800);
-  const start=await captureSceneFrame(page);
-  await page.waitForTimeout(500);
-  assert.ok((await captureSceneFrame(page))!==start,'Canvas must visibly change while playing');
-  results.push('Animated WebGL frames change over time');
-  await page.screenshot({path:root+'/output/playwright/desktop.png'});
-  for(let i=0;i<3;i++) {
-    await page.locator('.story-tab').nth(i).click();
-    assert.equal(await page.locator('.story-tab').nth(i).getAttribute('aria-pressed'),'true');
-    assert.equal(await page.locator('#signal-state').textContent(),['CAPTURING','TRANSMITTING','DELIVERING'][i]);
-  }
-  results.push('All three story controls update the animation phase and explanation');
-  await page.waitForFunction(()=>document.querySelector('#signal-state').textContent==='CAPTURING',null,{timeout:12000});
-  results.push('The complete signal loop returns from delivery to capture');
-  await page.locator('#intro-motion').click();
-  await page.waitForTimeout(100);
-  const paused=await captureSceneFrame(page);
-  await page.waitForTimeout(450);
-  assert.ok((await captureSceneFrame(page))===paused,'Pause freezes canvas');
-  results.push('Pause freezes the rendered scene');
-  await page.locator('#intro-motion').click();
-  await page.locator('#intro-tour').click();
-  assert.equal(await page.locator('#signal-state').textContent(),'CAPTURING');
-  await page.locator('#intro-enter').click();
-  assert.equal(await page.locator('#town-intro').isVisible(),false);
-  assert.equal(await page.locator('.app-shell').evaluate(e=>e.inert),false);
-  assert.equal(await page.locator('#job-form').isVisible(),true);
-  await page.locator('.nav-item[data-view="memory"]').click();
-  assert.equal(await page.locator('#memory-view').isVisible(),true);
-  await page.locator('#replay-intro').click();
-  assert.equal(await page.locator('#town-intro').isVisible(),true);
-  assert.equal(await page.locator('.app-shell').evaluate(e=>e.inert),true);
-  await page.keyboard.press('Escape');
-  assert.equal(await page.locator('#town-intro').isVisible(),false);
-  results.push('Entry, existing workspace navigation, replay, Escape, and focus isolation work');
-  await page.locator('#replay-intro').click();
-  await page.setViewportSize({width:390,height:844});
-  await page.waitForTimeout(700);
-  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No mobile horizontal overflow');
-  await page.screenshot({path:root+'/output/playwright/mobile.png',fullPage:true});
-  await page.locator('.story-tab').nth(1).click();
-  assert.equal(await page.locator('#signal-state').textContent(),'TRANSMITTING');
-  await page.locator('[data-enter]').first().click();
-  assert.equal(await page.locator('#town-intro').isVisible(),false);
-  results.push('390px mobile layout has no horizontal overflow; story and entry controls work');
-  await page.emulateMedia({reducedMotion:'reduce'});
-  await page.locator('#replay-intro').click();
-  assert.equal(await page.locator('#intro-motion').getAttribute('aria-pressed'),'true');
-  const still=await captureSceneFrame(page);
-  await page.waitForTimeout(400);
-  assert.ok((await captureSceneFrame(page))===still,'Reduced motion must freeze canvas');
-  await page.screenshot({path:root+'/output/playwright/reduced-motion.png',fullPage:true});
-  results.push('Reduced-motion preference produces a static scene');
-  assert.deepEqual(errors,[],'No browser runtime exceptions');
-  results.push('No browser runtime exceptions');
-  // A fresh context verifies WebGL failure still allows access to the real app.
-  const fallback=await browser.newPage();
-  await fallback.addInitScript(()=>{const orig=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){if(type.startsWith('webgl'))return null;return orig.call(this,type,...args);};});
-  await fallback.goto(baseURL);
-  await fallback.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='error');
-  await fallback.locator('#intro-enter').click();
-  assert.equal(await fallback.locator('#job-form').isVisible(),true);
-  results.push('WebGL-unavailable fallback preserves workspace entry');
+ const browser=await chromium.launch({executablePath:process.env.VISN_BROWSER_PATH||(process.platform==='darwin'?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':undefined),headless:true});
+ const results=[],errors=[];const page=await browser.newPage({viewport:{width:1440,height:960}});page.on('pageerror',e=>errors.push(e.stack));
+ await page.goto(baseURL);await page.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='ready');
+ const moving=await frame(page);await page.waitForTimeout(350);assert.ok((await frame(page))!==moving,'The scene advances while playing');
+ await page.locator('#intro-motion').click();await page.waitForTimeout(150);const paused=await frame(page);await page.waitForTimeout(200);assert.ok((await frame(page))===paused,'Pause freezes the visible scene');
+ for(let i=0;i<3;i++){await page.locator('.story-tab').nth(i).click();assert.equal(await page.locator('.story-tab').nth(i).getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#signal-state').textContent(),['YOUR VIEW','KNOWLEDGE','SHARED VALUE'][i]);}
+ await page.screenshot({path:out+'/contributor-landing.png'});results.push('Live 3D animation, pause and all contributor story chapters');
+ await page.locator('[data-scroll="how-it-works"]').first().click();await page.waitForTimeout(500);await page.screenshot({path:out+'/contributor-story.png'});
+ await page.goto(baseURL+'#/contribute');await page.locator('#contribution-next').click();assert.equal(await page.locator('#step-counter').textContent(),'01 / 04');
+ await page.locator('#contribution-camera').fill('Corner shop entrance');await page.locator('#contribution-context').selectOption({label:'Shop or business entrance'});await page.locator('#contribution-area').fill('Bengaluru');await page.locator('#contribution-authority').check();
+ await page.screenshot({path:out+'/onboarding.png'});await page.locator('#contribution-next').click();await page.locator('#contribution-next').click();assert.equal(await page.locator('#contribution-error').isVisible(),true);
+ await page.locator('#contribution-file').setInputFiles({name:'not-video.txt',mimeType:'text/plain',buffer:Buffer.from('not a video')});assert.match(await page.locator('#contribution-error').textContent(),/Choose a non-empty/);
+ await page.locator('#use-example').click();await page.locator('#contribution-next').click();await page.locator('#segment-start').fill('10');await page.locator('#segment-end').fill('5');await page.locator('#contribution-next').click();assert.equal(await page.locator('#step-counter').textContent(),'03 / 04');
+ await page.locator('#segment-start').fill('2.5');await page.locator('#segment-end').fill('22.5');await page.locator('#contribution-reviewed').check();await page.locator('#contribution-next').click();assert.match(await page.locator('#contribution-review').textContent(),/2.5–22.5/);
+ await page.screenshot({path:out+'/contribution-review.png'});await page.locator('#contribution-next').click();assert.equal(await page.locator('#step-counter').textContent(),'04 / 04');await page.locator('#contribution-draft-consent').check();await page.locator('#contribution-next').click();
+ await page.waitForURL('**/#/home');await page.locator('#contributor-home').waitFor({state:'visible'});assert.equal(await page.locator('#contributor-draft-count').textContent(),'1');await page.reload();assert.equal(await page.locator('#contributor-draft-count').textContent(),'1');await page.locator('.draft-details summary').click();assert.match(await page.locator('.draft-details').textContent(),/2.5–22.5/);
+ await page.screenshot({path:out+'/contributor-home.png'});results.push('Validated onboarding, explicit permissions, segment boundaries, review and persistent local draft');
+ // A real browser-generated recording exercises file decoding, not a mocked file input.
+ const recording=await page.evaluate(async()=>{const c=document.createElement('canvas');c.width=160;c.height=90;const ctx=c.getContext('2d'),stream=c.captureStream(10),chunks=[];const recorder=new MediaRecorder(stream,{mimeType:'video/webm'});const done=new Promise(resolve=>recorder.onstop=async()=>resolve(Array.from(new Uint8Array(await new Blob(chunks,{type:'video/webm'}).arrayBuffer()))));recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();for(let i=0;i<12;i++){ctx.fillStyle=i%2?'#d5c2a4':'#5c7759';ctx.fillRect(0,0,160,90);await new Promise(r=>setTimeout(r,100));}recorder.stop();stream.getTracks().forEach(t=>t.stop());return done;});
+ await page.goto(baseURL+'#/contribute');await page.locator('#contribution-camera').fill('Local video test');await page.locator('#contribution-context').selectOption({index:1});await page.locator('#contribution-authority').check();await page.locator('#contribution-next').click();
+ await page.locator('#contribution-file').setInputFiles({name:'local-preview.webm',mimeType:'video/webm',buffer:Buffer.from(recording)});await page.waitForFunction(()=>document.querySelector('#contribution-file-status').textContent.includes('MB'));await page.locator('#contribution-next').click();assert.equal(await page.locator('#contribution-preview').isVisible(),true);await page.locator('#preview-segment').click();await page.waitForTimeout(150);assert.equal(await page.locator('#contribution-preview').evaluate(v=>v.paused),false);results.push('Real local WebM decoding and segment playback');
+ await page.goto(baseURL+'#/workspace');assert.equal(await page.locator('#job-form').isVisible(),true);assert.equal(await page.locator('.app-shell').evaluate(e=>e.inert),false);await page.screenshot({path:out+'/warm-workspace.png'});await page.locator('#replay-intro').click();await page.locator('#town-intro').waitFor({state:'visible'});assert.equal(await page.locator('#town-intro').isVisible(),true);results.push('Existing analysis workspace and return navigation remain usable');
+ for(const width of [320,768,1024,1440]){
+  await page.setViewportSize({width,height:900});
+  for(const route of ['#/','#/contribute','#/home']){await page.goto(baseURL+route);await page.waitForTimeout(80);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`Overflow at ${width} ${route}`);if(route==='#/')assert.equal(await page.locator('#town-intro').evaluate(e=>e.scrollWidth<=e.clientWidth),true,`Landing overflow ${width}`);}
+  if(width===320){await page.screenshot({path:out+'/mobile-home.png',fullPage:true});await page.goto(baseURL+'#/contribute');await page.screenshot({path:out+'/mobile-onboarding.png',fullPage:true});await page.goto(baseURL+'#/');await page.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='ready');await page.screenshot({path:out+'/mobile-landing.png'});}
+ }
+ results.push('Landing, onboarding and home fit 320, 768, 1024 and 1440 px');
+ await page.emulateMedia({reducedMotion:'reduce'});await page.goto(baseURL);await page.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='ready');const still=await frame(page);await page.waitForTimeout(200);assert.ok((await frame(page))===still,'Reduced motion remains static');results.push('Reduced motion freezes the 3D scene');
+ const fallback=await browser.newPage();await fallback.addInitScript(()=>{const get=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){return type.startsWith('webgl')?null:get.call(this,type,...args);};});await fallback.goto(baseURL);await fallback.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='error');await fallback.locator('#intro-enter').click();await fallback.locator('#contribution-camera').waitFor({state:'visible'});assert.equal(await fallback.locator('#contribution-camera').isVisible(),true);await fallback.close();results.push('No-WebGL fallback still allows contributor onboarding');
   // Inspect the real exported renderer in a separate browser fixture. This keeps
   // production code free of debug globals and still exercises the served module.
   const geometryPage=await browser.newPage({viewport:{width:1440,height:960}});
@@ -124,7 +73,7 @@ async function captureSceneFrame(page) {
       targets.forEach((target,side)=>{
         if(!target)return;
         const hand=actor.hands[side].getWorldPosition(new THREE.Vector3());
-        const goal=actor.torso.localToWorld(new THREE.Vector3(...target));
+        const goal=actor.worldGrips?actor.worldGrips[side].clone():actor.torso.localToWorld(new THREE.Vector3(...target));
         gripError=Math.max(gripError,hand.distanceTo(goal));
       });
     }

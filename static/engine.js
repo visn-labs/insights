@@ -1,4 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
+import {walkingRoute,walkingTravel,poseWalking} from './assets/walking.js';
 
 // One locally rendered world. Distances are metres; motion uses elapsed seconds.
 const C = { paper: 0xf5eddf, plaster: 0xe3caa1, light: 0xf7e5bf, timber: 0x654732, roof: 0x75523f, brick: 0x9c7054, dark: 0x3e332c, glass: 0x71887d, stone: 0xc2a889, brass: 0xac8853, green: 0x567566, signal: 0xd7f4bf };
@@ -13,6 +14,7 @@ export class TownScene {
     this.onStage = onStage;
     this.time = 1.5;
     this.stage = 0;
+    this.storyOffset = 0;
     this.running = false;
     this.paused = false;
     this.reduced = false;
@@ -155,6 +157,7 @@ export class TownScene {
     this.box(this.scene, 0, -.17, 0, 130, .25, 130, 0xd6bea0);
     // Instanced cobbles retain real shadows/depth without thousands of draw calls.
     const tiles = [];
+    this.cobbleHeights=new Map();
     for (let x = -32; x < 32; x += .64) for (let z = -32; z < 32; z += .43) {
       if (Math.abs(x) > 4.35 && Math.abs(z) > 4.35) continue;
       tiles.push([x + (Math.round(z / .43) % 2) * .3, z]);
@@ -164,6 +167,8 @@ export class TownScene {
     tiles.forEach(([x, z], i) => {
       dummy.position.set(x, -.035 + this.random() * .023, z);
       dummy.scale.set(.57 + this.random() * .035, .09, .36 + this.random() * .025);
+      const row=Math.round((z+32)/.43),shift=(Math.round(z/.43)%2)*.3;
+      this.cobbleHeights.set(`${Math.round((x+32-shift)/.64)}/${row}`,{x,z,top:dummy.position.y+.045});
       dummy.rotation.y = (this.random() - .5) * .05; dummy.updateMatrix(); stones.setMatrixAt(i, dummy.matrix);
       color.setHex([0xcab597, 0xbfa589, 0xd0b99b, 0xb7a18a, 0xc4af94][i % 5]); stones.setColorAt(i, color);
     });
@@ -487,7 +492,7 @@ export class TownScene {
     const hairColor=[0x392e27,0x584433,0x725a43,0x827366][index%4];
     const torso=new THREE.Group();g.add(torso);
     const body=this.lathe(torso,[[.15,.89],[.18,.98],[.155,1.1],[.175,1.28],[female?.195:.215,1.39],[female?.185:.20,1.44],[.135,1.49],[.07,1.51]],coat);
-    body.scale.z=.66;
+    body.scale.z=.74;
     let skirt,coatHem;
     if(female) {
       skirt=this.lathe(g,[[.29,.14],[.305,.18],[.285,.37],[.245,.65],[.19,.9],[.15,1.1]],coat,28);skirt.scale.z=.8;
@@ -508,9 +513,9 @@ export class TownScene {
       this.rounded(torso,side*.10,1.355,.15,.058,.22,.025,coat,.012).rotation.z=side*.32;
       this.rounded(torso,side*.132,1.027,.132,.095,.016,.028,0x6a5541,.004);
     }
-    for(let i=0;i<4;i++)this.orb(torso,.043,1.095+i*.078,.153,.012,C.brass);
-    if(role==='vendor')this.rounded(torso,0,1.0,.17,.3,.5,.022,0xd9cbb0,.024);
-    if(role==='porter')this.rounded(torso,0,1.27,.16,.16,.18,.02,0x785641,.02);
+    for(let i=0;i<4;i++)this.orb(torso,.043,1.095+i*.078,.123+i*.008,.012,C.brass);
+    if(role==='vendor')this.rounded(torso,0,1.0,.139,.3,.5,.022,0xd9cbb0,.024);
+    if(role==='porter')this.rounded(torso,0,1.27,.14,.16,.18,.02,0x785641,.02);
     const head=new THREE.Group();head.position.y=1.71;torso.add(head);
     // A single tapered head surface avoids overlapping primitive seams at the jaw.
     if(!this.geometryCache.has('adult-head')) {
@@ -617,9 +622,13 @@ export class TownScene {
       if(!this.materials.has(key))this.materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.92}));
       mesh.material=this.materials.get(key);
     });
+    const pelvis=new THREE.Group();pelvis.position.y=.956;
+    for(const child of [...g.children]){child.position.y-=.956;pelvis.add(child);}g.add(pelvis);
+    const spine=new THREE.Group();spine.position.y=.18;pelvis.add(spine);
+    torso.position.y-=.18;spine.add(torso);
     g.scale.setScalar(.96+(index%6)*.015);
     this.scene.add(g);
-    return {mesh:g,torso,head,limbs,knees,elbows,ankles,hands,fingers,skirt,coatHem,heldProp,role,phase:index*1.73,
+    return {mesh:g,pelvis,spine,torso,head,limbs,knees,elbows,ankles,hands,fingers,skirt,coatHem,heldProp,role,phase:index*1.73,
       anatomy:{height:1.835,headHeight:.25,hip:.956,upperLeg:.44,lowerLeg:.42,soleOffset:.096,shoulder:1.435,upperArm:.31,lowerArm:.285}};
   }
   fitHands(actor) {
@@ -643,7 +652,10 @@ export class TownScene {
     if(actor.heldProp==='bag') {
       actor.limbs[3].rotation.x=0;actor.elbows[1].rotation.x=-.04;
     }
-    if(actor.grips)actor.grips.forEach(([x,y,z],side)=>reach(side,x,y,z));
+    if(actor.worldGrips) {
+      actor.mesh.updateWorldMatrix(true,true);
+      actor.worldGrips.forEach((point,side)=>{const p=actor.torso.worldToLocal(point.clone());reach(side,p.x,p.y,p.z);});
+    } else if(actor.grips)actor.grips.forEach(([x,y,z],side)=>reach(side,x,y,z));
     for(const side of [0,1]) {
       const holding=actor.grips||(side===1&&actor.heldProp);
       actor.fingers[side].forEach(({joint,tip})=>{joint.rotation.x=holding?-.85:-.1;tip.rotation.x=holding?-.95:-.15;});
@@ -663,14 +675,30 @@ export class TownScene {
     // Fold the long coat above the seat instead of sending its hem through the wood.
     if(actor.coatHem){actor.coatHem.scale.y=.5;actor.coatHem.position.y=.55;}
   }
-  route(points) {
-    let length=0;
-    const segments=[];
-    for(let i=0;i<points.length-1;i++) {
-      const a=new THREE.Vector3(points[i][0],.23,points[i][1]),b=new THREE.Vector3(points[i+1][0],.23,points[i+1][1]);
-      const distance=a.distanceTo(b);segments.push({a,b,start:length,distance});length+=distance;
+  groundHeight(x,z) {
+    const ax=Math.abs(x),az=Math.abs(z);
+    if(ax>4.725&&az>4.725)return .237;
+    if((Math.abs(ax-4.6)<.126&&az>4.2)||(Math.abs(az-4.6)<.126&&ax>4.2))return .31;
+    if(ax>4.65&&az>4.65)return .17;
+    let height=-.045;
+    const row=Math.round((z+32)/.43);
+    for(let r=row-1;r<=row+1;r++) {
+      const rz=-32+r*.43,shift=(Math.round(rz/.43)%2)*.3;
+      const col=Math.round((x+32-shift)/.64);
+      for(let c=col-1;c<=col+1;c++) {
+        const stone=this.cobbleHeights.get(`${c}/${r}`);
+        if(stone&&Math.abs(stone.x-x)<.31&&Math.abs(stone.z-z)<.205)height=Math.max(height,stone.top);
+      }
     }
-    return {segments,length};
+    for(const side of [-1,1])for(let i=-3;i<=3;i++) {
+      if((Math.abs(x-i*.85)<.31&&Math.abs(z-side*3.65)<.24)||(Math.abs(z-i*.85)<.31&&Math.abs(x-side*3.65)<.24))height=Math.max(height,.0525);
+    }
+    return height;
+  }
+  route(points) {return walkingRoute(points);}
+  walkPerson(actor,path,distance,speed,stride,turn=null) {
+    poseWalking(actor,{path,distance,speed,stride,turn,ground:(x,z)=>this.groundHeight(x,z)});
+    this.fitHands(actor);
   }
   buildLife() {
     // Sidewalk promenades round the four right-angle corners, plus crossing flows.
@@ -682,13 +710,15 @@ export class TownScene {
         const points=[[sx*lane,sz*26],[sx*lane,sz*lane],[sx*26,sz*lane]];
         if(i%2)points.reverse();
         actor.route=this.route(points);actor.speed=i===4?1.05:.5+(i%3)*.1;actor.offset=10+i*4.4;
+        actor.stride=(.86+actor.speed*.21)*actor.mesh.scale.y;
         this.actors.push(actor);
       }
     }
     for(let i=0;i<8;i++) {
       const actor=this.person(index++);const axis=i%2,side=i%4<2?1:-1;
       actor.route=this.route(axis?[[side*3.35,-8],[side*3.35,8]]:[[-8,side*3.35],[8,side*3.35]]);
-      actor.crossing=axis;actor.offset=(i%4)*1.1;actor.speed=.7;this.actors.push(actor);
+      actor.crossing=axis;actor.offset=(i%4)*1.1;actor.speed=.7;
+      actor.stride=actor.route.length/Math.round(actor.route.length/actor.mesh.scale.y);this.actors.push(actor);
     }
     const locals=[[-7.2,-5.85,0,'vendor'],[-8.5,-4.96,Math.PI,'reader'],[7,-5.35,Math.PI,'vendor'],[8.15,-5.1,-1.8,'walker'],[-5.2,7.2,1.3,'walker'],[-5.35,8.05,2.6,'walker'],[6.62,8.55,Math.PI/2,'reader'],[5.65,6.3,-2.4,'walker']];
     locals.forEach(([x,z,rotation,role],i)=>{
@@ -785,6 +815,9 @@ export class TownScene {
     for(let i=0;i<5;i++)this.rounded(g,(i%2-.5)*.38,1.1+Math.floor(i/2)*.18,((i%3)-1)*.3,.34,.25,.32,0xc1a47a,.025);
     const porter=this.person(51,'porter');porter.mesh.removeFromParent();g.add(porter.mesh);porter.mesh.position.set(0,0,-1.55);porter.grips=[-1,1].map(side=>[side*.4/porter.mesh.scale.x,1.04/porter.mesh.scale.y,.25/porter.mesh.scale.z]);this.fitHands(porter);
     this.handcart={mesh:g,wheels,porter};
+    porter.stride=32/Math.round(32/porter.mesh.scale.y);
+    porter.route=this.route([[-17.55,-2.3],[14.45,-2.3]]);
+    porter.worldGrips=[new THREE.Vector3(),new THREE.Vector3()];
   }
 
   batchAnimatedMeshes() {
@@ -850,7 +883,7 @@ export class TownScene {
 
   resize() {
     const rect=this.canvas.getBoundingClientRect();
-    this.width=rect.width;this.height=rect.height;
+    this.width=Math.max(1,rect.width);this.height=Math.max(1,rect.height);
     this.camera.aspect=this.width/this.height;
     this.camera.fov=this.width < 700 ? 65 : 58;
     this.camera.updateProjectionMatrix();
@@ -859,7 +892,7 @@ export class TownScene {
     if(!this.running || this.paused) this.update(0);
   }
   setStage(stage) {
-    this.time=Math.floor(this.time/18)*18+stage*6+.4;
+    this.storyOffset=stage*6+.4-this.time%18;
     this.stage=stage;this.onStage(stage);this.update(0);
   }
   setPaused(paused) { this.paused=paused;if(paused)this.stop();else this.start(); }
@@ -875,7 +908,7 @@ export class TownScene {
   stop() { this.running=false;cancelAnimationFrame(this.raf); }
   update(delta) {
     this.time+=delta;
-    const t=this.time,stage=Math.floor((t%18)/6);
+    const t=this.time,signalTime=t+this.storyOffset,stage=Math.floor(((signalTime%18+18)%18)/6);
     if(stage!==this.stage){this.stage=stage;this.onStage(stage);}
     if (this.reduced) this.smoothPointer.set(0, 0);
     else if (delta > 0) this.smoothPointer.lerp(this.pointer, 1 - Math.exp(-delta * 3));
@@ -885,38 +918,27 @@ export class TownScene {
     this.camera.lookAt(0,1.65,0);
     this.camera.updateMatrixWorld();
     for(const actor of this.actors) {
-      let walking=0;
       if(actor.route) {
-        let travel;
+        let path=actor.route,distance,speed,turn=null;
         if(actor.crossing!==undefined) {
-          // Perpendicular traffic takes turns; people wait at the kerb between crossings.
-          const cycle=(t+10+(actor.crossing?32:0))%64;
-          const u=THREE.MathUtils.clamp((cycle-5-actor.offset)/18,0,1);
-          const reverse=Math.floor((t+10+(actor.crossing?32:0))/64)%2;
-          travel=(reverse?1-u:u)*(actor.route.length-.001);
-          walking=u>0&&u<1?1:0;
-        } else {travel=(t*actor.speed+actor.offset)%actor.route.length;walking=1;}
-        const segment=actor.route.segments.find(s=>travel<=s.start+s.distance)||actor.route.segments.at(-1);
-        const u=(travel-segment.start)/segment.distance;
-        actor.mesh.position.lerpVectors(segment.a,segment.b,u);
-        const direction=segment.b.clone().sub(segment.a);
-        if(actor.crossing!==undefined && Math.floor((t+10+(actor.crossing?32:0))/64)%2)direction.negate();
-        actor.mesh.rotation.y=Math.atan2(direction.x,direction.z);
-        actor.mesh.position.y+=Math.abs(Math.sin(t*5+actor.phase))*.018*walking;
+          const clock=t+10+(actor.crossing?32:0),cycle=clock%64;
+          const reverse=Math.floor(clock/64)%2;
+          const journey=walkingTravel(cycle-5-actor.offset,actor.route.length,18);
+          distance=journey.distance;speed=journey.speed;
+          const backward={length:actor.route.length,sample:d=>{const p=actor.route.sample(actor.route.length-d);p.yaw+=Math.PI;return p;}};
+          if(reverse)path=backward;
+          if(cycle<2.5){turn={from:reverse?actor.route:backward,progress:cycle/2.5};speed=.23*Math.sin(Math.PI*turn.progress);}
+        } else {distance=(t*actor.speed+actor.offset)%actor.route.length;speed=actor.speed;}
+        this.walkPerson(actor,path,distance,speed,actor.stride,turn);
+      } else {
+        actor.head.rotation.y=Math.sin(t*.65+actor.phase)*.13;
+        if(actor.idle) {
+          actor.limbs[1].rotation.x=actor.role==='reader'?-.82:-.4+Math.sin(t*1.6+actor.phase)*.18;
+          actor.limbs[3].rotation.x=actor.role==='vendor'?-.7+Math.sin(t*1.9+actor.phase)*.22:actor.role==='reader'?-.82:-.15;
+          actor.elbows.forEach(e=>e.rotation.x=-.25);
+        }
+        this.fitHands(actor);
       }
-      const gait=t*(actor.speed>1?7:4.7)+actor.phase;
-      if(!actor.seated) {
-        actor.limbs.forEach((limb,j)=>limb.rotation.x=Math.sin(gait+(j<2?0:Math.PI))*(j%2?-.24:.34)*walking);
-        actor.knees.forEach((k,j)=>k.rotation.x=Math.max(0,-Math.sin(gait+j*Math.PI))*.52*walking);
-      }
-      actor.torso.rotation.z=Math.sin(t*1.7+actor.phase)*.012;
-      actor.head.rotation.y=Math.sin(t*.65+actor.phase)*.13;
-      if(actor.idle) {
-        actor.limbs[1].rotation.x=actor.role==='reader'?-.82:-.4+Math.sin(t*1.6+actor.phase)*.18;
-        actor.limbs[3].rotation.x=actor.role==='vendor'?-.7+Math.sin(t*1.9+actor.phase)*.22:actor.role==='reader'?-.82:-.15;
-        actor.elbows.forEach(e=>e.rotation.x=-.25);
-      }
-      this.fitHands(actor);
     }
     for(const vehicle of this.vehicles) {
       const phase=(t+10+(vehicle.axis?32:0))%64;
@@ -932,11 +954,14 @@ export class TownScene {
       vehicle.horse.mesh.position.y=Math.abs(Math.sin(t*6))*.035;
       vehicle.horse.tail.rotation.z=Math.sin(t*2)*.1;
     }
-    const cartTravel=-16+THREE.MathUtils.clamp(((t+10)%64)/29,0,1)*32;
+    const cartMotion=walkingTravel((t+10)%64,32,29);
+    const cartTravel=-16+cartMotion.distance;
     this.handcart.mesh.position.set(cartTravel,.12,-2.3);this.handcart.mesh.rotation.y=Math.PI/2;
     this.handcart.wheels.forEach(wheel=>wheel.rotation.z=-cartTravel/.39);
     const porter=this.handcart.porter;
-    for(let j=0;j<2;j++){porter.limbs[j*2].rotation.x=Math.sin(t*4.3+j*Math.PI)*.3;porter.knees[j].rotation.x=Math.max(0,-Math.sin(t*4.3+j*Math.PI))*.45;}
+    this.handcart.mesh.updateWorldMatrix(true,true);
+    porter.worldGrips.forEach((p,side)=>p.set(side?.4:-.4,1.04,-1.3).applyMatrix4(this.handcart.mesh.matrixWorld));
+    this.walkPerson(porter,porter.route,cartMotion.distance,cartMotion.speed,porter.stride);
     this.birds.forEach(({mesh,wings,x,z,phase})=>{
       const flutter=(t+phase*1.3)%21, fly=flutter>16;
       mesh.position.set(x+Math.sin(t*.45+phase)*.35,.1+(fly?Math.sin((flutter-16)/5*Math.PI)*1.6:0),z+Math.cos(t*.4+phase)*.3);
