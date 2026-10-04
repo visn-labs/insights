@@ -1,4 +1,5 @@
 import {renderContributor} from './assets/contributor.js';
+import {mountJourney} from './assets/journey.js';
 const root = document.querySelector('#town-intro');
 const canvas = document.querySelector('#town-canvas');
 const app = document.querySelector('.app-shell');
@@ -8,8 +9,8 @@ const status = document.querySelector('#intro-status');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const stories = [
   ['It starts with your perspective.', 'Your camera sees a small part of the world. You choose the moment to contribute.', 'YOUR VIEW'],
-  ['A shared understanding.', 'Contributed moments can help build a useful, searchable knowledge base.', 'KNOWLEDGE'],
-  ['Value comes back to you.', 'A contributor programme designed around rewards. Explore the preview to see how sharing could work.', 'SHARED VALUE'],
+  ['Everyday moments. Useful answers.', 'Your footage can help answer questions about activity, arrivals and how places are used.', 'KNOWLEDGE'],
+  ['Knowledge creates shared value.', 'People pay for insights. Our aim is to reward the contributors who help make those answers possible.', 'SHARED VALUE'],
 ];
 let scene, dismissed = false, userPaused = reducedMotion.matches;
 let initPromise;
@@ -35,17 +36,18 @@ function motionLabel() {
 function enter(){location.hash='/workspace';}
 function route() {
   const page=location.hash.replace(/^#\/?/,'').split('?')[0];
-  const contributor=page==='home'||page==='contribute',workspace=page==='workspace';
+  const contributor=['home','contribute','rewards'].includes(page),workspace=page==='workspace';
   dismissed=contributor||workspace;
   document.querySelector('#contribution-preview').pause();
   root.hidden=dismissed;app.hidden=!workspace;app.inert=!workspace;
+  if(!dismissed)root.scrollTo({top:0,behavior:'instant'});
   document.querySelector('#contributor-shell').hidden=!contributor;
   document.body.classList.toggle('landing-open',!dismissed);
   if(dismissed)scene?.stop();else if(scene){scene.resize();if(heroVisible)scene.start();}else initialize();
   if(contributor)renderContributor(page);
-  document.title=contributor?(page==='home'?'Visn — Contributor home':'Visn — Your first contribution'):workspace?'Visn — Analysis workspace':'Visn — Your view. Shared value.';
+  document.title=contributor?({home:'Visn — Contributor home',contribute:'Visn — Your first contribution',rewards:'Visn — How shared value works'}[page]):workspace?'Visn — Analysis workspace':'Visn — Your view. Shared value.';
   window.scrollTo(0,0);
-  const target=contributor?document.querySelector(page==='home'?'#contributor-home-title':'#onboarding-title'):workspace?document.querySelector('#page-title'):document.querySelector('#intro-enter');
+  const target=contributor?document.querySelector({home:'#contributor-home-title',contribute:'#onboarding-title',rewards:'#rewards-title'}[page]):workspace?document.querySelector('#page-title'):document.querySelector('#intro-enter');
   if(target.tagName==='H1')target.setAttribute('tabindex','-1');target.focus({preventScroll:true});
 }
 let heroVisible=true;
@@ -66,7 +68,6 @@ async function initialize() {
       root.dataset.state = 'error';
       status.textContent = '3D scene unavailable. Your workspace is ready.';
       motion.disabled = true;
-      document.querySelector('#intro-tour').disabled = true;
     }
   })();
   return initPromise;
@@ -78,10 +79,7 @@ document.querySelectorAll('[data-story]').forEach(button => button.addEventListe
   const index = Number(button.dataset.story); showStory(index); scene?.setStage(index);
 }));
 document.querySelector('#intro-tour').addEventListener('click', () => {
-  document.querySelector('#how-it-works').scrollIntoView({behavior:reducedMotion.matches?'auto':'smooth'});
-  scene?.setStage(0);
-  if (!reducedMotion.matches) { userPaused = false; scene?.setPaused(false); motionLabel(); }
-  else { showStory(1); scene?.setStage(1); }
+  journey.goTo(0);
 });
 motion.addEventListener('click', () => { userPaused = !userPaused; scene?.setPaused(userPaused); motionLabel(); });
 root.addEventListener('pointermove', event => {
@@ -90,7 +88,24 @@ root.addEventListener('pointermove', event => {
 }, { passive: true });
 root.addEventListener('pointerleave', () => scene?.pointer.set(0, 0));
 window.addEventListener('hashchange',route);
-document.querySelectorAll('[data-scroll]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();document.getElementById(link.dataset.scroll).scrollIntoView({behavior:reducedMotion.matches?'auto':'smooth'});}));
+document.querySelectorAll('[data-scroll]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();if(link.dataset.scroll==='how-it-works')journey.goTo(0);else document.getElementById(link.dataset.scroll).scrollIntoView({behavior:reducedMotion.matches?'instant':'smooth'});}));
+const perspectives = {
+  shop: ['A SHOP ENTRANCE', 'When does this corner come to life?', 'Patterns of arrivals could help a local business understand its busiest hours.', [20,28,42,36,55,74,93,85,62,73,44,26]],
+  loading: ['A LOADING BAY', 'When do deliveries slow things down?', 'Patterns of vehicle arrivals could help an operator plan deliveries around quieter periods.', [28,75,94,66,32,25,47,83,72,39,26,18]],
+  forecourt: ['A FORECOURT', 'How does this space change through the day?', 'Patterns of occupancy could help a business understand when its forecourt is in greatest demand.', [15,24,55,88,73,58,42,63,92,76,48,22]],
+};
+function showPerspective(key) {
+  const [source,question,answer,bars]=perspectives[key];
+  const buttons=[...document.querySelectorAll('[data-perspective]')];
+  buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.perspective===key)));
+  document.querySelector('#perspective-source').textContent=source;
+  document.querySelector('#perspective-question').textContent=question;
+  document.querySelector('#perspective-answer').textContent=answer;
+  document.querySelector('.example-heading>span:last-child').textContent=`0${Object.keys(perspectives).indexOf(key)+1} / 03`;
+  document.querySelectorAll('.chart-bars i').forEach((bar,i)=>bar.style.setProperty('--bar-height',bars[i]+'%'));
+}
+document.querySelectorAll('[data-perspective]').forEach(button=>button.addEventListener('click',()=>showPerspective(button.dataset.perspective)));
+showPerspective('shop');
 window.addEventListener('resize', () => { if (!dismissed) scene?.resize(); });
 // Recompute label offsets when a short mobile viewport scrolls the landing.
 root.addEventListener('scroll', () => { if (!dismissed && scene) { scene.rect = canvas.getBoundingClientRect(); if (userPaused) scene.update(0); } }, { passive: true });
@@ -110,4 +125,5 @@ window.addEventListener('pagehide', () => scene?.stop());
 window.addEventListener('pageshow', () => { if (!dismissed&&heroVisible) scene?.start(); });
 new IntersectionObserver(entries=>{heroVisible=entries[0].isIntersecting;if(scene){if(heroVisible&&!dismissed)scene.start();else scene.stop();}},{threshold:.05}).observe(document.querySelector('.landing-hero'));
 motionLabel();
+const journey=mountJourney(root,reducedMotion);
 route();

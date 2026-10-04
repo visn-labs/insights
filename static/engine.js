@@ -15,6 +15,7 @@ export class TownScene {
     this.time = 1.5;
     this.stage = 0;
     this.storyOffset = 0;
+    this.captureWeight = 1;
     this.running = false;
     this.paused = false;
     this.reduced = false;
@@ -739,6 +740,7 @@ export class TownScene {
   }
   wheel(parent,x,y,z,r) {
     const wheel=new THREE.Group();wheel.position.set(x,y,z);wheel.rotation.y=Math.PI/2;parent.add(wheel);
+    wheel.userData.radius=r+.045;
     this.torus(wheel,0,0,0,r,.045,0x463b30);
     this.torus(wheel,0,0,0,r-.055,.03,0x947651);
     for(let i=0;i<12;i++) {
@@ -748,7 +750,7 @@ export class TownScene {
     return wheel;
   }
   horse(parent,x,z,color,driver) {
-    const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
+    const g=new THREE.Group();g.position.set(x,-.42,z);parent.add(g);
     this.ellipsoid(g,0,1.14,0,.33,.43,.73,color);
     this.ellipsoid(g,0,1.25,.48,.24,.37,.28,color);
     const neck=this.ellipsoid(g,0,1.65,.63,.18,.48,.22,color);neck.rotation.x=.38;
@@ -759,24 +761,26 @@ export class TownScene {
       this.orb(g,side*.143,2.015,.96,.021,0x241f1b);
     }
     for(let i=0;i<10;i++)this.ellipsoid(g,0,1.3+i*.08,.31+i*.03,.11,.09,.08,0x42392e);
-    const legs=[],knees=[];
+    const legs=[],knees=[],hooves=[];
     for(const side of [-1,1])for(const end of [-1,1]) {
       const leg=new THREE.Group();leg.position.set(side*.22,1.02,end*.47);g.add(leg);
       this.cylinder(leg,0,-.21,0,.073,.049,.42,color,12);
       const knee=new THREE.Group();knee.position.y=-.42;leg.add(knee);
       this.orb(knee,0,0,0,.065,color);this.cylinder(knee,0,-.2,0,.048,.034,.4,color,10);
-      this.rounded(knee,0,-.43,.025,.11,.11,.15,0x3c332b,.025);legs.push(leg);knees.push(knee);
+      const hoof=new THREE.Group();hoof.position.y=-.43;knee.add(hoof);
+      this.rounded(hoof,0,0,.025,.11,.11,.15,0x3c332b,.025);legs.push(leg);knees.push(knee);hooves.push(hoof);
     }
     const tail=this.ellipsoid(g,0,.94,-.78,.1,.42,.12,0x42392e);tail.rotation.x=-.32;
     // Breast collar, saddle strap, reins and shafts connect the horse to the carriage.
     this.torus(g,0,1.18,.43,.34,.025,C.dark).scale.y=1.1;
     this.box(g,0,1.55,-.05,.58,.06,.17,C.dark);
+    const reins=[];
     for(const side of [-1,1]) {
       const grip=parent.worldToLocal(driver.hands[side===-1?0:1].getWorldPosition(new THREE.Vector3()));
-      this.tube(g,[side*.18,1.89,1.03],[grip.x-x,grip.y,grip.z-z],.011,C.dark);
-      this.tube(g,[side*.44,.89,.05],[side*.6,.72,-1.75],.035,C.timber);
+      reins.push(this.tube(g,[side*.18,1.89,1.03],[grip.x-x,grip.y-g.position.y,grip.z-z],.011,C.dark));
+      this.tube(g,[side*.44,.89,.05],[side*.6,.72-g.position.y,-1.75],.035,C.timber);
     }
-    return {mesh:g,legs,knees,tail};
+    return {mesh:g,legs,knees,hooves,tail,reins};
   }
   buildCarriage(index) {
     const g=new THREE.Group();this.scene.add(g);
@@ -798,12 +802,37 @@ export class TownScene {
     this.rounded(g,0,1.43,.22,1.16,.38,.14,C.dark,.055);
     const wheels=[];
     for(const side of [-1,1])for(const end of [-1,1])wheels.push(this.wheel(g,side*.85,.6,end===1?.44:-1.4,end===1?.48:.59));
-    for(const z of [.44,-1.4])this.tube(g,[-.85,.6,z],[.85,.6,z],.045,C.dark);
+    const axles=[-1.4,.44].map(z=>this.tube(g,[-.85,.6,z],[.85,.6,z],.045,C.dark));
     const driver=this.person(46+index,'porter');driver.mesh.removeFromParent();g.add(driver.mesh);driver.mesh.position.set(0,0,.5);driver.mesh.scale.setScalar(.98);
     this.seatPerson(driver,1.265,.8);driver.grips=[[-.18,1.19,.39],[.18,1.19,.39]];this.fitHands(driver);
     g.updateMatrixWorld(true);
     const horse=this.horse(g,0,2.3,index?0x9c7b58:0x6b5140,driver);
-    this.vehicles.push({mesh:g,wheels,horse,axis:index,driver});
+    this.vehicles.push({mesh:g,wheels,axles,horse,axis:index,driver});
+  }
+  poseHorse(horse,distance,speed) {
+    // Distance drives the diagonal trot. Hooves stay planted through stance,
+    // then clear the stones during recovery; stopping freezes the step cycle.
+    const stride=1.2,stance=.62;
+    horse.mesh.position.y=-.42;
+    horse.mesh.updateWorldMatrix(true,false);
+    horse.legs.forEach((leg,i)=>{
+      const offset=i===0||i===3?0:.5;
+      const cycle=distance/stride+offset,phase=cycle%1;
+      let z=(stance/2-phase)*stride,lift=0;
+      if(phase>=stance){
+        const u=(phase-stance)/(1-stance),ease=u*u*(3-2*u);
+        z=(-stance/2+ease)*stride-(1-stance)*stride*u;
+        lift=Math.sin(Math.PI*u)**2*.14*Math.min(1,speed/.5);
+      }
+      const world=horse.mesh.localToWorld(new THREE.Vector3(leg.position.x,0,leg.position.z+z));
+      world.y=this.groundHeight(world.x,world.z)+.055+lift;
+      const target=horse.mesh.worldToLocal(world).sub(leg.position);
+      const a=.42,b=.43,length=Math.min(a+b-.001,target.length());
+      const bend=Math.acos(THREE.MathUtils.clamp((a*a+length*length-b*b)/(2*a*length),-1,1));
+      leg.rotation.x=Math.atan2(-target.z,-target.y)-bend;
+      horse.knees[i].rotation.x=Math.PI-Math.acos(THREE.MathUtils.clamp((a*a+b*b-length*length)/(2*a*b),-1,1));
+      horse.hooves[i].rotation.x=-leg.rotation.x-horse.knees[i].rotation.x;
+    });
   }
   buildHandcart() {
     const g=new THREE.Group();this.scene.add(g);
@@ -871,7 +900,7 @@ export class TownScene {
       const label=document.createElement('span');label.className='camera-marker';label.textContent=`CAM 0${i+1}`;this.labels.appendChild(label);
       const targetBox=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(.85,1.95,.75)),new THREE.LineBasicMaterial({color:0x729c70,transparent:true,opacity:.6}));this.scene.add(targetBox);
       const capture=new THREE.Line(new THREE.BufferGeometry().setFromPoints([origin,origin]),new THREE.LineBasicMaterial({color:0xabc891,transparent:true,opacity:.4}));this.scene.add(capture);
-      this.cameras.push({head,origin,curve,path,packets,cone,ring,label,targetBox,capture});
+      this.cameras.push({head,origin,curve,path,packets,cone,ring,label,targetBox,capture,led});
     });
   }
   buildAtmosphere() {
@@ -910,6 +939,7 @@ export class TownScene {
     this.time+=delta;
     const t=this.time,signalTime=t+this.storyOffset,stage=Math.floor(((signalTime%18+18)%18)/6);
     if(stage!==this.stage){this.stage=stage;this.onStage(stage);}
+    this.captureWeight=THREE.MathUtils.lerp(this.captureWeight,stage===0?1:0,1-Math.exp(-delta*3));
     if (this.reduced) this.smoothPointer.set(0, 0);
     else if (delta > 0) this.smoothPointer.lerp(this.pointer, 1 - Math.exp(-delta * 3));
     // Equal X/Z offsets put the eye on the southeast corner's 45-degree bisector.
@@ -931,10 +961,13 @@ export class TownScene {
         } else {distance=(t*actor.speed+actor.offset)%actor.route.length;speed=actor.speed;}
         this.walkPerson(actor,path,distance,speed,actor.stride,turn);
       } else {
-        actor.head.rotation.y=Math.sin(t*.65+actor.phase)*.13;
+        const breath=Math.sin(t*1.4+actor.phase),gesture=Math.max(0,Math.sin(t*.9+actor.phase))**3;
+        actor.head.rotation.y=Math.sin(t*.45+actor.phase)*.13;
+        actor.head.rotation.x=actor.role==='reader'?.12+breath*.015:breath*.018;
+        actor.spine.rotation.x=breath*.008;
         if(actor.idle) {
-          actor.limbs[1].rotation.x=actor.role==='reader'?-.82:-.4+Math.sin(t*1.6+actor.phase)*.18;
-          actor.limbs[3].rotation.x=actor.role==='vendor'?-.7+Math.sin(t*1.9+actor.phase)*.22:actor.role==='reader'?-.82:-.15;
+          actor.limbs[1].rotation.x=actor.role==='reader'?-.82:-.25-gesture*.28;
+          actor.limbs[3].rotation.x=actor.role==='vendor'?-.35-gesture*.48:actor.role==='reader'?-.82:-.15;
           actor.elbows.forEach(e=>e.rotation.x=-.25);
         }
         this.fitHands(actor);
@@ -942,22 +975,29 @@ export class TownScene {
     }
     for(const vehicle of this.vehicles) {
       const phase=(t+10+(vehicle.axis?32:0))%64;
-      const progress=THREE.MathUtils.clamp(phase/27,0,1);
-      const travel=-30+progress*60;
+      const motion=walkingTravel(phase,60,27,2);
+      const travel=-30+motion.distance;
       vehicle.mesh.position.set(vehicle.axis?-1.15:travel,.14,vehicle.axis?travel:1.15);
       vehicle.mesh.rotation.y=vehicle.axis?0:Math.PI/2;
-      vehicle.wheels.forEach(wheel=>wheel.rotation.z=-travel/.54);
-      vehicle.horse.legs.forEach((leg,i)=>{
-        const gait=t*6+(i===0||i===3?0:Math.PI);leg.rotation.x=Math.sin(gait)*.36;
-        vehicle.horse.knees[i].rotation.x=Math.max(0,-Math.sin(gait))*.7;
+      vehicle.mesh.updateWorldMatrix(true,false);
+      vehicle.wheels.forEach(wheel=>{
+        const center=vehicle.mesh.localToWorld(wheel.position.clone());
+        wheel.position.y=this.groundHeight(center.x,center.z)+wheel.userData.radius-vehicle.mesh.position.y;
+        wheel.rotation.z=-motion.distance/wheel.userData.radius;
       });
-      vehicle.horse.mesh.position.y=Math.abs(Math.sin(t*6))*.035;
-      vehicle.horse.tail.rotation.z=Math.sin(t*2)*.1;
+      vehicle.axles.forEach((axle,i)=>{
+        const left=vehicle.wheels[i].position,right=vehicle.wheels[i+2].position;
+        axle.position.copy(left).add(right).multiplyScalar(.5);
+        axle.quaternion.setFromUnitVectors(UP,right.clone().sub(left).normalize());
+        axle.scale.y=left.distanceTo(right)/1.7;
+      });
+      this.poseHorse(vehicle.horse,motion.distance,motion.speed);
+      vehicle.horse.tail.rotation.z=Math.sin(t*1.7+vehicle.axis)*.08;
     }
     const cartMotion=walkingTravel((t+10)%64,32,29);
     const cartTravel=-16+cartMotion.distance;
     this.handcart.mesh.position.set(cartTravel,.12,-2.3);this.handcart.mesh.rotation.y=Math.PI/2;
-    this.handcart.wheels.forEach(wheel=>wheel.rotation.z=-cartTravel/.39);
+    this.handcart.wheels.forEach(wheel=>wheel.rotation.z=-cartMotion.distance/wheel.userData.radius);
     const porter=this.handcart.porter;
     this.handcart.mesh.updateWorldMatrix(true,true);
     porter.worldGrips.forEach((p,side)=>p.set(side?.4:-.4,1.04,-1.3).applyMatrix4(this.handcart.mesh.matrixWorld));
@@ -979,15 +1019,17 @@ export class TownScene {
       p.setXYZ(0,cam.origin.x,cam.origin.y,cam.origin.z);
       [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([x,z],j)=>p.setXYZ(j+1,center.x+x*.9,.12,center.z+z*1.1));
       p.needsUpdate=true;cam.cone.geometry.computeBoundingSphere();
-      cam.cone.material.opacity=(stage===0?.065:.035)+Math.sin(t*2+i)*.008;
-      cam.ring.position.copy(center);cam.ring.scale.setScalar(1+(t*.65+i)%1.2);cam.ring.material.opacity=.3*(1-((t*.65+i)%1.2)/1.2);
-      cam.targetBox.position.copy(target);cam.targetBox.material.opacity=stage===0?.45:.18;
-      const cp=cam.capture.geometry.attributes.position;cp.setXYZ(0,cam.origin.x,cam.origin.y,cam.origin.z);cp.setXYZ(1,target.x,target.y,target.z);cp.needsUpdate=true;cam.capture.geometry.computeBoundingSphere();cam.capture.material.opacity=stage===0?.3:.1;
-      cam.path.material.opacity=stage===0?.12:.33;
+      const capturePulse=(t*1.15+i*.67)%1;
+      cam.cone.material.opacity=.035+this.captureWeight*.03+Math.sin(t*2+i)*.008;
+      cam.ring.position.copy(center);cam.ring.scale.setScalar(1+capturePulse*.8);cam.ring.material.opacity=.3*(1-capturePulse);
+      cam.led.scale.setScalar(.015*(1+Math.exp(-capturePulse*8)*.6));
+      cam.targetBox.position.copy(target);cam.targetBox.material.opacity=.18+this.captureWeight*.27;
+      const cp=cam.capture.geometry.attributes.position;cp.setXYZ(0,cam.origin.x,cam.origin.y,cam.origin.z);cp.setXYZ(1,target.x,target.y,target.z);cp.needsUpdate=true;cam.capture.geometry.computeBoundingSphere();cam.capture.material.opacity=.1+this.captureWeight*.2;
+      cam.path.material.opacity=.33-this.captureWeight*.21;
       cam.packets.forEach((packet,j)=>{
         const u=(t*.115+j/10+i*.067)%1;
         cam.curve.getPoint(u,point);packet.position.copy(point);
-        packet.material.opacity=Math.min(1,u*12)*(1-Math.pow(u,4))*(stage===0?.65:1);
+        packet.material.opacity=Math.min(1,u*12)*(1-THREE.MathUtils.smoothstep(u,.68,1))*(1-this.captureWeight*.35);
         packet.scale.setScalar((1-u*.55)*(j%3===0?1.6:1));packet.rotation.y=t*1.2+j;
       });
       point.copy(cam.origin).add(new THREE.Vector3(0,.5,0)).project(this.camera);

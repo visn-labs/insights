@@ -12,6 +12,7 @@ The landing focuses on footage contributors and leads into onboarding and contri
 - `static/styles.css`: scoped landing palette, responsive composition, existing dashboard styles.
 - `static/intro.js`: hash routing, scene loading, story controls, pause/replay, reduced motion and visibility.
 - `static/assets/contributor.js` and `contributor.css`: local contribution drafts, recording preview, segment validation, home and shared visual theme.
+- `static/assets/journey.js`: viewport-activated persistent 3D storytelling stage, scroll interpolation, chapter navigation and reduced-motion views.
 - `static/assets/walking.js`: route sampling, speed ramps, world-space foot targets and anatomical leg solving.
 - `static/engine.js`: exported `TownScene`, actual Three.js geometry and animated scene. It has no independent auto-starting renderer.
 - `static/vendor/three.*.js`: pinned local Three.js modules. No CDN, build system, or new npm runtime dependency.
@@ -25,20 +26,25 @@ All pedestrians, drivers, and the porter use the same adult rig: a 1.835 m refer
 
 ## Contributor flow
 
-- `/` or `/#/`: illustrated hero, three contributor story chapters, sharing/reward FAQs, and onboarding invitations.
+- `/` or `/#/`: illustrated hero, three contributor story chapters, interactive shop/loading-bay/forecourt insight examples, the two-sided business model, sharing/reward FAQs, and onboarding invitations.
 - `/#/contribute`: camera context and permission → local recording or labelled example → segment selection and review → explicit local-draft save.
 - `/#/home`: real draft count, saved metadata and next steps. Rewards/submissions are explicitly unavailable, without fabricated balances or approval states.
+- `/#/rewards`: the intended preparation, terms, review and reward journey, with current and planned stages clearly labelled.
 - `/#/workspace`: existing video analysis tools with the warm visual theme.
 
-Draft metadata uses the `visn.contributions.v1` local-storage key. No contributor account, file upload, eligibility assessment or payout is performed. Video previews use a revocable browser object URL; videos are not stored. A selected segment is previewed without altering the original recording. Submission and payment integration require actual programme rules and backend services.
+Draft metadata uses the `visn.contributions.v1` local-storage key. No contributor account, file upload, eligibility assessment or payout is performed. Video previews use a revocable browser object URL; videos are not stored. A selected segment is previewed without altering the original recording. Number fields and keyboard-accessible range controls stay in sync with a selection timeline and duration. Changing the selection clears the review confirmation. Completed step buttons let contributors go back to make changes; contributor home adapts its next-step guidance to saved drafts. Submission and payment integration require actual programme rules and backend services.
 
 ## Walking and story timing
 
-The street clock and 18-second narrative clock are separate. Story buttons change explanatory chapters without teleporting pedestrians. **See how it works** scrolls into the contributor story.
+The street clock and 18-second narrative clock are separate. Story buttons change explanatory chapters without teleporting pedestrians. **See how it works** smoothly enters a four-chapter 3D story. A sticky stage follows camera → selected recording → connected knowledge → shared value. The same camera and miniature street frames move between arrangements; data particles blend between capture, network and return paths. Each chapter has an interactive action, next-step control and direct chapter navigation. Native wheel/touch scrolling controls progress without scroll interception.
+
+The story uses a separate lightweight renderer, created only when its stage reaches the viewport. The town renderer stops once its hero is offscreen; the story renderer stops offscreen or on other routes. Pointer movement adds restrained parallax. Pausing stops ambient motion while chapter selection remains available. Reduced-motion visitors get static views with instant navigation. WebGL failures preserve all story text and onboarding navigation.
 
 A planted foot keeps a fixed world-space landing point for 62% of its stride. The heel rolls down, the sole bears weight, and the toe pushes off. The swing foot lifts and travels to the next landing. Its cycle advances with distance travelled, so changing speed changes cadence rather than causing skating. Stride size respects character scale. Leg solving preserves thigh and shin lengths, while the pelvis lowers enough to keep both foot targets reachable. The torso counter-rotates and arms swing opposite the legs; prop-holding hands retain their grip targets.
 
 Pavement, kerb, crossing and cobble heights determine foot support. Routes round the pavement corners; crossing pedestrians accelerate, stop with feet grounded and step around when turning back. The porter uses the same walking solver and holds the moving cart handles. This is procedural animation, not a full crowd/collision simulation or motion-capture asset.
+
+Carriages use eased distance-based travel. Each wheel rotates using its own radius, and the horse trot uses the same travelled distance. Hoof targets stay planted through stance; joint angles solve against the local cobble height and hooves stay level. Horses stop stepping when their carriage stops. Idle pedestrians breathe, glance and gesture with pauses; signal visibility blends between story chapters and packets fade before the destination.
 
 ## Close-up walking review
 
@@ -63,7 +69,7 @@ Browser acceptance checks include animation/pause, story controls, missing permi
 
 Run `node tools/check_walking.mjs` for numerical checks on the real production model: support-foot drift, ground penetration, swing clearance, bone bending, turns, start/stop and independent story timing. It does not require a GPU or npm packages.
 
-The browser fixture additionally projects all four pavement corners through the real camera, checks the diagonal viewpoint, samples geometry transforms through 90 seconds of street activity, checks adult proportions, hand-to-prop alignment and seated sole contact, and reports renderer draw calls and triangle counts.
+The browser fixture additionally projects all four pavement corners through the real camera, checks the diagonal viewpoint, samples geometry transforms through 90 seconds of street activity, checks adult proportions, hand-to-prop alignment, seated sole contact, horse hoof contact and stopped gait, and reports renderer draw calls and triangle counts.
 
 ### Repeat the browser acceptance test
 
@@ -74,3 +80,7 @@ VISN_PLAYWRIGHT_MODULE=/path/to/node_modules/playwright node tools/check_landing
 ```
 
 Alternatively install Playwright in your normal tooling environment and run `node tools/check_landing.cjs`. `VISN_PREVIEW_URL` overrides the default local URL; `VISN_BROWSER_PATH` selects a browser executable. On macOS the script defaults to installed Google Chrome. On other platforms it uses Playwright's installed Chromium. The script checks the assets served by Rust directly and writes desktop/mobile screenshots and `verification.json` under `output/playwright/`.
+
+Set `VISN_AXE_MODULE=/path/to/node_modules/@axe-core/playwright` to include automated WCAG A/AA checks on the four contributor routes. Findings are written to `output/playwright/accessibility.json`. Automated checks supplement browser and keyboard review.
+
+Run `VISN_PLAYWRIGHT_MODULE=/path/to/node_modules/playwright node tools/check_journey.cjs` for the connected story: interactive models in every chapter, forward/backward navigation, native scroll transitions, mobile layouts, pause/reduced motion and no-WebGL fallback. Screenshots and `journey-verification.json` are saved under `output/playwright/`.

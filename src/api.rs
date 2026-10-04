@@ -29,7 +29,7 @@ use crate::{
     store::AppState,
     ui::{
         ANIME_JS, APP_JS, CONTRIBUTOR_CSS, CONTRIBUTOR_JS, ENGINE_JS, INDEX_HTML, INTRO_JS,
-        STYLES_CSS, SVGS_JS, THREE_CORE_JS, THREE_JS, WALKING_JS,
+        JOURNEY_JS, STYLES_CSS, SVGS_JS, THREE_CORE_JS, THREE_JS, WALKING_JS,
     },
 };
 
@@ -48,6 +48,7 @@ pub fn router(state: AppState) -> Router {
         .route("/assets/walking.js", get(walking_js))
         .route("/assets/contributor.js", get(contributor_js))
         .route("/assets/contributor.css", get(contributor_css))
+        .route("/assets/journey.js", get(journey_js))
         .route("/assets/{filename}", get(serve_asset))
         .route("/svgs/{filename}", get(serve_svg))
         .route("/healthz", get(health))
@@ -124,6 +125,9 @@ async fn walking_js() -> impl IntoResponse {
 }
 async fn contributor_js() -> impl IntoResponse {
     javascript(CONTRIBUTOR_JS)
+}
+async fn journey_js() -> impl IntoResponse {
+    javascript(JOURNEY_JS)
 }
 async fn contributor_css() -> impl IntoResponse {
     (

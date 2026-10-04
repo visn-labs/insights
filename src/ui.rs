@@ -11,3 +11,4 @@ pub const ENGINE_JS: &str = include_str!("../static/engine.js");
 pub const WALKING_JS: &str = include_str!("../static/assets/walking.js");
 pub const CONTRIBUTOR_JS: &str = include_str!("../static/assets/contributor.js");
 pub const CONTRIBUTOR_CSS: &str = include_str!("../static/assets/contributor.css");
+pub const JOURNEY_JS: &str = include_str!("../static/assets/journey.js");

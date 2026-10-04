@@ -5,6 +5,17 @@ const form=$('#contribution-form');
 const fields=[...form.querySelectorAll('[data-onboarding-step]')];
 const video=$('#contribution-preview');
 const error=$('#contribution-error');
+const stepHints=[
+  ['Start with a place you know.', 'A camera name and a little context make your draft easier to understand. You don’t need an exact address.'],
+  ['One recording is enough.', 'Choose a clip from your device. Just looking around? The example lets you try every step without footage.'],
+  ['Keep the moment that matters.', 'Use the handles or enter the start and end times. Play your selection before continuing.'],
+  ['Your decision, with the details in view.', 'Review the camera, recording and segment. Saving keeps only these details in this browser.'],
+];
+document.querySelectorAll('[data-step-label]').forEach((item,i)=>{
+  const label=item.querySelector('div'),button=document.createElement('button');
+  button.type='button';button.className='step-jump';button.innerHTML=label.innerHTML;
+  button.addEventListener('click',()=>showStep(i));label.replaceWith(button);
+});
 function fail(message){error.textContent=message;error.hidden=false;}
 function clearError(){error.hidden=true;error.textContent='';}
 function readDrafts(){
@@ -27,8 +38,11 @@ function fillList(element,rows){
 function showStep(next,focus=true){
   video.pause();step=next;clearError();
   fields.forEach((field,i)=>{field.hidden=i!==step;field.disabled=i!==step;});
-  document.querySelectorAll('[data-step-label]').forEach((item,i)=>{if(i===step)item.setAttribute('aria-current','step');else item.removeAttribute('aria-current');item.classList.toggle('complete',i<step);});
+  document.querySelectorAll('[data-step-label]').forEach((item,i)=>{if(i===step)item.setAttribute('aria-current','step');else item.removeAttribute('aria-current');item.classList.toggle('complete',i<step);item.querySelector('button').disabled=i>step;});
   $('#step-counter').textContent=`0${step+1} / 04`;
+  $('#onboarding-hint-title').textContent=stepHints[step][0];
+  $('#onboarding-hint-copy').textContent=stepHints[step][1];
+  $('#onboarding-meter').value=step+1;
   $('#contribution-back').hidden=step===0;
   $('#contribution-next').textContent=step===3?'Save my draft ↗':'Continue →';
   if(step===3)fillList($('#contribution-review'),reviewRows());
@@ -46,6 +60,7 @@ function selectClip(value){
   $('#contribution-file-status').textContent=value.example?'Example recording · 30 seconds':`${value.name} · ${(value.bytes/1048576).toFixed(1)} MB · ${value.duration.toFixed(1)} seconds`;
   $('#example-note').hidden=!value.example;$('#example-preview').hidden=!value.example;video.hidden=value.example;
   $('#preview-segment').hidden=value.example;clearError();
+  updateSegment();
 }
 $('#use-example').addEventListener('click',()=>{
   video.pause();if(objectURL)URL.revokeObjectURL(objectURL);objectURL=null;video.removeAttribute('src');$('#contribution-file').value='';
@@ -73,7 +88,26 @@ function validSegment(){
 }
 $('#preview-segment').addEventListener('click',async()=>{if(!validSegment()||!objectURL)return;video.currentTime=Number($('#segment-start').value);try{await video.play();}catch{fail('Playback could not start. Use the video controls to try again.');}});
 video.addEventListener('timeupdate',()=>{if(!video.paused&&video.currentTime>=Number($('#segment-end').value))video.pause();});
-for(const id of ['segment-start','segment-end'])$('#'+id).addEventListener('input',()=>{$('#contribution-reviewed').checked=false;});
+function updateSegment(){
+  if(!clip)return;
+  const start=Number($('#segment-start').value),end=Number($('#segment-end').value);
+  for(const name of ['start','end']){
+    const range=$('#segment-'+name+'-range');range.max=Math.floor(clip.duration*10)/10;range.value=$('#segment-'+name).value;
+  }
+  const valid=Number.isFinite(start)&&Number.isFinite(end)&&start>=0&&end>start&&end<=clip.duration+.001;
+  $('#segment-duration').textContent=valid?`${(end-start).toFixed(1)} seconds selected`:'Adjust your selection';
+  $('#segment-track').style.setProperty('--segment-start',`${Math.max(0,Math.min(100,start/clip.duration*100))}%`);
+  $('#segment-track').style.setProperty('--segment-end',`${Math.max(0,Math.min(100,end/clip.duration*100))}%`);
+}
+for(const name of ['start','end']){
+  $('#segment-'+name).addEventListener('input',()=>{$('#contribution-reviewed').checked=false;updateSegment();});
+  $('#segment-'+name+'-range').addEventListener('input',event=>{
+    const other=Number($('#segment-'+(name==='start'?'end':'start')).value);
+    const value=name==='start'?Math.min(Number(event.target.value),other-.1):Math.max(Number(event.target.value),other+.1);
+    $('#segment-'+name).value=Math.max(0,Math.min(Math.floor(clip.duration*10)/10,value)).toFixed(1);
+    $('#contribution-reviewed').checked=false;video.pause();updateSegment();
+  });
+}
 $('#contribution-back').addEventListener('click',()=>showStep(Math.max(0,step-1)));
 form.addEventListener('submit',event=>{
   event.preventDefault();if(saving)return;clearError();
@@ -95,6 +129,10 @@ function renderHome(){
   notice.textContent='Your draft is saved on this device. Your video has not been uploaded.';
   try{drafts=readDrafts();}catch(e){notice.hidden=false;notice.textContent=e.message||'Saved drafts are unavailable in this browser.';}
   $('#contributor-draft-count').textContent=drafts.length;$('#contribution-empty').hidden=drafts.length>0;
+  $('#home-next-title').textContent=drafts.length?'Your perspective is ready for the next chapter.':'Begin with one camera. One moment.';
+  $('#home-next-copy').textContent=drafts.length?'Keep the original recording with you. Your saved drafts contain details only. Explore how acceptance and rewards are intended to work before submissions open.':'Prepare a first draft in four guided steps. You can try a labelled example before choosing your own footage.';
+  $('#home-next-link').href=drafts.length?'#/rewards':'#/contribute';
+  $('#home-next-link').textContent=drafts.length?'Understand the reward journey ↗':'Prepare my first contribution ↗';
   const list=$('#contribution-list');list.replaceChildren();
   for(const [i,draft] of drafts.entries()){
     const row=document.createElement('article');row.className='contribution-row';
@@ -108,8 +146,9 @@ function renderHome(){
 }
 export function renderContributor(page){
   $('#contributor-shell').dataset.page=page;
-  const onboarding=page==='contribute';$('#onboarding-page').hidden=!onboarding;$('#contributor-home').hidden=onboarding;
-  if(onboarding)showStep(step,false);else {video.pause();renderHome();}
+  const onboarding=page==='contribute';$('#onboarding-page').hidden=!onboarding;$('#contributor-home').hidden=page!=='home';$('#rewards-page').hidden=page!=='rewards';
+  document.querySelectorAll('.contributor-header nav a').forEach(link=>{if(link.hash==='#/'+page)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');});
+  if(onboarding)showStep(step,false);else {video.pause();if(page==='home')renderHome();}
 }
 window.addEventListener('pagehide',()=>video.pause());
 showStep(0,false);
