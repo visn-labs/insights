@@ -7,7 +7,7 @@ async function frame(page){const clip=await page.locator('#town-canvas').evaluat
 (async()=>{
  const browser=await chromium.launch({executablePath:process.env.VISN_BROWSER_PATH||(process.platform==='darwin'?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':undefined),headless:true});
  const results=[],errors=[];const page=await browser.newPage({viewport:{width:1440,height:960}});page.on('pageerror',e=>errors.push(e.stack));
- await page.goto(baseURL);await page.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='ready');
+ await page.goto(baseURL);if(await page.locator('#logo-skip').isVisible())await page.locator('#logo-skip').click();await page.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='ready');
  const moving=await frame(page);await page.waitForTimeout(350);assert.ok((await frame(page))!==moving,'The scene advances while playing');
  await page.locator('#intro-motion').click();await page.waitForTimeout(150);const paused=await frame(page);await page.waitForTimeout(200);assert.ok((await frame(page))===paused,'Pause freezes the visible scene');
  for(let i=0;i<3;i++){await page.locator('.story-tab').nth(i).click();assert.equal(await page.locator('.story-tab').nth(i).getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#signal-state').textContent(),['YOUR VIEW','KNOWLEDGE','SHARED VALUE'][i]);}

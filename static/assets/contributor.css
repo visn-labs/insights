@@ -67,3 +67,23 @@
 @media(min-width:761px){.journey-chapters{position:relative}.journey-chapters::before,.journey-chapters::after{content:'';position:absolute;top:8svh;bottom:8svh;left:calc(15% - 25px);width:1px;background:#ddcfb9}.journey-chapters::after{background:#8b9b78;transform:scaleY(var(--journey-progress));transform-origin:top;transition:transform .12s linear}.journey-step>div{position:relative}.journey-step .folio::before{content:'';position:absolute;left:-29px;top:3px;width:7px;height:7px;border:1px solid #9aa583;background:#f5eddf;border-radius:50%;z-index:1}.journey-step.is-current .folio::before{background:#607c61;border-color:#607c61;box-shadow:0 0 0 5px #f5eddf}}
 @media(min-width:761px) and (max-width:1000px){.journey-chapters::before,.journey-chapters::after{left:calc(12% - 25px)}}
 @media(prefers-reduced-motion:reduce){.journey-chapters::after{transition:none}}
+
+/* One viewport-sized logo world behind every chapter, never a scrolling stage. */
+.logo-universe{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;transition:opacity .4s;background:transparent}
+.logo-universe>svg{display:block;width:100%;height:100%}
+.town-intro>.landing-hero,.town-intro>section,.town-intro>.site-footer{position:relative;z-index:1}
+.town-intro>.connected-journey{background:transparent}
+.logo-opening .logo-universe{z-index:10;background:#f8f2e6;transition:none}
+.logo-opening-controls{position:fixed;z-index:11;inset:auto 6% 6%;display:flex;justify-content:space-between;align-items:center;gap:20px;font:9px ui-monospace,monospace;letter-spacing:.12em;color:#634934;pointer-events:none}
+.logo-opening-controls button{pointer-events:auto;background:#fff9ec;border:1px solid #aa9278;padding:12px 18px;color:#493327;cursor:pointer;font:11px 'Avenir Next',sans-serif}
+.logo-replay{border:0;border-bottom:1px solid #b8a58b;background:none;color:#665640;font:10px 'Avenir Next',sans-serif;padding:6px 0;margin-top:18px;cursor:pointer}
+.visn-brand-icon{width:42px;height:42px;align-self:center;margin-right:12px;flex-shrink:0;transition:transform .65s cubic-bezier(.2,.8,.2,1)}
+.landing-brand:hover .visn-brand-icon{transform:rotate(60deg)}
+.journey-visual{background:none!important;box-shadow:none!important;isolation:auto;pointer-events:none;overflow:visible}
+.journey-vignette,.journey-fallback{display:none!important}
+.journey-scene-footer,.journey-scene-heading{pointer-events:auto;background:#f5eddfe8;padding:14px;border-radius:3px}
+.logo-story-caption{position:absolute;bottom:24%;left:12%;right:8%;font:italic 21px/1.65 Georgia,serif;color:#5d705a;text-align:right}
+.journey-step>div{background:linear-gradient(90deg,#f5eddfed 65%,#f5eddf99);padding:30px 22px;border-radius:4px}
+.journey-intro,.journey-outro{background:#f5eddfb8}
+@media(max-width:760px){.town-intro{position:fixed!important;min-height:0!important;height:100dvh!important}.journey-visual{height:150px;min-height:0;z-index:3}.journey-scene-heading{display:none}.journey-scene-footer{top:12px;bottom:auto;left:5%;right:5%}.journey-chapters{margin-top:-150px}.journey-step{padding:175px 6% 55px;min-height:100svh}.journey-step>div{padding:24px 18px;background:#f5eddfdc}.logo-story-caption{display:none}.logo-opening-controls{flex-direction:column;font-size:8px;inset:auto 5% 5%}.visn-brand-icon{width:34px;height:34px;margin-right:8px}}
+@media(prefers-reduced-motion:reduce){.logo-universe,.visn-brand-icon{transition:none}.landing-brand:hover .visn-brand-icon{transform:none}}
