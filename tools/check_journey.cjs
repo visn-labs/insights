@@ -6,9 +6,31 @@ const url=process.env.VISN_PREVIEW_URL||'http://127.0.0.1:8080/';
 const browser=await chromium.launch({executablePath:process.env.VISN_BROWSER_PATH||(process.platform==='darwin'?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':undefined),headless:true});
 const page=await browser.newPage({viewport:{width:1440,height:950}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto(url);await page.waitForSelector('.logo-universe');
-for(const phase of ['explode','collapse','hexagon','pathways','assembled']){await page.waitForFunction(p=>document.querySelector('.logo-universe').dataset.phase===p,phase,{timeout:30000});await page.screenshot({path:`${out}/logo-opening-${phase}.png`});}
+for(const phase of ['explode','collapse','hexagon','pathways','assembled']){await page.waitForFunction(p=>document.querySelector('.logo-universe').dataset.phase===p,phase,{timeout:30000});if(phase==='collapse'){
+const radii=[];
+for(let n=0;n<5;n++){await page.waitForTimeout(180);radii.push(await page.locator('.logo-universe').evaluate(e=>+e.dataset.apertureRadius));}
+assert.ok(radii.every((r,i)=>i===0||r<radii[i-1]),'The aperture narrows continuously');
+assert.ok(await page.locator('.logo-universe [data-floating-node]').evaluateAll(nodes=>{const r=+document.querySelector('.logo-universe').dataset.apertureRadius;return nodes.every(n=>Math.hypot(+n.getAttribute('cx'),+n.getAttribute('cy'))+ +n.getAttribute('r')<=r);}), 'Nodes stay within the closing aperture');
+}
+await page.screenshot({path:`${out}/logo-opening-${phase}.png`});}
 assert.equal(await page.locator('.logo-universe [data-blade]').count(),6);
+assert.equal(await page.locator('.logo-universe [data-floating-node]').count(),84);
+assert.ok(await page.locator('.logo-universe [data-connection]').count()<=126,'Local connections stay bounded');
+assert.ok(await page.locator('.logo-universe').evaluate(e=>+e.dataset.maxDegree<=3));
+assert.ok(await page.locator('.logo-universe [data-blade]').evaluateAll(blades=>blades.every(b=>b.getAttribute('transform').includes('58 -558')&&!b.getAttribute('transform').includes('translate'))),'Leaves turn around rim pivots');
 await page.waitForSelector('.logo-opening-controls',{state:'hidden'});
+assert.ok(await page.locator('.logo-universe').evaluate(e=>+getComputedStyle(e).opacity>.1),'The opening mark remains visible for the handoff');
+const continuity=await page.evaluate(async()=>{
+  const root=document.querySelector('#town-intro'),node=document.querySelector('[data-floating-node]'),network=document.querySelector('[data-network]');
+  const offset=root.scrollTop+document.querySelector('[data-journey-step]').getBoundingClientRect().top;
+  root.scrollTo({top:offset*.55,behavior:'smooth'});let previous=null,maxStep=0;
+  for(let i=0;i<90;i++){await new Promise(requestAnimationFrame);const position=[+node.getAttribute('cx'),+node.getAttribute('cy')];if(+network.style.opacity>.15&&previous)maxStep=Math.max(maxStep,Math.hypot(position[0]-previous[0],position[1]-previous[1]));previous=position;}
+  return maxStep;
+});
+assert.ok(continuity<50,'Visible nodes flow continuously from the opening mark');
+await page.screenshot({path:out+'/flow-handoff.png'});
+await page.evaluate(()=>document.querySelector('#town-intro').scrollTo({top:0,behavior:'smooth'}));await page.waitForTimeout(1500);
+assert.ok(await page.locator('.logo-universe').evaluate(e=>+e.dataset.entry<.01),'Reverse scrolling restores the hero mark');
 await page.locator('#intro-tour').click();await page.waitForTimeout(1500);
 let samples=[];for(let i=0;i<4;i++){
 await page.locator(`.journey-nav [data-chapter="${i}"]`).click();await page.waitForTimeout(1600);
@@ -24,7 +46,7 @@ const still=await page.locator('.logo-universe svg').innerHTML();await page.wait
 assert.ok(await page.locator('.logo-universe svg').innerHTML()===still,'Pause freezes every logo and network element');
 await page.locator('#journey-motion').click();
 const sphere=await page.locator('.logo-universe circle').first().evaluate(e=>{const r=e.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};});
-await page.mouse.move(sphere.x+10,sphere.y);await page.waitForTimeout(100);
+await page.mouse.move(sphere.x+10,sphere.y);await page.waitForTimeout(500);
 const moved=await page.locator('.logo-universe circle').first().evaluate(e=>{const r=e.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};});
 assert.ok(Math.hypot(moved.x-sphere.x,moved.y-sphere.y)>2,'Pointer repels nearby spheres');
 await page.locator('.journey-nav [data-chapter="3"]').click();await page.waitForTimeout(1300);

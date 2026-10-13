@@ -87,3 +87,16 @@
 .journey-intro,.journey-outro{background:#f5eddfb8}
 @media(max-width:760px){.town-intro{position:fixed!important;min-height:0!important;height:100dvh!important}.journey-visual{height:150px;min-height:0;z-index:3}.journey-scene-heading{display:none}.journey-scene-footer{top:12px;bottom:auto;left:5%;right:5%}.journey-chapters{margin-top:-150px}.journey-step{padding:175px 6% 55px;min-height:100svh}.journey-step>div{padding:24px 18px;background:#f5eddfdc}.logo-story-caption{display:none}.logo-opening-controls{flex-direction:column;font-size:8px;inset:auto 5% 5%}.visn-brand-icon{width:34px;height:34px;margin-right:8px}}
 @media(prefers-reduced-motion:reduce){.logo-universe,.visn-brand-icon{transition:none}.landing-brand:hover .visn-brand-icon{transform:none}}
+
+/* The opening mark and story share one layer; the street dissolves underneath it. */
+.town-intro>.landing-hero{z-index:auto}
+.logo-universe{z-index:2;transition:none}
+.logo-opening .logo-universe{background:transparent}
+.town-intro>.connected-journey{z-index:3}
+.landing-hero .intro-copy,.landing-hero .landing-header,.landing-hero .scene-controls,.landing-hero .landing-footer,.landing-hero .scene-note{z-index:3}
+.town-stage{opacity:calc(1 - var(--story-entry,0) * .88)}
+.journey-step>div{background:radial-gradient(ellipse at 30% 50%,#f5eddfed 45%,#f5eddf90 75%,transparent);border-radius:0}
+.journey-scene-heading,.journey-scene-footer{background:linear-gradient(90deg,#f5eddf70,#f5eddfe0 30%,#f5eddf70);border-radius:0}
+.journey-intro,.journey-outro{background:transparent}
+.journey-step>div,.journey-step.is-current>div{transform:none}
+@media(max-width:760px){.journey-step>div{background:linear-gradient(90deg,#f5eddfdc,#f5eddfc9 80%,#f5eddf90)}}
