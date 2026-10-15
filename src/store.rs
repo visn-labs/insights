@@ -7,7 +7,7 @@ use std::{
 use anyhow::{bail, Context};
 use futures_util::{stream, StreamExt};
 use tokio::sync::RwLock;
-use tracing::error;
+use tracing::{error, info};
 use uuid::Uuid;
 
 use crate::{
@@ -385,28 +385,43 @@ impl AppState {
         request: MemoryQueryRequest,
     ) -> anyhow::Result<MemoryQueryResponse> {
         validate_memory_query(&request)?;
-        let (mut matches, considered) = {
+        let query_id = Uuid::now_v7();
+        let started = Instant::now();
+        info!(%query_id, semantic = request.semantic_enabled, rerank = request.rerank_enabled, "memory retrieval started");
+        let candidates = {
             let jobs = self.memory_jobs.read().await;
-            let mut output = Vec::new();
-            for job in jobs.values() {
-                let Some(result) = &job.result else { continue };
-                for camera in &result.camera_results {
-                    output.extend(camera.events.iter().map(|event| (event, &camera.camera)));
-                }
-            }
-            memory::retrieve(&request, output)
+            jobs.values()
+                .filter_map(|job| job.result.as_ref())
+                .flat_map(|result| &result.camera_results)
+                .flat_map(|camera| {
+                    camera
+                        .events
+                        .iter()
+                        .map(|event| (event.clone(), camera.camera.clone()))
+                })
+                .collect()
         };
-        let mut summary = if matches.is_empty() {
-            "No indexed event matched the supplied filters. Index a camera interval or broaden the query filters.".to_owned()
+        // No job-store lock is held during model loading, indexing or inference.
+        let retrieval = crate::retrieval::search(&self.config, &request, candidates).await;
+        let mut matches = retrieval.matches;
+        let considered = retrieval.considered;
+        let retrieval_mode = retrieval.mode;
+        let retrieval_notes = retrieval.notes;
+        let mut summary = if considered == 0 {
+            retrieval_notes
+                .first()
+                .cloned()
+                .unwrap_or_else(|| "No indexed clips were available to search.".into())
+        } else if matches.is_empty() {
+            "No matching evidence was retrieved. Index a camera interval or broaden the query and filters.".to_owned()
         } else {
             format!(
-                "Retrieved {} candidate event{} from {} indexed events. Results use local metadata and VLM-generated evidence descriptions where available.",
+                "Retrieved {} candidate event{} from {} indexed events. Candidates are ranked by relevance, not verified facts or confidence.",
                 matches.len(),
                 if matches.len() == 1 { "" } else { "s" },
                 considered
             )
         };
-        let mut retrieval_mode = "local_lexical_metadata".to_owned();
         let mut model = None;
         let mut fallback_reason = None;
         if request.vlm_enabled && !matches.is_empty() {
@@ -417,20 +432,26 @@ impl AppState {
             {
                 Ok((vlm_summary, used_model, relevant)) => {
                     summary = vlm_summary;
-                    memory::reorder_by_vlm(&mut matches, &relevant);
-                    retrieval_mode = "local_recall_plus_vlm_verification".to_owned();
+                    if retrieval_mode == "local_lexical_metadata" {
+                        memory::reorder_by_vlm(&mut matches, &relevant);
+                    }
                     model = Some(used_model);
                 }
                 Err(error) => fallback_reason = Some(error.to_string()),
             }
         }
+        info!(%query_id, mode = %retrieval_mode, considered, matches = matches.len(),
+            elapsed_ms = started.elapsed().as_millis() as u64,
+            notes = ?retrieval_notes, provenance = %retrieval.provenance, "memory retrieval completed");
         Ok(MemoryQueryResponse {
-            query_id: Uuid::now_v7(),
+            query_id,
             query: request.query,
             summary,
             matches,
             events_considered: considered,
             retrieval_mode,
+            retrieval_notes,
+            retrieval_provenance: retrieval.provenance,
             model,
             fallback_reason,
         })

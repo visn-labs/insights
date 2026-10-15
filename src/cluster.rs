@@ -713,12 +713,13 @@ pub fn cluster_report(
             failure.camera_id, failure.error
         ));
     }
-    let confidence = if detector_observations == 0 {
-        0.0
-    } else if decisions.is_empty() {
-        1.0
+    let confidence = if detector_observations == 0 || decisions.is_empty() {
+        None
     } else {
-        decisions.iter().map(|decision| decision.score).sum::<f32>() / decisions.len() as f32
+        notes.push(
+            "Report confidence is the mean association score, not a calibrated probability.".into(),
+        );
+        Some(decisions.iter().map(|decision| decision.score).sum::<f32>() / decisions.len() as f32)
     };
 
     Report {
@@ -872,7 +873,7 @@ mod tests {
             notable_event_ids: Vec::new(),
             observations: Vec::new(),
             data_quality_notes: Vec::new(),
-            confidence: 1.0,
+            confidence: None,
         }
     }
 

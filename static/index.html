@@ -107,8 +107,8 @@
       </div>
 
       <nav aria-label="Primary navigation">
-        <button class="nav-item active" data-view="workspace"><span class="nav-icon">⌁</span>Workspace</button>
-        <button class="nav-item" data-view="memory"><span class="nav-icon">⌕</span>Memory <span id="memory-count" class="nav-count">0</span></button>
+        <button class="nav-item active" data-view="workspace"><span class="nav-icon">⌁</span>Detector analytics</button>
+        <button class="nav-item" data-view="memory"><span class="nav-icon">⌕</span>Video memory <span id="memory-count" class="nav-count">0</span></button>
         <button class="nav-item" data-view="runs"><span class="nav-icon">◫</span>Runs <span id="run-count" class="nav-count">0</span></button>
         <button class="nav-item" data-view="system"><span class="nav-icon">◇</span>System</button>
       </nav>
@@ -135,6 +135,7 @@
       </header>
 
       <section id="workspace-view" class="view active">
+        <div class="panel workflow-note"><strong>YOLO detection and rule reports</strong><p>For experiment 1, record and search clips in Video memory using Qwen visual retrieval.</p><button id="open-memory" type="button" class="secondary-button">Open video memory →</button></div>
         <div class="workspace-grid">
           <section class="panel setup-panel">
             <div class="panel-heading">
@@ -303,6 +304,7 @@
       </section>
 
       <section id="memory-view" class="view">
+        <div class="panel workflow-note"><strong>Experiment 1 · Record → index → search → review evidence</strong><p id="retrieval-status" role="status">Checking visual search service…</p></div>
         <div class="memory-layout">
           <section class="panel memory-control-panel">
             <div class="panel-heading">
@@ -310,6 +312,7 @@
               <span class="badge neutral">Retrieval first</span>
             </div>
             <form id="memory-job-form">
+              <label class="field"><span>Camera stream URL</span><input id="memory-stream-url" type="url" placeholder="http://camera/mjpg/video.mjpg"><small>Use a single stream here, or leave it empty and supply camera JSON below.</small></label>
               <div class="memory-form-grid">
                 <label class="field"><span>Index run name</span><input id="memory-job-name" maxlength="120" value="Authorized camera memory test" required></label>
                 <label class="field"><span>Cluster ID (optional)</span><input id="memory-cluster-id" maxlength="120" value="local-test-cluster" placeholder="local-test-cluster"></label>
@@ -318,7 +321,7 @@
               </div>
               <label class="toggle-row memory-toggle">
                 <span><strong>Enrich highest-priority events with the selected VLM</strong><small>The lightweight observer indexes every interval. VLM calls are capped and failures use metadata-only descriptions.</small></span>
-                <input id="memory-vlm-enabled" type="checkbox" checked><i></i>
+                <input id="memory-vlm-enabled" type="checkbox"><i></i>
               </label>
               <label class="field"><span>Vision-language model for indexing and queries</span><select id="memory-vlm-model"></select></label>
               <label class="field"><span>Backend camera payloads</span><textarea id="memory-cameras-json" class="memory-json-editor" spellcheck="false" placeholder='[{"liveurl":"http://camera/mjpg/video.mjpg","Country":"...","description":"..."}]'></textarea></label>
@@ -339,10 +342,12 @@
               <div><p class="step">V1 / EVIDENCE</p><h2>Indexed events</h2></div>
               <span id="memory-job-status" class="badge neutral">idle</span>
             </div>
+            <label class="field"><span>Recorded sessions</span><select id="memory-job-select"><option value="">No recordings yet</option></select></label>
             <div id="memory-empty" class="memory-empty"><p>Load a verified camera preset or paste backend camera metadata, then record a short bounded interval.</p></div>
             <div id="memory-processing" class="processing hidden"><span class="spinner"></span><div><strong>Recording and indexing cameras</strong><small>Source evidence is retained before sparse event analysis.</small></div></div>
             <div id="memory-job-error" class="inline-error hidden"></div>
             <div id="memory-result" class="hidden">
+              <button id="search-indexed-memory" type="button" class="secondary-button">Search these indexed cameras →</button>
               <div class="metric-grid">
                 <article><span>Cameras</span><strong id="memory-metric-cameras">0</strong></article>
                 <article><span>Events</span><strong id="memory-metric-events">0</strong></article>
@@ -357,18 +362,24 @@
 
         <section class="panel memory-query-panel">
           <div class="panel-heading">
-            <div><p class="step">V1 / RETRIEVE</p><h2>Search indexed camera evidence</h2></div>
+            <div><p class="step">EXPERIMENT 1 / RETRIEVE</p><h2>Search indexed camera evidence</h2></div>
             <span class="badge neutral">Evidence linked</span>
           </div>
+          <p id="memory-search-scope" role="status"></p>
+          <button id="memory-search-all" type="button" class="secondary-button">Search all recordings · clear filters</button>
           <form id="memory-query-form" class="memory-query-form">
-            <label class="field memory-query-input"><span>Question or visual search</span><input id="memory-query-text" maxlength="1000" value="Show the periods with the most movement and describe what is visible" required></label>
-            <label class="field"><span>Cluster filter</span><input id="memory-query-cluster" maxlength="120" value="local-test-cluster" placeholder="Leave empty for all"></label>
-            <label class="toggle-row compact-toggle"><span><strong>VLM synthesis</strong><small>Rerank and summarize the local candidates.</small></span><input id="memory-query-vlm" type="checkbox" checked><i></i></label>
+            <label class="field memory-query-input"><span>Question or visual search</span><input id="memory-query-text" maxlength="1000" placeholder="For example: trucks waiting at a traffic signal" required></label>
+            <label class="field"><span>Cluster filter</span><input id="memory-query-cluster" maxlength="120" placeholder="Leave empty for all"></label>
+            <label class="field"><span>Camera IDs (optional, comma-separated)</span><input id="memory-query-cameras" placeholder="Leave empty for all cameras"></label>
+            <label class="toggle-row compact-toggle"><span><strong>Visual retrieval</strong><small>Search clip content as well as words. First search indexes uncached clips.</small></span><input id="memory-query-semantic" type="checkbox" checked><i></i></label>
+            <label class="toggle-row compact-toggle"><span><strong>Visual reranking</strong><small>Inspect the shortlist for closer matches.</small></span><input id="memory-query-rerank" type="checkbox" checked><i></i></label>
+            <label class="toggle-row compact-toggle"><span><strong>VLM synthesis</strong><small>Summarize candidate descriptions; does not verify video.</small></span><input id="memory-query-vlm" type="checkbox"><i></i></label>
             <button id="memory-query-button" class="primary-button" type="submit"><span>Search memory</span><b>⌕</b></button>
           </form>
           <div id="memory-query-error" class="inline-error hidden"></div>
           <div id="memory-query-result" class="hidden">
             <div class="report-card memory-answer-card"><div class="report-meta"><span>RETRIEVAL ANSWER</span><span id="memory-query-mode">—</span></div><h3 id="memory-query-title">—</h3><p id="memory-query-summary">—</p><div id="memory-query-notes" class="report-notes"></div></div>
+            <details class="raw-result"><summary>Retrieval result and model provenance</summary><pre id="memory-query-json"></pre></details>
             <div id="memory-query-matches" class="memory-event-grid"></div>
           </div>
         </section>

@@ -41,6 +41,8 @@ pub struct Config {
     pub max_concurrent_cameras: usize,
     pub max_ephemeral_jobs: usize,
     pub memory_clip_mode: String,
+    pub retrieval_url: Option<String>,
+    pub retrieval_timeout_secs: u64,
     pub kafka_enabled: bool,
     #[cfg(feature = "kafka")]
     pub kafka_brokers: String,
@@ -155,6 +157,8 @@ impl Config {
             max_concurrent_cameras,
             max_ephemeral_jobs: positive_usize("VISN_MAX_EPHEMERAL_JOBS", "128")?,
             memory_clip_mode: memory_clip_mode()?,
+            retrieval_url: optional("VISN_RETRIEVAL_URL"),
+            retrieval_timeout_secs: positive_usize("VISN_RETRIEVAL_TIMEOUT_SECS", "600")? as u64,
             kafka_enabled: bool_value("VISN_KAFKA_ENABLED", false)?,
             #[cfg(feature = "kafka")]
             kafka_brokers: value("VISN_KAFKA_BROKERS", "127.0.0.1:9092"),

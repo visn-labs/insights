@@ -974,7 +974,10 @@ fn strip_json_fence(content: &str) -> &str {
 }
 
 fn validate_report(facts: &Report, candidate: &Report) -> anyhow::Result<()> {
-    if !(0.0..=1.0).contains(&candidate.confidence) {
+    if !candidate
+        .confidence
+        .is_some_and(|value| (0.0..=1.0).contains(&value))
+    {
         bail!("Gemma confidence must be between zero and one");
     }
     let allowed_ids: BTreeSet<Uuid> = facts.notable_event_ids.iter().copied().collect();
@@ -1014,7 +1017,7 @@ mod tests {
             notable_event_ids: vec![Uuid::nil()],
             observations: vec![],
             data_quality_notes: vec![],
-            confidence: 1.0,
+            confidence: Some(1.0),
         }
     }
 

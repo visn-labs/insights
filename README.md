@@ -187,6 +187,7 @@ The Kafka feature builds `librdkafka` and therefore requires CMake and a native 
 
 ## Documentation
 
+- [Experiment 1: Qwen visual Memory retrieval and reranking](docs/EXPERIMENT1_RETRIEVAL.md)
 - [Phase 0 architecture and build details](docs/PHASE0_BUILD.md)
 - [Backend inference optimization, export, and validation](docs/BACKEND_INFERENCE_OPTIMIZATION.md)
 - [HTTP API and data contracts](docs/API.md)

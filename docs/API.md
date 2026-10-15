@@ -253,3 +253,12 @@ Returns the recorded source Matroska artifact.
 ```
 
 Local metadata/description recall always runs. With `vlm_enabled`, LM Studio receives only the shortlisted event records to produce an evidence-grounded summary and ordering. Failure falls back to local recall and is reported in `fallback_reason`.
+
+
+### Retrieval readiness and report confidence
+
+`GET /api/v1/retrieval-status` returns `configured`, `available`, and a user-facing `message`. A reachable worker does not prove model inference; successful `POST /api/v1/memory-query` returns `retrieval_mode`, coverage notes, and `retrieval_provenance`.
+
+Rule-generated `Report.confidence` is now nullable: `null` means no calibrated overall confidence is available. Model reports still require a numeric value in [0, 1]. Cluster association report scores, when present, are explicitly described as mean association scores. Track summaries and events use a confidence-weighted class consensus; class changes are disclosed in quality notes. Event detector scores remain tied to their original observations.
+
+`POST /api/v1/memory-query` also accepts optional `job_id` (UUID). When supplied, it restricts retrieval to that recording before cluster/camera/time filters and model calls. Empty candidate sets return `not_run_empty_index` or `not_run_filtered_empty`, with a diagnostic in `retrieval_notes`; no model is called in either case.

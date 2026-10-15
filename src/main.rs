@@ -7,6 +7,7 @@ mod event_engine;
 mod gemma;
 mod memory;
 mod pipeline;
+mod retrieval;
 mod sink;
 mod store;
 mod ui;

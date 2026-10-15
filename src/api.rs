@@ -71,6 +71,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/v1/memory-jobs/{id}", get(get_memory_job))
         .route("/api/v1/memory-events/{id}/{kind}", get(memory_artifact))
         .route("/api/v1/memory-query", post(memory_query))
+        .route("/api/v1/retrieval-status", get(retrieval_status))
         .layer(DefaultBodyLimit::max(max_upload))
         .layer(
             CorsLayer::new()
@@ -424,6 +425,31 @@ async fn memory_query(
     Json(request): Json<MemoryQueryRequest>,
 ) -> Result<Json<crate::domain::MemoryQueryResponse>, ApiError> {
     Ok(Json(state.query_memory(request).await?))
+}
+
+async fn retrieval_status(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let Some(url) = &state.config.retrieval_url else {
+        return Json(serde_json::json!({"available": false, "configured": false,
+            "message": "Visual search is not configured. Start scripts/run_memory.sh, or set VISN_RETRIEVAL_URL and run the Qwen worker. Keyword search remains available."}));
+    };
+    let result = async {
+        reqwest::Client::new()
+            .get(format!("{}/health", url.trim_end_matches('/')))
+            .timeout(std::time::Duration::from_secs(2))
+            .send()
+            .await?
+            .error_for_status()?
+            .json::<serde_json::Value>()
+            .await
+    }
+    .await;
+    match result {
+        Ok(worker) if worker["status"] == "ready" => Json(serde_json::json!({
+            "available": true, "configured": true, "worker": worker,
+            "message": "Qwen worker reachable. Models load on the first search; successful inference is reported with each result."})),
+        _ => Json(serde_json::json!({"available": false, "configured": true,
+            "message": "Qwen worker unavailable. Check the worker process and VISN_RETRIEVAL_URL. Keyword fallback will be reported explicitly."})),
+    }
 }
 
 #[derive(Debug)]

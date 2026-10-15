@@ -42,6 +42,10 @@ const state = {
   selectedJobId: null,
   selectedJobKind: null,
   selectedMemoryJobId: null,
+  renderedMemoryJob: null,
+  memoryJobOptions: null,
+  searchAllRecordings: false,
+  memoryQueryBusy: false,
   upload: null,
   pollTimer: null,
 };
@@ -56,10 +60,11 @@ async function boot() {
   bindForm();
   bindUploads();
   bindMemory();
+  showView('memory');
   renderVlmOptions();
   $('#refresh-button').addEventListener('click', refreshAll);
   $('#new-run-button').addEventListener('click', () => showView('workspace'));
-  await Promise.all([loadCapabilities(), loadModels(), loadSample(), refreshJobLists()]);
+  await Promise.all([loadCapabilities(), loadRetrievalStatus(), loadModels(), loadSample(), refreshJobLists()]);
   state.pollTimer = window.setInterval(refreshJobLists, 1500);
 }
 
@@ -72,7 +77,7 @@ function bindNavigation() {
 function showView(name) {
   $$('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.view === name));
   $$('.view').forEach((view) => view.classList.toggle('active', view.id === `${name}-view`));
-  const titles = { workspace: 'Pipeline workspace', memory: 'Retrieval-first memory', runs: 'Run history', system: 'System readiness' };
+  const titles = { workspace: 'Detector analytics', memory: 'Video memory · Experiment 1', runs: 'Run history', system: 'System readiness' };
   $('#page-title').textContent = titles[name] || 'Pipeline workspace';
 }
 
@@ -88,16 +93,46 @@ function bindMemory() {
     }
   });
   $('#memory-job-form').addEventListener('submit', submitMemoryJob);
+  $('#memory-job-select').addEventListener('change', event => {
+    const job = state.memoryJobs.find(job => job.id === event.target.value);
+    if (job) inspectMemoryJob(job);
+  });
   $('#memory-query-form').addEventListener('submit', submitMemoryQuery);
+  $('#memory-search-all').addEventListener('click', () => {
+    state.searchAllRecordings = true;
+    $('#memory-query-cluster').value = '';
+    $('#memory-query-cameras').value = '';
+    updateMemorySearchScope();
+  });
   $('#memory-vlm-model').addEventListener('change', () => renderModels());
-  loadMemoryPreset('cluster-a');
+  $('#open-memory').addEventListener('click', () => {
+    const source = $('input[name="source"]:checked').value;
+    const stream = $(source === 'rtsp' ? '#rtsp-uri' : '#http-uri').value.trim();
+    if (stream) $('#memory-stream-url').value = stream;
+    showView('memory');
+    $('#memory-stream-url').focus();
+  });
+  $('#search-indexed-memory').addEventListener('click', () => {
+    const job = state.memoryJobs.find(job => job.id === state.selectedMemoryJobId);
+    if (job) {
+      state.searchAllRecordings = false;
+      updateMemorySearchScope();
+      $('#memory-query-cluster').value = job.request.cluster_id || '';
+      $('#memory-query-cameras').value = job.request.cameras.map(camera => camera.camera_id).join(', ');
+    }
+    $('#memory-query-text').focus();
+    $('#memory-query-form').scrollIntoView({behavior: 'smooth', block: 'center'});
+  });
+  $('#memory-query-semantic').addEventListener('change', () => {
+    $('#memory-query-rerank').disabled = !$('#memory-query-semantic').checked;
+  });
 }
 
 function loadMemoryPreset(name) {
   const preset = MEMORY_CAMERA_PRESETS[name];
   if (!preset) return;
+  $('#memory-stream-url').value = '';
   $('#memory-cluster-id').value = preset.clusterId;
-  $('#memory-query-cluster').value = preset.clusterId;
   $('#memory-cameras-json').value = JSON.stringify(preset.cameras, null, 2);
   setInlineError('#memory-form-error', '');
 }
@@ -156,9 +191,20 @@ async function api(path, options = {}) {
 
 async function refreshAll() {
   $('#refresh-button').disabled = true;
-  await Promise.all([loadCapabilities(), loadModels(), refreshJobLists()]);
+  await Promise.all([loadCapabilities(), loadRetrievalStatus(), loadModels(), refreshJobLists()]);
   $('#refresh-button').disabled = false;
   toast('Runtime state refreshed');
+}
+
+async function loadRetrievalStatus() {
+  try {
+    const status = await api('/api/v1/retrieval-status');
+    $('#retrieval-status').textContent = status.message;
+    $('#retrieval-status').dataset.available = String(status.available);
+  } catch (error) {
+    $('#retrieval-status').textContent = `Unable to check visual search: ${error.message}`;
+    $('#retrieval-status').dataset.available = 'false';
+  }
 }
 
 async function loadCapabilities() {
@@ -189,14 +235,14 @@ async function loadModels() {
       $('#gemma-status').textContent = 'LM Studio reachable';
     } else {
       $('#gemma-dot').className = 'status-dot error';
-      $('#gemma-status').textContent = 'VLM fallback mode';
+      $('#gemma-status').textContent = 'Optional captions offline';
     }
     renderVlmOptions();
     renderModels(response.error);
   } catch (error) {
     state.models = [];
     $('#gemma-dot').className = 'status-dot error';
-    $('#gemma-status').textContent = 'VLM fallback mode';
+    $('#gemma-status').textContent = 'Optional captions offline';
     renderVlmOptions();
     renderModels(error.message);
   }
@@ -363,7 +409,8 @@ async function submitMemoryJob(event) {
   button.disabled = true;
   button.querySelector('span').textContent = 'Submitting…';
   try {
-    let cameras = JSON.parse($('#memory-cameras-json').value || '[]');
+    const stream = $('#memory-stream-url').value.trim();
+    let cameras = stream ? [{live_url: stream}] : JSON.parse($('#memory-cameras-json').value || '[]');
     if (!Array.isArray(cameras)) cameras = [cameras];
     if (!cameras.length) throw new Error('Provide at least one backend camera payload.');
     const clusterId = $('#memory-cluster-id').value.trim();
@@ -374,7 +421,7 @@ async function submitMemoryJob(event) {
       monitor_duration_secs: Number($('#memory-duration').value),
       observer_fps: Number($('#memory-observer-fps').value),
       vlm_enabled: $('#memory-vlm-enabled').checked,
-      vlm_model: $('#vlm-model').value,
+      vlm_model: $('#memory-vlm-model').value,
     };
     const job = await api('/api/v1/memory-jobs', {
       method: 'POST',
@@ -382,6 +429,8 @@ async function submitMemoryJob(event) {
       body: JSON.stringify(request),
     });
     state.selectedMemoryJobId = job.id;
+    $('#memory-query-cluster').value = clusterId;
+    $('#memory-query-cameras').value = job.request.cameras.map(camera => camera.camera_id).join(', ');
     inspectMemoryJob(job);
     toast('Camera-memory indexing submitted');
     await loadMemoryJobs();
@@ -397,20 +446,36 @@ async function loadMemoryJobs() {
   try {
     state.memoryJobs = await api('/api/v1/memory-jobs');
     $('#memory-count').textContent = state.memoryJobs.length;
+    const options = state.memoryJobs.map(job => `<option value="${job.id}">${escapeHtml(job.request.name)} · ${escapeHtml(job.status)} · ${new Date(job.created_at_ms).toLocaleString()}</option>`).join('');
+    if (state.memoryJobOptions !== options) {
+      state.memoryJobOptions = options;
+      $('#memory-job-select').innerHTML = options || '<option value="">No recordings yet</option>';
+    }
     if (state.selectedMemoryJobId) {
+      $('#memory-job-select').value = state.selectedMemoryJobId;
       const selected = state.memoryJobs.find((job) => job.id === state.selectedMemoryJobId);
       if (selected) inspectMemoryJob(selected);
     } else if (state.memoryJobs.length) {
-      state.selectedMemoryJobId = state.memoryJobs[0].id;
-      inspectMemoryJob(state.memoryJobs[0]);
+      const initial = state.memoryJobs.find(job => job.status === 'completed' && job.result?.events_indexed > 0) || state.memoryJobs[0];
+      inspectMemoryJob(initial);
     }
+    updateMemorySearchScope();
   } catch (error) {
     console.warn('Could not refresh memory jobs', error);
   }
 }
 
 function inspectMemoryJob(job) {
+  const renderKey = `${job.id}:${job.status}:${job.completed_at_ms}`;
+  if (state.renderedMemoryJob === renderKey) return;
+  state.renderedMemoryJob = renderKey;
   state.selectedMemoryJobId = job.id;
+  state.searchAllRecordings = false;
+  $('#memory-query-cluster').value = job.request.cluster_id || '';
+  $('#memory-query-cameras').value = (job.result?.camera_results || []).map(result => result.camera.camera_id).join(', ');
+  $('#memory-query-result').classList.add('hidden');
+  updateMemorySearchScope(job);
+  $('#memory-job-select').value = job.id;
   $('#memory-empty').classList.add('hidden');
   const badge = $('#memory-job-status');
   badge.textContent = job.status;
@@ -440,10 +505,10 @@ function renderMemoryCamera(cameraResult) {
   return `<section class="memory-camera-block">
     <div class="memory-camera-heading">
       <div><strong>${escapeHtml(camera.camera_id)}</strong><small>${escapeHtml(location || camera.manufacturer || 'Metadata pending')}</small></div>
-      <span>${events.length} event${events.length === 1 ? '' : 's'} · ${cameraResult.frames_decoded} sparse frames</span>
+      <span>${events.length} event${events.length === 1 ? '' : 's'} · ${cameraResult.frames_decoded} source frames</span>
     </div>
     ${camera.description ? `<p class="memory-camera-description">${escapeHtml(camera.description)}</p>` : ''}
-    <div class="memory-event-grid">${events.map(renderMemoryEvent).join('')}</div>
+    <div class="memory-event-grid">${events.map(event => renderMemoryEvent(event)).join('')}</div>
     ${(cameraResult.data_quality_notes || []).length ? `<div class="report-notes">${cameraResult.data_quality_notes.map((note) => `<span>${escapeHtml(note)}</span>`).join('')}</div>` : ''}
   </section>`;
 }
@@ -451,13 +516,14 @@ function renderMemoryCamera(cameraResult) {
 function renderMemoryEvent(event, match = null) {
   const description = event.description || {};
   const tags = [...(description.visible_objects || []), ...(description.apparent_actions || []), ...(description.visible_text || [])].slice(0, 6);
-  const score = match ? `<span class="memory-score">score ${Number(match.score).toFixed(3)}</span>` : '';
+  const score = match ? `<span class="memory-score">relevance ${Number(match.score).toFixed(3)}</span>` : '';
   return `<article class="memory-event-card">
     <img src="${event.thumbnail_url}" alt="Representative evidence frame from ${escapeHtml(event.camera_id)}" loading="lazy">
     <div class="memory-event-body">
       <div class="memory-event-meta"><span>${formatDuration(event.start_ms)}–${formatDuration(event.end_ms)}</span><span>activity ${Number(event.activity_peak).toFixed(2)}</span>${score}</div>
-      <strong>${escapeHtml(description.scene_type || 'Indexed interval')}</strong>
-      <p>${escapeHtml(description.summary || 'Evidence interval indexed without a visual description.')}</p>
+      <strong>${escapeHtml(description.generated_by_model ? description.scene_type : 'Recorded evidence')}</strong>
+      <p>${escapeHtml(description.generated_by_model ? description.summary : 'No generated caption. Visual retrieval examines the recorded clip directly.')}</p>
+      ${description.fallback_reason ? `<details><summary>Caption status</summary><small>${escapeHtml(description.fallback_reason)}</small></details>` : ''}
       ${tags.length ? `<div class="memory-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
       ${match?.matched_terms?.length ? `<small class="matched-terms">Matched: ${escapeHtml(match.matched_terms.join(', '))}</small>` : ''}
       <video controls preload="none" poster="${event.thumbnail_url}" src="${event.evidence_url}"></video>
@@ -465,11 +531,24 @@ function renderMemoryEvent(event, match = null) {
   </article>`;
 }
 
+function updateMemorySearchScope(selected = null) {
+  const job = selected || state.memoryJobs.find(job => job.id === state.selectedMemoryJobId);
+  const ready = state.searchAllRecordings
+    ? state.memoryJobs.some(job => job.result?.events_indexed > 0)
+    : job?.status === 'completed' && job.result?.events_indexed > 0;
+  $('#memory-search-scope').textContent = state.searchAllRecordings
+    ? 'Searching all indexed recordings, subject to the filters below.'
+    : ready ? `Searching selected recording: ${job.request.name} · ${job.result.events_indexed} indexed clips.`
+    : `Selected recording is ${job?.status || 'not available'}. Choose a completed recording with indexed clips, or search all recordings.`;
+  $('#memory-query-button').disabled = state.memoryQueryBusy || !ready;
+}
+
 async function submitMemoryQuery(event) {
   event.preventDefault();
   setInlineError('#memory-query-error', '');
   const button = $('#memory-query-button');
   button.disabled = true;
+  state.memoryQueryBusy = true;
   button.querySelector('span').textContent = 'Searching…';
   try {
     const clusterId = $('#memory-query-cluster').value.trim();
@@ -478,28 +557,35 @@ async function submitMemoryQuery(event) {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         query: $('#memory-query-text').value.trim(),
+        job_id: state.searchAllRecordings ? null : state.selectedMemoryJobId,
+        semantic_enabled: $('#memory-query-semantic').checked,
+        rerank_enabled: $('#memory-query-rerank').checked,
         cluster_id: clusterId || null,
-        camera_ids: [],
+        camera_ids: $('#memory-query-cameras').value.split(',').map(id => id.trim()).filter(Boolean),
         limit: 12,
         vlm_enabled: $('#memory-query-vlm').checked,
         vlm_model: $('#memory-vlm-model').value,
       }),
     });
     renderMemoryQuery(response);
+    loadRetrievalStatus();
   } catch (error) {
     setInlineError('#memory-query-error', error.message);
   } finally {
     button.disabled = false;
+    state.memoryQueryBusy = false;
     button.querySelector('span').textContent = 'Search memory';
+    updateMemorySearchScope();
   }
 }
 
 function renderMemoryQuery(result) {
   $('#memory-query-result').classList.remove('hidden');
-  $('#memory-query-title').textContent = result.matches.length ? `${result.matches.length} evidence candidates` : 'No matching evidence';
+  $('#memory-query-json').textContent = JSON.stringify(result, null, 2);
+  $('#memory-query-title').textContent = result.matches.length ? `${result.matches.length} evidence candidates` : result.events_considered === 0 ? 'No clips were searched' : 'No matching evidence';
   $('#memory-query-summary').textContent = result.summary;
-  $('#memory-query-mode').textContent = result.model || label(result.retrieval_mode);
-  const notes = [`${result.events_considered} indexed events considered`];
+  $('#memory-query-mode').textContent = ({hybrid_qwen_reranker: 'Visual + keyword · Qwen reranked', hybrid_rrf: 'Visual + keyword · rank fusion', local_lexical_metadata: 'Keyword only', not_run_empty_index: 'Not searched · no indexed clips', not_run_filtered_empty: 'Not searched · filters excluded all clips'}[result.retrieval_mode] || label(result.retrieval_mode)) + (result.model ? ` · Summary: ${result.model}` : '');
+  const notes = [`${result.events_considered} filtered events considered`, ...(result.retrieval_notes || [])];
   if (result.fallback_reason) notes.push(`VLM fallback: ${result.fallback_reason}`);
   $('#memory-query-notes').innerHTML = notes.map((note) => `<span>${escapeHtml(note)}</span>`).join('');
   $('#memory-query-matches').innerHTML = result.matches.length

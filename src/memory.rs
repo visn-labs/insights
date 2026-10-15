@@ -14,7 +14,7 @@ use tokio::{
     process::Command,
     sync::Semaphore,
 };
-use tracing::warn;
+use tracing::{info, warn};
 use uuid::Uuid;
 
 use crate::{
@@ -113,6 +113,8 @@ impl MemoryService {
             .await
             .context("create camera memory directory")?;
 
+        info!(%job_id, camera_id = %camera.camera_id, monitor_duration_secs, observer_fps,
+            "memory recording and indexing started");
         let output = self
             .run_observer(
                 &camera.live_url,
@@ -220,6 +222,8 @@ impl MemoryService {
             });
         }
 
+        info!(%job_id, camera_id = %camera.camera_id, events = events.len(), duration_ms = output.duration_ms,
+            frames_consumed = output.frames_decoded, "memory evidence indexed");
         Ok(MemoryCameraResult {
             camera,
             duration_ms: output.duration_ms,

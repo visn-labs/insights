@@ -192,7 +192,7 @@ pub struct Report {
     pub notable_event_ids: Vec<Uuid>,
     pub observations: Vec<String>,
     pub data_quality_notes: Vec<String>,
-    pub confidence: f32,
+    pub confidence: Option<f32>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -600,6 +600,12 @@ pub struct MemoryEvent {
 pub struct MemoryQueryRequest {
     pub query: String,
     #[serde(default)]
+    pub job_id: Option<Uuid>,
+    #[serde(default = "default_retrieval_enabled")]
+    pub semantic_enabled: bool,
+    #[serde(default = "default_retrieval_enabled")]
+    pub rerank_enabled: bool,
+    #[serde(default)]
     pub cluster_id: Option<String>,
     #[serde(default)]
     pub camera_ids: Vec<String>,
@@ -613,6 +619,10 @@ pub struct MemoryQueryRequest {
     pub vlm_enabled: bool,
     #[serde(default)]
     pub vlm_model: Option<String>,
+}
+
+fn default_retrieval_enabled() -> bool {
+    true
 }
 
 fn default_query_limit() -> usize {
@@ -635,6 +645,8 @@ pub struct MemoryQueryResponse {
     pub matches: Vec<MemoryQueryMatch>,
     pub events_considered: usize,
     pub retrieval_mode: String,
+    pub retrieval_notes: Vec<String>,
+    pub retrieval_provenance: serde_json::Value,
     pub model: Option<String>,
     pub fallback_reason: Option<String>,
 }

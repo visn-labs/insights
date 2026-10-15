@@ -47,6 +47,7 @@ struct CompiledLine {
 
 struct TrackState {
     class_name: String,
+    class_votes: BTreeMap<String, f32>,
     started_at_ms: u64,
     last_observation: Observation,
     observations: usize,
@@ -119,11 +120,13 @@ impl StreamingAnalyzer {
 
     pub fn finish(mut self) -> Analysis {
         let mut tracks = Vec::with_capacity(self.tracks.len());
+        let mut unstable_tracks = 0;
         for (track_id, track) in self.tracks {
             if !track.confirmed {
                 continue;
             }
 
+            unstable_tracks += usize::from(track.class_votes.len() > 1);
             let duration_ms = track
                 .last_observation
                 .frame_time_ms
@@ -157,6 +160,21 @@ impl StreamingAnalyzer {
             });
         }
 
+        // Publish one confidence-weighted class per track, retaining event IDs and timing.
+        let classes: HashMap<_, _> = tracks
+            .iter()
+            .map(|track| (track.track_id.as_str(), track.class_name.as_str()))
+            .collect();
+        for event in &mut self.events {
+            if let Some(class) = classes.get(event.track_id.as_str()) {
+                if event.class_name != *class {
+                    if let Some(rest) = event.description.strip_prefix(&event.class_name) {
+                        event.description = format!("{class}{rest}");
+                    }
+                    event.class_name = (*class).to_owned();
+                }
+            }
+        }
         // Batch analysis historically visited tracks in lexical track-id order before its
         // stable timestamp sort. Include that tie-break explicitly so interleaved streamed
         // frames retain the same deterministic order for simultaneous events.
@@ -165,12 +183,15 @@ impl StreamingAnalyzer {
                 .cmp(&right.event_time_ms)
                 .then_with(|| left.track_id.cmp(&right.track_id))
         });
-        let report = deterministic_report(
+        let mut report = deterministic_report(
             &tracks,
             &self.events,
             self.observation_count,
             self.duration_ms,
         );
+        if unstable_tracks > 0 {
+            report.data_quality_notes.push(format!("{unstable_tracks} tracks changed detector class; summaries and events use the confidence-weighted track class. Event confidence remains the detector score at that timestamp."));
+        }
         Analysis {
             tracks,
             events: self.events,
@@ -242,6 +263,7 @@ impl TrackState {
     fn new(observation: &Observation, zone_count: usize, line_state_count: usize) -> Self {
         Self {
             class_name: observation.class_name.clone(),
+            class_votes: BTreeMap::new(),
             started_at_ms: observation.frame_time_ms,
             last_observation: observation_without_appearance(observation),
             observations: 0,
@@ -264,6 +286,16 @@ impl TrackState {
         confirmation_threshold: usize,
     ) -> Vec<ObservedEvent> {
         self.observations += 1;
+        *self
+            .class_votes
+            .entry(observation.class_name.clone())
+            .or_default() += observation.confidence;
+        self.class_name = self
+            .class_votes
+            .iter()
+            .max_by(|a, b| a.1.total_cmp(b.1).then_with(|| b.0.cmp(a.0)))
+            .map(|(name, _)| name.clone())
+            .unwrap_or_else(|| observation.class_name.clone());
         self.maximum_confidence = self.maximum_confidence.max(observation.confidence);
         self.last_observation = observation_without_appearance(observation);
         self.appearance.observe(observation);
@@ -502,7 +534,7 @@ fn deterministic_report(
             .collect::<Vec<_>>()
             .join(", ")
     };
-    let mut notes = Vec::new();
+    let mut notes = vec!["Rule reports have no calibrated overall confidence; confidence is null. Dwell is first-to-last observation span, not proof of continuous presence inside a zone.".to_owned()];
     if observation_count == 0 {
         notes.push("No detector observations were available.".to_owned());
     }
@@ -526,13 +558,45 @@ fn deterministic_report(
             .map(|event| event.description.clone())
             .collect(),
         data_quality_notes: notes,
-        confidence: if observation_count == 0 { 0.0 } else { 1.0 },
+        confidence: None,
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn class_changes_use_track_consensus_and_report_confidence_is_unknown() {
+        let policy = AnalyticsPolicy {
+            minimum_confirmation_observations: 1,
+            dwell_threshold_ms: 1000,
+            ..AnalyticsPolicy::default()
+        };
+        let mut observation = sample_observations().remove(0);
+        observation.class_name = "truck".into();
+        observation.confidence = 0.9;
+        observation.frame_time_ms = 0;
+        let mut observations = vec![observation.clone()];
+        observation.frame_time_ms = 1000;
+        observations.push(observation.clone());
+        observation.frame_time_ms = 2000;
+        observation.class_name = "bus".into();
+        observation.confidence = 0.4;
+        observations.push(observation);
+        let result = analyze(Uuid::nil(), &observations, &policy);
+        assert_eq!(result.tracks[0].class_name, "truck");
+        assert!(!result.events.is_empty());
+        assert!(result
+            .events
+            .iter()
+            .all(|event| event.class_name == "truck" && event.description.starts_with("truck")));
+        assert!(result.report.confidence.is_none());
+        assert!(result
+            .report
+            .data_quality_notes
+            .iter()
+            .any(|note| note.contains("1 tracks changed")));
+    }
     use crate::pipeline::{sample_observations, sample_policy};
 
     #[test]

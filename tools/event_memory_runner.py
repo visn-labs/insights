@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 from collections import deque
 import json
+import logging
 import math
 import os
 from pathlib import Path
@@ -71,6 +72,9 @@ def record_network_source(ffmpeg: str, source: str, target: Path, seconds: float
     elif source.startswith(("rtsp://", "rtsps://")):
         input_options += ["-rtsp_transport", "tcp"]
 
+    # Raw MJPEG has no reliable presentation clock. Preserve camera arrival time.
+    if '.mjpg' in source.lower() or '.mjpeg' in source.lower():
+        input_options += ["-use_wallclock_as_timestamps", "1"]
     command = [
         ffmpeg,
         "-hide_banner",
@@ -187,7 +191,13 @@ def extract_clip(
         "-t", f"{duration:.3f}",
         "-map", "0:v:0", "-map", "0:a:0?",
     ]
-    if clip_mode == "copy":
+    # MP4 can contain MJPEG and still be unplayable in browsers. Only copy H.264.
+    import cv2
+    probe = cv2.VideoCapture(str(evidence))
+    fourcc = int(probe.get(cv2.CAP_PROP_FOURCC))
+    probe.release()
+    codec = ''.join(chr((fourcc >> (8*i)) & 255) for i in range(4)).lower()
+    if clip_mode == "copy" and codec in ("h264", "avc1"):
         copied = subprocess.run(
             [*common, "-c", "copy", "-avoid_negative_ts", "make_zero", "-movflags", "+faststart", "-y", str(target)],
             stdout=subprocess.DEVNULL,
@@ -199,7 +209,7 @@ def extract_clip(
         target.unlink(missing_ok=True)
 
     transcoded = subprocess.run(
-        [*common, "-c:v", "libx264", "-preset", "ultrafast", "-crf", "28", "-threads", str(threads), "-c:a", "aac", "-movflags", "+faststart", "-y", str(target)],
+        [*common, "-c:v", "libx264", "-preset", "ultrafast", "-crf", "28", "-pix_fmt", "yuv420p", "-threads", str(threads), "-c:a", "aac", "-movflags", "+faststart", "-y", str(target)],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
         check=False,
@@ -214,9 +224,9 @@ def analyze(cv2: Any, np: Any, ffmpeg: str, evidence: Path, output_dir: Path, ar
     nominal_fps = float(capture.get(cv2.CAP_PROP_FPS) or 0.0)
     if nominal_fps <= 0 or nominal_fps > 240:
         nominal_fps = 25.0
-    stride = max(1, round(nominal_fps / args.observer_fps))
-    total_frames = int(capture.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
-    reported_duration_ms = int(total_frames * 1000.0 / nominal_fps) if total_frames > 0 else 0
+    next_sample_ms = 0.0
+    sample_period_ms = 1000.0 / args.observer_fps
+    frame_period_ms = 1000.0 / nominal_fps
 
     events: list[dict[str, Any]] = []
     activity_history: Any = deque(maxlen=60)
@@ -274,21 +284,23 @@ def analyze(cv2: Any, np: Any, ffmpeg: str, evidence: Path, output_dir: Path, ar
 
     try:
         while True:
-            if frame_index % stride != 0:
-                ok = capture.grab()
-                if not ok:
-                    break
-                frame_index += 1
-                frames_consumed += 1
+            if not capture.grab():
+                break
+            source_time_ms = float(capture.get(cv2.CAP_PROP_POS_MSEC) or 0)
+            if source_time_ms <= 0:
+                source_time_ms = frame_index * frame_period_ms
+            if source_time_ms >= args.max_seconds * 1000:
+                break
+            frame_index += 1
+            frames_consumed += 1
+            last_time_ms = max(last_time_ms, source_time_ms)
+            if source_time_ms + 0.01 < next_sample_ms:
                 continue
-            ok, frame = capture.read()
+            ok, frame = capture.retrieve()
             if not ok:
                 break
-            frames_consumed += 1
-            source_time_ms = int(capture.get(cv2.CAP_PROP_POS_MSEC) or 0)
-            if source_time_ms <= 0:
-                source_time_ms = int(frame_index * 1000.0 / nominal_fps)
-            last_time_ms = max(last_time_ms, source_time_ms)
+            next_sample_ms = source_time_ms + sample_period_ms
+            source_time_ms = round(source_time_ms)
             small = cv2.resize(frame, (160, 96), interpolation=cv2.INTER_AREA)
             gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
             activity, current_hist = activity_score(
@@ -321,11 +333,10 @@ def analyze(cv2: Any, np: Any, ffmpeg: str, evidence: Path, output_dir: Path, ar
             event_scores.append(activity)
             activity_history.append(activity)
             observer_frames += 1
-            frame_index += 1
     finally:
         capture.release()
 
-    duration_ms = max(last_time_ms + round(1000.0 / args.observer_fps), reported_duration_ms)
+    duration_ms = round(min(args.max_seconds * 1000, last_time_ms + frame_period_ms))
     finish_event(duration_ms, "stream_end")
     if not events:
         raise RuntimeError("no observer frames were decoded from the recorded evidence")
@@ -390,8 +401,12 @@ def main() -> None:
 
         cv2.setNumThreads(args.threads)
         ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+        logging.info("Recording bounded camera interval: %.1fs", args.max_seconds)
         record_network_source(ffmpeg, args.source, evidence, args.max_seconds)
+        logging.info("Recording retained; analyzing intervals and generating browser clips")
         result = analyze(cv2, np, ffmpeg, evidence, output_dir, args)
+        logging.info("Indexed %d intervals over %dms", len(result['events']), result['duration_ms'])
     except ImportError as error:
         fail(f"missing memory-runner dependency: {error}; install tools/requirements-yolo.txt")
     except Exception as error:
