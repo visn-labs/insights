@@ -309,6 +309,7 @@ impl AppState {
         let duration = request.monitor_duration_secs;
         let fps = request.observer_fps;
         let vlm_enabled = request.vlm_enabled;
+        let temporal_enabled = request.temporal_enabled;
         let model = request.vlm_model.clone();
         let outcomes = stream::iter(request.cameras.clone().into_iter().map(|camera| {
             let service = service.clone();
@@ -324,6 +325,7 @@ impl AppState {
                         duration,
                         fps,
                         vlm_enabled,
+                        temporal_enabled,
                         model.as_deref(),
                     )
                     .await;
@@ -424,7 +426,28 @@ impl AppState {
         };
         let mut model = None;
         let mut fallback_reason = None;
-        if request.vlm_enabled && !matches.is_empty() {
+        let mut interpretations = Vec::new();
+        let mut interpretation_notes = Vec::new();
+        if request.temporal_enabled && !matches.is_empty() {
+            let events: Vec<_> = matches
+                .iter()
+                .take(3)
+                .map(|item| item.event.clone())
+                .collect();
+            match crate::interpretation::interpret(&self.config, &request.query, &events).await {
+                Ok(results) => {
+                    interpretation_notes.push("Experiment 2: model observations from ordered visual frames plus metadata; inspect citations. Retrieval ranking is unchanged.".into());
+                    summary = results.iter().map(|result| format!("Clip {} ({}): {}",result.event_id,result.status,result.answer)).collect::<Vec<_>>().join("\n");
+                    interpretations = results;
+                }
+                Err(error) => interpretation_notes.push(format!("Sequence interpretation unavailable; retained experiment 1 retrieval results: {error}")),
+            }
+        }
+        if request.temporal_enabled && matches.is_empty() {
+            interpretation_notes
+                .push("Sequence interpretation skipped: no retrieved visual evidence.".into());
+        }
+        if request.vlm_enabled && !request.temporal_enabled && !matches.is_empty() {
             match self
                 .memory
                 .synthesize_query(&request.query, &matches, request.vlm_model.as_deref())
@@ -442,8 +465,11 @@ impl AppState {
         }
         info!(%query_id, mode = %retrieval_mode, considered, matches = matches.len(),
             elapsed_ms = started.elapsed().as_millis() as u64,
+            temporal_requested = request.temporal_enabled, interpreted = interpretations.len(), interpretation_notes = ?interpretation_notes,
             notes = ?retrieval_notes, provenance = %retrieval.provenance, "memory retrieval completed");
         Ok(MemoryQueryResponse {
+            interpretations,
+            interpretation_notes,
             query_id,
             query: request.query,
             summary,
@@ -999,6 +1025,7 @@ fn rehydrate_memory_paths(config: &Config, job: &mut MemoryJobRecord) {
             .join(job.id.to_string())
             .join(safe_memory_component(&camera.camera.camera_id));
         for event in &mut camera.events {
+            event.source_duration_ms = camera.duration_ms;
             event.thumbnail_path = directory.join(format!("{}.jpg", event.event_id));
             let clip = directory.join(format!("{}.mp4", event.event_id));
             event.source_evidence_path = directory.join("source.mkv");

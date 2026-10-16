@@ -5,6 +5,7 @@ mod detector_worker;
 mod domain;
 mod event_engine;
 mod gemma;
+mod interpretation;
 mod memory;
 mod pipeline;
 mod retrieval;

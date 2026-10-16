@@ -97,6 +97,7 @@ impl MemoryService {
         monitor_duration_secs: u64,
         observer_fps: f32,
         vlm_enabled: bool,
+        temporal_enabled: bool,
         requested_vlm_model: Option<&str>,
     ) -> anyhow::Result<MemoryCameraResult> {
         if camera.camera_id.trim().is_empty() {
@@ -127,7 +128,7 @@ impl MemoryService {
         ensure_file(&source_evidence_path).await?;
 
         let mut selected = BTreeSet::new();
-        if vlm_enabled {
+        if vlm_enabled || temporal_enabled {
             selected = select_vlm_events(&output.events, self.config.max_vlm_events_per_camera);
         }
 
@@ -157,7 +158,7 @@ impl MemoryService {
                     source_evidence_path.clone()
                 }
             };
-            let description = if selected.contains(&index) {
+            let description = if selected.contains(&index) && !temporal_enabled {
                 match load_representative_frame(&event.representative_frame, &thumbnail_path).await
                 {
                     Ok(frame) => match self
@@ -190,7 +191,7 @@ impl MemoryService {
                 fallback_description(
                     &camera,
                     event.activity_peak,
-                    if vlm_enabled {
+                    if vlm_enabled || temporal_enabled {
                         Some(format!(
                             "VLM enrichment was limited to the {} highest-priority events for this camera",
                             self.config.max_vlm_events_per_camera
@@ -201,6 +202,8 @@ impl MemoryService {
                 )
             };
             events.push(MemoryEvent {
+                source_duration_ms: output.duration_ms,
+                interpretation: None,
                 event_id,
                 job_id,
                 camera_id: camera.camera_id.clone(),
@@ -220,6 +223,24 @@ impl MemoryService {
                 clip_path,
                 source_evidence_path: source_evidence_path.clone(),
             });
+            if temporal_enabled && selected.contains(&index) {
+                let event = events.last_mut().expect("event just inserted");
+                match crate::interpretation::interpret(&self.config,
+                    "Describe the visible state changes from the beginning to the end. Which actions, if any, are supported by the sequence?",
+                    std::slice::from_ref(event)).await {
+                    Ok(mut results) => {
+                        let result = results.remove(0);
+                        event.description.summary = format!("Sequence interpretation ({}): {}", result.status, result.answer);
+                        event.description.scene_type = "timestamped sequence interpretation".into();
+                        event.description.generated_by_model = true;
+                        event.description.confidence = 0.0;
+                        event.description.model = result.provenance["model"].as_str().map(str::to_owned);
+                        event.description.fallback_reason = None;
+                        event.interpretation = Some(result);
+                    }
+                    Err(error) => event.description.fallback_reason = Some(format!("Sequence interpretation unavailable: {error}")),
+                }
+            }
         }
 
         info!(%job_id, camera_id = %camera.camera_id, events = events.len(), duration_ms = output.duration_ms,

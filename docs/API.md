@@ -262,3 +262,11 @@ Local metadata/description recall always runs. With `vlm_enabled`, LM Studio rec
 Rule-generated `Report.confidence` is now nullable: `null` means no calibrated overall confidence is available. Model reports still require a numeric value in [0, 1]. Cluster association report scores, when present, are explicitly described as mean association scores. Track summaries and events use a confidence-weighted class consensus; class changes are disclosed in quality notes. Event detector scores remain tied to their original observations.
 
 `POST /api/v1/memory-query` also accepts optional `job_id` (UUID). When supplied, it restricts retrieval to that recording before cluster/camera/time filters and model calls. Empty candidate sets return `not_run_empty_index` or `not_run_filtered_empty`, with a diagnostic in `retrieval_notes`; no model is called in either case.
+
+## Experiment 2: ordered visual interpretation
+
+`POST /api/v1/memory-jobs` and `POST /api/v1/memory-query` accept `temporal_enabled` (boolean, default `false`). When enabled, sequence interpretation takes precedence over legacy `vlm_enabled` caption/synthesis. Retrieval settings and filters are unchanged.
+
+Memory events include `source_duration_ms` and optional `interpretation`. Query responses include `interpretations` and `interpretation_notes`. Each interpretation contains `event_id`, `status` (`supported` or `uncertain`, a model judgment), `answer`, source-relative `start_ms`/`end_ms`, `sampled_timestamps_ms`, ordered `frames` (`timestamp_ms`, JPEG data URL `image`), `observations` (`frame_index`, `timestamp_ms`, `description`), `limitations`, `provenance`, `cached`, and `elapsed_secs`. Sample timestamps are seek targets, not precise action boundaries.
+
+The local Qwen worker exposes `POST /interpret` for Rust, using the same evidence-root restrictions and serialized inference lock as retrieval. Query-time interpretation covers at most three ranked events, expands each interval by up to two seconds per side, clamps to source duration, and caps each window at twenty seconds. Indexing uses the existing priority-event budget. Unavailable/invalid interpretation preserves retrieval results with an explicit note. No model claim updates deterministic tracking facts or retrieval scores.

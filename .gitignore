@@ -18,3 +18,5 @@ __pycache__/
 /output/playwright/
 /.venv-retrieval/
 /.retrieval/
+
+/output/experiment2/

@@ -98,6 +98,9 @@ function bindMemory() {
     if (job) inspectMemoryJob(job);
   });
   $('#memory-query-form').addEventListener('submit', submitMemoryQuery);
+  for (const [sequence, caption] of [['#memory-temporal-enabled', '#memory-vlm-enabled'], ['#memory-query-temporal', '#memory-query-vlm']]) {
+    $(sequence).addEventListener('change', () => { $(caption).disabled = $(sequence).checked; });
+  }
   $('#memory-search-all').addEventListener('click', () => {
     state.searchAllRecordings = true;
     $('#memory-query-cluster').value = '';
@@ -420,7 +423,8 @@ async function submitMemoryJob(event) {
       cameras,
       monitor_duration_secs: Number($('#memory-duration').value),
       observer_fps: Number($('#memory-observer-fps').value),
-      vlm_enabled: $('#memory-vlm-enabled').checked,
+      vlm_enabled: $('#memory-vlm-enabled').checked && !$('#memory-temporal-enabled').checked,
+      temporal_enabled: $('#memory-temporal-enabled').checked,
       vlm_model: $('#memory-vlm-model').value,
     };
     const job = await api('/api/v1/memory-jobs', {
@@ -513,6 +517,20 @@ function renderMemoryCamera(cameraResult) {
   </section>`;
 }
 
+function renderInterpretation(value) {
+  if (!value) return '';
+  return `<section class="sequence-evidence" aria-label="Ordered visual evidence">
+    <strong>Experiment 2 · ${value.status === 'supported' ? 'Unverified model interpretation' : 'Uncertain interpretation'}</strong>
+    <p>${escapeHtml(value.answer)}</p>
+    <small>Action-direction errors were observed in testing. Review the frames before relying on this interpretation.</small>
+    <small>Source window ${(value.start_ms / 1000).toFixed(2)}–${(value.end_ms / 1000).toFixed(2)}s · ${escapeHtml(value.provenance.model || '')}${value.cached ? ' · cached' : ''}</small>
+    <details><summary>Review ordered frames and observations</summary>
+      <div class="sequence-frames">${(value.frames || []).map((frame, index) => `<figure><img src="${frame.image}" loading="lazy" alt="Sequence frame ${index + 1} at ${(frame.timestamp_ms / 1000).toFixed(2)} seconds"><figcaption>${(frame.timestamp_ms / 1000).toFixed(2)}s</figcaption></figure>`).join('')}</div>
+      <ol>${value.observations.map(item => `<li><b>${(item.timestamp_ms / 1000).toFixed(2)}s</b> ${escapeHtml(item.description)}</li>`).join('')}</ol>
+      ${value.limitations.map(note => `<p><small>${escapeHtml(note)}</small></p>`).join('')}
+    </details></section>`;
+}
+
 function renderMemoryEvent(event, match = null) {
   const description = event.description || {};
   const tags = [...(description.visible_objects || []), ...(description.apparent_actions || []), ...(description.visible_text || [])].slice(0, 6);
@@ -526,6 +544,7 @@ function renderMemoryEvent(event, match = null) {
       ${description.fallback_reason ? `<details><summary>Caption status</summary><small>${escapeHtml(description.fallback_reason)}</small></details>` : ''}
       ${tags.length ? `<div class="memory-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
       ${match?.matched_terms?.length ? `<small class="matched-terms">Matched: ${escapeHtml(match.matched_terms.join(', '))}</small>` : ''}
+      ${renderInterpretation(event.interpretation)}
       <video controls preload="none" poster="${event.thumbnail_url}" src="${event.evidence_url}"></video>
     </div>
   </article>`;
@@ -549,7 +568,7 @@ async function submitMemoryQuery(event) {
   const button = $('#memory-query-button');
   button.disabled = true;
   state.memoryQueryBusy = true;
-  button.querySelector('span').textContent = 'Searching…';
+  button.querySelector('span').textContent = $('#memory-query-temporal').checked ? 'Retrieving and reading frames…' : 'Searching…';
   try {
     const clusterId = $('#memory-query-cluster').value.trim();
     const response = await api('/api/v1/memory-query', {
@@ -563,7 +582,8 @@ async function submitMemoryQuery(event) {
         cluster_id: clusterId || null,
         camera_ids: $('#memory-query-cameras').value.split(',').map(id => id.trim()).filter(Boolean),
         limit: 12,
-        vlm_enabled: $('#memory-query-vlm').checked,
+        vlm_enabled: $('#memory-query-vlm').checked && !$('#memory-query-temporal').checked,
+        temporal_enabled: $('#memory-query-temporal').checked,
         vlm_model: $('#memory-vlm-model').value,
       }),
     });
@@ -585,11 +605,11 @@ function renderMemoryQuery(result) {
   $('#memory-query-title').textContent = result.matches.length ? `${result.matches.length} evidence candidates` : result.events_considered === 0 ? 'No clips were searched' : 'No matching evidence';
   $('#memory-query-summary').textContent = result.summary;
   $('#memory-query-mode').textContent = ({hybrid_qwen_reranker: 'Visual + keyword · Qwen reranked', hybrid_rrf: 'Visual + keyword · rank fusion', local_lexical_metadata: 'Keyword only', not_run_empty_index: 'Not searched · no indexed clips', not_run_filtered_empty: 'Not searched · filters excluded all clips'}[result.retrieval_mode] || label(result.retrieval_mode)) + (result.model ? ` · Summary: ${result.model}` : '');
-  const notes = [`${result.events_considered} filtered events considered`, ...(result.retrieval_notes || [])];
+  const notes = [`${result.events_considered} filtered events considered`, ...(result.retrieval_notes || []), ...(result.interpretation_notes || [])];
   if (result.fallback_reason) notes.push(`VLM fallback: ${result.fallback_reason}`);
   $('#memory-query-notes').innerHTML = notes.map((note) => `<span>${escapeHtml(note)}</span>`).join('');
   $('#memory-query-matches').innerHTML = result.matches.length
-    ? result.matches.map((match) => renderMemoryEvent(match.event, match)).join('')
+    ? result.matches.map((match) => renderMemoryEvent({...match.event, interpretation: (result.interpretations || []).find(item => item.event_id === match.event.event_id) || match.event.interpretation}, match)).join('')
     : '<div class="empty-row">No events matched the current query and filters.</div>';
 }
 

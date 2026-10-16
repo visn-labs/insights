@@ -491,6 +491,8 @@ pub struct CameraProfile {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryJobRequest {
+    #[serde(default)]
+    pub temporal_enabled: bool,
     pub name: String,
     #[serde(default)]
     pub cluster_id: Option<String>,
@@ -572,6 +574,10 @@ pub struct MemoryEventDescription {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryEvent {
+    #[serde(default)]
+    pub source_duration_ms: u64,
+    #[serde(default)]
+    pub interpretation: Option<SequenceInterpretation>,
     pub event_id: Uuid,
     pub job_id: Uuid,
     pub camera_id: String,
@@ -598,6 +604,8 @@ pub struct MemoryEvent {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryQueryRequest {
+    #[serde(default)]
+    pub temporal_enabled: bool,
     pub query: String,
     #[serde(default)]
     pub job_id: Option<Uuid>,
@@ -639,6 +647,8 @@ pub struct MemoryQueryMatch {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryQueryResponse {
+    pub interpretations: Vec<SequenceInterpretation>,
+    pub interpretation_notes: Vec<String>,
     pub query_id: Uuid,
     pub query: String,
     pub summary: String,
@@ -649,4 +659,34 @@ pub struct MemoryQueryResponse {
     pub retrieval_provenance: serde_json::Value,
     pub model: Option<String>,
     pub fallback_reason: Option<String>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SequenceInterpretation {
+    #[serde(default)]
+    pub frames: Vec<SequenceFrame>,
+    pub event_id: Uuid,
+    pub status: String,
+    pub answer: String,
+    pub start_ms: u64,
+    pub end_ms: u64,
+    pub sampled_timestamps_ms: Vec<u64>,
+    pub observations: Vec<FrameObservation>,
+    pub limitations: Vec<String>,
+    pub provenance: serde_json::Value,
+    pub cached: bool,
+    pub elapsed_secs: f64,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct FrameObservation {
+    pub frame_index: usize,
+    pub timestamp_ms: u64,
+    pub description: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SequenceFrame {
+    pub timestamp_ms: u64,
+    pub image: String,
 }

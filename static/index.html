@@ -323,6 +323,7 @@
                 <span><strong>Enrich highest-priority events with the selected VLM</strong><small>The lightweight observer indexes every interval. VLM calls are capped and failures use metadata-only descriptions.</small></span>
                 <input id="memory-vlm-enabled" type="checkbox"><i></i>
               </label>
+              <label class="toggle-row memory-toggle"><span><strong>Experiment 2 · Interpret ordered frames</strong><small>Use timestamped sequences for priority events instead of single-frame captions. Slower; Qwen worker required.</small></span><input id="memory-temporal-enabled" type="checkbox"><i></i></label>
               <label class="field"><span>Vision-language model for indexing and queries</span><select id="memory-vlm-model"></select></label>
               <label class="field"><span>Backend camera payloads</span><textarea id="memory-cameras-json" class="memory-json-editor" spellcheck="false" placeholder='[{"liveurl":"http://camera/mjpg/video.mjpg","Country":"...","description":"..."}]'></textarea></label>
               <div class="preset-row">
@@ -374,6 +375,7 @@
             <label class="toggle-row compact-toggle"><span><strong>Visual retrieval</strong><small>Search clip content as well as words. First search indexes uncached clips.</small></span><input id="memory-query-semantic" type="checkbox" checked><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>Visual reranking</strong><small>Inspect the shortlist for closer matches.</small></span><input id="memory-query-rerank" type="checkbox" checked><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>VLM synthesis</strong><small>Summarize candidate descriptions; does not verify video.</small></span><input id="memory-query-vlm" type="checkbox"><i></i></label>
+            <label class="toggle-row compact-toggle"><span><strong>Experiment 2 · Explain visual evidence</strong><small>Read eight ordered frames and metadata from up to three retrieved clips. Includes uncertainty and frame citations.</small></span><input id="memory-query-temporal" type="checkbox"><i></i></label>
             <button id="memory-query-button" class="primary-button" type="submit"><span>Search memory</span><b>⌕</b></button>
           </form>
           <div id="memory-query-error" class="inline-error hidden"></div>

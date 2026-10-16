@@ -205,3 +205,7 @@ The exact NVIDIA and model compatibility matrix must be pinned on the target Lin
 - [NVIDIA DeepStream sample pipeline documentation](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_C_Sample_Apps.html)
 
 Review Ultralytics licensing and Gemma terms for the exact commercial deployment before distributing model-backed images or services.
+
+### Experiment 2: ordered visual interpretation
+
+An opt-in extension to experiment 1 reads timestamped frame sequences plus event metadata during indexing and question answering. See [Experiment 2](docs/EXPERIMENT2_INTERPRETATION.md) for controls, evaluation results, and limitations.

@@ -127,6 +127,7 @@ class Retrieval:
         self.root.mkdir(parents=True, exist_ok=True)
         self.models = models
         self.hashes = {}
+        self.interpreter = None
         self.db = sqlite3.connect(self.root / "semantic-v1.sqlite3", check_same_thread=False)
         self.db.execute("CREATE TABLE IF NOT EXISTS vectors (key TEXT PRIMARY KEY, version TEXT NOT NULL, vector TEXT NOT NULL)")
         self.lock = threading.Lock()
@@ -147,20 +148,22 @@ class Retrieval:
             self.hashes[identity] = digest
         return path, self.hashes[identity]
 
-    def frames(self, event):
+    def frames(self, event, count=None, size=None):
         import imageio_ffmpeg
         from PIL import Image
         path, _ = self.source(event)
+        count = count or self.args.frames
+        size = size or self.args.frame_size
         frames = []
-        for i in range(self.args.frames):
-            timestamp = event["start_ms"] + (i+.5)/self.args.frames*(event["end_ms"]-event["start_ms"])
+        for i in range(count):
+            timestamp = event["start_ms"] + (i+.5)/count*(event["end_ms"]-event["start_ms"])
             # Isolated FFmpeg avoids loading conflicting OpenCV/PyAV dylibs on macOS.
             result = subprocess.run([
                 imageio_ffmpeg.get_ffmpeg_exe(), "-hide_banner", "-loglevel", "error",
                 "-ss", f"{timestamp/1000:.6f}", "-i", str(path),
                 "-t", f"{(event['end_ms']-timestamp)/1000:.6f}",
                 "-frames:v", "1", "-vf",
-                f"scale={self.args.frame_size}:{self.args.frame_size}:force_original_aspect_ratio=decrease",
+                f"scale={size}:{size}:force_original_aspect_ratio=decrease",
                 "-threads", "1", "-f", "image2pipe", "-vcodec", "png", "pipe:1"
             ], capture_output=True, timeout=30, check=True)
             if not result.stdout:
@@ -185,6 +188,8 @@ class Retrieval:
         return vector, False
 
     def search(self, body):
+        if self.interpreter:
+            self.interpreter.release()
         started = time.monotonic()
         if not isinstance(body, dict) or not isinstance(body.get("query"), str):
             raise ValueError("Expected an object with a string query")
@@ -251,6 +256,10 @@ class Retrieval:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--keep-models-loaded", action="store_true", help="Keep both models in memory instead of switching between them")
+    parser.add_argument("--interpretation-model", default="Qwen/Qwen3-VL-2B-Instruct")
+    parser.add_argument("--interpretation-revision", default="main")
+    parser.add_argument("--interpretation-frames", type=int, default=8, choices=range(2,17))
+    parser.add_argument("--interpretation-frame-size", type=int, default=384, choices=range(128,513))
     parser.add_argument("--port", type=int, default=8186)
     parser.add_argument("--data-dir", default=str(ROOT / "data"))
     parser.add_argument("--qwen-source", default=str(ROOT / ".retrieval/qwen"))
@@ -280,7 +289,7 @@ def main():
             self.reply(200 if self.path == "/health" else 404,
                        {"status": "ready", "models_loaded": service.models is not None})
         def do_POST(self):
-            if self.path != "/search":
+            if self.path not in ("/search", "/interpret") :
                 return self.reply(404, {"error": "Unknown endpoint"})
             try:
                 length = int(self.headers.get("Content-Length", "0"))
@@ -291,7 +300,14 @@ def main():
             if not service.lock.acquire(blocking=False):
                 return self.reply(503, {"error": "Retrieval worker is busy; retry after indexing completes"})
             try:
-                result = service.search(json.loads(self.rfile.read(length)))
+                body = json.loads(self.rfile.read(length))
+                if self.path == '/interpret':
+                    from temporal_interpretation import SequenceInterpreter
+                    if service.interpreter is None:
+                        service.interpreter = SequenceInterpreter(service)
+                    result = service.interpreter.interpret(body)
+                else:
+                    result = service.search(body)
                 self.reply(200, result)
             except Exception as error:
                 LOG.exception("Retrieval request failed")
