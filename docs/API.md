@@ -290,3 +290,33 @@ Capabilities now include `entity_memory_version` (`entity-memory-v2-pts`). Graph
 Query-focused interpretation uses an independent per-image target audit before comparing visible target frames. `not_observed` means absent from sampled images, not proof of absence throughout the recording. Action claims require two visible citations. Visibility contradictions abstain. Prompt/cache version: `independent-target-audit-v6`; visibility judgments remain unverified model outputs.
 
 Supported temporal answers must cite at least two distinct encoded images as well as two visible target observations. The Python worker additionally abstains when cited pixels show no measurable change, and reapplies this check to cached model answers. The optional `--interpretation-api-url` backend accepts a loopback HTTP `/v1` endpoint, requires an explicit `--interpretation-revision`, and verifies response model identity. Returned provenance distinguishes `local-openai-chat-v1` from `pytorch-transformers`; local model snapshots are pinned content fingerprints supplied for the evaluated files.
+
+### Combining temporal interpretation with an explicit entity
+
+`POST /api/v1/memory-query` accepts `temporal_enabled: true` together with `entity_id` and optional `long_memory_enabled: true`. Retrieval is constrained to the selected entity's current graph, recording and camera, then ordinary query filters still apply. Unmatched entity/scope combinations yield no candidates. A changed source hash prevents interpretation with stale boxes; retrieval remains available with an interpretation failure note.
+
+`interpretations[].frames[]` now additionally returns optional `decoded_timestamp_ms` (actual decoded PTS, distinct from the existing seek-target `timestamp_ms`) and `target_crop` (JPEG data URL). `provenance.track_grounding` identifies `explicit_entity` or `unconstrained`, the entity UUID and aligned frame indices. `tracker-pts-v1-no-interpolation` samples 2–8 selected detector observation times; ordinary interpretation still samples eight seek midpoints. Matching boxes tolerate at most 1 ms of timestamp rounding. Unsupported/missing target alignment cannot support an action claim. These fields do not verify tracker identity or model reasoning.
+
+### Blind visual-state check
+
+For prompt `blind-state-consistency-v9`, sequence responses may include `claimed_transition`. `provenance.state_verification` contains the gate `version`, `status` (`passed`, `rejected`, `not_applicable`), and `reason`; executed checks also contain `comparison`, `identity`, `reference_visible`, `before`, `after`, cited `frame_indices`, and derived `transition`. Tracker distance checks may include `tracker_area_ratio`.
+
+A supported v9 response must have a passed gate, matching identity, a visible reference, and transition/citation agreement. Rejected checks return `uncertain` with retained images and observations. Passed checks are fallible model comparisons, not verified facts or confidence estimates. A model/transport failure still preserves retrieval results with an explicit interpretation failure note. Cached generations are checked again against their cited images.
+
+### Selected-track visibility quality (v10)
+
+For `track-visibility-quality-v10`, `provenance.selected_track_visibility_min_edge` records the minimum selected crop short edge (16 pixels). Missing/tiny crops produce unclear observations. Failed recognition of a selected crop does not establish scene-wide absence, so selected-entity ambiguity returns `uncertain` rather than `not_observed`, including on cached generation reads. Rust rejects v10 `not_observed` with `track_grounding.status: explicit_entity`. Unconstrained sampled-absence behavior is unchanged. The supported-answer state-proof contract applies to v9 and v10 alike.
+
+### Source-detail crop provenance
+
+For explicitly selected entities, the worker's default `--interpretation-crop-mode source` decodes source detail without upscaling (long edge ≤1920), crops only timestamp-aligned boxes, and caps model crop long edges at 768 by downsampling. `preview` is a comparison/historical-review mode. No new query parameter is required.
+
+`provenance.crop_policy` records the cache policy/version. `provenance.crop_evidence` records `version`, `mode` (`source`, `preview`, `none`), `max_edge`, `no_upscale`, `model_crop_max_edge`, `context_sizes`, `detail_sizes`, `original_crop_sizes`, `crop_sizes` and `decoded_timestamps_ms`. Frames continue to expose the small full context as `image` and the selected detail as `target_crop`. Crop dimensions describe actual returned pixels; they do not measure confidence or prove identity. A context/detail timestamp mismatch fails interpretation and preserves retrieval via the existing failure note.
+
+### Repeated-work cache instrumentation
+
+`retrieval_provenance.work_cache` reports `enabled`, per-search `counters` (`decode_hits`, `ffmpeg_calls`, `decode_evictions`, `query_hits`, `query_calls`, `rerank_hits`, `rerank_calls`) and current `decode_bytes`, `decode_entries`, `query_entries`, `rerank_entries`. These are diagnostic measurements, not accuracy/confidence scores. Interpretation work occurs after retrieval and is not included in the per-search counters.
+
+The worker caches lossless compressed frame bytes (32 MiB/128 entries), exact query vectors (32 entries) and finite rerank scores (256 entries) in RAM. Source validation remains active on hits, model revisions/settings partition entries, and callers receive fresh decoded images. `--disable-work-caches` bypasses these RAM caches without disabling existing persistent embedding/generation caches. Visual-state checks still run on cached generations.
+
+Source fingerprints use a separate 256-path LRU registry. Every access validates scope and file metadata (device, inode, size, modification and change times); eviction only causes an exact SHA256 recomputation. A source that changes during hashing is rejected. Fingerprints are not video evidence or generated model facts.

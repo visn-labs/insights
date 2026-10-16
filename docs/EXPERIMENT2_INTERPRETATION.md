@@ -103,3 +103,43 @@ Malformed single-image JSON becomes `unclear` for that image. Invalid or contrad
 The [completed model comparison](LIVE_STREAM_EVALUATION_2026_10_16.md#stronger-model-comparison-and-citation-safeguard) adds an optional local API interpreter and tests a cached 4B MLX configuration on identical visual inputs. It improves some direction/absence answers but fails the full grounding gate; 2B remains the launcher default and temporal interpretation remains opt-in.
 
 Supported actions must cite visually distinct evidence, including when served from cache. Python abstains on unchanged cited images; Rust rejects repeated encoded image citations. This guard does not verify semantic correctness. The optional API uses loopback HTTP, requires a pinned revision/fingerprint, sends lossless images, and verifies the returned model identifier. Its MLX runtime belongs in a separate environment because its Transformers requirements differ from retrieval.
+
+## Target-grounded interpretation (2026-10-16)
+
+Prompt `separate-presence-transition-v8` separates question parsing from visual evidence. A text-only pass extracts the physical object, requested action, and reference. Single-image presence audits receive only the physical object; they cannot see the action question. Motion synthesis receives the question, independent audits, and ordered images. Accepted action responses must supply two ordered visible citations, different before/after descriptions, and a reference. These are structural checks, not proof that the descriptions are true.
+
+For query-time tracker grounding, select an entity and enable **Explain visual evidence**. **Follow linked observations** can remain enabled simultaneously. The server limits retrieval to that entity's recording/camera, checks the current graph version and source SHA256, and passes only in-window boxes. With at least two detector observation times, it samples up to eight evenly selected observation timestamps instead of eight uniform seek times. It does not rerun tracking or infer identity across gaps.
+
+The decoder now exposes actual presentation timestamps separately from seek targets. A crop is accepted only within 1 ms of its detector observation and with a valid normalized box of at least 4×4 decoded pixels. Each audit/comparison sees both the full frame and selected crop. Missing/ambiguous alignment becomes uncertain; boxes are never interpolated. Supported citations need different decoded times. A static target box and static normalized crop trigger abstention even when the background changes. Both crop guards run after generation and cache reads. Full frames, crops, and decoded timestamps are reviewable in the UI.
+
+No entity selected means unconstrained interpretation. Automatic matching of a color/appearance question to one of several tracker histories is deliberately not implemented: the current model cannot reliably resolve that ambiguity. Missing or old tracker graphs require rebuilding linked observations first. Generated answers do not update entity memory.
+
+The default model remains 2B; the optional cached 4B model was used for this stage's actual inference checks. See the [live evaluation report](LIVE_STREAM_EVALUATION_2026_10_16.md#target-grounded-interpretation-stage) for failures as well as workflow validation.
+
+## Blind state consistency (next phase)
+
+Prompt `blind-state-consistency-v9` and gate `blind-visual-states-v1` add a separate post-generation visual check. It receives only the physical target, reference, comparison family, and two cited images (plus aligned crops). The proposed answer, proposed direction, and previous audit descriptions are withheld. This is a separate call to the **same configured model**, not an independent model or human truth source.
+
+The verifier returns identity (`same`/`different`/`unclear`), a visible-reference boolean, and enum states. Deterministic tables map closed/ajar/open, off/on-reference, outside/inside, and far/middle/near changes to transitions. A supported answer needs matching identity, visible reference, a genuine enum transition, and agreement with the synthesis's explicit transition. Tracker camera-distance claims additionally require a box-area change of at least 15% in the matching direction; selected crops below a 16-pixel short edge abstain. These conservative thresholds are uncalibrated safeguards, not confidence scores.
+
+The gate runs after both fresh generation and cache reads. A test reuses one cached generation but changes the blind state response, proving the old claim becomes uncertain. Accepted public answers use a template generated from the checked transition; unchecked synthesis prose is not published as the answer. Rust rejects v9 supported responses with missing, rejected, mismatched-transition or mismatched-citation gate evidence. The UI displays the separate-check result and reason.
+
+Results and remaining failures are in the live evaluation report. Human review is pending: [review instructions](STATE_REVIEW.md). Generated interpretation never updates tracker facts.
+
+## Selected-track visibility quality (v10)
+
+Human review exposed an absence/uncertainty error. `track-visibility-quality-v10` applies the existing 16-pixel crop short-edge limit before presence audits, not only after motion synthesis. Missing/tiny selected crops become unclear without a visual model call. A failed target match in a larger selected crop also remains unclear; it cannot establish scene-wide absence. A post-cache guard revalidates raw `not_observed` selected-track responses. Unconstrained absence checks remain available. Rust rejects v10 selected-entity absence and still requires checked state proof for supported answers.
+
+The follow-up review has completed. Initial v9 low-visibility validation passed 1/2; after the fix, both low-visibility and both prior identity controls abstain. These are development safeguards, not positive action accuracy. See the evaluation report for source-bound reviews, original failures and separate post-fix outputs.
+
+## Source-detail crops
+
+Selected trackers now default to `--interpretation-crop-mode source`. Context frames remain at the configured preview size. A separate bounded decode provides source-detail frames at the same seek targets, with a maximum long edge of 1920 pixels and no upscaling. Their decoded PTS must exactly match the context sequence before any box is applied. Crops are extracted from these detail frames, then downsampled only when needed to fit a 768-pixel model-input long edge.
+
+`provenance.crop_policy` versions the crop path/settings in generation cache keys. `provenance.crop_evidence` records mode, decode/model limits, no-upscale policy, context/detail/original-crop/model-crop dimensions and decoded timestamps. The UI shows the dimensions of each returned source crop. Untracked interpretations and ordinary embedding/reranking context sampling do not need an extra detail decode. `--interpretation-crop-mode preview` retains the prior crop path for controlled comparisons and historical low-resolution review evaluation.
+
+`tools/select_clear_tracks.py` chooses development examples with at least two detector observations, a source crop short edge of at least 48 pixels, at least one second of sampled history, and detector area variation of at least 1.25× inside a 20-second window. Geometry is a selection heuristic, not verified identity, sharpness or motion truth. Cameras without a qualifying track are skipped. Future review generation reuses this selection and source crop path instead of selecting the longest tiny track.
+
+Old human visibility labels are bound to the inspected crop resolution. `tools/evaluate_reviewed_states.py` rejects a response whose crop dimensions differ from the reviewed packet. Do not transfer labels from blurry previews to source-detail crops without review. Existing completed packets remain unchanged. `--development` marks reused evidence explicitly; it is not presented as untouched acceptance footage.
+
+The controlled four-case comparison improves actual target pixel area by approximately 1.6–2.8×, with identical context images and timestamps. Both modes still abstain on every case; action accuracy has not improved in this experiment. See the live report for artifacts and remaining interpretation errors.

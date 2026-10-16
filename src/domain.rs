@@ -673,6 +673,8 @@ pub struct MemoryQueryResponse {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SequenceInterpretation {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub claimed_transition: Option<String>,
     #[serde(default)]
     pub frames: Vec<SequenceFrame>,
     pub event_id: Uuid,
@@ -699,6 +701,10 @@ pub struct FrameObservation {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SequenceFrame {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub decoded_timestamp_ms: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_crop: Option<String>,
     pub timestamp_ms: u64,
     pub image: String,
 }

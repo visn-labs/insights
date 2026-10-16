@@ -1,0 +1,168 @@
+{
+  "packet_sha256": "cce7880d3670b09a3e914f7f0605de063d2f4def5f8ecaf3624f72874a11d5ef",
+  "reviewer": "Anagha Sharma",
+  "review_method": "human",
+  "reviewed_utc": "2026-10-16T11:00:25.374Z",
+  "cases": [
+    {
+      "id": "live-3-9788af39",
+      "object": "Car passing by",
+      "identity": "different",
+      "reference_visible": true,
+      "notes": "Even though the clarity of farther objects are a bit less, the identification is excellent",
+      "frames": [
+        {
+          "timestamp_ms": 5880,
+          "visibility": "visible",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 14880,
+          "visibility": "visible",
+          "state": "near"
+        },
+        {
+          "timestamp_ms": 17720,
+          "visibility": "visible",
+          "state": "middle"
+        }
+      ]
+    },
+    {
+      "id": "live-3-27804ec1",
+      "object": "Vehicles passing by",
+      "identity": "different",
+      "reference_visible": true,
+      "notes": "Good object identification",
+      "frames": [
+        {
+          "timestamp_ms": 10520,
+          "visibility": "visible",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 13760,
+          "visibility": "visible",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 15320,
+          "visibility": "visible",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 27680,
+          "visibility": "visible",
+          "state": "middle"
+        }
+      ]
+    },
+    {
+      "id": "live-2-untracked",
+      "object": "Traffic signal junction",
+      "identity": "same",
+      "reference_visible": true,
+      "notes": "",
+      "frames": [
+        {
+          "timestamp_ms": 3200,
+          "visibility": "visible",
+          "state": "middle"
+        },
+        {
+          "timestamp_ms": 9240,
+          "visibility": "visible",
+          "state": "middle"
+        },
+        {
+          "timestamp_ms": 9240,
+          "visibility": "visible",
+          "state": "middle"
+        },
+        {
+          "timestamp_ms": 9240,
+          "visibility": "visible",
+          "state": "middle"
+        },
+        {
+          "timestamp_ms": 13720,
+          "visibility": "visible",
+          "state": "middle"
+        },
+        {
+          "timestamp_ms": 16080,
+          "visibility": "visible",
+          "state": "middle"
+        },
+        {
+          "timestamp_ms": 18480,
+          "visibility": "visible",
+          "state": "middle"
+        },
+        {
+          "timestamp_ms": 18480,
+          "visibility": "visible",
+          "state": "middle"
+        }
+      ]
+    },
+    {
+      "id": "live-1-dce234f8",
+      "object": "Highway view from a skywalk",
+      "identity": "same",
+      "reference_visible": true,
+      "notes": "",
+      "frames": [
+        {
+          "timestamp_ms": 14160,
+          "visibility": "visible",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 14920,
+          "visibility": "visible",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 15160,
+          "visibility": "visible",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 17360,
+          "visibility": "visible",
+          "state": "far"
+        }
+      ]
+    },
+    {
+      "id": "live-1-387fecde",
+      "object": "Highway view from a skywalk",
+      "identity": "same",
+      "reference_visible": true,
+      "notes": "",
+      "frames": [
+        {
+          "timestamp_ms": 14160,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 14920,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 15160,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 17640,
+          "visibility": "visible",
+          "state": "far"
+        }
+      ]
+    }
+  ]
+}

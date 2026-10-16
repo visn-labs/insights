@@ -10,6 +10,7 @@ import unittest
 from unittest.mock import patch
 
 from evaluate_temporal_corpus import main
+from temporal_interpretation import PROMPT_VERSION
 
 
 class Checks(unittest.TestCase):
@@ -19,7 +20,7 @@ class Checks(unittest.TestCase):
         labels.write_text(json.dumps(dict(cases=[dict(id='case',source_path=str(source),source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),start_ms=0,end_ms=800,query='Does the truck approach?',expected='PRIVATE_EXPECTED_ANSWER',expected_target_visibility=['PRIVATE_VISIBILITY']*8)])))
         if changed: source.write_bytes(b'changed source')
         times=list(range(50,800,100))
-        value=dict(event_id='case',start_ms=0,end_ms=800,provenance=dict(model='fixture-model',snapshot='/cache/'+revision,frames=8,frame_size=frame_size,prompt_version='independent-target-audit-v6'),sampled_timestamps_ms=times,
+        value=dict(event_id='case',start_ms=0,end_ms=800,provenance=dict(model='fixture-model',snapshot='/cache/'+revision,frames=8,frame_size=frame_size,prompt_version=PROMPT_VERSION),sampled_timestamps_ms=times,
             frames=[dict(timestamp_ms=t,image='data:image/jpeg;base64,YQ==') for t in times],observations=[dict(frame_index=i,timestamp_ms=times[i],target_visibility='visible',description='Truck visible') for i in (0,7)],status='supported',answer='Approaches',limitations=[],cached=False)
         if forged: value['observations'][0]['timestamp_ms']=51
         def response(request,timeout):

@@ -73,19 +73,48 @@ class Checks(unittest.TestCase):
         from PIL import Image
         frames=[Image.new('RGB',(32,32),c) for c in ('red','green','blue','white')]
         worker=SequenceInterpreter.__new__(SequenceInterpreter)
+        worker.identify_target=lambda query:dict(object='target',action='approach',reference='camera',comparison='camera_distance')
         def run(audits, synthesis=None):
             responses=iter([dict(target_visibility=v,description=v) for v in audits]+([] if synthesis is None else [synthesis]))
             worker.complete=lambda *args: next(responses)
             return worker.generate('Does the target approach?',{},frames,[100,200,300,400])
         self.assertEqual(run(['absent']*4)['status'],'not_observed')
         self.assertEqual(run(['absent','visible','absent','unclear'])['status'],'uncertain')
-        synthesis=dict(status='supported',answer='Approaches',frame_indices=[1,2])
+        synthesis=dict(status='supported',transition='approaching',answer='Approaches',frame_indices=[1,2],before='small target',after='large target',reference='camera')
         good=run(['absent','visible','visible','absent'],synthesis)
         self.assertEqual([o['frame_index'] for o in good['observations']],[1,2])
         self.assertEqual(good['observations'][0]['description'],'visible')
         synthesis['frame_indices'][1]=3
         self.assertEqual(run(['absent','visible','visible','absent'],synthesis)['status'],'uncertain')
         self.assertEqual(run(['absent','visible','visible','absent'],[])['status'],'uncertain')
+
+    def test_presence_never_receives_action_question(self):
+        from PIL import Image
+        worker=SequenceInterpreter.__new__(SequenceInterpreter)
+        calls=[]
+        def complete(system,content,budget,**kwargs):
+            calls.append((system,content,kwargs))
+            if kwargs.get('visual_required') is False:
+                return dict(object='door',action='opening or closing',reference='door frame',comparison='door_openness')
+            if len(calls)<4:
+                import json
+                self.assertEqual(json.loads(content[0]['text']),dict(physical_target='door'))
+                return dict(target_visibility='visible',description='Door visible in its frame')
+            return dict(status='supported',transition='opening',answer='Opening',frame_indices=[0,1],before='closed',after='open',reference='door frame')
+        worker.complete=complete
+        result=worker.generate('Is the door opening or closing?',{},[Image.new('RGB',(32,32),c) for c in ('red','blue')],[100,200])
+        self.assertEqual(result['status'],'supported')
+        self.assertEqual(len(calls),4)
+
+    def test_supported_requires_distinct_target_states(self):
+        from PIL import Image
+        worker=SequenceInterpreter.__new__(SequenceInterpreter)
+        worker.identify_target=lambda q:dict(object='car',action='arriving',reference='parking space',comparison='region_membership')
+        for extra in ({},dict(before='same',after='SAME',reference='space'),dict(before='outside',after='inside',reference='')):
+            responses=iter([dict(target_visibility='visible',description='Car')]*2+[dict(status='supported',answer='Arriving',frame_indices=[0,1],**extra)])
+            worker.complete=lambda *a:next(responses)
+            value=worker.generate('Is the car arriving?',{},[Image.new('RGB',(32,32),c) for c in ('red','blue')],[100,200])
+            self.assertEqual(value['status'],'uncertain')
 
     def test_malformed_audit_abstains(self):
         from PIL import Image

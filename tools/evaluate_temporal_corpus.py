@@ -27,6 +27,7 @@ def main():
     p.add_argument('--url', default='http://127.0.0.1:8193')
     p.add_argument('--labels', required=True)
     p.add_argument('--output', required=True)
+    p.add_argument('--prompt-version', help='Explicit prompt override; frozen labels remain unchanged')
     p.add_argument('--model', required=True)
     p.add_argument('--revision', required=True)
     args = p.parse_args()
@@ -34,7 +35,9 @@ def main():
     frozen_hash = digest(labels)
     corpus = json.loads(labels.read_text())
     cases = corpus['cases']
-    sampling = corpus.get('sampling', dict(frames=8,frame_size=384,prompt_version=PROMPT_VERSION))
+    sampling = dict(corpus.get('sampling', dict(frames=8,frame_size=384,prompt_version=PROMPT_VERSION)))
+    if args.prompt_version:
+        sampling['prompt_version'] = args.prompt_version
     if not cases or len({c['id'] for c in cases}) != len(cases):
         raise ValueError('Corpus needs unique case IDs')
     for case in cases:
@@ -51,6 +54,7 @@ def main():
     manifest = dict(started_utc=datetime.now(timezone.utc).isoformat(),labels=str(labels),
         labels_sha256=frozen_hash,expected_model=args.model,expected_revision=args.revision,
         interpreter_source_sha256=digest(Path(__file__).with_name('temporal_interpretation.py')),
+        state_gate_source_sha256=digest(Path(__file__).with_name('state_verification.py')),
         expected_labels_sent_to_model=False,expected_sampling=sampling,requests=[])
     rows = []
     for case in cases:

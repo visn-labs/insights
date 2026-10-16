@@ -380,7 +380,7 @@
             <label class="toggle-row compact-toggle"><span><strong>VLM synthesis</strong><small>Summarize candidate descriptions; does not verify video.</small></span><input id="memory-query-vlm" type="checkbox"><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>Experiment 2 · Explain visual evidence</strong><small>Read ordered frames and metadata from up to three retrieved clips. Includes uncertainty and frame citations.</small></span><input id="memory-query-temporal" type="checkbox"><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>Experiment 3 · Follow linked observations</strong><small>Retrieve a source-cited history. Similar objects and unrelated recordings remain separate.</small></span><input id="memory-query-long" type="checkbox"><i></i></label>
-            <label class="field"><span>Entity track (optional)</span><select id="memory-query-entity"><option value="">Find candidates from question</option></select><small>Track IDs are local to a recording and camera, not verified identities.</small></label>
+            <label class="field"><span>Entity track (optional)</span><select id="memory-query-entity"><option value="">Find candidates from question</option></select><small>Track IDs are local to a recording and camera, not verified identities. Enable visual explanation to compare this track using crops matched to decoded frames.</small></label>
             <button id="memory-query-button" class="primary-button" type="submit"><span>Search memory</span><b>⌕</b></button>
           </form>
           <div id="memory-query-error" class="inline-error hidden"></div>

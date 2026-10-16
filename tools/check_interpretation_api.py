@@ -48,6 +48,25 @@ class Checks(unittest.TestCase):
             result=subprocess.run([sys.executable,str(worker),*arguments],capture_output=True,timeout=5)
             self.assertEqual(result.returncode,2)
 
+    def test_api_only_load_does_not_import_local_model_libraries(self):
+        import builtins
+        worker=self.worker();worker.model=None;worker.service.models=None;worker.service.args.interpretation_revision='pinned'
+        original=builtins.__import__
+        def guarded(name,*a,**kw):
+            if name in ('torch','transformers','huggingface_hub'):raise AssertionError('Unnecessary local model import: '+name)
+            return original(name,*a,**kw)
+        with patch('builtins.__import__',guarded),patch('urllib.request.urlopen',return_value=io.BytesIO(b'{"data":[{"id":"fixture-model"}]}')):
+            worker.load()
+        self.assertIs(worker.model,True);self.assertEqual(worker.snapshot,'pinned')
+
+    def test_api_load_still_releases_actual_retrieval_weights(self):
+        from unittest.mock import Mock
+        fake_torch=SimpleNamespace(backends=SimpleNamespace(mps=SimpleNamespace(is_available=lambda:True)),mps=SimpleNamespace(empty_cache=Mock()),cuda=SimpleNamespace(is_available=lambda:False))
+        worker=self.worker();worker.model=None;worker.service.models=SimpleNamespace(embedder=object(),reranker=object());worker.service.args.interpretation_revision='pinned'
+        with patch.dict('sys.modules',torch=fake_torch),patch('urllib.request.urlopen',return_value=io.BytesIO(b'{"data":[{"id":"fixture-model"}]}')):
+            worker.load()
+        self.assertIsNone(worker.service.models.embedder);self.assertIsNone(worker.service.models.reranker);fake_torch.mps.empty_cache.assert_called_once()
+
     def test_image_is_required(self):
         with self.assertRaises(ValueError): self.worker().api_complete('Inspect',[dict(type='text',text='metadata only')],180)
 

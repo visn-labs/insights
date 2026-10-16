@@ -110,9 +110,9 @@ function bindMemory() {
     finally {state.buildingEntityMemory = false;$('#memory-job-select').disabled = false;updateMemorySearchScope();}
   });
   const syncMemoryModes = () => { $('#memory-query-vlm').disabled = $('#memory-query-long').checked || $('#memory-query-temporal').checked; };
-  $('#memory-query-long').addEventListener('change', () => {if ($('#memory-query-long').checked) $('#memory-query-temporal').checked = false;syncMemoryModes();});
-  $('#memory-query-temporal').addEventListener('change', () => {if ($('#memory-query-temporal').checked) $('#memory-query-long').checked = false;syncMemoryModes();});
-  $('#memory-query-entity').addEventListener('change', () => { if ($('#memory-query-entity').value) {$('#memory-query-long').checked = true;$('#memory-query-temporal').checked=false;syncMemoryModes();} });
+  $('#memory-query-long').addEventListener('change', () => {syncMemoryModes();});
+  $('#memory-query-temporal').addEventListener('change', () => {syncMemoryModes();});
+  $('#memory-query-entity').addEventListener('change', () => { if ($('#memory-query-entity').value) {$('#memory-query-long').checked = true;syncMemoryModes();} });
 
   $('#memory-job-select').addEventListener('change', event => {
     const job = state.memoryJobs.find(job => job.id === event.target.value);
@@ -562,13 +562,15 @@ function renderJourneys(answer) {
 
 function renderInterpretation(value) {
   if (!value) return '';
+  const cropSizes = value.provenance.crop_evidence?.crop_sizes || [];
   return `<section class="sequence-evidence" aria-label="Ordered visual evidence">
     <strong>Experiment 2 · ${value.status === 'supported' ? 'Unverified model interpretation' : value.status === 'not_observed' ? 'Target not observed in sampled frames' : 'Uncertain interpretation'}</strong>
     <p>${escapeHtml(value.answer)}</p>
     <small>Action-direction errors were observed in testing. Review the frames before relying on this interpretation.</small>
     <small>Source window ${(value.start_ms / 1000).toFixed(2)}–${(value.end_ms / 1000).toFixed(2)}s · ${escapeHtml(value.provenance.model || '')}${value.cached ? ' · cached' : ''}</small>
+    ${value.provenance.state_verification ? `<small>Separate visual-state check: ${escapeHtml(value.provenance.state_verification.status)} · ${escapeHtml(value.provenance.state_verification.reason)}${value.provenance.state_verification.before ? ` · ${escapeHtml(value.provenance.state_verification.before)} → ${escapeHtml(value.provenance.state_verification.after)}` : ''}</small>` : ''}
     <details><summary>Review ordered frames and observations</summary>
-      <div class="sequence-frames">${(value.frames || []).map((frame, index) => `<figure><img src="${frame.image}" loading="lazy" alt="Sequence frame ${index + 1} near ${(frame.timestamp_ms / 1000).toFixed(2)} seconds"><figcaption title="Source seek target; sparse video can repeat an earlier valid image">≈${(frame.timestamp_ms / 1000).toFixed(2)}s</figcaption></figure>`).join('')}</div>
+      <div class="sequence-frames">${(value.frames || []).map((frame, index) => `<figure><img src="${frame.image}" loading="lazy" alt="Sequence frame ${index + 1} near ${(frame.timestamp_ms / 1000).toFixed(2)} seconds">${frame.target_crop ? `<img src="${frame.target_crop}" loading="lazy" alt="Selected tracker crop for frame ${index + 1}">` : ''}<figcaption title="Source seek target; sparse video can repeat an earlier valid image">seek ≈${(frame.timestamp_ms / 1000).toFixed(2)}s${Number.isFinite(frame.decoded_timestamp_ms) ? ` · decoded ${(frame.decoded_timestamp_ms / 1000).toFixed(2)}s` : ''}${frame.target_crop && Array.isArray(cropSizes[index]) ? `<small>${value.provenance.crop_evidence?.mode === 'source' ? 'Source crop' : 'Preview crop'} · ${escapeHtml(cropSizes[index].join(' × '))} px</small>` : ''}</figcaption></figure>`).join('')}</div>
       <ol>${value.observations.map(item => `<li><b>${(item.timestamp_ms / 1000).toFixed(2)}s</b> ${escapeHtml(item.target_visibility || 'unclassified')} · ${escapeHtml(item.description)}</li>`).join('')}</ol>
       ${value.limitations.map(note => `<p><small>${escapeHtml(note)}</small></p>`).join('')}
     </details></section>`;
@@ -629,7 +631,7 @@ async function submitMemoryQuery(event) {
         vlm_enabled: $('#memory-query-vlm').checked && !$('#memory-query-temporal').checked && !$('#memory-query-long').checked,
         temporal_enabled: $('#memory-query-temporal').checked,
         long_memory_enabled: $('#memory-query-long').checked,
-        entity_id: $('#memory-query-long').checked ? ($('#memory-query-entity').value || null) : null,
+        entity_id: ($('#memory-query-long').checked || $('#memory-query-temporal').checked) ? ($('#memory-query-entity').value || null) : null,
         vlm_model: $('#memory-vlm-model').value,
       }),
     });

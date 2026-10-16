@@ -480,6 +480,22 @@ impl AppState {
             .collect();
         let candidates = cameras
             .iter()
+            .filter(|camera| {
+                !request.temporal_enabled
+                    || request.entity_id.is_none_or(|id| {
+                        camera.long_memory.as_ref().is_some_and(|graph| {
+                            graph.version == crate::long_memory::VERSION
+                                && graph.entities.iter().any(|entity| {
+                                    entity.entity_id == id
+                                        && entity.camera_id == camera.camera.camera_id
+                                        && camera
+                                            .events
+                                            .iter()
+                                            .any(|event| event.job_id == entity.job_id)
+                                })
+                        })
+                    })
+            })
             .flat_map(|camera| {
                 camera
                     .events
@@ -518,7 +534,7 @@ impl AppState {
                 .take(3)
                 .map(|item| item.event.clone())
                 .collect();
-            match crate::interpretation::interpret(&self.config, &request.query, &events).await {
+            match crate::interpretation::interpret_with_tracks(&self.config, &request.query, &events, &cameras, request.entity_id).await {
                 Ok(results) => {
                     interpretation_notes.push("Experiment 2: model observations from ordered visual frames plus metadata; inspect citations. Retrieval ranking is unchanged.".into());
                     summary = results.iter().map(|result| format!("Clip {} ({}): {}",result.event_id,result.status,result.answer)).collect::<Vec<_>>().join("\n");

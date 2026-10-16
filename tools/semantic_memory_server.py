@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Local Qwen video retrieval sidecar. Run with the isolated retrieval environment."""
 import argparse
+from collections import OrderedDict
 import gc
 import hashlib
 import io
@@ -8,6 +9,7 @@ import json
 import logging
 import math
 import os
+import re
 from pathlib import Path
 import sqlite3
 import sys
@@ -20,6 +22,12 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 LOG = logging.getLogger("visn.retrieval")
 ROOT = Path(__file__).resolve().parents[1]
 UPSTREAM_REVISION = "393e2978d27852b0d0230d6994f37f9c15bed73c"
+DECODE_CACHE_MAX_BYTES = 32 * 1024 * 1024
+DECODE_CACHE_MAX_ENTRIES = 128
+QUERY_CACHE_MAX_ENTRIES = 32
+RERANK_CACHE_MAX_ENTRIES = 256
+SOURCE_CACHE_MAX_ENTRIES = 256
+
 INSTRUCTION = "Retrieve camera video segments that visually match the search query."
 
 
@@ -75,8 +83,8 @@ class QwenModels:
                 torch.cuda.empty_cache()
             if torch.backends.mps.is_available():
                 torch.mps.empty_cache()
-        model_path = self.embedding_path if kind == "embedder" else self.snapshot_download(
-            self.args.reranker_model, revision=self.args.reranker_revision)
+        model_path = self.embedding_path if kind == "embedder" else (self.reranker_snapshot or self.snapshot_download(
+            self.args.reranker_model, revision=self.args.reranker_revision))
         if kind == "reranker":
             self.reranker_snapshot = model_path
         LOG.info("Loading %s on %s", kind, device)
@@ -127,8 +135,13 @@ class Retrieval:
         self.root = Path(args.data_dir).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.models = models
-        self.hashes = {}
+        self.hashes = OrderedDict()
         self.interpreter = None
+        self.decode_cache = OrderedDict()
+        self.decode_cache_bytes = 0
+        self.query_cache = OrderedDict()
+        self.rerank_cache = OrderedDict()
+        self.work_stats = dict(decode_hits=0, ffmpeg_calls=0, decode_evictions=0, query_hits=0, query_calls=0, rerank_hits=0, rerank_calls=0)
         self.db = sqlite3.connect(self.root / "semantic-v1.sqlite3", check_same_thread=False)
         self.db.execute("CREATE TABLE IF NOT EXISTS vectors (key TEXT PRIMARY KEY, version TEXT NOT NULL, vector TEXT NOT NULL)")
         self.lock = threading.Lock()
@@ -141,46 +154,78 @@ class Retrieval:
         if not isinstance(start, int) or not isinstance(end, int) or start < 0 or end <= start:
             raise ValueError("Invalid event interval")
         stat = path.stat()
-        identity = (str(path), stat.st_size, stat.st_mtime_ns)
-        if identity not in self.hashes:
+        identity = (stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns)
+        key = str(path)
+        cached = self.hashes.get(key)
+        if cached is None or cached[0] != identity:
             with path.open("rb") as handle:
                 digest = hashlib.file_digest(handle, "sha256").hexdigest()
-            self.hashes = {k: v for k, v in self.hashes.items() if k[0] != str(path)}
-            self.hashes[identity] = digest
-        return path, self.hashes[identity]
+                after = os.fstat(handle.fileno())
+            if identity != (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns):
+                raise ValueError("Evidence changed while fingerprinting")
+            self.hashes[key] = (identity, digest)
+        self.hashes.move_to_end(key)
+        while len(self.hashes) > SOURCE_CACHE_MAX_ENTRIES:
+            self.hashes.popitem(last=False)
+        return path, self.hashes[key][1]
 
-    def frames(self, event, count=None, size=None):
+    def frames(self, event, count=None, size=None, with_timestamps=False, sample_timestamps=None, no_upscale=False):
         import imageio_ffmpeg
         from PIL import Image
-        path, _ = self.source(event)
+        path, source_sha = self.source(event)
         count = count or self.args.frames
         size = size or self.args.frame_size
         frames = []
+        decoded_times = []
+        scale = f"scale='min(iw,{size})':'min(ih,{size})':force_original_aspect_ratio=decrease" if no_upscale else f"scale={size}:{size}:force_original_aspect_ratio=decrease"
         def decode(timestamp):
+            cache_key = (source_sha,event['start_ms'],event['end_ms'],f"{timestamp/1000:.6f}",size,no_upscale)
+            enabled = not getattr(self.args,'disable_work_caches',False)
+            if enabled and cache_key in self.decode_cache:
+                self.work_stats['decode_hits'] += 1
+                self.decode_cache.move_to_end(cache_key)
+                return self.decode_cache[cache_key]
+            self.work_stats['ffmpeg_calls'] += 1
             # Keep every decoded image inside [start,end). An empty late seek
             # means sparse PTS, not necessarily missing evidence for the interval.
-            return subprocess.run([
-                imageio_ffmpeg.get_ffmpeg_exe(), "-hide_banner", "-loglevel", "error",
+            result = subprocess.run([
+                imageio_ffmpeg.get_ffmpeg_exe(), "-hide_banner", "-loglevel", "info",
                 "-copyts", "-start_at_zero", "-ss", f"{timestamp/1000:.6f}",
                 "-t", f"{(event['end_ms']-timestamp)/1000:.6f}", "-i", str(path),
                 "-frames:v", "1", "-vf",
-                f"select='gte(t,{timestamp/1000:.6f})*lt(t,{event['end_ms']/1000:.6f})',scale={size}:{size}:force_original_aspect_ratio=decrease",
+                f"select='gte(t,{timestamp/1000:.6f})*lt(t,{event['end_ms']/1000:.6f})',{scale},showinfo",
                 "-vsync", "0",
                 "-threads", "1", "-f", "image2pipe", "-vcodec", "png", "pipe:1"
-            ], capture_output=True, timeout=30, check=True).stdout
-        for i in range(count):
-            timestamp = event["start_ms"] + (i+.5)/count*(event["end_ms"]-event["start_ms"])
-            raw = decode(timestamp)
+            ], capture_output=True, timeout=30, check=True)
+            matches = re.findall(rb'pts_time:([0-9.eE+-]+)', result.stderr)
+            actual = round(float(matches[0])*1000) if matches else None
+            if result.stdout and (actual is None or not event['start_ms'] <= actual < event['end_ms']):
+                raise ValueError('Decoded image has no in-window PTS')
+            value = (result.stdout, actual)
+            if enabled and len(result.stdout) <= DECODE_CACHE_MAX_BYTES:
+                self.decode_cache[cache_key] = value
+                self.decode_cache_bytes += len(result.stdout)
+                while self.decode_cache_bytes > DECODE_CACHE_MAX_BYTES or len(self.decode_cache) > DECODE_CACHE_MAX_ENTRIES:
+                    _, evicted = self.decode_cache.popitem(last=False)
+                    self.decode_cache_bytes -= len(evicted[0])
+                    self.work_stats['decode_evictions'] += 1
+            return value
+        targets = sample_timestamps if sample_timestamps is not None else [event["start_ms"] + (i+.5)/count*(event["end_ms"]-event["start_ms"]) for i in range(count)]
+        for target in targets:
+            timestamp = max(event['start_ms'],target-.5) if sample_timestamps is not None else target
+            raw, actual = decode(timestamp)
             if not raw:
                 if frames:
                     frames.append(frames[-1].copy())
+                    decoded_times.append(decoded_times[-1])
                     continue
-                raw = decode(event['start_ms'])
+                raw, actual = decode(event['start_ms'])
             if not raw:
                 raise ValueError("No decodable image inside the requested event interval")
             with Image.open(io.BytesIO(raw)) as image:
                 frames.append(image.convert("RGB"))
-        return frames
+                decoded_times.append(actual)
+        return (frames, decoded_times) if with_timestamps else frames
 
     def embedding(self, event):
         _, digest = self.source(event)
@@ -197,10 +242,47 @@ class Retrieval:
         self.db.commit()
         return vector, False
 
+    def query_embedding(self, query):
+        key = (self.models.version, query)
+        enabled = not getattr(self.args,'disable_work_caches',False)
+        if enabled and key in self.query_cache:
+            self.query_cache.move_to_end(key)
+            self.work_stats['query_hits'] += 1
+            return self.query_cache[key]
+        self.work_stats['query_calls'] += 1
+        vector = tuple(self.models.embed({"text":query,"instruction":INSTRUCTION}))
+        if not vector or any(type(v) not in (float,int) or not math.isfinite(v) for v in vector):
+            raise ValueError('Invalid query embedding')
+        if enabled:
+            self.query_cache[key] = vector
+            while len(self.query_cache)>QUERY_CACHE_MAX_ENTRIES:self.query_cache.popitem(last=False)
+        return vector
+
+    def rerank_event(self, query, event):
+        # Validate scope/source even on hits. Revision is resolved once per model session.
+        _, sha = self.source(event)
+        snapshot = getattr(self.models,'reranker_snapshot',None)
+        key = (self.models.version,snapshot,query,sha,event['start_ms'],event['end_ms'])
+        enabled = not getattr(self.args,'disable_work_caches',False)
+        if enabled and snapshot and key in self.rerank_cache:
+            self.rerank_cache.move_to_end(key)
+            self.work_stats['rerank_hits'] += 1
+            return self.rerank_cache[key]
+        self.work_stats['rerank_calls'] += 1
+        score = self.models.rerank(query,self.frames(event))
+        if not math.isfinite(score) or not 0<=score<=1:raise ValueError('Invalid rerank score')
+        snapshot = getattr(self.models,'reranker_snapshot',None)
+        if enabled and snapshot:
+            key = (self.models.version,snapshot,query,sha,event['start_ms'],event['end_ms'])
+            self.rerank_cache[key] = score
+            while len(self.rerank_cache)>RERANK_CACHE_MAX_ENTRIES:self.rerank_cache.popitem(last=False)
+        return score
+
     def search(self, body):
         if self.interpreter:
             self.interpreter.release()
         started = time.monotonic()
+        initial_stats = dict(self.work_stats)
         if not isinstance(body, dict) or not isinstance(body.get("query"), str):
             raise ValueError("Expected an object with a string query")
         query = body["query"].strip()
@@ -222,7 +304,7 @@ class Retrieval:
             return {"items": [], "mode": "hybrid_rrf", "notes": []}
         if self.models is None:
             self.models = QwenModels(self.args)
-        q = self.models.embed({"text": query, "instruction": INSTRUCTION})
+        q = self.query_embedding(query)
         semantic, failures, cached = [], [], 0
         for index, event in enumerate(events):
             try:
@@ -247,7 +329,7 @@ class Retrieval:
             try:
                 reranked = []
                 for event_id, score in shortlist:
-                    reranked.append((event_id, self.models.rerank(query, self.frames(by_id[event_id])), score))
+                    reranked.append((event_id, self.rerank_event(query, by_id[event_id]), score))
                 reranked.sort(key=lambda row: (-row[1], -row[2], row[0]))
                 shortlist = [(event_id, score) for event_id, score, _ in reranked]
                 mode = "hybrid_qwen_reranker"
@@ -260,16 +342,21 @@ class Retrieval:
                     "embedding": json.loads(self.models.version),
                     "reranker_snapshot": getattr(self.models, "reranker_snapshot", None) if mode == "hybrid_qwen_reranker" else None,
                     "fusion": "reciprocal-rank-k60", "shortlist_limit": max(20, limit),
-                    "elapsed_secs": round(time.monotonic()-started, 3)}}
+                    "elapsed_secs": round(time.monotonic()-started, 3),
+                    "work_cache":dict(enabled=not getattr(self.args,'disable_work_caches',False),
+                        counters={k:self.work_stats[k]-initial_stats[k] for k in self.work_stats},decode_bytes=self.decode_cache_bytes,
+                        decode_entries=len(self.decode_cache),query_entries=len(self.query_cache),rerank_entries=len(self.rerank_cache))}}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--disable-work-caches", action="store_true", help="Disable bounded lossless decode/query/rerank work caches for controlled validation")
     parser.add_argument("--keep-models-loaded", action="store_true", help="Keep both models in memory instead of switching between them")
     parser.add_argument("--interpretation-model", default="Qwen/Qwen3-VL-2B-Instruct")
     parser.add_argument("--interpretation-revision", default="main")
     parser.add_argument("--interpretation-api-url", help="Optional local OpenAI-compatible /v1 API; requires a pinned interpretation revision")
     parser.add_argument("--interpretation-frames", type=int, default=8, choices=range(2,17))
+    parser.add_argument("--interpretation-crop-mode", choices=("source", "preview"), default="source", help="Source-detail crops without upscaling (default), or preview crops for controlled comparisons")
     parser.add_argument("--interpretation-frame-size", type=int, default=384, choices=range(128,513))
     parser.add_argument("--port", type=int, default=8186)
     parser.add_argument("--data-dir", default=str(ROOT / "data"))
