@@ -66,6 +66,16 @@ class RetrievalChecks(unittest.TestCase):
                 service.search(dict(body, lexical_ids=['outside-filter']))
             service.db.close()
 
+    def test_sparse_interval_holds_in_bounds_without_seeking_into_next_event(self):
+        with TemporaryDirectory() as tmp:
+            source=Path(tmp)/'source.mp4';write_video(source)
+            service=Retrieval(SimpleNamespace(data_dir=tmp,frames=8,frame_size=64),Models())
+            frames=service.frames(dict(source_path=str(source),start_ms=0,end_ms=50))
+            self.assertEqual(len(frames),8)
+            self.assertTrue(all(frame.getpixel((32,32))[0]>200 for frame in frames))
+            with self.assertRaises(ValueError):service.frames(dict(source_path=str(source),start_ms=50,end_ms=90))
+            service.db.close()
+
     def test_fusion_preserves_semantic_only_candidates(self):
         result = fuse(['keyword'], ['visual', 'keyword'], 2)
         self.assertEqual([row[0] for row in result], ['keyword', 'visual'])

@@ -324,6 +324,7 @@
                 <input id="memory-vlm-enabled" type="checkbox"><i></i>
               </label>
               <label class="toggle-row memory-toggle"><span><strong>Experiment 2 · Interpret ordered frames</strong><small>Use timestamped sequences for priority events instead of single-frame captions. Slower; Qwen worker required.</small></span><input id="memory-temporal-enabled" type="checkbox"><i></i></label>
+              <label class="toggle-row memory-toggle"><span><strong>Experiment 3 · Build linked entity memory</strong><small>Track the retained recording and link observations to evidence. Adds detector processing; identity remains uncertain.</small></span><input id="memory-long-enabled" type="checkbox"><i></i></label>
               <label class="field"><span>Vision-language model for indexing and queries</span><select id="memory-vlm-model"></select></label>
               <label class="field"><span>Backend camera payloads</span><textarea id="memory-cameras-json" class="memory-json-editor" spellcheck="false" placeholder='[{"liveurl":"http://camera/mjpg/video.mjpg","Country":"...","description":"..."}]'></textarea></label>
               <div class="preset-row">
@@ -344,6 +345,8 @@
               <span id="memory-job-status" class="badge neutral">idle</span>
             </div>
             <label class="field"><span>Recorded sessions</span><select id="memory-job-select"><option value="">No recordings yet</option></select></label>
+            <button id="memory-build-links" type="button" class="secondary-button" disabled>Build entity memory for this recording</button>
+            <p id="memory-links-status" role="status"></p>
             <div id="memory-empty" class="memory-empty"><p>Load a verified camera preset or paste backend camera metadata, then record a short bounded interval.</p></div>
             <div id="memory-processing" class="processing hidden"><span class="spinner"></span><div><strong>Recording and indexing cameras</strong><small>Source evidence is retained before sparse event analysis.</small></div></div>
             <div id="memory-job-error" class="inline-error hidden"></div>
@@ -375,13 +378,16 @@
             <label class="toggle-row compact-toggle"><span><strong>Visual retrieval</strong><small>Search clip content as well as words. First search indexes uncached clips.</small></span><input id="memory-query-semantic" type="checkbox" checked><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>Visual reranking</strong><small>Inspect the shortlist for closer matches.</small></span><input id="memory-query-rerank" type="checkbox" checked><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>VLM synthesis</strong><small>Summarize candidate descriptions; does not verify video.</small></span><input id="memory-query-vlm" type="checkbox"><i></i></label>
-            <label class="toggle-row compact-toggle"><span><strong>Experiment 2 · Explain visual evidence</strong><small>Read eight ordered frames and metadata from up to three retrieved clips. Includes uncertainty and frame citations.</small></span><input id="memory-query-temporal" type="checkbox"><i></i></label>
+            <label class="toggle-row compact-toggle"><span><strong>Experiment 2 · Explain visual evidence</strong><small>Read ordered frames and metadata from up to three retrieved clips. Includes uncertainty and frame citations.</small></span><input id="memory-query-temporal" type="checkbox"><i></i></label>
+            <label class="toggle-row compact-toggle"><span><strong>Experiment 3 · Follow linked observations</strong><small>Retrieve a source-cited history. Similar objects and unrelated recordings remain separate.</small></span><input id="memory-query-long" type="checkbox"><i></i></label>
+            <label class="field"><span>Entity track (optional)</span><select id="memory-query-entity"><option value="">Find candidates from question</option></select><small>Track IDs are local to a recording and camera, not verified identities.</small></label>
             <button id="memory-query-button" class="primary-button" type="submit"><span>Search memory</span><b>⌕</b></button>
           </form>
           <div id="memory-query-error" class="inline-error hidden"></div>
           <div id="memory-query-result" class="hidden">
             <div class="report-card memory-answer-card"><div class="report-meta"><span>RETRIEVAL ANSWER</span><span id="memory-query-mode">—</span></div><h3 id="memory-query-title">—</h3><p id="memory-query-summary">—</p><div id="memory-query-notes" class="report-notes"></div></div>
             <details class="raw-result"><summary>Retrieval result and model provenance</summary><pre id="memory-query-json"></pre></details>
+            <div id="memory-query-journeys"></div>
             <div id="memory-query-matches" class="memory-event-grid"></div>
           </div>
         </section>

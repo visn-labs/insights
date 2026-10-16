@@ -1,0 +1,55 @@
+{
+  "annotation_basis": "Assistant contact-sheet review before temporal model runs. Positive cases are observable motion directions; negative cases have no visual support. Same sources as retrieval-labels.json. Labels were created by the assistant, not an independent human annotator.",
+  "cases": [
+    {
+      "id": "toll-truck-direction",
+      "camera": "live-1",
+      "event_index": 0,
+      "query": "Is the green-and-yellow truck in the left-center foreground lane moving toward the camera or away from it? Follow the same truck using its size and position changes.",
+      "expected": "toward_camera",
+      "job_id": "01a1433a-26bf-7e50-b482-5007781d97c7",
+      "start_ms": 1,
+      "end_ms": 8399
+    },
+    {
+      "id": "night-crossing-car",
+      "camera": "live-2",
+      "event_index": 1,
+      "query": "Does a moving car cross the intersection during this sequence, or does the scene remain empty? Compare the car in successive images.",
+      "expected": "car_crosses_intersection",
+      "job_id": "01a1433a-26bf-7e50-b482-4ff132722114",
+      "start_ms": 15041,
+      "end_ms": 23519
+    },
+    {
+      "id": "highway-turquoise-direction",
+      "camera": "live-3",
+      "event_index": 0,
+      "query": "Is the turquoise car beside the red container truck in the near carriageway moving toward the camera or away from it? Compare its size and position.",
+      "expected": "toward_camera",
+      "job_id": "01a1433a-26bf-7e50-b482-4fe9e55d087c",
+      "start_ms": 1,
+      "end_ms": 2359
+    },
+    {
+      "id": "night-negative-aircraft",
+      "camera": "live-2",
+      "event_index": 0,
+      "query": "Is an aircraft taking off in this sequence?",
+      "expected": "no_visual_support",
+      "job_id": "01a1433a-26bf-7e50-b482-4ff132722114",
+      "start_ms": 1,
+      "end_ms": 15039
+    },
+    {
+      "id": "toll-negative-boat",
+      "camera": "live-1",
+      "event_index": 0,
+      "query": "Is a boat travelling across water in this sequence?",
+      "expected": "no_visual_support",
+      "job_id": "01a1433a-26bf-7e50-b482-5007781d97c7",
+      "start_ms": 1,
+      "end_ms": 8399
+    }
+  ]
+}

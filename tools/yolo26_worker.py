@@ -212,6 +212,7 @@ class CameraSession:
         wall_start = time.monotonic()
         deadline = wall_start + self.max_seconds
         frame_index = 0
+        sampler = runner.TimestampSampler(self.requested_fps)
         capture = None
         try:
             while not self.cancelled:
@@ -232,19 +233,16 @@ class CameraSession:
                 )
                 if nominal_fps <= 0 or nominal_fps > 240:
                     nominal_fps = 25.0
-                stride = max(1, round(nominal_fps / self.requested_fps))
 
                 reconnect = False
                 while not self.cancelled:
                     elapsed = time.monotonic() - wall_start
                     if self.is_network and elapsed >= self.max_seconds:
                         break
-                    process_frame = frame_index % stride == 0
-                    if process_frame:
+                    if self.is_http:
                         ok, frame = capture.read()
                     else:
-                        ok = capture.grab()
-                        frame = None
+                        ok, frame = capture.grab(), None
                     if not ok:
                         reconnect = self.is_network and time.monotonic() < deadline
                         break
@@ -262,8 +260,12 @@ class CameraSession:
                         reconnect = False
                         break
                     frame_index += 1
-                    if not process_frame:
+                    if not sampler.accept(source_time_ms):
                         continue
+                    if frame is None:
+                        ok, frame = capture.retrieve()
+                        if not ok:
+                            break
                     if not self._offer(FramePacket(frame, source_time_ms)):
                         break
 

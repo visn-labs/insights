@@ -209,3 +209,11 @@ Review Ultralytics licensing and Gemma terms for the exact commercial deployment
 ### Experiment 2: ordered visual interpretation
 
 An opt-in extension to experiment 1 reads timestamped frame sequences plus event metadata during indexing and question answering. See [Experiment 2](docs/EXPERIMENT2_INTERPRETATION.md) for controls, evaluation results, and limitations.
+
+### Experiment 3: linked entity memory
+
+Opt into persistent, evidence-linked tracker histories for new or existing recordings. Query separated observations without merging similar objects or reusing IDs across recording/camera boundaries. See [Experiment 3 implementation and evaluation](docs/EXPERIMENT3_ENTITY_MEMORY.md).
+
+### Three-stream evaluation and timestamp sampling fixes
+
+See [the 16 October live-stream report](docs/LIVE_STREAM_EVALUATION_2026_10_16.md) for the frozen retrieval pilot, detector cadence/decoder fixes, eight-versus-sixteen-image comparison, and remaining accuracy limits. Existing entity memory uses a new sampling version and requires a rebuild; retained recordings remain available.

@@ -246,6 +246,7 @@ pub struct RepresentativeFrame {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct CapabilityResponse {
+    pub entity_memory_version: String,
     pub service_version: String,
     pub local_state: String,
     pub simulator: bool,
@@ -492,6 +493,8 @@ pub struct CameraProfile {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryJobRequest {
     #[serde(default)]
+    pub long_memory_enabled: bool,
+    #[serde(default)]
     pub temporal_enabled: bool,
     pub name: String,
     #[serde(default)]
@@ -544,6 +547,8 @@ pub struct MemoryCameraFailure {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryCameraResult {
+    #[serde(default)]
+    pub long_memory: Option<crate::long_memory::EntityMemory>,
     pub camera: CameraProfile,
     pub duration_ms: u64,
     pub frames_decoded: usize,
@@ -605,6 +610,10 @@ pub struct MemoryEvent {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryQueryRequest {
     #[serde(default)]
+    pub long_memory_enabled: bool,
+    #[serde(default)]
+    pub entity_id: Option<Uuid>,
+    #[serde(default)]
     pub temporal_enabled: bool,
     pub query: String,
     #[serde(default)]
@@ -647,6 +656,7 @@ pub struct MemoryQueryMatch {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryQueryResponse {
+    pub long_memory: Option<crate::long_memory::JourneyAnswer>,
     pub interpretations: Vec<SequenceInterpretation>,
     pub interpretation_notes: Vec<String>,
     pub query_id: Uuid,
@@ -680,6 +690,8 @@ pub struct SequenceInterpretation {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FrameObservation {
+    #[serde(default)]
+    pub target_visibility: String,
     pub frame_index: usize,
     pub timestamp_ms: u64,
     pub description: String,

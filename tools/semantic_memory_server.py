@@ -14,6 +14,7 @@ import sys
 import subprocess
 import threading
 import time
+from urllib.parse import urlparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 LOG = logging.getLogger("visn.retrieval")
@@ -55,7 +56,7 @@ class QwenModels:
         self.version = json.dumps({"model": args.embedding_model, "snapshot": self.embedding_path,
                                    "upstream": UPSTREAM_REVISION, "frames": args.frames,
                                    "pixels": args.frame_size, "instruction": INSTRUCTION,
-                                   "sampler": "ffmpeg-interval-midpoints-v2"}, sort_keys=True)
+                                   "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last"}, sort_keys=True)
 
     def load(self, kind):
         import torch
@@ -155,20 +156,29 @@ class Retrieval:
         count = count or self.args.frames
         size = size or self.args.frame_size
         frames = []
+        def decode(timestamp):
+            # Keep every decoded image inside [start,end). An empty late seek
+            # means sparse PTS, not necessarily missing evidence for the interval.
+            return subprocess.run([
+                imageio_ffmpeg.get_ffmpeg_exe(), "-hide_banner", "-loglevel", "error",
+                "-copyts", "-start_at_zero", "-ss", f"{timestamp/1000:.6f}",
+                "-t", f"{(event['end_ms']-timestamp)/1000:.6f}", "-i", str(path),
+                "-frames:v", "1", "-vf",
+                f"select='gte(t,{timestamp/1000:.6f})*lt(t,{event['end_ms']/1000:.6f})',scale={size}:{size}:force_original_aspect_ratio=decrease",
+                "-vsync", "0",
+                "-threads", "1", "-f", "image2pipe", "-vcodec", "png", "pipe:1"
+            ], capture_output=True, timeout=30, check=True).stdout
         for i in range(count):
             timestamp = event["start_ms"] + (i+.5)/count*(event["end_ms"]-event["start_ms"])
-            # Isolated FFmpeg avoids loading conflicting OpenCV/PyAV dylibs on macOS.
-            result = subprocess.run([
-                imageio_ffmpeg.get_ffmpeg_exe(), "-hide_banner", "-loglevel", "error",
-                "-ss", f"{timestamp/1000:.6f}", "-i", str(path),
-                "-t", f"{(event['end_ms']-timestamp)/1000:.6f}",
-                "-frames:v", "1", "-vf",
-                f"scale={size}:{size}:force_original_aspect_ratio=decrease",
-                "-threads", "1", "-f", "image2pipe", "-vcodec", "png", "pipe:1"
-            ], capture_output=True, timeout=30, check=True)
-            if not result.stdout:
-                raise ValueError("Cannot decode a frame within the requested event interval")
-            with Image.open(io.BytesIO(result.stdout)) as image:
+            raw = decode(timestamp)
+            if not raw:
+                if frames:
+                    frames.append(frames[-1].copy())
+                    continue
+                raw = decode(event['start_ms'])
+            if not raw:
+                raise ValueError("No decodable image inside the requested event interval")
+            with Image.open(io.BytesIO(raw)) as image:
                 frames.append(image.convert("RGB"))
         return frames
 
@@ -258,6 +268,7 @@ def main():
     parser.add_argument("--keep-models-loaded", action="store_true", help="Keep both models in memory instead of switching between them")
     parser.add_argument("--interpretation-model", default="Qwen/Qwen3-VL-2B-Instruct")
     parser.add_argument("--interpretation-revision", default="main")
+    parser.add_argument("--interpretation-api-url", help="Optional local OpenAI-compatible /v1 API; requires a pinned interpretation revision")
     parser.add_argument("--interpretation-frames", type=int, default=8, choices=range(2,17))
     parser.add_argument("--interpretation-frame-size", type=int, default=384, choices=range(128,513))
     parser.add_argument("--port", type=int, default=8186)
@@ -273,6 +284,12 @@ def main():
     args = parser.parse_args()
     if not 2 <= args.frames <= 32 or not 64 <= args.frame_size <= 512:
         parser.error("frames must be 2..32 and frame-size 64..512")
+    if args.interpretation_api_url:
+        endpoint = urlparse(args.interpretation_api_url)
+        if endpoint.scheme != "http" or endpoint.hostname not in ("127.0.0.1", "localhost", "::1") or endpoint.username or endpoint.password:
+            parser.error("Interpretation API must be a local HTTP endpoint without URL credentials")
+    if args.interpretation_api_url and args.interpretation_revision == "main":
+        parser.error("API interpretation requires --interpretation-revision identifying the evaluated model files")
     os.environ.setdefault("HF_HOME", str(ROOT / ".retrieval/huggingface"))
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     service = Retrieval(args)

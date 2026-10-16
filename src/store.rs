@@ -6,7 +6,7 @@ use std::{
 
 use anyhow::{bail, Context};
 use futures_util::{stream, StreamExt};
-use tokio::sync::RwLock;
+use tokio::sync::{Mutex, RwLock};
 use tracing::{error, info};
 use uuid::Uuid;
 
@@ -33,6 +33,7 @@ pub struct AppState {
     cluster_jobs: Arc<RwLock<HashMap<Uuid, ClusterJobRecord>>>,
     memory_jobs: Arc<RwLock<HashMap<Uuid, MemoryJobRecord>>>,
     uploads: Arc<RwLock<HashMap<Uuid, UploadRecord>>>,
+    long_memory_gate: Arc<Mutex<()>>,
 }
 
 impl AppState {
@@ -46,6 +47,7 @@ impl AppState {
             cluster_jobs: Arc::new(RwLock::new(HashMap::new())),
             memory_jobs: Arc::new(RwLock::new(memory_jobs)),
             uploads: Arc::new(RwLock::new(HashMap::new())),
+            long_memory_gate: Arc::new(Mutex::new(())),
         }
     }
 
@@ -105,6 +107,75 @@ impl AppState {
             .get(&id)
             .cloned()
             .map(redact_memory_job)
+    }
+
+    async fn enrich_entity_memory(
+        &self,
+        job_id: Uuid,
+        camera: &mut crate::domain::MemoryCameraResult,
+    ) -> anyhow::Result<()> {
+        use sha2::{Digest, Sha256};
+        use tokio::io::AsyncReadExt;
+        let source = camera
+            .events
+            .first()
+            .context("No indexed evidence to link")?
+            .source_evidence_path
+            .clone();
+        let mut file = tokio::fs::File::open(&source).await?;
+        let mut digest = Sha256::new();
+        let mut buffer = vec![0; 65536];
+        loop {
+            let size = file.read(&mut buffer).await?;
+            if size == 0 {
+                break;
+            }
+            digest.update(&buffer[..size]);
+        }
+        let digest = format!("{:x}", digest.finalize());
+        let camera_job = Uuid::new_v5(&job_id, camera.camera.camera_id.as_bytes());
+        info!(%job_id, camera_id=%camera.camera.camera_id, "experiment 3 tracking retained source");
+        let (model, analysis) = self
+            .pipeline
+            .memory_tracks(
+                camera_job,
+                source,
+                camera.duration_ms.div_ceil(1000).max(1),
+                &camera
+                    .events
+                    .iter()
+                    .map(|e| (e.start_ms, e.end_ms))
+                    .collect::<Vec<_>>(),
+            )
+            .await?;
+        camera.long_memory = Some(crate::long_memory::build(
+            job_id, camera, &analysis, model, digest,
+        ));
+        info!(%job_id, camera_id=%camera.camera.camera_id, entities=camera.long_memory.as_ref().unwrap().entities.len(), "experiment 3 entity memory built");
+        Ok(())
+    }
+
+    pub async fn build_entity_memory(&self, id: Uuid) -> anyhow::Result<MemoryJobRecord> {
+        // Serialize manifest mutations; inference itself also shares the detector gate.
+        let _guard = self.long_memory_gate.lock().await;
+        let mut job = self
+            .memory_jobs
+            .read()
+            .await
+            .get(&id)
+            .cloned()
+            .context("Recording not found")?;
+        if job.status != JobStatus::Completed {
+            bail!("Choose a completed recording");
+        }
+        let result = job.result.as_mut().context("Recording has no evidence")?;
+        for camera in &mut result.camera_results {
+            self.enrich_entity_memory(id, camera).await?;
+        }
+        // Persist before exposing the replacement. Failure leaves the old memory intact.
+        persist_memory_job(&self.config, &job).await?;
+        self.memory_jobs.write().await.insert(id, job.clone());
+        Ok(redact_memory_job(job))
     }
 
     pub async fn memory_event_artifact(
@@ -340,7 +411,16 @@ impl AppState {
         let mut camera_failures = Vec::new();
         for (camera_id, outcome) in outcomes {
             match outcome {
-                Ok(result) => camera_results.push(result),
+                Ok(mut result) => {
+                    if request.long_memory_enabled {
+                        if let Err(error) = self.enrich_entity_memory(job_id, &mut result).await {
+                            result
+                                .data_quality_notes
+                                .push(format!("Experiment 3 entity memory unavailable: {error:#}"));
+                        }
+                    }
+                    camera_results.push(result);
+                }
                 Err(error) => camera_failures.push(MemoryCameraFailure {
                     camera_id,
                     error: format!("{error:#}"),
@@ -390,19 +470,23 @@ impl AppState {
         let query_id = Uuid::now_v7();
         let started = Instant::now();
         info!(%query_id, semantic = request.semantic_enabled, rerank = request.rerank_enabled, "memory retrieval started");
-        let candidates = {
-            let jobs = self.memory_jobs.read().await;
-            jobs.values()
-                .filter_map(|job| job.result.as_ref())
-                .flat_map(|result| &result.camera_results)
-                .flat_map(|camera| {
-                    camera
-                        .events
-                        .iter()
-                        .map(|event| (event.clone(), camera.camera.clone()))
-                })
-                .collect()
-        };
+        let cameras: Vec<crate::domain::MemoryCameraResult> = self
+            .memory_jobs
+            .read()
+            .await
+            .values()
+            .filter_map(|job| job.result.as_ref())
+            .flat_map(|result| result.camera_results.clone())
+            .collect();
+        let candidates = cameras
+            .iter()
+            .flat_map(|camera| {
+                camera
+                    .events
+                    .iter()
+                    .map(|event| (event.clone(), camera.camera.clone()))
+            })
+            .collect();
         // No job-store lock is held during model loading, indexing or inference.
         let retrieval = crate::retrieval::search(&self.config, &request, candidates).await;
         let mut matches = retrieval.matches;
@@ -447,7 +531,11 @@ impl AppState {
             interpretation_notes
                 .push("Sequence interpretation skipped: no retrieved visual evidence.".into());
         }
-        if request.vlm_enabled && !request.temporal_enabled && !matches.is_empty() {
+        if request.vlm_enabled
+            && !request.temporal_enabled
+            && !request.long_memory_enabled
+            && !matches.is_empty()
+        {
             match self
                 .memory
                 .synthesize_query(&request.query, &matches, request.vlm_model.as_deref())
@@ -463,11 +551,18 @@ impl AppState {
                 Err(error) => fallback_reason = Some(error.to_string()),
             }
         }
+        let long_memory = request
+            .long_memory_enabled
+            .then(|| crate::long_memory::answer(&request, &matches, &cameras));
+        if let Some(answer) = &long_memory {
+            summary = answer.summary.clone();
+        }
         info!(%query_id, mode = %retrieval_mode, considered, matches = matches.len(),
             elapsed_ms = started.elapsed().as_millis() as u64,
             temporal_requested = request.temporal_enabled, interpreted = interpretations.len(), interpretation_notes = ?interpretation_notes,
             notes = ?retrieval_notes, provenance = %retrieval.provenance, "memory retrieval completed");
         Ok(MemoryQueryResponse {
+            long_memory,
             interpretations,
             interpretation_notes,
             query_id,

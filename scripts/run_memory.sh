@@ -8,7 +8,13 @@ if [ ! -x .venv-retrieval/bin/python ]; then
 fi
 export VISN_RETRIEVAL_URL=http://127.0.0.1:8186
 export VISN_DATA_DIR="${VISN_DATA_DIR:-$PWD/data}"
-.venv-retrieval/bin/python tools/semantic_memory_server.py --data-dir "$VISN_DATA_DIR" &
+set --
+if [ -n "${VISN_INTERPRETATION_API_URL:-}" ]; then
+  set -- --interpretation-api-url "$VISN_INTERPRETATION_API_URL"
+fi
+.venv-retrieval/bin/python tools/semantic_memory_server.py --data-dir "$VISN_DATA_DIR" \
+  --interpretation-model "${VISN_INTERPRETATION_MODEL:-Qwen/Qwen3-VL-2B-Instruct}" \
+  --interpretation-revision "${VISN_INTERPRETATION_REVISION:-main}" "$@" &
 retrieval_pid=$!
 trap 'kill "$retrieval_pid" 2>/dev/null || true' EXIT INT TERM
 sleep 1

@@ -69,6 +69,10 @@ pub fn router(state: AppState) -> Router {
             post(create_memory_job).get(list_memory_jobs),
         )
         .route("/api/v1/memory-jobs/{id}", get(get_memory_job))
+        .route(
+            "/api/v1/memory-jobs/{id}/long-memory",
+            post(build_entity_memory),
+        )
         .route("/api/v1/memory-events/{id}/{kind}", get(memory_artifact))
         .route("/api/v1/memory-query", post(memory_query))
         .route("/api/v1/retrieval-status", get(retrieval_status))
@@ -198,6 +202,7 @@ async fn health(State(state): State<AppState>) -> Json<serde_json::Value> {
 
 async fn capabilities(State(state): State<AppState>) -> Json<CapabilityResponse> {
     Json(CapabilityResponse {
+        entity_memory_version: crate::long_memory::VERSION.into(),
         service_version: env!("CARGO_PKG_VERSION").to_owned(),
         local_state: "memory + local uploads; no database required".to_owned(),
         simulator: true,
@@ -418,6 +423,13 @@ async fn memory_artifact(
         .await
         .map(IntoResponse::into_response)
         .map_err(|error| ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, error.to_string()))
+}
+
+async fn build_entity_memory(
+    State(state): State<AppState>,
+    AxumPath(id): AxumPath<Uuid>,
+) -> Result<Json<crate::domain::MemoryJobRecord>, ApiError> {
+    Ok(Json(state.build_entity_memory(id).await?))
 }
 
 async fn memory_query(

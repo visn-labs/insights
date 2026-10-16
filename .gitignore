@@ -20,3 +20,11 @@ __pycache__/
 /.retrieval/
 
 /output/experiment2/
+
+/output/experiment3/
+
+/output/live-evaluation-*/
+
+/output/model-comparison-*/
+
+/.venv-mlx-evaluation/

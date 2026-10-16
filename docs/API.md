@@ -267,6 +267,26 @@ Rule-generated `Report.confidence` is now nullable: `null` means no calibrated o
 
 `POST /api/v1/memory-jobs` and `POST /api/v1/memory-query` accept `temporal_enabled` (boolean, default `false`). When enabled, sequence interpretation takes precedence over legacy `vlm_enabled` caption/synthesis. Retrieval settings and filters are unchanged.
 
-Memory events include `source_duration_ms` and optional `interpretation`. Query responses include `interpretations` and `interpretation_notes`. Each interpretation contains `event_id`, `status` (`supported` or `uncertain`, a model judgment), `answer`, source-relative `start_ms`/`end_ms`, `sampled_timestamps_ms`, ordered `frames` (`timestamp_ms`, JPEG data URL `image`), `observations` (`frame_index`, `timestamp_ms`, `description`), `limitations`, `provenance`, `cached`, and `elapsed_secs`. Sample timestamps are seek targets, not precise action boundaries.
+Memory events include `source_duration_ms` and optional `interpretation`. Query responses include `interpretations` and `interpretation_notes`. Each interpretation contains `event_id`, `status` (`supported`, `not_observed`, or `uncertain`, a model judgment), `answer`, source-relative `start_ms`/`end_ms`, `sampled_timestamps_ms`, ordered `frames` (`timestamp_ms`, JPEG data URL `image`), `observations` (`frame_index`, `timestamp_ms`, `target_visibility` = `visible|absent|unclear`, `description`), `limitations`, `provenance`, `cached`, and `elapsed_secs`. Sample timestamps are seek targets, not precise action boundaries.
 
 The local Qwen worker exposes `POST /interpret` for Rust, using the same evidence-root restrictions and serialized inference lock as retrieval. Query-time interpretation covers at most three ranked events, expands each interval by up to two seconds per side, clamps to source duration, and caps each window at twenty seconds. Indexing uses the existing priority-event budget. Unavailable/invalid interpretation preserves retrieval results with an explicit note. No model claim updates deterministic tracking facts or retrieval scores.
+
+## Experiment 3: linked entity memory
+
+- `POST /api/v1/memory-jobs`: optional `long_memory_enabled` (default `false`) runs tracking on the retained recording and builds source-cited histories. Tracking failure leaves indexed clips intact and adds a camera quality note.
+- `POST /api/v1/memory-jobs/{id}/long-memory`: rebuild a completed recording's entity memory from retained source. Returns the updated job. The request may take time; errors preserve the previous manifest. Rebuilds are serialized.
+- `MemoryCameraResult.long_memory`: optional object containing `version`, `source_sha256`, `detector_model`, `detector_fps`, `status`, `entities`, `links`, and `notes`.
+- Entities have stable `entity_id`, scoped `job_id`, `camera_id`, `track_id`, `class_name`, `observations`, and `uncertainty`. Each observation has `observation_id`, evidence `event_id`, source-relative `timestamp_ms`, `kind`, `description`, optional normalized `bbox`, and optional `detector_confidence` (not identity confidence).
+- Links contain `from`/`to` observation IDs, `entity_id`, `relation: same_tracker_order`, and `gap_ms`. These express tracker association and observation ordering only.
+- `POST /api/v1/memory-query`: optional `long_memory_enabled` and `entity_id`. Response `long_memory` is null when disabled, otherwise contains `status`, `summary`, `entities`, `links`, `supporting_events`, and `notes`. Status is `tracker_linked`, `ambiguous_entities`, or `insufficient_evidence`. Ordinary `matches` and their ranking are unchanged.
+- All existing filters apply to expansion; observation times are additionally filtered. At most 12 histories are returned, with an explicit truncation note. Cross-recording/camera identity and global chronology are not inferred.
+
+See [experiment 3 validation and limitations](EXPERIMENT3_ENTITY_MEMORY.md).
+
+### Entity-memory sampling version
+
+Capabilities now include `entity_memory_version` (`entity-memory-v2-pts`). Graphs from previous detector sampling versions must be rebuilt; the UI explains this and suppresses outdated entity selections. Entity UUIDs include the memory version, recording, camera and local tracker ID. Embedding/interpretation caches also record the bounded decoder version; incompatible entries are not reused.
+
+Query-focused interpretation uses an independent per-image target audit before comparing visible target frames. `not_observed` means absent from sampled images, not proof of absence throughout the recording. Action claims require two visible citations. Visibility contradictions abstain. Prompt/cache version: `independent-target-audit-v6`; visibility judgments remain unverified model outputs.
+
+Supported temporal answers must cite at least two distinct encoded images as well as two visible target observations. The Python worker additionally abstains when cited pixels show no measurable change, and reapplies this check to cached model answers. The optional `--interpretation-api-url` backend accepts a loopback HTTP `/v1` endpoint, requires an explicit `--interpretation-revision`, and verifies response model identity. Returned provenance distinguishes `local-openai-chat-v1` from `pytorch-transformers`; local model snapshots are pinned content fingerprints supplied for the evaluated files.

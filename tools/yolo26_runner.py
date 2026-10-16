@@ -76,6 +76,25 @@ def fail(message: str) -> None:
     raise SystemExit(2)
 
 
+class TimestampSampler:
+    """Sample observed presentation/receipt times, independent of nominal codec FPS."""
+    def __init__(self, fps: float):
+        if not math.isfinite(fps) or fps <= 0:
+            raise ValueError('Sampling FPS must be positive and finite')
+        self.period_ms = 1000.0 / fps
+        self.next_ms = 0.0
+        self.last_ms = -1.0
+
+    def accept(self, timestamp_ms: float) -> bool:
+        if not math.isfinite(timestamp_ms) or timestamp_ms < self.last_ms:
+            raise ValueError('Frame timestamps must be finite and monotonic')
+        self.last_ms = timestamp_ms
+        if timestamp_ms + 0.001 < self.next_ms:
+            return False
+        self.next_ms = (math.floor((timestamp_ms + 0.001) / self.period_ms) + 1) * self.period_ms
+        return True
+
+
 class FfmpegHttpCapture:
     """Small VideoCapture-compatible adapter using an isolated FFmpeg process."""
 
@@ -357,7 +376,7 @@ def main() -> None:
     nominal_fps = capture.fps() if is_http_stream else float(capture.get(cv2.CAP_PROP_FPS) or 0.0)
     if nominal_fps <= 0 or nominal_fps > 240:
         nominal_fps = 25.0
-    stride = max(1, round(nominal_fps / args.fps))
+    sampler = TimestampSampler(args.fps)
     observations: list[dict[str, Any]] | None = (
         None if args.stream_output else []
     )
@@ -374,12 +393,12 @@ def main() -> None:
             elapsed_seconds = time.monotonic() - wall_start
             if is_network_stream and elapsed_seconds >= args.max_seconds:
                 break
-            process_frame = frame_index % stride == 0
-            if process_frame:
+            # HTTP is already cadence-filtered by FFmpeg. For retained files and
+            # RTSP, inspect PTS/receipt time after grab, then retrieve only due frames.
+            if is_http_stream:
                 ok, frame = capture.read()
             else:
-                ok = capture.grab()
-                frame = None
+                ok, frame = capture.grab(), None
             if not ok:
                 if not is_network_stream or time.monotonic() >= wall_start + args.max_seconds:
                     break
@@ -406,9 +425,13 @@ def main() -> None:
                 break
             if not is_network_stream and elapsed_seconds > args.max_seconds * 2:
                 fail("Video read exceeded the bounded wall-clock deadline")
-            if not process_frame:
+            if not sampler.accept(source_time_ms):
                 frame_index += 1
                 continue
+            if frame is None:
+                ok, frame = capture.retrieve()
+                if not ok:
+                    break
 
             frame_observations: list[dict[str, Any]] = []
             height, width = frame.shape[:2]

@@ -276,3 +276,9 @@ input:focus, select:focus, textarea:focus { border-color: #6b8a60; box-shadow: 0
 .sequence-frames figcaption { font-size: 12px; }
 .sequence-evidence ol { padding-left: 20px; }
 .sequence-evidence li { margin: 8px 0; font-size: 13px; }
+
+.linked-memory { margin: 24px 0; padding: 20px; border: 1px solid #b8a58b; border-radius: 12px; }
+.entity-history { margin: 16px 0; padding: 12px; background: #f6eedf; border-radius: 8px; }
+.entity-history summary, .linked-memory > details > summary { cursor: pointer; font-weight: 600; }
+.entity-history li { margin: 16px 0; }
+.entity-history small { overflow-wrap: anywhere; }

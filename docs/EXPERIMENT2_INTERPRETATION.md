@@ -30,7 +30,7 @@ The model is `Qwen/Qwen3-VL-2B-Instruct`, downloaded lazily into `.retrieval/hug
 2. Expand each selected event by up to two seconds on either side, clamp to retained source duration, and cap the window at twenty seconds. Long events use the first bounded window, so later activity may be missed.
 3. Decode interval-midpoint images in order. Timestamps are source-relative seek targets, not exact decoded presentation timestamps or action boundaries.
 4. Supply the question, ordered images, timestamps, and event metadata. Metadata is context, not proof. The prompt describes first and last states before choosing an action.
-5. Validate event IDs, response shape, source bounds, ordered sample times, visual frame data, and citations. A model `supported` claim needs two distinct frame citations. These structural checks cannot establish semantic truth or detect every contradictory explanation.
+5. Validate event IDs, response shape, source bounds, ordered sample times, visual frame data, and citations. A model `supported` claim needs two distinct citations marked `target_visibility: visible`. `not_observed` requires absent first/last citations and no visible/unclear citations. `uncertain` covers ambiguous targets or transitions. These structural checks cannot establish semantic truth or detect every contradictory explanation.
 6. Near-identical sampled images trigger deterministic `uncertain` abstention. The guard compares mean absolute per-channel RGB difference against 0.01 on the 0–255 scale, allowing only tiny codec variation. It can miss subtle/unsampled action; it is not a motion detector.
 7. Persist interpretation JSON in the worker SQLite database. Cache keys include source content hash, interval, question, metadata, resolved model snapshot, prompt version, and sampling/guard settings. Returned frame JPEGs are decoded from the retained source; corrupt cache entries are regenerated.
 8. Return explicit interpretation notes on failure while preserving retrieval matches. No generated claim updates deterministic tracking facts. The sequence result has no calibrated confidence; the legacy indexing description's confidence field remains zero for this path and is not a probability.
@@ -83,3 +83,23 @@ NODE_PATH=/private/tmp/visn-ui-qa/node_modules node tools/check_temporal_workflo
 ```
 
 The browser/indexing scripts intentionally target the retained local validation recording. Set `VISN_TEST_JOB` for another completed recording in the browser test; adjust the indexing fixture path for another source. Run model checks sequentially because the worker accepts one inference request at a time.
+
+## Three-stream follow-up
+
+The [live-stream evaluation](LIVE_STREAM_EVALUATION_2026_10_16.md) compared eight and sixteen images. More images corrected one direction label but did not reliably ground the cited explanation, so eight remains the default. The decoder now enforces PTS interval bounds and repeats the last valid in-window image for empty late seeks; provenance/cache identities use `ffmpeg-pts-bounded-midpoints-v4-hold-last`. Sample times remain approximate seek targets.
+
+### Query-focused grounding (v6)
+
+The worker first inspects each image independently for target visibility, then supplies only target-visible images to the sequence model. It compares the first/last **visible target** samples, rather than forcing window endpoints. Each observation declares `target_visibility` (`visible`, `absent`, `unclear`). Intermediate citations are allowed. A missing target is reported as `not_observed` in sampled evidence, not proof that an event never happened. Answers must stay focused on the queried target. Both Python and Rust enforce the status/visibility contract; neither can verify a model's pixel-level claims. The frontend displays the distinct absence state and each observation's visibility.
+
+The prompt version changes the interpretation cache key, preserving previous results without reusing v3 answers. Old stored observations deserialize with empty visibility for compatibility; they cannot pass the current worker-response validator as supported evidence. Sampling remains eight sparse images with approximate seek times.
+
+The independent audit can deterministically return `not_observed` only when every sampled image is classified absent. Fewer than two distinct visible target images produce `uncertain`. Motion synthesis cannot cite an absent or ambiguous audited frame; disagreement becomes `uncertain`. Saved citations use the independent image descriptions rather than a synthesized trajectory narrative. These are two passes of the same model, not independent annotators or guaranteed object detection, and add inference latency.
+
+Malformed single-image JSON becomes `unclear` for that image. Invalid or contradictory motion synthesis becomes a structured `uncertain` response with the audited samples. Decoder/model availability failures still preserve retrieval with an interpretation note. No generated JSON is repaired by guessing missing fields. The motion pass returns a compact answer and two original indices; public citation descriptions come from the image audit.
+
+## Stronger-model follow-up
+
+The [completed model comparison](LIVE_STREAM_EVALUATION_2026_10_16.md#stronger-model-comparison-and-citation-safeguard) adds an optional local API interpreter and tests a cached 4B MLX configuration on identical visual inputs. It improves some direction/absence answers but fails the full grounding gate; 2B remains the launcher default and temporal interpretation remains opt-in.
+
+Supported actions must cite visually distinct evidence, including when served from cache. Python abstains on unchanged cited images; Rust rejects repeated encoded image citations. This guard does not verify semantic correctness. The optional API uses loopback HTTP, requires a pinned revision/fingerprint, sends lossless images, and verifies the returned model identifier. Its MLX runtime belongs in a separate environment because its Transformers requirements differ from retrieval.

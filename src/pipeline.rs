@@ -137,6 +137,38 @@ impl PipelineService {
         .await
     }
 
+    /// Reuse the detector and rule engine on retained evidence without publishing analytics.
+    pub async fn memory_tracks(
+        &self,
+        job_id: Uuid,
+        source: PathBuf,
+        seconds: u64,
+        evidence_intervals: &[(u64, u64)],
+    ) -> anyhow::Result<(String, Analysis)> {
+        let request = JobRequest {
+            name: "entity memory".into(),
+            source: crate::domain::SourceSpec::Sample,
+            backend: BackendKind::Yolo26Command,
+            detector_fps: 5.0,
+            monitor_duration_secs: seconds,
+            gemma_enabled: false,
+            vlm_model: None,
+            observations: vec![],
+            policy: serde_json::from_value(serde_json::json!({}))?,
+        };
+        let result = self
+            .run_yolo26(
+                job_id,
+                &request,
+                &ResolvedSource::Upload(source),
+                &request.policy,
+                DetectorAppearanceMode::Off,
+                evidence_intervals,
+            )
+            .await?;
+        Ok((result.model, result.analysis))
+    }
+
     pub async fn process_cluster_camera(
         &self,
         job_id: Uuid,
@@ -190,7 +222,7 @@ impl PipelineService {
                 }
             }
             BackendKind::Yolo26Command => {
-                self.run_yolo26(job_id, request, &source, &policy, appearance_mode)
+                self.run_yolo26(job_id, request, &source, &policy, appearance_mode, &[])
                     .await?
             }
         };
@@ -372,6 +404,7 @@ impl PipelineService {
         source: &ResolvedSource,
         policy: &AnalyticsPolicy,
         appearance_mode: DetectorAppearanceMode,
+        evidence_intervals: &[(u64, u64)],
     ) -> anyhow::Result<ProcessedDetection> {
         let _permit = self
             .detector_gate
@@ -381,7 +414,14 @@ impl PipelineService {
         let source = source.detector_value()?;
         if self.detector_worker.enabled() {
             match self
-                .run_yolo26_persistent(job_id, request, &source, policy, appearance_mode)
+                .run_yolo26_persistent(
+                    job_id,
+                    request,
+                    &source,
+                    policy,
+                    appearance_mode,
+                    evidence_intervals,
+                )
                 .await
             {
                 Ok(result) => return Ok(result),
@@ -398,8 +438,15 @@ impl PipelineService {
                 Err(failure) => return Err(failure.error),
             }
         }
-        self.run_yolo26_subprocess(job_id, request, &source, policy, appearance_mode)
-            .await
+        self.run_yolo26_subprocess(
+            job_id,
+            request,
+            &source,
+            policy,
+            appearance_mode,
+            evidence_intervals,
+        )
+        .await
     }
 
     async fn run_yolo26_persistent(
@@ -409,6 +456,7 @@ impl PipelineService {
         source: &str,
         policy: &AnalyticsPolicy,
         appearance_mode: DetectorAppearanceMode,
+        evidence_intervals: &[(u64, u64)],
     ) -> Result<ProcessedDetection, PersistentDetectionFailure> {
         let mut session = self
             .detector_worker
@@ -425,7 +473,8 @@ impl PipelineService {
                 error,
                 observations_processed: 0,
             })?;
-        let mut analyzer = StreamingAnalyzer::new(job_id, policy);
+        let mut analyzer =
+            StreamingAnalyzer::new(job_id, policy).with_evidence_intervals(evidence_intervals);
         let mut detected_classes = BTreeSet::new();
 
         while let Some(event) = session.recv().await {
@@ -486,6 +535,7 @@ impl PipelineService {
         source: &str,
         policy: &AnalyticsPolicy,
         appearance_mode: DetectorAppearanceMode,
+        evidence_intervals: &[(u64, u64)],
     ) -> anyhow::Result<ProcessedDetection> {
         let mut command = Command::new(&self.config.detector_executable);
         command
@@ -537,7 +587,8 @@ impl PipelineService {
             .context("open YOLO26 runner standard error")?;
         let stderr_task = tokio::spawn(capture_bounded_stderr(stderr));
         let mut stdout = BufReader::new(stdout);
-        let mut analyzer = StreamingAnalyzer::new(job_id, policy);
+        let mut analyzer =
+            StreamingAnalyzer::new(job_id, policy).with_evidence_intervals(evidence_intervals);
         let mut detected_classes = BTreeSet::new();
         let mut detector_output = None;
         let mut saw_stream_output = false;

@@ -246,6 +246,7 @@ impl MemoryService {
         info!(%job_id, camera_id = %camera.camera_id, events = events.len(), duration_ms = output.duration_ms,
             frames_consumed = output.frames_decoded, "memory evidence indexed");
         Ok(MemoryCameraResult {
+            long_memory: None,
             camera,
             duration_ms: output.duration_ms,
             frames_decoded: output.frames_decoded,

@@ -8,6 +8,7 @@ use crate::domain::{
 };
 
 pub struct Analysis {
+    pub evidence_observations: Vec<Observation>,
     pub tracks: Vec<TrackSummary>,
     pub events: Vec<ObservedEvent>,
     pub report: Report,
@@ -15,9 +16,12 @@ pub struct Analysis {
 }
 
 /// Incrementally computes the same track summaries, rule events, and report as [`analyze`]
-/// without retaining the observation history. Observations for a given track must arrive in
+/// without retaining the full observation history. Experiment 3 can opt into bounded
+/// first/last evidence anchors per indexed interval. Observations for a given track must arrive in
 /// non-decreasing timestamp order; the detector's streamed frame protocol provides that order.
 pub struct StreamingAnalyzer {
+    evidence_intervals: Vec<(u64, u64)>,
+    evidence_anchors: BTreeMap<(String, usize), (Observation, Observation)>,
     job_id: Uuid,
     policy: CompiledPolicy,
     tracks: BTreeMap<String, TrackState>,
@@ -75,11 +79,19 @@ impl StreamingAnalyzer {
         Self {
             job_id,
             policy: CompiledPolicy::new(policy),
+            evidence_intervals: Vec::new(),
+            evidence_anchors: BTreeMap::new(),
             tracks: BTreeMap::new(),
             events: Vec::new(),
             observation_count: 0,
             duration_ms: 0,
         }
+    }
+
+    /// Opt-in bounded anchors: first/last detection per track per indexed interval.
+    pub fn with_evidence_intervals(mut self, intervals: &[(u64, u64)]) -> Self {
+        self.evidence_intervals = intervals.to_vec();
+        self
     }
 
     pub fn observation_count(&self) -> usize {
@@ -106,6 +118,16 @@ impl StreamingAnalyzer {
             );
         }
 
+        for (index, (start, end)) in self.evidence_intervals.iter().enumerate() {
+            if *start <= observation.frame_time_ms && observation.frame_time_ms < *end {
+                let current = observation_without_appearance(observation);
+                let entry = self
+                    .evidence_anchors
+                    .entry((observation.track_id.clone(), index))
+                    .or_insert_with(|| (current.clone(), current.clone()));
+                entry.1 = current;
+            }
+        }
         self.observation_count += 1;
         self.duration_ms = self.duration_ms.max(observation.frame_time_ms);
         let emitted = track.observe(
@@ -193,6 +215,17 @@ impl StreamingAnalyzer {
             report.data_quality_notes.push(format!("{unstable_tracks} tracks changed detector class; summaries and events use the confidence-weighted track class. Event confidence remains the detector score at that timestamp."));
         }
         Analysis {
+            evidence_observations: self
+                .evidence_anchors
+                .into_values()
+                .flat_map(|(first, last)| {
+                    if first.frame_time_ms == last.frame_time_ms {
+                        vec![first]
+                    } else {
+                        vec![first, last]
+                    }
+                })
+                .collect(),
             tracks,
             events: self.events,
             report,

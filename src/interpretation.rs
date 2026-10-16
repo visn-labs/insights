@@ -73,7 +73,10 @@ pub async fn interpret(
 fn validate(result: &SequenceInterpretation, bounds: (u64, u64)) -> anyhow::Result<()> {
     let times = &result.sampled_timestamps_ms;
     if (result.start_ms, result.end_ms) != bounds
-        || !matches!(result.status.as_str(), "supported" | "uncertain")
+        || !matches!(
+            result.status.as_str(),
+            "supported" | "not_observed" | "uncertain"
+        )
         || result.answer.trim().is_empty()
         || result.answer.len() > 6400
         || !(2..=16).contains(&times.len())
@@ -107,14 +110,46 @@ fn validate(result: &SequenceInterpretation, bounds: (u64, u64)) -> anyhow::Resu
     for observation in &result.observations {
         if times.get(observation.frame_index) != Some(&observation.timestamp_ms)
             || !seen.insert(observation.frame_index)
+            || !matches!(
+                observation.target_visibility.as_str(),
+                "visible" | "absent" | "unclear"
+            )
             || observation.description.trim().is_empty()
             || observation.description.len() > 2400
         {
             bail!("Invalid frame citation");
         }
     }
-    if result.status == "supported" && seen.len() < 2 {
+    if result.status == "supported"
+        && result
+            .observations
+            .iter()
+            .filter(|o| o.target_visibility == "visible")
+            .count()
+            < 2
+    {
         bail!("Action claim needs two frames");
+    }
+    if result.status == "supported" {
+        let images: HashSet<_> = result
+            .observations
+            .iter()
+            .map(|o| result.frames[o.frame_index].image.as_str())
+            .collect();
+        if images.len() < 2 {
+            bail!("Action claim cites repeated images");
+        }
+    }
+    if result.status == "not_observed"
+        && (seen.len() < 2
+            || !seen.contains(&0)
+            || !seen.contains(&(times.len() - 1))
+            || result
+                .observations
+                .iter()
+                .any(|o| o.target_visibility != "absent"))
+    {
+        bail!("Not-observed answer needs absent boundary observations");
     }
     Ok(())
 }
@@ -126,10 +161,23 @@ mod tests {
     fn rejects_invented_timestamp_and_single_frame_action() {
         let mut value: SequenceInterpretation = serde_json::from_value(json!({"event_id":uuid::Uuid::nil(),
             "status":"supported","answer":"An object leaves", "start_ms":0,"end_ms":1000,
-            "sampled_timestamps_ms":[250,750],"frames":[{"timestamp_ms":250,"image":"data:image/jpeg;base64,YQ=="},{"timestamp_ms":750,"image":"data:image/jpeg;base64,YQ=="}],"observations":[{"frame_index":0,"timestamp_ms":250,"description":"present"},
-                {"frame_index":1,"timestamp_ms":750,"description":"absent"}],"limitations":[],"cached":false,
+            "sampled_timestamps_ms":[250,750],"frames":[{"timestamp_ms":250,"image":"data:image/jpeg;base64,YQ=="},{"timestamp_ms":750,"image":"data:image/jpeg;base64,Yg=="}],"observations":[{"frame_index":0,"timestamp_ms":250,"target_visibility":"visible","description":"present"},
+                {"frame_index":1,"timestamp_ms":750,"target_visibility":"visible","description":"closer"}],"limitations":[],"cached":false,
             "elapsed_secs":1.0,"provenance":{}})).unwrap();
         assert!(validate(&value, (0, 1000)).is_ok());
+        let distinct = value.frames[1].image.clone();
+        value.frames[1].image = value.frames[0].image.clone();
+        assert!(validate(&value, (0, 1000)).is_err());
+        value.frames[1].image = distinct;
+        value.observations[1].target_visibility = "absent".into();
+        assert!(validate(&value, (0, 1000)).is_err());
+        value.status = "not_observed".into();
+        assert!(validate(&value, (0, 1000)).is_err());
+        value.observations[0].target_visibility = "absent".into();
+        assert!(validate(&value, (0, 1000)).is_ok());
+        value.observations[0].target_visibility = "visible".into();
+        value.observations[1].target_visibility = "visible".into();
+        value.status = "supported".into();
         value.observations[1].timestamp_ms = 900;
         assert!(validate(&value, (0, 1000)).is_err());
         value.observations.pop();

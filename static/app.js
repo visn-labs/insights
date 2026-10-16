@@ -93,16 +93,38 @@ function bindMemory() {
     }
   });
   $('#memory-job-form').addEventListener('submit', submitMemoryJob);
+  $('#memory-build-links').addEventListener('click', async () => {
+    const id = state.selectedMemoryJobId;
+    state.buildingEntityMemory = true;
+    $('#memory-build-links').disabled = true;
+    $('#memory-job-select').disabled = true;
+    $('#memory-links-status').textContent = 'Tracking retained footage and linking evidence…';
+    try {
+      const job = await api(`/api/v1/memory-jobs/${id}/long-memory`, {method:'POST'});
+      state.renderedMemoryJob = null;
+      await loadMemoryJobs();
+      if (state.selectedMemoryJobId === id) inspectMemoryJob(job);
+      $('#memory-links-status').textContent = `${job.result.camera_results.reduce((n,c)=>n+(c.long_memory?.entities.length || 0),0)} tracker histories saved. Identity remains uncertain.`;
+      toast('Entity memory saved');
+    } catch(error) { $('#memory-links-status').textContent = `Entity memory failed: ${error.message}`; }
+    finally {state.buildingEntityMemory = false;$('#memory-job-select').disabled = false;updateMemorySearchScope();}
+  });
+  const syncMemoryModes = () => { $('#memory-query-vlm').disabled = $('#memory-query-long').checked || $('#memory-query-temporal').checked; };
+  $('#memory-query-long').addEventListener('change', () => {if ($('#memory-query-long').checked) $('#memory-query-temporal').checked = false;syncMemoryModes();});
+  $('#memory-query-temporal').addEventListener('change', () => {if ($('#memory-query-temporal').checked) $('#memory-query-long').checked = false;syncMemoryModes();});
+  $('#memory-query-entity').addEventListener('change', () => { if ($('#memory-query-entity').value) {$('#memory-query-long').checked = true;$('#memory-query-temporal').checked=false;syncMemoryModes();} });
+
   $('#memory-job-select').addEventListener('change', event => {
     const job = state.memoryJobs.find(job => job.id === event.target.value);
     if (job) inspectMemoryJob(job);
   });
   $('#memory-query-form').addEventListener('submit', submitMemoryQuery);
-  for (const [sequence, caption] of [['#memory-temporal-enabled', '#memory-vlm-enabled'], ['#memory-query-temporal', '#memory-query-vlm']]) {
+  for (const [sequence, caption] of [['#memory-temporal-enabled', '#memory-vlm-enabled']]) {
     $(sequence).addEventListener('change', () => { $(caption).disabled = $(sequence).checked; });
   }
   $('#memory-search-all').addEventListener('click', () => {
     state.searchAllRecordings = true;
+    $('#memory-query-entity').value = '';
     $('#memory-query-cluster').value = '';
     $('#memory-query-cameras').value = '';
     updateMemorySearchScope();
@@ -222,6 +244,7 @@ async function loadCapabilities() {
     $('#service-status').textContent = 'Service ready';
     $('#service-version').textContent = `v${state.capabilities.service_version} · ${state.capabilities.kafka_enabled ? 'Kafka' : 'No-op sink'}`;
     renderCapabilities();
+    state.renderedMemoryJob = null;
   } catch (error) {
     $('#service-dot').className = 'status-dot error';
     $('#service-status').textContent = 'Service unavailable';
@@ -424,6 +447,7 @@ async function submitMemoryJob(event) {
       monitor_duration_secs: Number($('#memory-duration').value),
       observer_fps: Number($('#memory-observer-fps').value),
       vlm_enabled: $('#memory-vlm-enabled').checked && !$('#memory-temporal-enabled').checked,
+      long_memory_enabled: $('#memory-long-enabled').checked,
       temporal_enabled: $('#memory-temporal-enabled').checked,
       vlm_model: $('#memory-vlm-model').value,
     };
@@ -470,7 +494,7 @@ async function loadMemoryJobs() {
 }
 
 function inspectMemoryJob(job) {
-  const renderKey = `${job.id}:${job.status}:${job.completed_at_ms}`;
+  const renderKey = `${job.id}:${job.status}:${job.completed_at_ms}:${JSON.stringify(job.result?.camera_results.map(c => [c.long_memory?.version, c.long_memory?.source_sha256, c.long_memory?.entities.length]))}`;
   if (state.renderedMemoryJob === renderKey) return;
   state.renderedMemoryJob = renderKey;
   state.selectedMemoryJobId = job.id;
@@ -478,6 +502,11 @@ function inspectMemoryJob(job) {
   $('#memory-query-cluster').value = job.request.cluster_id || '';
   $('#memory-query-cameras').value = (job.result?.camera_results || []).map(result => result.camera.camera_id).join(', ');
   $('#memory-query-result').classList.add('hidden');
+  const memories = (job.result?.camera_results || []).map(c => c.long_memory).filter(Boolean);
+  const outdated = memories.some(g => state.capabilities?.entity_memory_version && g.version !== state.capabilities.entity_memory_version);
+  const entities = memories.filter(g => !state.capabilities?.entity_memory_version || g.version === state.capabilities.entity_memory_version).flatMap(g => g.entities);
+  $('#memory-query-entity').innerHTML = '<option value="">Find candidates from question</option>' + entities.map(e => `<option value="${e.entity_id}">${escapeHtml(e.class_name)} · ${escapeHtml(e.camera_id)} · track ${escapeHtml(e.track_id)}</option>`).join('');
+  if (!state.buildingEntityMemory) $('#memory-links-status').textContent = outdated ? 'Saved tracker memory uses an older sampling version. Rebuild entity memory for this recording.' : entities.length ? `${entities.length} tracker histories saved. Same-track links are not verified identities.` : (job.result?.camera_results.some(c => c.long_memory?.status === 'ready') ? 'Entity memory built; no confirmed tracks found.' : 'No linked entity memory for this recording yet.');
   updateMemorySearchScope(job);
   $('#memory-job-select').value = job.id;
   $('#memory-empty').classList.add('hidden');
@@ -517,16 +546,30 @@ function renderMemoryCamera(cameraResult) {
   </section>`;
 }
 
+function renderJourneys(answer) {
+  if (!answer) return '';
+  const evidence = new Map(answer.supporting_events.map(e => [e.event_id, e]));
+  return `<section class="linked-memory"><h3>Linked evidence · ${escapeHtml(label(answer.status))}</h3>
+    <p>${escapeHtml(answer.summary)}</p>
+    <div class="report-notes">${answer.notes.map(n => `<span>${escapeHtml(n)}</span>`).join('')}</div>
+    ${answer.entities.map(entity => `<details class="entity-history"><summary>${escapeHtml(entity.class_name)} · ${escapeHtml(entity.camera_id)} · track ${escapeHtml(entity.track_id)} · ${entity.observations.length} observations</summary>
+      <p>${escapeHtml(entity.uncertainty)}</p><ol>${entity.observations.map(o => {const event=evidence.get(o.event_id);return `<li><b>${(o.timestamp_ms/1000).toFixed(2)}s · ${escapeHtml(label(o.kind))}</b><p>${escapeHtml(o.kind === 'detector_observation' ? `${entity.class_name} detected at this time. Review the clip to confirm.` : o.description)}</p>${o.kind === 'detector_observation' ? `<details><summary>Detection details</summary><small>${escapeHtml(o.description)}</small></details>` : ''}${event ? `<a href="${event.evidence_url}#t=${Math.max(0,(o.timestamp_ms-event.start_ms)/1000).toFixed(3)}" target="_blank" rel="noopener">Review source clip · ${(event.start_ms/1000).toFixed(2)}–${(event.end_ms/1000).toFixed(2)}s ↗</a>` : '<span>Evidence unavailable</span>'}</li>`;}).join('')}</ol>
+      <small>Recording ${escapeHtml(entity.job_id)} · entity ${escapeHtml(entity.entity_id)}</small>
+    </details>`).join('')}
+    <details><summary>Review supporting clips (${answer.supporting_events.length})</summary><div class="memory-event-grid">${answer.supporting_events.map(e=>renderMemoryEvent(e)).join('')}</div></details>
+  </section>`;
+}
+
 function renderInterpretation(value) {
   if (!value) return '';
   return `<section class="sequence-evidence" aria-label="Ordered visual evidence">
-    <strong>Experiment 2 · ${value.status === 'supported' ? 'Unverified model interpretation' : 'Uncertain interpretation'}</strong>
+    <strong>Experiment 2 · ${value.status === 'supported' ? 'Unverified model interpretation' : value.status === 'not_observed' ? 'Target not observed in sampled frames' : 'Uncertain interpretation'}</strong>
     <p>${escapeHtml(value.answer)}</p>
     <small>Action-direction errors were observed in testing. Review the frames before relying on this interpretation.</small>
     <small>Source window ${(value.start_ms / 1000).toFixed(2)}–${(value.end_ms / 1000).toFixed(2)}s · ${escapeHtml(value.provenance.model || '')}${value.cached ? ' · cached' : ''}</small>
     <details><summary>Review ordered frames and observations</summary>
-      <div class="sequence-frames">${(value.frames || []).map((frame, index) => `<figure><img src="${frame.image}" loading="lazy" alt="Sequence frame ${index + 1} at ${(frame.timestamp_ms / 1000).toFixed(2)} seconds"><figcaption>${(frame.timestamp_ms / 1000).toFixed(2)}s</figcaption></figure>`).join('')}</div>
-      <ol>${value.observations.map(item => `<li><b>${(item.timestamp_ms / 1000).toFixed(2)}s</b> ${escapeHtml(item.description)}</li>`).join('')}</ol>
+      <div class="sequence-frames">${(value.frames || []).map((frame, index) => `<figure><img src="${frame.image}" loading="lazy" alt="Sequence frame ${index + 1} near ${(frame.timestamp_ms / 1000).toFixed(2)} seconds"><figcaption title="Source seek target; sparse video can repeat an earlier valid image">≈${(frame.timestamp_ms / 1000).toFixed(2)}s</figcaption></figure>`).join('')}</div>
+      <ol>${value.observations.map(item => `<li><b>${(item.timestamp_ms / 1000).toFixed(2)}s</b> ${escapeHtml(item.target_visibility || 'unclassified')} · ${escapeHtml(item.description)}</li>`).join('')}</ol>
       ${value.limitations.map(note => `<p><small>${escapeHtml(note)}</small></p>`).join('')}
     </details></section>`;
 }
@@ -560,6 +603,7 @@ function updateMemorySearchScope(selected = null) {
     : ready ? `Searching selected recording: ${job.request.name} · ${job.result.events_indexed} indexed clips.`
     : `Selected recording is ${job?.status || 'not available'}. Choose a completed recording with indexed clips, or search all recordings.`;
   $('#memory-query-button').disabled = state.memoryQueryBusy || !ready;
+  $('#memory-build-links').disabled = state.buildingEntityMemory || job?.status !== 'completed' || !job?.result?.events_indexed;
 }
 
 async function submitMemoryQuery(event) {
@@ -582,8 +626,10 @@ async function submitMemoryQuery(event) {
         cluster_id: clusterId || null,
         camera_ids: $('#memory-query-cameras').value.split(',').map(id => id.trim()).filter(Boolean),
         limit: 12,
-        vlm_enabled: $('#memory-query-vlm').checked && !$('#memory-query-temporal').checked,
+        vlm_enabled: $('#memory-query-vlm').checked && !$('#memory-query-temporal').checked && !$('#memory-query-long').checked,
         temporal_enabled: $('#memory-query-temporal').checked,
+        long_memory_enabled: $('#memory-query-long').checked,
+        entity_id: $('#memory-query-long').checked ? ($('#memory-query-entity').value || null) : null,
         vlm_model: $('#memory-vlm-model').value,
       }),
     });
@@ -602,15 +648,16 @@ async function submitMemoryQuery(event) {
 function renderMemoryQuery(result) {
   $('#memory-query-result').classList.remove('hidden');
   $('#memory-query-json').textContent = JSON.stringify(result, null, 2);
-  $('#memory-query-title').textContent = result.matches.length ? `${result.matches.length} evidence candidates` : result.events_considered === 0 ? 'No clips were searched' : 'No matching evidence';
+  $('#memory-query-title').textContent = result.long_memory ? (result.long_memory.entities.length ? `${result.long_memory.entities.length} linked tracker ${result.long_memory.entities.length === 1 ? 'history' : 'histories'}` : 'No linked entity evidence') : result.matches.length ? `${result.matches.length} evidence candidates` : result.events_considered === 0 ? 'No clips were searched' : 'No matching evidence';
   $('#memory-query-summary').textContent = result.summary;
-  $('#memory-query-mode').textContent = ({hybrid_qwen_reranker: 'Visual + keyword · Qwen reranked', hybrid_rrf: 'Visual + keyword · rank fusion', local_lexical_metadata: 'Keyword only', not_run_empty_index: 'Not searched · no indexed clips', not_run_filtered_empty: 'Not searched · filters excluded all clips'}[result.retrieval_mode] || label(result.retrieval_mode)) + (result.model ? ` · Summary: ${result.model}` : '');
+  $('#memory-query-mode').textContent = (result.long_memory ? 'Linked memory · ' : '') + ({hybrid_qwen_reranker: 'Visual + keyword · Qwen reranked', hybrid_rrf: 'Visual + keyword · rank fusion', local_lexical_metadata: 'Keyword only', not_run_empty_index: 'Not searched · no indexed clips', not_run_filtered_empty: 'Not searched · filters excluded all clips'}[result.retrieval_mode] || label(result.retrieval_mode)) + (result.model ? ` · Summary: ${result.model}` : '');
   const notes = [`${result.events_considered} filtered events considered`, ...(result.retrieval_notes || []), ...(result.interpretation_notes || [])];
   if (result.fallback_reason) notes.push(`VLM fallback: ${result.fallback_reason}`);
   $('#memory-query-notes').innerHTML = notes.map((note) => `<span>${escapeHtml(note)}</span>`).join('');
+  $('#memory-query-journeys').innerHTML = renderJourneys(result.long_memory);
   $('#memory-query-matches').innerHTML = result.matches.length
     ? result.matches.map((match) => renderMemoryEvent({...match.event, interpretation: (result.interpretations || []).find(item => item.event_id === match.event.event_id) || match.event.interpretation}, match)).join('')
-    : '<div class="empty-row">No events matched the current query and filters.</div>';
+    : `<div class="empty-row">${result.long_memory?.entities.length ? 'No additional retrieval candidates. Linked evidence is shown above.' : 'No events matched the current query and filters.'}</div>`;
 }
 
 function setInlineError(selector, message) {

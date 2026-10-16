@@ -6,6 +6,7 @@ mod domain;
 mod event_engine;
 mod gemma;
 mod interpretation;
+mod long_memory;
 mod memory;
 mod pipeline;
 mod retrieval;
