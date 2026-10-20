@@ -9,6 +9,7 @@ mod interpretation;
 mod long_memory;
 mod memory;
 mod pipeline;
+mod resources;
 mod retrieval;
 mod sink;
 mod store;

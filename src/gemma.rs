@@ -40,6 +40,20 @@ struct LoadedModel {
 
 const LOADED_MODEL_CACHE_TTL: Duration = Duration::from_secs(15);
 
+struct ManagedMedia<'a> {
+    _resource: Option<crate::resources::ResourceGuard>,
+    _media: Option<SemaphorePermit<'a>>,
+}
+
+impl ManagedMedia<'_> {
+    async fn complete(&mut self) -> anyhow::Result<()> {
+        if let Some(resource) = &mut self._resource {
+            resource.complete().await?;
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ModelInfo {
     pub id: String,
@@ -270,7 +284,7 @@ impl GemmaClient {
             .acquire()
             .await
             .context("acquire global VLM inference gate")?;
-        let _media_permit = self.acquire_exclusive_media().await?;
+        let mut media_permit = self.acquire_exclusive_media().await?;
         let model = self.selected_model_inner(requested_model).await?;
         tracing::info!(model = model.as_str(), "generate_report: using model");
         let facts = serde_json::to_string(deterministic)?;
@@ -310,6 +324,7 @@ impl GemmaClient {
             .json::<ChatResponse>()
             .await
             .context("decode LM Studio chat response")?;
+        media_permit.complete().await?;
         let content = response
             .choices
             .first()
@@ -336,7 +351,7 @@ impl GemmaClient {
             .acquire()
             .await
             .context("acquire global VLM inference gate")?;
-        let _media_permit = self.acquire_exclusive_media().await?;
+        let mut media_permit = self.acquire_exclusive_media().await?;
         let model = self.selected_model_inner(requested_model).await?;
         tracing::info!(model = model.as_str(), "describe_view: using model");
         let schema = json!({
@@ -387,6 +402,7 @@ impl GemmaClient {
             .json::<ChatResponse>()
             .await
             .context("decode LM Studio vision response")?;
+        media_permit.complete().await?;
         let content = response
             .choices
             .first()
@@ -417,7 +433,7 @@ impl GemmaClient {
             .acquire()
             .await
             .context("acquire global VLM inference gate")?;
-        let _media_permit = self.acquire_exclusive_media().await?;
+        let mut media_permit = self.acquire_exclusive_media().await?;
         let model = self.selected_model_inner(requested_model).await?;
         let schema = json!({
             "summary": "two or three factual sentences about the visible scene and moment",
@@ -471,6 +487,7 @@ impl GemmaClient {
             .json::<ChatResponse>()
             .await
             .context("decode LM Studio event-description response")?;
+        media_permit.complete().await?;
         let content = strip_json_fence(
             response
                 .choices
@@ -502,7 +519,7 @@ impl GemmaClient {
             .acquire()
             .await
             .context("acquire global VLM inference gate")?;
-        let _media_permit = self.acquire_exclusive_media().await?;
+        let mut media_permit = self.acquire_exclusive_media().await?;
         let model = self.selected_model_inner(requested_model).await?;
         let evidence: Vec<_> = matches
             .iter()
@@ -550,6 +567,7 @@ impl GemmaClient {
             .json::<ChatResponse>()
             .await
             .context("decode LM Studio memory-query response")?;
+        media_permit.complete().await?;
         let content = strip_json_fence(
             response
                 .choices
@@ -578,24 +596,33 @@ impl GemmaClient {
         Ok((candidate, model))
     }
 
-    async fn acquire_exclusive_media(&self) -> anyhow::Result<Option<SemaphorePermit<'_>>> {
-        if !self.config.vlm_exclusive_media {
-            return Ok(None);
+    async fn acquire_exclusive_media(&self) -> anyhow::Result<ManagedMedia<'_>> {
+        let media = if self.config.vlm_exclusive_media {
+            let permits = u32::try_from(self.config.max_concurrent_cameras)
+                .context("media-worker limit exceeds semaphore permit range")?;
+            let permit = self
+                .media_worker_gate
+                .acquire_many(permits)
+                .await
+                .context("acquire exclusive media budget for VLM call")?;
+            if let Err(error) = self.detector_worker.shutdown_when_idle().await {
+                warn!(
+                    %error,
+                    "could not explicitly drain the persistent detector before VLM execution"
+                );
+            }
+            Some(permit)
+        } else {
+            None
+        };
+        let resource = crate::resources::ResourceGuard::acquire(&self.config).await?;
+        if resource.is_some() {
+            *self.loaded_model.lock().await = None;
         }
-        let permits = u32::try_from(self.config.max_concurrent_cameras)
-            .context("media-worker limit exceeds semaphore permit range")?;
-        let permit = self
-            .media_worker_gate
-            .acquire_many(permits)
-            .await
-            .context("acquire exclusive media budget for VLM call")?;
-        if let Err(error) = self.detector_worker.shutdown_when_idle().await {
-            warn!(
-                %error,
-                "could not explicitly drain the persistent detector before VLM execution"
-            );
-        }
-        Ok(Some(permit))
+        Ok(ManagedMedia {
+            _resource: resource,
+            _media: media,
+        })
     }
 
     /// Ensures that the requested model is actively loaded in LM Studio.
@@ -825,7 +852,20 @@ impl GemmaClient {
 
     /// Unloads a model instance from LM Studio.
     async fn unload_model(&self, instance_id: &str) -> anyhow::Result<()> {
-        // Try with "identifier" field first (newer LM Studio API).
+        // Native v1 uses instance_id. Retain legacy-field compatibility below.
+        let current = self
+            .client
+            .post(format!(
+                "{}/models/unload",
+                self.config.lmstudio_api_base_url
+            ))
+            .bearer_auth(&self.config.gemma_api_key)
+            .json(&json!({"instance_id":instance_id}))
+            .send()
+            .await;
+        if matches!(current,Ok(response) if response.status().is_success()) {
+            return Ok(());
+        }
         let body = json!({ "identifier": instance_id });
         let result = self
             .client

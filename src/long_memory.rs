@@ -4,7 +4,7 @@ use crate::{
     event_engine::Analysis,
 };
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use uuid::Uuid;
 
 pub const VERSION: &str = "entity-memory-v2-pts";
@@ -61,6 +61,36 @@ pub struct JourneyAnswer {
     pub notes: Vec<String>,
 }
 
+// Store the winning interval at each boundary. The tuple preserves the original
+// earliest-start/UUID selection, including first-in-input tie handling.
+fn evidence_interval_index(events: &[MemoryEvent]) -> BTreeMap<u64, Option<usize>> {
+    let mut boundaries: BTreeMap<u64, Vec<(bool, usize)>> = BTreeMap::new();
+    for (i, event) in events.iter().enumerate() {
+        if event.start_ms < event.end_ms {
+            boundaries
+                .entry(event.start_ms)
+                .or_default()
+                .push((true, i));
+            boundaries.entry(event.end_ms).or_default().push((false, i));
+        }
+    }
+    let mut active = BTreeSet::new();
+    boundaries
+        .into_iter()
+        .map(|(time, changes)| {
+            for (entering, i) in changes {
+                let key = (events[i].start_ms, events[i].event_id, i);
+                if entering {
+                    active.insert(key);
+                } else {
+                    active.remove(&key);
+                }
+            }
+            (time, active.first().map(|(_, _, i)| *i))
+        })
+        .collect()
+}
+
 pub fn build(
     job_id: Uuid,
     camera: &MemoryCameraResult,
@@ -71,7 +101,29 @@ pub fn build(
     let mut entities = Vec::new();
     let mut links = Vec::new();
     let mut omitted = 0;
+    let intervals = evidence_interval_index(&camera.events);
+    let mut rules_by_track = HashMap::<&str, Vec<_>>::new();
+    for event in &analysis.events {
+        rules_by_track
+            .entry(&event.track_id)
+            .or_default()
+            .push(event);
+    }
+    let mut observations_by_track = HashMap::<&str, Vec<_>>::new();
+    for observation in &analysis.evidence_observations {
+        observations_by_track
+            .entry(&observation.track_id)
+            .or_default()
+            .push(observation);
+    }
     for track in &analysis.tracks {
+        let track_observations = observations_by_track.get(track.track_id.as_str());
+        let mut observations_by_time = HashMap::new();
+        for observation in track_observations.into_iter().flatten() {
+            observations_by_time
+                .entry(observation.frame_time_ms)
+                .or_insert(*observation);
+        }
         // Namespace numeric tracker IDs by recording AND camera. Never merge by class or caption.
         let entity_id = Uuid::new_v5(
             &job_id,
@@ -96,10 +148,10 @@ pub fn build(
             ),
         ];
         points.extend(
-            analysis
-                .events
-                .iter()
-                .filter(|e| e.track_id == track.track_id)
+            rules_by_track
+                .get(track.track_id.as_str())
+                .into_iter()
+                .flatten()
                 .map(|e| {
                     (
                         e.event_time_ms,
@@ -119,30 +171,21 @@ pub fn build(
                     )
                 }),
         );
-        points.extend(analysis.evidence_observations.iter().filter(|o|o.track_id==track.track_id).map(|o|(o.frame_time_ms,"detector_observation".into(),format!("{} detection at normalized box [{:.3}, {:.3}, {:.3}, {:.3}]; detector score {:.3} (not identity confidence)",o.class_name,o.bbox[0],o.bbox[1],o.bbox[2],o.bbox[3],o.confidence))));
+        points.extend(track_observations.into_iter().flatten().map(|o|(o.frame_time_ms,"detector_observation".into(),format!("{} detection at normalized box [{:.3}, {:.3}, {:.3}, {:.3}]; detector score {:.3} (not identity confidence)",o.class_name,o.bbox[0],o.bbox[1],o.bbox[2],o.bbox[3],o.confidence))));
         points.sort();
         points.dedup();
         let observations: Vec<_> = points
             .into_iter()
             .filter_map(|(time, kind, description)| {
                 // Half-open source intervals: a boundary citation belongs to the following clip.
-                let event = camera
-                    .events
-                    .iter()
-                    .filter(|e| e.start_ms <= time && time < e.end_ms)
-                    .min_by_key(|e| (e.start_ms, e.event_id));
+                let event = intervals
+                    .range(..=time)
+                    .next_back()
+                    .and_then(|(_, i)| i.map(|i| &camera.events[i]));
                 match event {
                     Some(event) => Some(EvidenceObservation {
-                        bbox: analysis
-                            .evidence_observations
-                            .iter()
-                            .find(|o| o.track_id == track.track_id && o.frame_time_ms == time)
-                            .map(|o| o.bbox),
-                        detector_confidence: analysis
-                            .evidence_observations
-                            .iter()
-                            .find(|o| o.track_id == track.track_id && o.frame_time_ms == time)
-                            .map(|o| o.confidence),
+                        bbox: observations_by_time.get(&time).map(|o| o.bbox),
+                        detector_confidence: observations_by_time.get(&time).map(|o| o.confidence),
                         observation_id: Uuid::new_v5(
                             &entity_id,
                             format!("{time}:{kind}").as_bytes(),
@@ -366,7 +409,7 @@ pub fn answer(
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
     use crate::{
         domain::{AnalyticsPolicy, Observation},
@@ -374,7 +417,9 @@ mod tests {
     };
     use serde_json::json;
 
-    fn fixture(job: Uuid, camera_id: &str) -> MemoryCameraResult {
+    include!("../tools/fixtures/long_memory_build_reference.rs");
+
+    pub(crate) fn fixture(job: Uuid, camera_id: &str) -> MemoryCameraResult {
         let camera = json!({"camera_id":camera_id,"live_url":"http://fixture/"});
         let events:Vec<_>=[(0,4000),(4000,10000),(10000,22000)].into_iter().enumerate().map(|(index,(start,end))|json!({
             "event_id":Uuid::new_v5(&job,format!("{camera_id}:{index}").as_bytes()),"job_id":job,"camera_id":camera_id,"cluster_id":"fixture",
@@ -408,6 +453,13 @@ mod tests {
             analyzer.observe(observation).unwrap();
         }
         let analysis = analyzer.finish();
+        let reference = build_reference(
+            job,
+            &camera,
+            &analysis,
+            "fixture-detector".into(),
+            "fixture-sha".into(),
+        );
         camera.long_memory = Some(build(
             job,
             &camera,
@@ -415,7 +467,160 @@ mod tests {
             "fixture-detector".into(),
             "fixture-sha".into(),
         ));
+        assert_eq!(
+            serde_json::to_value(&reference).unwrap(),
+            serde_json::to_value(camera.long_memory.as_ref().unwrap()).unwrap()
+        );
         camera
+    }
+
+    #[test]
+    fn interval_index_matches_scan_with_overlap_duplicates_invalid_intervals_and_gaps() {
+        let camera = fixture(Uuid::from_u128(91), "intervals");
+        let mut events = Vec::new();
+        for i in 0..150usize {
+            let mut event = camera.events[i % camera.events.len()].clone();
+            event.event_id = Uuid::from_u128((i % 7) as u128);
+            event.start_ms = ((i * 73) % 800) as u64;
+            event.end_ms = event.start_ms + ((i * 17) % 120) as u64;
+            events.push(event);
+        }
+        events.reverse();
+        let index = evidence_interval_index(&events);
+        for time in 0..1100 {
+            let expected = events
+                .iter()
+                .enumerate()
+                .filter(|(_, e)| e.start_ms <= time && time < e.end_ms)
+                .min_by_key(|(_, e)| (e.start_ms, e.event_id))
+                .map(|(i, _)| i);
+            let actual = index.range(..=time).next_back().and_then(|(_, i)| *i);
+            assert_eq!(actual, expected, "time {time}");
+        }
+    }
+
+    #[test]
+    fn duplicate_observation_and_overlapping_evidence_graphs_match_reference() {
+        let job = Uuid::from_u128(92);
+        let mut camera = fixture(job, "duplicate");
+        let mut first = camera.events[0].clone();
+        first.end_ms = 15000;
+        camera.events.push(first);
+        let mut analyzer =
+            event_engine::StreamingAnalyzer::new(job, &serde_json::from_value(json!({})).unwrap())
+                .with_evidence_intervals(&[(0, 4000), (4000, 10000), (10000, 22000)]);
+        for time in [0, 1000, 1000, 4000, 8000, 12000, 21000] {
+            analyzer
+                .observe(&Observation {
+                    frame_time_ms: time,
+                    track_id: "one".into(),
+                    class_name: "person".into(),
+                    confidence: if time == 1000 { 0.7 } else { 0.9 },
+                    bbox: [0.1, 0.2, 0.2, 0.3],
+                    appearance: None,
+                })
+                .unwrap();
+        }
+        let mut analysis = analyzer.finish();
+        let mut duplicate = analysis.evidence_observations[0].clone();
+        duplicate.confidence = 0.1;
+        duplicate.bbox = [0.5, 0.5, 0.1, 0.1];
+        analysis.evidence_observations.push(duplicate);
+        assert_eq!(
+            serde_json::to_value(build(
+                job,
+                &camera,
+                &analysis,
+                "model".into(),
+                "hash".into()
+            ))
+            .unwrap(),
+            serde_json::to_value(build_reference(
+                job,
+                &camera,
+                &analysis,
+                "model".into(),
+                "hash".into()
+            ))
+            .unwrap()
+        );
+    }
+
+    #[test]
+    #[ignore = "Controlled component timing; run explicitly with --ignored --nocapture"]
+    fn benchmark_indexed_entity_build() {
+        let job = Uuid::from_u128(93);
+        let mut camera = fixture(job, "benchmark");
+        let template = camera.events[0].clone();
+        camera.events = (0..512)
+            .map(|i| {
+                let mut e = template.clone();
+                e.event_id = Uuid::from_u128(i + 1);
+                e.start_ms = i as u64 * 40;
+                e.end_ms = e.start_ms + 40;
+                e
+            })
+            .collect();
+        let intervals: Vec<_> = camera
+            .events
+            .iter()
+            .map(|e| (e.start_ms, e.end_ms))
+            .collect();
+        let policy = serde_json::from_value(json!({})).unwrap();
+        let mut analyzer =
+            event_engine::StreamingAnalyzer::new(job, &policy).with_evidence_intervals(&intervals);
+        for track in 0..64 {
+            for step in 0..64 {
+                analyzer
+                    .observe(&Observation {
+                        frame_time_ms: step * 300,
+                        track_id: track.to_string(),
+                        class_name: "person".into(),
+                        confidence: 0.9,
+                        bbox: [0.1, 0.1, 0.2, 0.2],
+                        appearance: None,
+                    })
+                    .unwrap();
+            }
+        }
+        let analysis = analyzer.finish();
+        let mut before = Vec::new();
+        let mut after = Vec::new();
+        if let Ok(mode) = std::env::var("VISN_ENTITY_BENCH_MODE") {
+            assert!(matches!(mode.as_str(), "reference" | "indexed"));
+            let mut times = Vec::new();
+            for _ in 0..7 {
+                let start = std::time::Instant::now();
+                let graph = if mode == "reference" {
+                    build_reference(job, &camera, &analysis, "m".into(), "h".into())
+                } else {
+                    build(job, &camera, &analysis, "m".into(), "h".into())
+                };
+                times.push(start.elapsed().as_secs_f64());
+                std::hint::black_box(&graph);
+            }
+            println!(
+                "ENTITY_BUILD_RESOURCE_BENCHMARK {}",
+                json!({"mode":mode,"seconds":times,"scope":"isolated component process; graph parity is checked in the paired benchmark"})
+            );
+            return;
+        }
+        for _ in 0..7 {
+            let start = std::time::Instant::now();
+            let reference = build_reference(job, &camera, &analysis, "m".into(), "h".into());
+            before.push(start.elapsed().as_secs_f64());
+            let start = std::time::Instant::now();
+            let indexed = build(job, &camera, &analysis, "m".into(), "h".into());
+            after.push(start.elapsed().as_secs_f64());
+            assert_eq!(
+                serde_json::to_value(&reference).unwrap(),
+                serde_json::to_value(&indexed).unwrap()
+            );
+        }
+        println!(
+            "ENTITY_BUILD_BENCHMARK {}",
+            json!({"intervals":512,"tracks":64,"observations":analysis.evidence_observations.len(),"reference_secs":before,"indexed_secs":after,"exact_graphs":true,"scope":"component timing in current build profile; not service throughput or peak memory"})
+        );
     }
     fn query() -> MemoryQueryRequest {
         serde_json::from_value(

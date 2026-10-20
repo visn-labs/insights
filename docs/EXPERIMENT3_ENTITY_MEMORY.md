@@ -2,7 +2,7 @@
 
 ## What is implemented
 
-An opt-in, FOLIO-inspired layer links separated detector observations to retained video evidence. It reuses YOLO26, ByteTrack, the Rust rule engine, and existing atomic JSON manifests. It does **not** reproduce FOLIO's trained memory writer or claim validated cross-recording identity.
+An opt-in, FOLIO-inspired layer links separated detector observations to retained video evidence. It reuses YOLO26, ByteTrack, the Rust rule engine, and existing atomic JSON manifests. It does **not** reproduce FOLIO's training-free, focus-guided semantic memory-writing workflow or claim validated cross-recording identity. The next stages are specified in the [general video implementation plan](GENERAL_VIDEO_IMPLEMENTATION_PLAN.md).
 
 Experiment 1 retrieval and experiment 2 visual interpretation remain available. Experiment 3 answers with a deterministic, evidence-linked tracker history; unreliable VLM action descriptions are not promoted into identity links.
 

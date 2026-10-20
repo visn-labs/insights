@@ -1,0 +1,16 @@
+{
+  "schema": "visn-experiment-profile-v1",
+  "id": "baseline-retrieval-v1",
+  "vector_policy": "legacy-renormalize-v1",
+  "embedding": {
+    "model": "Qwen/Qwen3-VL-Embedding-2B",
+    "snapshot": "9f2f7e710d6d81056aa5c0a4f04764fec6bb7bda",
+    "frames": 8,
+    "pixels": 256,
+    "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last"
+  },
+  "reranker_revision": "4bd860ac4f15ad1897a214615cccc700f8f71818",
+  "hypothesis": "Canonical normalized values survive persistence exactly; no dtype reduction.",
+  "primary_gate": "fresh/cache/restart vector equality and unchanged candidate scope/ranking; broader promotion requires plan acceptance gates",
+  "status": "baseline"
+}

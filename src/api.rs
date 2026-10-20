@@ -70,6 +70,14 @@ pub fn router(state: AppState) -> Router {
         )
         .route("/api/v1/memory-jobs/{id}", get(get_memory_job))
         .route(
+            "/api/v1/memory-jobs/{id}/visual-index",
+            get(visual_index_status).post(start_visual_index),
+        )
+        .route(
+            "/api/v1/memory-jobs/{id}/visual-index/{task_id}/{action}",
+            post(visual_index_action),
+        )
+        .route(
             "/api/v1/memory-jobs/{id}/long-memory",
             post(build_entity_memory),
         )
@@ -439,6 +447,111 @@ async fn memory_query(
     Ok(Json(state.query_memory(request).await?))
 }
 
+async fn worker_control(
+    state: &AppState,
+    method: reqwest::Method,
+    path: &str,
+    body: Option<serde_json::Value>,
+) -> Result<(StatusCode, Json<serde_json::Value>), ApiError> {
+    let url = state.config.retrieval_url.as_ref().ok_or_else(|| {
+        ApiError::new(
+            StatusCode::SERVICE_UNAVAILABLE,
+            "Visual search is not configured",
+        )
+    })?;
+    let client = reqwest::Client::builder()
+        .connect_timeout(std::time::Duration::from_secs(2))
+        .timeout(std::time::Duration::from_secs(
+            state.config.retrieval_timeout_secs,
+        ))
+        .build()
+        .map_err(|e| ApiError::new(StatusCode::SERVICE_UNAVAILABLE, e.to_string()))?;
+    let mut request = client.request(method, format!("{}{path}", url.trim_end_matches('/')));
+    if let Some(body) = body {
+        request = request.json(&body);
+    }
+    let response = request.send().await.map_err(|_| {
+        ApiError::new(
+            StatusCode::SERVICE_UNAVAILABLE,
+            "Visual worker unavailable; retained recordings and keyword search remain available",
+        )
+    })?;
+    let status = response.status();
+    let value = response
+        .json()
+        .await
+        .map_err(|_| ApiError::new(StatusCode::BAD_GATEWAY, "Invalid visual worker response"))?;
+    Ok((status, Json(value)))
+}
+
+async fn visual_index_status(
+    State(state): State<AppState>,
+    AxumPath(id): AxumPath<Uuid>,
+) -> Result<(StatusCode, Json<serde_json::Value>), ApiError> {
+    if !state.memory_job_exists(id).await {
+        return Err(ApiError::new(StatusCode::NOT_FOUND, "Recording not found"));
+    }
+    worker_control(
+        &state,
+        reqwest::Method::GET,
+        &format!("/index-jobs?scope_id={id}"),
+        None,
+    )
+    .await
+}
+
+async fn start_visual_index(
+    State(state): State<AppState>,
+    AxumPath(id): AxumPath<Uuid>,
+) -> Result<(StatusCode, Json<serde_json::Value>), ApiError> {
+    let events = state.visual_index_events(id).await?;
+    worker_control(
+        &state,
+        reqwest::Method::POST,
+        "/index-jobs",
+        Some(serde_json::json!({"scope_id":id,"events":events})),
+    )
+    .await
+}
+
+async fn visual_index_action(
+    State(state): State<AppState>,
+    AxumPath((id, task_id, action)): AxumPath<(Uuid, Uuid, String)>,
+) -> Result<(StatusCode, Json<serde_json::Value>), ApiError> {
+    if !state.memory_job_exists(id).await {
+        return Err(ApiError::new(StatusCode::NOT_FOUND, "Recording not found"));
+    }
+    if !matches!(action.as_str(), "cancel" | "retry") {
+        return Err(ApiError::new(
+            StatusCode::BAD_REQUEST,
+            "Unknown indexing action",
+        ));
+    }
+    let (status, Json(task)) = worker_control(
+        &state,
+        reqwest::Method::GET,
+        &format!("/index-jobs/{task_id}"),
+        None,
+    )
+    .await?;
+    if !status.is_success() {
+        return Ok((status, Json(task)));
+    }
+    if task["scope_id"].as_str() != Some(id.to_string().as_str()) {
+        return Err(ApiError::new(
+            StatusCode::NOT_FOUND,
+            "Index task does not belong to this recording",
+        ));
+    }
+    worker_control(
+        &state,
+        reqwest::Method::POST,
+        &format!("/index-jobs/{task_id}/{action}"),
+        None,
+    )
+    .await
+}
+
 async fn retrieval_status(State(state): State<AppState>) -> Json<serde_json::Value> {
     let Some(url) = &state.config.retrieval_url else {
         return Json(serde_json::json!({"available": false, "configured": false,
@@ -458,7 +571,7 @@ async fn retrieval_status(State(state): State<AppState>) -> Json<serde_json::Val
     match result {
         Ok(worker) if worker["status"] == "ready" => Json(serde_json::json!({
             "available": true, "configured": true, "worker": worker,
-            "message": "Qwen worker reachable. Models load on the first search; successful inference is reported with each result."})),
+            "message": "Qwen worker reachable. Prepare visual search in the background or search directly. Queue state and actual retrieval mode are reported separately."})),
         _ => Json(serde_json::json!({"available": false, "configured": true,
             "message": "Qwen worker unavailable. Check the worker process and VISN_RETRIEVAL_URL. Keyword fallback will be reported explicitly."})),
     }

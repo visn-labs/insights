@@ -538,6 +538,13 @@ impl PipelineService {
         evidence_intervals: &[(u64, u64)],
     ) -> anyhow::Result<ProcessedDetection> {
         let mut command = Command::new(&self.config.detector_executable);
+        if let Some(directory) = &self.config.resource_dir {
+            command
+                .args(&self.config.resource_runner_args)
+                .arg("--exec")
+                .arg(&self.config.detector_executable)
+                .env("VISN_RESOURCE_DIR", directory);
+        }
         command
             .args(&self.config.detector_args)
             .arg("--source")

@@ -118,6 +118,7 @@ impl MemoryService {
             "memory recording and indexing started");
         let output = self
             .run_observer(
+                job_id,
                 &camera.live_url,
                 &directory,
                 monitor_duration_secs,
@@ -261,21 +262,25 @@ impl MemoryService {
 
     async fn run_observer(
         &self,
+        job_id: Uuid,
         source: &str,
         directory: &Path,
         monitor_duration_secs: u64,
         observer_fps: f32,
     ) -> anyhow::Result<RunnerOutput> {
+        let waiting = std::time::Instant::now();
         let _permit = self
             .observer_gate
             .acquire()
             .await
             .context("acquire global sparse-observer gate")?;
+        info!(%job_id, elapsed_us = waiting.elapsed().as_micros() as u64, "memory observer admission completed");
         if let Err(error) = self.detector_worker.shutdown_if_idle().await {
             warn!(%error, "could not release an idle detector before sparse observation");
         }
         let mut command = Command::new(&self.config.detector_executable);
         command
+            .env("VISN_TRACE_ID", job_id.to_string())
             .args(&self.config.memory_runner_args)
             .arg("--source")
             .arg("-")
@@ -324,6 +329,13 @@ impl MemoryService {
                 status,
                 stderr.trim()
             );
+        }
+        for line in stderr.render().lines() {
+            if let Some((_, payload)) = line.split_once("WORKFLOW_TRACE ") {
+                if let Ok(telemetry) = serde_json::from_str::<serde_json::Value>(payload) {
+                    info!(%job_id, %telemetry, "memory observer telemetry");
+                }
+            }
         }
         if stdout.truncated {
             bail!(

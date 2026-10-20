@@ -46,6 +46,9 @@ const state = {
   memoryJobOptions: null,
   searchAllRecordings: false,
   memoryQueryBusy: false,
+  visualIndex: null,
+  visualIndexBusy: false,
+  visualIndexPolling: false,
   upload: null,
   pollTimer: null,
 };
@@ -82,6 +85,9 @@ function showView(name) {
 }
 
 function bindMemory() {
+  $('#visual-index-start').addEventListener('click', () => changeVisualIndex());
+  $('#visual-index-cancel').addEventListener('click', () => changeVisualIndex('cancel'));
+  $('#visual-index-retry').addEventListener('click', () => changeVisualIndex('retry'));
   $$('.memory-preset').forEach((button) => button.addEventListener('click', () => loadMemoryPreset(button.dataset.preset)));
   $('#format-memory-json').addEventListener('click', () => {
     try {
@@ -116,7 +122,7 @@ function bindMemory() {
 
   $('#memory-job-select').addEventListener('change', event => {
     const job = state.memoryJobs.find(job => job.id === event.target.value);
-    if (job) inspectMemoryJob(job);
+    if (job) { inspectMemoryJob(job); loadVisualIndex(); }
   });
   $('#memory-query-form').addEventListener('submit', submitMemoryQuery);
   for (const [sequence, caption] of [['#memory-temporal-enabled', '#memory-vlm-enabled']]) {
@@ -488,6 +494,7 @@ async function loadMemoryJobs() {
       inspectMemoryJob(initial);
     }
     updateMemorySearchScope();
+    loadVisualIndex();
   } catch (error) {
     console.warn('Could not refresh memory jobs', error);
   }
@@ -496,6 +503,7 @@ async function loadMemoryJobs() {
 function inspectMemoryJob(job) {
   const renderKey = `${job.id}:${job.status}:${job.completed_at_ms}:${JSON.stringify(job.result?.camera_results.map(c => [c.long_memory?.version, c.long_memory?.source_sha256, c.long_memory?.entities.length]))}`;
   if (state.renderedMemoryJob === renderKey) return;
+  if (state.selectedMemoryJobId !== job.id) { state.visualIndex = null; setInlineError('#visual-index-error', ''); }
   state.renderedMemoryJob = renderKey;
   state.selectedMemoryJobId = job.id;
   state.searchAllRecordings = false;
@@ -508,6 +516,7 @@ function inspectMemoryJob(job) {
   $('#memory-query-entity').innerHTML = '<option value="">Find candidates from question</option>' + entities.map(e => `<option value="${e.entity_id}">${escapeHtml(e.class_name)} · ${escapeHtml(e.camera_id)} · track ${escapeHtml(e.track_id)}</option>`).join('');
   if (!state.buildingEntityMemory) $('#memory-links-status').textContent = outdated ? 'Saved tracker memory uses an older sampling version. Rebuild entity memory for this recording.' : entities.length ? `${entities.length} tracker histories saved. Same-track links are not verified identities.` : (job.result?.camera_results.some(c => c.long_memory?.status === 'ready') ? 'Entity memory built; no confirmed tracks found.' : 'No linked entity memory for this recording yet.');
   updateMemorySearchScope(job);
+  renderVisualIndex();
   $('#memory-job-select').value = job.id;
   $('#memory-empty').classList.add('hidden');
   const badge = $('#memory-job-status');
@@ -529,6 +538,76 @@ function inspectMemoryJob(job) {
   $('#memory-camera-results').innerHTML = result.camera_results.map(renderMemoryCamera).join('') +
     (result.camera_failures || []).map((failure) => `<article class="camera-result-card error"><div class="camera-result-head"><strong>${escapeHtml(failure.camera_id)}</strong><small>failed</small></div><p>${escapeHtml(failure.error)}</p></article>`).join('');
   $('#memory-raw-json').textContent = JSON.stringify(result, null, 2);
+}
+
+async function loadVisualIndex() {
+  const id = state.selectedMemoryJobId;
+  if (!id || state.visualIndexPolling || state.visualIndexBusy) return;
+  state.visualIndexPolling = true;
+  try {
+    const result = await api(`/api/v1/memory-jobs/${id}/visual-index`);
+    if (id !== state.selectedMemoryJobId) return;
+    state.visualIndex = result.jobs.find(job => job.profile_current === true) || result.jobs[0] || null;
+    const queue = result.scheduler || {};
+    $('#memory-query-queue').textContent = queue.active || queue.interactive_waiting
+      ? `${queue.active === 'background' ? 'Background preparation is using the model; questions take priority after the current interval.' : queue.active ? 'The model is serving a question.' : 'Model available.'} ${queue.interactive_waiting || 0} question requests waiting.`
+      : 'Model slot available. Questions and background preparation share one inference slot.';
+    const resources = result.resources;
+    if (resources?.enabled && resources.external_recovery_required) {
+      $('#memory-query-queue').textContent = 'Visual search is waiting for model-service recovery. Each search will report the retrieval mode used.';
+    } else if (resources?.enabled && (resources.this_process_waiting || (resources.owner && resources.owner.role !== 'retrieval'))) {
+      $('#memory-query-queue').textContent = 'Shared resources are busy. Visual preparation and questions will continue when a slot is available.';
+    }
+    renderVisualIndex();
+  } catch (error) {
+    if (id === state.selectedMemoryJobId) {
+      $('#visual-index-status').textContent = `Visual preparation unavailable: ${error.message}`;
+      $('#memory-query-queue').textContent = 'Queue status unavailable. Each search reports the retrieval mode actually used.';
+    }
+  } finally { state.visualIndexPolling = false; }
+}
+
+function renderVisualIndex() {
+  const recording = state.memoryJobs.find(job => job.id === state.selectedMemoryJobId);
+  const task = state.visualIndex?.scope_id === state.selectedMemoryJobId ? state.visualIndex : null;
+  const active = task && ['queued','running'].includes(task.status);
+  $('#visual-index-start').disabled = state.visualIndexBusy || active || recording?.status !== 'completed' || !recording?.result?.events_indexed;
+  $('#visual-index-start').textContent = task?.status === 'completed' ? 'Check preparation again' : 'Prepare this recording';
+  $('#visual-index-cancel').classList.toggle('hidden', !active);
+  $('#visual-index-retry').classList.toggle('hidden', !task || !['failed','cancelled'].includes(task.status));
+  $('#visual-index-cancel').disabled = $('#visual-index-retry').disabled = state.visualIndexBusy;
+  const progress = $('#visual-index-progress');
+  progress.classList.toggle('hidden', !task);
+  progress.max = task?.total || 1;
+  progress.value = task?.completed || 0;
+  $('#visual-index-status').textContent = !task
+    ? 'No visual preparation task for this recording. You can prepare it now or search directly.'
+    : `${label(task.status)} · ${task.completed}/${task.total} intervals prepared${task.failed ? ` · ${task.failed} failed` : ''}. ${task.status === 'completed' ? 'All requested intervals prepared; this does not certify scene or action accuracy.' : task.status === 'cancelled' ? 'Completed artifacts are retained. An interval already in progress may finish.' : task.status === 'failed' ? 'Coverage is incomplete. Retry, or prepare again if the source or model changed.' : 'Questions may run between intervals. Closing this page does not stop the task.'}`;
+  if (task?.status === 'completed' && task.profile_current !== true) {
+    $('#visual-index-status').textContent += task.profile_current === false
+      ? ' This task used a different model profile. Prepare again for the current worker.'
+      : ' The current worker profile has not been resolved yet. Check preparation again to confirm readiness.';
+  }
+}
+
+async function changeVisualIndex(action = '') {
+  const id = state.selectedMemoryJobId;
+  const task = state.visualIndex;
+  if (!id || (action && (!task || task.scope_id !== id))) return;
+  state.visualIndexBusy = true;
+  setInlineError('#visual-index-error', '');
+  renderVisualIndex();
+  try {
+    const suffix = action ? `/${task.id}/${action}` : '';
+    const result = await api(`/api/v1/memory-jobs/${id}/visual-index${suffix}`, {method:'POST'});
+    if (id === state.selectedMemoryJobId) state.visualIndex = result;
+  } catch (error) {
+    if (id === state.selectedMemoryJobId) setInlineError('#visual-index-error', error.message);
+  } finally {
+    state.visualIndexBusy = false;
+    renderVisualIndex();
+    loadVisualIndex();
+  }
 }
 
 function renderMemoryCamera(cameraResult) {

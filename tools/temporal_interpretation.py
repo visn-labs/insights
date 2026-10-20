@@ -3,6 +3,7 @@ import gc
 import hashlib
 import json
 import logging
+import os
 import math
 import base64
 import io
@@ -10,6 +11,7 @@ import time
 import urllib.request
 
 from state_verification import gate, validate_target, MIN_CROP_EDGE
+from workflow_telemetry import CURRENT, measured, stage
 
 LOG = logging.getLogger('visn.interpretation')
 PROMPT_VERSION = 'track-visibility-quality-v10'
@@ -110,6 +112,7 @@ def track_crops(grounding, digest, frames, decoded_times, bounds):
     return result
 
 
+@measured('target_crop_preparation')
 def evidence_crops(service, event, previews, preview_pts, count, sample_times, digest, bounds, mode='source'):
     """Keep context pixels stable; crop separately decoded source detail at identical PTS."""
     if mode not in ('source','preview'):
@@ -168,12 +171,14 @@ class SequenceInterpreter:
         self.snapshot = None
         service.db.execute('CREATE TABLE IF NOT EXISTS interpretations (key TEXT PRIMARY KEY, result TEXT NOT NULL)')
 
+    @measured('interpreter_release')
     def release(self):
         external = self.model is True
         self.model = self.processor = None
         if not external:
             gc.collect()
 
+    @measured('interpreter_model_load')
     def load(self):
         if self.model is not None:
             return
@@ -214,6 +219,7 @@ class SequenceInterpreter:
             torch_dtype=torch.float32 if device == 'cpu' else torch.float16,
             attn_implementation='sdpa').to(device).eval()
 
+    @measured('visual_model_call')
     def complete(self, system, content, max_tokens, *, visual_required=True):
         if getattr(self.service.args, 'interpretation_api_url', None):
             return self.api_complete(system, content, max_tokens, visual_required=visual_required)
@@ -230,24 +236,31 @@ class SequenceInterpreter:
             text = text.split('\n',1)[1].rsplit('```',1)[0].strip()
         return json.loads(text)
 
+    @measured('external_model_completion')
     def api_complete(self, system, content, max_tokens, *, visual_required=True):
         args = self.service.args
         items = []
-        for item in content:
-            if item['type'] == 'image':
-                buffer = io.BytesIO()
-                item['image'].save(buffer, format='PNG')
-                items.append(dict(type='image_url',image_url=dict(url='data:image/png;base64,'+base64.b64encode(buffer.getvalue()).decode())))
-            else:
-                items.append(dict(item))
+        with stage('interpretation_input_encoding'):
+            for item in content:
+                if item['type'] == 'image':
+                    buffer = io.BytesIO()
+                    item['image'].save(buffer, format='PNG')
+                    items.append(dict(type='image_url',image_url=dict(url='data:image/png;base64,'+base64.b64encode(buffer.getvalue()).decode())))
+                else:
+                    items.append(dict(item))
         if visual_required and not any(item['type']=='image_url' for item in items):
             raise ValueError('No visual evidence reached the API interpreter')
         payload = dict(model=args.interpretation_model,temperature=0,max_tokens=max_tokens,stream=False,
             messages=[dict(role='system',content=system),dict(role='user',content=items)])
         request = urllib.request.Request(args.interpretation_api_url.rstrip('/')+'/chat/completions',
             data=json.dumps(payload).encode(),headers={'Content-Type':'application/json'})
-        with urllib.request.urlopen(request,timeout=300) as response:
-            value = json.load(response)
+        if getattr(getattr(self.service,'resources',None),'root',None) and os.environ.get('VISN_MANAGED_LMSTUDIO','').lower() in ('1','true'):
+            request.add_header('Authorization','Bearer '+os.environ.get('VISN_GEMMA_API_KEY','lm-studio'))
+        if CURRENT.get():
+            request.add_header('X-Visn-Query-ID',CURRENT.get().request_id)
+        with stage('external_model_http'):
+            with urllib.request.urlopen(request,timeout=300) as response:
+                value = json.load(response)
         if value.get('model') != args.interpretation_model:
             raise RuntimeError('Local API returned a different interpretation model')
         text = value['choices'][0]['message']['content'].strip()
@@ -255,6 +268,7 @@ class SequenceInterpreter:
             text = text.split('\n',1)[1].rsplit('```',1)[0].strip()
         return json.loads(text)
 
+    @measured('target_specification')
     def identify_target(self, query):
         """Parse the question, without images or event descriptions influencing identity."""
         target = self.complete(
@@ -268,6 +282,7 @@ class SequenceInterpreter:
             [{'type':'text','text':json.dumps({'question':query})}], 180, visual_required=False)
         return validate_target(target)
 
+    @measured('interpretation_generation')
     def generate(self, query, event, frames, timestamps):
         try:
             target = self.identify_target(query)
@@ -342,6 +357,7 @@ class SequenceInterpreter:
         value['limitations'].append('Independent visibility checks and motion interpretation are model judgments, not verified detections.')
         return value
 
+    @measured('interpretation')
     def interpret(self, body):
         if not isinstance(body, dict):
             raise ValueError('Expected an object')
@@ -380,7 +396,8 @@ class SequenceInterpreter:
                 'selected_track_visibility_min_edge':MIN_CROP_EDGE if event.get('grounding') is not None else None,
                 'crop_policy':dict(version=CROP_VERSION,mode=getattr(self.service.args,'interpretation_crop_mode','source') if event.get('grounding') is not None else 'none',max_edge=SOURCE_CROP_MAX_EDGE,model_crop_max_edge=MODEL_CROP_MAX_EDGE)}
             key = hashlib.sha256(json.dumps([digest, start, end, query, event.get('metadata'), event.get('grounding'), provenance], sort_keys=True).encode()).hexdigest()
-            row = self.service.db.execute('SELECT result FROM interpretations WHERE key=?',(key,)).fetchone()
+            with stage('interpretation_cache_read'):
+                row = self.service.db.execute('SELECT result FROM interpretations WHERE key=?',(key,)).fetchone()
             cached = row is not None
             frames, decoded_times = self.service.frames(event, count=count, size=self.service.args.interpretation_frame_size, with_timestamps=True, sample_timestamps=timestamps if tracker_sampling else None)
             crops, crop_provenance = evidence_crops(self.service,event,frames,decoded_times,count,timestamps if tracker_sampling else None,digest,(start,end),getattr(self.service.args,'interpretation_crop_mode','source'))
@@ -406,21 +423,25 @@ class SequenceInterpreter:
                         'limitations':['Static-evidence guard, not a model conclusion. Subtle or unsampled actions may be missed.']}, timestamps)
                 else:
                     value = self.generate(query, event, frames, timestamps)
-                self.service.db.execute('INSERT OR REPLACE INTO interpretations VALUES (?,?)',(key,json.dumps(value)))
-                self.service.db.commit()
+                with stage('interpretation_cache_write'):
+                    self.service.db.execute('INSERT OR REPLACE INTO interpretations VALUES (?,?)',(key,json.dumps(value)))
+                    self.service.db.commit()
             # Reapply to both newly generated and cached model answers. Cached
             # model JSON is not trusted as an action claim without its pixels.
-            value = guard_track_absence(guard_track_citations(abstain_on_static_citations(value, frames), crops), crops)
-            provenance['state_verification'] = gate(value, frames, crops, self.complete)
-            images = []
-            for index, (frame, timestamp) in enumerate(zip(frames, timestamps)):
-                buffer = io.BytesIO()
-                frame.save(buffer, format='JPEG', quality=75)
-                image={'timestamp_ms':timestamp,'decoded_timestamp_ms':decoded_times[index], 'image':'data:image/jpeg;base64,'+base64.b64encode(buffer.getvalue()).decode()}
-                if crops is not None and crops[index] is not None:
-                    cropped=io.BytesIO();crops[index]['image'].save(cropped,format='JPEG',quality=85)
-                    image['target_crop']='data:image/jpeg;base64,'+base64.b64encode(cropped.getvalue()).decode()
-                images.append(image)
+            with stage('interpretation_safeguards'):
+                value = guard_track_absence(guard_track_citations(abstain_on_static_citations(value, frames), crops), crops)
+            with stage('visual_state_verification'):
+                provenance['state_verification'] = gate(value, frames, crops, self.complete)
+            with stage('evidence_image_encoding'):
+                images = []
+                for index, (frame, timestamp) in enumerate(zip(frames, timestamps)):
+                    buffer = io.BytesIO()
+                    frame.save(buffer, format='JPEG', quality=75)
+                    image={'timestamp_ms':timestamp,'decoded_timestamp_ms':decoded_times[index], 'image':'data:image/jpeg;base64,'+base64.b64encode(buffer.getvalue()).decode()}
+                    if crops is not None and crops[index] is not None:
+                        cropped=io.BytesIO();crops[index]['image'].save(cropped,format='JPEG',quality=85)
+                        image['target_crop']='data:image/jpeg;base64,'+base64.b64encode(cropped.getvalue()).decode()
+                    images.append(image)
             value.update(frames=images, event_id=event['event_id'],start_ms=start,end_ms=end,sampled_timestamps_ms=timestamps,
                          provenance=provenance,cached=cached,elapsed_secs=round(time.monotonic()-started,3))
             value['limitations'].append('Sparse ordered frames; sample times are seek targets, not exact action boundaries. Empty late seeks hold the last valid in-window image; repeats do not prove continued visibility. Model interpretation is not a verified fact.')

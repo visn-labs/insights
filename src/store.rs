@@ -36,6 +36,66 @@ pub struct AppState {
     long_memory_gate: Arc<Mutex<()>>,
 }
 
+struct MemoryQuerySnapshot {
+    indexed_count: usize,
+    candidates: Vec<(crate::domain::MemoryEvent, crate::domain::CameraProfile)>,
+    cameras: Vec<crate::domain::MemoryCameraResult>,
+}
+
+fn memory_query_snapshot<'a>(
+    request: &MemoryQueryRequest,
+    cameras: impl Iterator<Item = &'a crate::domain::MemoryCameraResult>,
+) -> MemoryQuerySnapshot {
+    let mut snapshot = MemoryQuerySnapshot {
+        indexed_count: 0,
+        candidates: Vec::new(),
+        cameras: Vec::new(),
+    };
+    let needs_graph =
+        request.long_memory_enabled || (request.temporal_enabled && request.entity_id.is_some());
+    for camera in cameras {
+        let entity_scope = !request.temporal_enabled
+            || request.entity_id.is_none_or(|id| {
+                camera.long_memory.as_ref().is_some_and(|graph| {
+                    graph.version == crate::long_memory::VERSION
+                        && graph.entities.iter().any(|entity| {
+                            entity.entity_id == id
+                                && entity.camera_id == camera.camera.camera_id
+                                && camera
+                                    .events
+                                    .iter()
+                                    .any(|event| event.job_id == entity.job_id)
+                        })
+                })
+            });
+        if entity_scope {
+            snapshot.indexed_count += camera.events.len();
+        }
+        let events: Vec<_> = camera
+            .events
+            .iter()
+            .filter(|e| crate::retrieval::eligible(request, e))
+            .collect();
+        if entity_scope {
+            snapshot
+                .candidates
+                .extend(events.iter().map(|e| ((*e).clone(), camera.camera.clone())));
+        }
+        if needs_graph && !events.is_empty() {
+            snapshot.cameras.push(crate::domain::MemoryCameraResult {
+                long_memory: camera.long_memory.clone(),
+                camera: camera.camera.clone(),
+                duration_ms: camera.duration_ms,
+                frames_decoded: camera.frames_decoded,
+                evidence_url: camera.evidence_url.clone(),
+                events: events.into_iter().cloned().collect(),
+                data_quality_notes: camera.data_quality_notes.clone(),
+            });
+        }
+    }
+    snapshot
+}
+
 impl AppState {
     pub fn new(config: Arc<Config>, pipeline: PipelineService, memory: MemoryService) -> Self {
         let memory_jobs = load_memory_jobs(&config);
@@ -107,6 +167,29 @@ impl AppState {
             .get(&id)
             .cloned()
             .map(redact_memory_job)
+    }
+
+    pub async fn memory_job_exists(&self, id: Uuid) -> bool {
+        self.memory_jobs.read().await.contains_key(&id)
+    }
+
+    pub async fn visual_index_events(&self, id: Uuid) -> anyhow::Result<Vec<serde_json::Value>> {
+        let jobs = self.memory_jobs.read().await;
+        let job = jobs.get(&id).context("Recording not found")?;
+        if job.status != JobStatus::Completed {
+            bail!("Complete the recording before preparing visual search");
+        }
+        let result = job.result.as_ref().context("Recording has no evidence")?;
+        let events = crate::retrieval::event_payload(
+            result
+                .camera_results
+                .iter()
+                .flat_map(|camera| camera.events.iter()),
+        )?;
+        if events.is_empty() {
+            bail!("Recording has no intervals to prepare");
+        }
+        Ok(events)
     }
 
     async fn enrich_entity_memory(
@@ -470,41 +553,31 @@ impl AppState {
         let query_id = Uuid::now_v7();
         let started = Instant::now();
         info!(%query_id, semantic = request.semantic_enabled, rerank = request.rerank_enabled, "memory retrieval started");
-        let cameras: Vec<crate::domain::MemoryCameraResult> = self
-            .memory_jobs
-            .read()
-            .await
-            .values()
-            .filter_map(|job| job.result.as_ref())
-            .flat_map(|result| result.camera_results.clone())
-            .collect();
-        let candidates = cameras
-            .iter()
-            .filter(|camera| {
-                !request.temporal_enabled
-                    || request.entity_id.is_none_or(|id| {
-                        camera.long_memory.as_ref().is_some_and(|graph| {
-                            graph.version == crate::long_memory::VERSION
-                                && graph.entities.iter().any(|entity| {
-                                    entity.entity_id == id
-                                        && entity.camera_id == camera.camera.camera_id
-                                        && camera
-                                            .events
-                                            .iter()
-                                            .any(|event| event.job_id == entity.job_id)
-                                })
-                        })
-                    })
-            })
-            .flat_map(|camera| {
-                camera
-                    .events
-                    .iter()
-                    .map(|event| (event.clone(), camera.camera.clone()))
-            })
-            .collect();
+        let snapshot_started = Instant::now();
+        let snapshot = {
+            let jobs = self.memory_jobs.read().await;
+            memory_query_snapshot(
+                &request,
+                jobs.values()
+                    .filter_map(|job| job.result.as_ref())
+                    .flat_map(|result| result.camera_results.iter()),
+            )
+        };
+        info!(%query_id, snapshot_elapsed_us = snapshot_started.elapsed().as_micros() as u64,
+            indexed_count = snapshot.indexed_count, copied_events = snapshot.candidates.len(),
+            copied_camera_histories = snapshot.cameras.len(), "memory query snapshot ready");
+        let cameras = snapshot.cameras;
         // No job-store lock is held during model loading, indexing or inference.
-        let retrieval = crate::retrieval::search(&self.config, &request, candidates).await;
+        let retrieval_started = Instant::now();
+        let retrieval = crate::retrieval::search(
+            &self.config,
+            &request,
+            snapshot.candidates,
+            snapshot.indexed_count,
+            Some(query_id),
+        )
+        .await;
+        info!(%query_id, elapsed_us = retrieval_started.elapsed().as_micros() as u64, "memory retrieval stage completed");
         let mut matches = retrieval.matches;
         let considered = retrieval.considered;
         let retrieval_mode = retrieval.mode;
@@ -529,12 +602,13 @@ impl AppState {
         let mut interpretations = Vec::new();
         let mut interpretation_notes = Vec::new();
         if request.temporal_enabled && !matches.is_empty() {
+            let interpretation_started = Instant::now();
             let events: Vec<_> = matches
                 .iter()
                 .take(3)
                 .map(|item| item.event.clone())
                 .collect();
-            match crate::interpretation::interpret_with_tracks(&self.config, &request.query, &events, &cameras, request.entity_id).await {
+            match crate::interpretation::interpret_with_tracks(&self.config, &request.query, &events, &cameras, request.entity_id, Some(query_id)).await {
                 Ok(results) => {
                     interpretation_notes.push("Experiment 2: model observations from ordered visual frames plus metadata; inspect citations. Retrieval ranking is unchanged.".into());
                     summary = results.iter().map(|result| format!("Clip {} ({}): {}",result.event_id,result.status,result.answer)).collect::<Vec<_>>().join("\n");
@@ -542,6 +616,7 @@ impl AppState {
                 }
                 Err(error) => interpretation_notes.push(format!("Sequence interpretation unavailable; retained experiment 1 retrieval results: {error}")),
             }
+            info!(%query_id, elapsed_us = interpretation_started.elapsed().as_micros() as u64, "memory interpretation stage completed");
         }
         if request.temporal_enabled && matches.is_empty() {
             interpretation_notes
@@ -552,6 +627,7 @@ impl AppState {
             && !request.long_memory_enabled
             && !matches.is_empty()
         {
+            let synthesis_started = Instant::now();
             match self
                 .memory
                 .synthesize_query(&request.query, &matches, request.vlm_model.as_deref())
@@ -566,12 +642,15 @@ impl AppState {
                 }
                 Err(error) => fallback_reason = Some(error.to_string()),
             }
+            info!(%query_id, elapsed_us = synthesis_started.elapsed().as_micros() as u64, "memory synthesis stage completed");
         }
+        let history_started = Instant::now();
         let long_memory = request
             .long_memory_enabled
             .then(|| crate::long_memory::answer(&request, &matches, &cameras));
         if let Some(answer) = &long_memory {
             summary = answer.summary.clone();
+            info!(%query_id, elapsed_us = history_started.elapsed().as_micros() as u64, "memory history stage completed");
         }
         info!(%query_id, mode = %retrieval_mode, considered, matches = matches.len(),
             elapsed_ms = started.elapsed().as_millis() as u64,
@@ -1168,4 +1247,169 @@ pub fn now_ms() -> u64 {
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
         .as_millis() as u64
+}
+
+#[cfg(test)]
+mod query_snapshot_tests {
+    use super::*;
+    use crate::domain::MemoryCameraResult;
+    use serde_json::json;
+
+    fn reference(
+        request: &MemoryQueryRequest,
+        cameras: &[MemoryCameraResult],
+    ) -> MemoryQuerySnapshot {
+        let cameras = cameras.to_vec();
+        let candidates: Vec<_> = cameras
+            .iter()
+            .filter(|camera| {
+                !request.temporal_enabled
+                    || request.entity_id.is_none_or(|id| {
+                        camera.long_memory.as_ref().is_some_and(|graph| {
+                            graph.version == crate::long_memory::VERSION
+                                && graph.entities.iter().any(|e| {
+                                    e.entity_id == id
+                                        && e.camera_id == camera.camera.camera_id
+                                        && camera
+                                            .events
+                                            .iter()
+                                            .any(|event| event.job_id == e.job_id)
+                                })
+                        })
+                    })
+            })
+            .flat_map(|c| c.events.iter().map(|e| (e.clone(), c.camera.clone())))
+            .collect();
+        MemoryQuerySnapshot {
+            indexed_count: candidates.len(),
+            candidates,
+            cameras,
+        }
+    }
+
+    #[tokio::test]
+    async fn filtered_snapshot_preserves_retrieval_graphs_and_scope_diagnostics() {
+        let a = crate::long_memory::tests::fixture(Uuid::from_u128(100), "a");
+        let b = crate::long_memory::tests::fixture(Uuid::from_u128(101), "b");
+        let mut missing = b.clone();
+        missing.long_memory = None;
+        let mut stale = b.clone();
+        stale.long_memory.as_mut().unwrap().version = "old".into();
+        let cameras = vec![a.clone(), b, missing, stale];
+        let entity = a.long_memory.as_ref().unwrap().entities[0].entity_id;
+        let mut cases = vec![
+            json!({}),
+            json!({"job_id":a.events[0].job_id}),
+            json!({"camera_ids":["missing"]}),
+            json!({"cluster_id":"missing"}),
+            json!({"start_ms":4000,"end_ms":10000}),
+            json!({"job_id":Uuid::nil()}),
+            json!({"temporal_enabled":true,"entity_id":entity}),
+            json!({"temporal_enabled":true,"entity_id":Uuid::nil()}),
+            json!({"entity_id":entity}),
+        ];
+        for fields in &mut cases {
+            fields["query"] = json!("trucks");
+            fields["semantic_enabled"] = json!(false);
+        }
+        for long in [false, true] {
+            for fields in &cases {
+                let mut request: MemoryQueryRequest =
+                    serde_json::from_value(fields.clone()).unwrap();
+                request.long_memory_enabled = long;
+                let before = reference(&request, &cameras);
+                let after = memory_query_snapshot(&request, cameras.iter());
+                assert_eq!(before.indexed_count, after.indexed_count);
+                assert_eq!(
+                    serde_json::to_value(
+                        before
+                            .candidates
+                            .iter()
+                            .filter(|(e, _)| crate::retrieval::eligible(&request, e))
+                            .collect::<Vec<_>>()
+                    )
+                    .unwrap(),
+                    serde_json::to_value(&after.candidates).unwrap()
+                );
+                if long {
+                    assert_eq!(
+                        serde_json::to_value(crate::long_memory::answer(
+                            &request,
+                            &[],
+                            &before.cameras
+                        ))
+                        .unwrap(),
+                        serde_json::to_value(crate::long_memory::answer(
+                            &request,
+                            &[],
+                            &after.cameras
+                        ))
+                        .unwrap()
+                    );
+                }
+                if !long && !(request.temporal_enabled && request.entity_id.is_some()) {
+                    assert!(after.cameras.is_empty());
+                }
+                let config = Config::from_env().unwrap();
+                let x = crate::retrieval::search(
+                    &config,
+                    &request,
+                    before.candidates,
+                    before.indexed_count,
+                    None,
+                )
+                .await;
+                let y = crate::retrieval::search(
+                    &config,
+                    &request,
+                    after.candidates,
+                    after.indexed_count,
+                    None,
+                )
+                .await;
+                assert_eq!(
+                    json!([x.matches, x.considered, x.mode, x.notes, x.provenance]),
+                    json!([y.matches, y.considered, y.mode, y.notes, y.provenance])
+                );
+            }
+        }
+    }
+
+    #[test]
+    #[ignore = "Controlled snapshot timing/RSS; run explicitly with --ignored --nocapture"]
+    fn benchmark_filtered_snapshot() {
+        let base = crate::long_memory::tests::fixture(Uuid::from_u128(200), "benchmark");
+        let mut cameras = Vec::new();
+        for i in 0..512u128 {
+            let mut camera = base.clone();
+            for event in &mut camera.events {
+                event.job_id = Uuid::from_u128(1000 + i);
+                event.visual_signature = vec![0.125; 4096];
+            }
+            cameras.push(camera);
+        }
+        let request: MemoryQueryRequest = serde_json::from_value(
+            json!({"query":"trucks","semantic_enabled":false,"job_id":Uuid::from_u128(1000)}),
+        )
+        .unwrap();
+        let mode = std::env::var("VISN_SNAPSHOT_BENCH_MODE").unwrap_or_else(|_| "filtered".into());
+        assert!(matches!(mode.as_str(), "reference" | "filtered"));
+        let mut times = Vec::new();
+        let mut counts = (0, 0);
+        for _ in 0..10 {
+            let start = Instant::now();
+            let snapshot = if mode == "reference" {
+                reference(&request, &cameras)
+            } else {
+                memory_query_snapshot(&request, cameras.iter())
+            };
+            times.push(start.elapsed().as_secs_f64());
+            counts = (snapshot.candidates.len(), snapshot.cameras.len());
+            std::hint::black_box(&snapshot);
+        }
+        println!(
+            "SNAPSHOT_BENCHMARK {}",
+            json!({"mode":mode,"recordings":512,"indexed_events":1536,"copied_candidates":counts.0,"copied_cameras":counts.1,"seconds":times,"scope":"snapshot component in current build profile; measure whole-process RSS separately"})
+        );
+    }
 }

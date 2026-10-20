@@ -22,6 +22,8 @@ import subprocess
 import sys
 from typing import Any
 
+from workflow_telemetry import WorkflowTrace, measured, stage
+
 
 OUTPUT_PREFIX = "VISN_MEMORY_JSON:"
 
@@ -51,6 +53,7 @@ def redacted(source: str) -> str:
     return "<local-video>"
 
 
+@measured('capture')
 def record_network_source(ffmpeg: str, source: str, target: Path, seconds: float) -> None:
     network = source.startswith(("http://", "https://", "rtsp://", "rtsps://"))
     if not network:
@@ -102,6 +105,7 @@ def record_network_source(ffmpeg: str, source: str, target: Path, seconds: float
         raise RuntimeError(f"could not record {redacted(source)}: {detail.strip()[-1200:]}")
 
 
+@measured('observer_quality')
 def frame_quality(cv2: Any, frame: Any) -> float:
     height, width = frame.shape[:2]
     scale = min(1.0, 480.0 / max(height, width))
@@ -119,6 +123,7 @@ def frame_quality(cv2: Any, frame: Any) -> float:
     return max(0.0, min(1.0, 0.45 * min(sharpness / 350.0, 1.0) + 0.35 * min(contrast / 70.0, 1.0) + 0.20 * exposure))
 
 
+@measured('observer_signature')
 def visual_signature(cv2: Any, np: Any, frame: Any) -> list[float]:
     sample = cv2.resize(frame, (96, 64), interpolation=cv2.INTER_AREA)
     hsv = cv2.cvtColor(sample, cv2.COLOR_BGR2HSV)
@@ -132,6 +137,7 @@ def visual_signature(cv2: Any, np: Any, frame: Any) -> list[float]:
     return (signature / norm).tolist() if math.isfinite(norm) and norm > 1e-8 else []
 
 
+@measured('observer_activity')
 def activity_score(cv2: Any, np: Any, previous: Any, previous_hist: Any, current: Any) -> tuple[float, Any]:
     current_hist = cv2.calcHist([current], [0], None, [32], [0, 256])
     cv2.normalize(current_hist, current_hist)
@@ -172,6 +178,7 @@ def encode_frame(cv2: Any, frame: Any, frame_time_ms: int, path: Path) -> dict[s
     }
 
 
+@measured('playback_derivative')
 def extract_clip(
     ffmpeg: str,
     evidence: Path,
@@ -217,6 +224,7 @@ def extract_clip(
     return transcoded.returncode == 0 and target.is_file() and target.stat().st_size > 0
 
 
+@measured('observer_analysis')
 def analyze(cv2: Any, np: Any, ffmpeg: str, evidence: Path, output_dir: Path, args: argparse.Namespace) -> dict[str, Any]:
     capture = cv2.VideoCapture(str(evidence))
     if not capture.isOpened():
@@ -284,7 +292,9 @@ def analyze(cv2: Any, np: Any, ffmpeg: str, evidence: Path, output_dir: Path, ar
 
     try:
         while True:
-            if not capture.grab():
+            with stage('observer_decode_advance'):
+                grabbed = capture.grab()
+            if not grabbed:
                 break
             source_time_ms = float(capture.get(cv2.CAP_PROP_POS_MSEC) or 0)
             if source_time_ms <= 0:
@@ -296,7 +306,8 @@ def analyze(cv2: Any, np: Any, ffmpeg: str, evidence: Path, output_dir: Path, ar
             last_time_ms = max(last_time_ms, source_time_ms)
             if source_time_ms + 0.01 < next_sample_ms:
                 continue
-            ok, frame = capture.retrieve()
+            with stage('observer_frame_retrieval'):
+                ok, frame = capture.retrieve()
             if not ok:
                 break
             next_sample_ms = source_time_ms + sample_period_ms
@@ -394,25 +405,29 @@ def main() -> None:
     ):
         os.environ[variable] = thread_count
 
-    try:
-        import cv2  # type: ignore
-        import imageio_ffmpeg  # type: ignore
-        import numpy as np  # type: ignore
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    with WorkflowTrace(os.environ.get('VISN_TRACE_ID'), 'ingest',
+                       enabled=os.environ.get('VISN_WORKFLOW_TELEMETRY','').lower() in ('1','true')):
+        try:
+            import cv2  # type: ignore
+            import imageio_ffmpeg  # type: ignore
+            import numpy as np  # type: ignore
 
-        cv2.setNumThreads(args.threads)
-        ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
-        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-        logging.info("Recording bounded camera interval: %.1fs", args.max_seconds)
-        record_network_source(ffmpeg, args.source, evidence, args.max_seconds)
-        logging.info("Recording retained; analyzing intervals and generating browser clips")
-        result = analyze(cv2, np, ffmpeg, evidence, output_dir, args)
-        logging.info("Indexed %d intervals over %dms", len(result['events']), result['duration_ms'])
-    except ImportError as error:
-        fail(f"missing memory-runner dependency: {error}; install tools/requirements-yolo.txt")
-    except Exception as error:
-        fail(str(error).replace(args.source, redacted(args.source)))
+            cv2.setNumThreads(args.threads)
+            ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+            logging.info("Recording bounded camera interval: %.1fs", args.max_seconds)
+            record_network_source(ffmpeg, args.source, evidence, args.max_seconds)
+            logging.info("Recording retained; analyzing intervals and generating browser clips")
+            result = analyze(cv2, np, ffmpeg, evidence, output_dir, args)
+            logging.info("Indexed %d intervals over %dms", len(result['events']), result['duration_ms'])
+        except ImportError as error:
+            fail(f"missing memory-runner dependency: {error}; install tools/requirements-yolo.txt")
+        except Exception as error:
+            fail(str(error).replace(args.source, redacted(args.source)))
 
-    sys.stdout.write(f"{OUTPUT_PREFIX}{json.dumps(result, separators=(',', ':'), allow_nan=False)}\n")
+        with stage('observer_result_serialization'):
+            encoded=json.dumps(result, separators=(',', ':'), allow_nan=False)
+        sys.stdout.write(f"{OUTPUT_PREFIX}{encoded}\n")
 
 
 if __name__ == "__main__":

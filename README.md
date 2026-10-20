@@ -16,6 +16,10 @@ A self-contained Phase 0 implementation of the video analytics service. It is in
 
 ## Local V1 retrieval memory
 
+The next implementation stages are defined in the [general video implementation and evaluation plan](docs/GENERAL_VIDEO_IMPLEMENTATION_PLAN.md), covering performance improvements, research experiments, integration tests, failure diagnosis and rollback. Highway footage is one high-activity test category within the general-video scope.
+
+The latest package adds [opt-in cross-process model residency coordination](docs/GENERAL_VIDEO_PACKAGE_5.md), preserving model settings while detector, retrieval and interpretation processes take turns. It includes retained-video 1/2/4-stream checks and interrupted external-model recovery; it is not enabled by default or qualified as a throughput improvement. [Durable visual preparation](docs/GENERAL_VIDEO_PACKAGE_4.md) remains available from **Prepare this recording**. [Workflow diagnostics](docs/GENERAL_VIDEO_PACKAGE_3.md) remain opt-in. Independent general-video acceptance and production load qualification are pending.
+
 The service now includes the first retrieval-first V1 slice from `docs/RETRIEVAL_FIRST_VIDEO_MEMORY_PLAN.md`:
 
 - Accepts one or more backend camera payloads using the current `liveurl`, `Country`, `Country code`, `Region`, `City`, `Latitude`, `Longitude`, `ZIP`, `Timezone`, `Manufacturer`, and `description` field names.
@@ -148,6 +152,11 @@ See [.env.example](.env.example). The service reads environment variables direct
 | `VISN_VLM_FLASH_ATTENTION` | `true` | Request Flash Attention from LM Studio |
 | `VISN_VLM_EXCLUSIVE_MEDIA` | `true` | Pause local detector/observer workers during each VLM call |
 | `VISN_DETECTOR_EXECUTABLE` | `.venv/bin/python` if present, otherwise `python3` | Development detector executable |
+| `VISN_RESOURCE_DIR` | unset | Opt-in shared local residency lock directory; use the same absolute path for every participating model process |
+| `VISN_RESOURCE_WAIT_SECS` | `180` | Cross-process admission deadline, 0–3600 seconds; does not expire active model ownership |
+| `VISN_RESOURCE_QUEUE_LIMIT` | `32` | Python cross-process waiting-ticket limit, 1–256; each participant must use the same limit |
+| `VISN_MANAGED_LMSTUDIO` | `false` | Coordinated external calls require a dedicated, initially unloaded native-v1 LM Studio endpoint; see recovery instructions in package 5 |
+| `VISN_RESOURCE_RUNNER_ARGS` | `tools/workflow_resources.py` | Rust resource guardian arguments passed to the configured Python detector executable |
 | `VISN_DETECTOR_ARGS` | `tools/yolo26_runner.py` | Detector command arguments |
 | `VISN_PERSISTENT_DETECTOR` | `true` | Load one YOLO model for all concurrently active camera sessions |
 | `VISN_PERSISTENT_DETECTOR_FALLBACK` | `true` | Retry through the isolated runner only if the shared worker produced no observations |

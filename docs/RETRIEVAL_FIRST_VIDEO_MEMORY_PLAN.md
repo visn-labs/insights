@@ -1,5 +1,7 @@
 # Retrieval-First Video Memory: Implementation Plan
 
+> Historical architecture roadmap. For the current post-Experiment 1–3 implementation sequence, general-video evaluation gates, debugging and rollback policy, use [General video implementation plan — 17 October 2026](GENERAL_VIDEO_IMPLEMENTATION_PLAN.md). The baseline in section 3 below predates implemented retrieval, persistence and the shared detector worker.
+
 ## 1. Decision and intended outcome
 
 The next architecture should add a retrieval-first event-memory lane beside the existing deterministic analytics lane.

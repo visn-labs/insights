@@ -24,7 +24,7 @@ pub async fn interpret(
     query: &str,
     events: &[MemoryEvent],
 ) -> anyhow::Result<Vec<SequenceInterpretation>> {
-    interpret_with_tracks(config, query, events, &[], None).await
+    interpret_with_tracks(config, query, events, &[], None, None).await
 }
 
 pub async fn interpret_with_tracks(
@@ -33,6 +33,7 @@ pub async fn interpret_with_tracks(
     events: &[MemoryEvent],
     cameras: &[crate::domain::MemoryCameraResult],
     entity_id: Option<uuid::Uuid>,
+    query_id: Option<uuid::Uuid>,
 ) -> anyhow::Result<Vec<SequenceInterpretation>> {
     if events.is_empty() {
         return Ok(vec![]);
@@ -69,6 +70,10 @@ pub async fn interpret_with_tracks(
     }
     let response = reqwest::Client::new()
         .post(format!("{}/interpret", url.trim_end_matches('/')))
+        .header(
+            "X-Visn-Query-ID",
+            query_id.unwrap_or_else(uuid::Uuid::now_v7).to_string(),
+        )
         .timeout(Duration::from_secs(config.retrieval_timeout_secs))
         .json(&json!({"query":query,"events":candidates}))
         .send()

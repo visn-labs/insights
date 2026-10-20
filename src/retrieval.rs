@@ -9,7 +9,7 @@ use serde::Deserialize;
 use serde_json::json;
 use std::{
     collections::{HashMap, HashSet},
-    time::Duration,
+    time::{Duration, Instant},
 };
 use uuid::Uuid;
 
@@ -50,8 +50,10 @@ pub async fn search(
     config: &Config,
     request: &MemoryQueryRequest,
     candidates: Vec<(MemoryEvent, CameraProfile)>,
+    indexed_count: usize,
+    query_id: Option<Uuid>,
 ) -> RetrievalResult {
-    let indexed_count = candidates.len();
+    let started = Instant::now();
     let filtered: Vec<_> = candidates
         .into_iter()
         .filter(|(event, _)| eligible(request, event))
@@ -61,6 +63,12 @@ pub async fn search(
     let (lexical, _) = memory::retrieve(
         &lexical_request,
         filtered.iter().map(|(e, c)| (e, c)).collect(),
+    );
+    tracing::info!(
+        ?query_id,
+        elapsed_us = started.elapsed().as_micros() as u64,
+        candidates = filtered.len(),
+        "memory filter and lexical stages completed"
     );
     let mut result = RetrievalResult {
         matches: lexical.clone(),
@@ -90,6 +98,7 @@ pub async fn search(
                 request,
                 &filtered,
                 &lexical,
+                query_id,
             )
             .await
             {
@@ -120,23 +129,20 @@ async fn remote_search(
     request: &MemoryQueryRequest,
     candidates: &[(MemoryEvent, CameraProfile)],
     lexical: &[MemoryQueryMatch],
+    query_id: Option<Uuid>,
 ) -> anyhow::Result<(
     Vec<MemoryQueryMatch>,
     String,
     Vec<String>,
     serde_json::Value,
 )> {
-    let events: Vec<_>=candidates.iter().map(|(event,_)| {
-        Ok(json!({"event_id":event.event_id,
-            // Source intervals avoid copy-mode keyframe padding and reference-mode full clips.
-            "source_path":std::path::absolute(&event.source_evidence_path).context("invalid source evidence path")?,
-            "start_ms":event.start_ms,"end_ms":event.end_ms}))
-    }).collect::<anyhow::Result<_>>()?;
+    let events = event_payload(candidates.iter().map(|(event, _)| event))?;
     let client = reqwest::Client::builder()
         .connect_timeout(Duration::from_secs(2))
         .timeout(Duration::from_secs(timeout))
         .build()?;
-    let response=client.post(format!("{}/search",url.trim_end_matches('/'))).json(&json!({
+    let response=client.post(format!("{}/search",url.trim_end_matches('/')))
+        .header("X-Visn-Query-ID", query_id.unwrap_or_else(Uuid::now_v7).to_string()).json(&json!({
         "query":request.query,"events":events,"limit":request.limit.clamp(1,50),"rerank":request.rerank_enabled,
         "lexical_ids":lexical.iter().map(|item|item.event.event_id).collect::<Vec<_>>()
     })).send().await.context("Qwen retrieval service request failed")?.error_for_status().context("Qwen retrieval service returned an error")?;
@@ -168,6 +174,17 @@ async fn remote_search(
     Ok((matches, body.mode, body.notes, body.provenance))
 }
 
+pub fn event_payload<'a>(
+    events: impl Iterator<Item = &'a MemoryEvent>,
+) -> anyhow::Result<Vec<serde_json::Value>> {
+    events.map(|event| {
+        Ok(json!({"event_id":event.event_id,
+            // Source intervals avoid copy-mode keyframe padding and reference-mode full clips.
+            "source_path":std::path::absolute(&event.source_evidence_path).context("invalid source evidence path")?,
+            "start_ms":event.start_ms,"end_ms":event.end_ms}))
+    }).collect()
+}
+
 fn validate(body: &SearchResult, allowed: HashSet<Uuid>, limit: usize) -> anyhow::Result<()> {
     if !matches!(body.mode.as_str(), "hybrid_rrf" | "hybrid_qwen_reranker")
         || body.items.len() > limit
@@ -190,6 +207,22 @@ fn validate(body: &SearchResult, allowed: HashSet<Uuid>, limit: usize) -> anyhow
 #[cfg(test)]
 mod tests {
     use super::*;
+    async fn search(
+        config: &Config,
+        request: &MemoryQueryRequest,
+        candidates: Vec<(MemoryEvent, CameraProfile)>,
+    ) -> RetrievalResult {
+        let count = candidates.len();
+        super::search(config, request, candidates, count, None).await
+    }
+
+    #[tokio::test]
+    async fn prefiltered_empty_preserves_original_scope_diagnostic() {
+        let request = serde_json::from_value(json!({"query":"truck"})).unwrap();
+        let result = super::search(&Config::from_env().unwrap(), &request, vec![], 123, None).await;
+        assert_eq!(result.mode, "not_run_filtered_empty");
+        assert!(result.notes[0].starts_with("123 indexed clips exist"));
+    }
     #[tokio::test]
     async fn empty_index_is_not_reported_as_keyword_search() {
         let config = Config::from_env().unwrap();

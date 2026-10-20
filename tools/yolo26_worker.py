@@ -329,6 +329,7 @@ def command_reader(commands: queue.Queue[dict[str, Any]]) -> None:
 
 
 def main() -> None:
+    from workflow_resources import Residency, trim_allocator
     args = parse_args()
     try:
         validate_startup_args(args)
@@ -375,16 +376,27 @@ def main() -> None:
 
     tracker_config = IterableSimpleNamespace(**YAML.load(check_yaml(args.tracker)))
     tracker_config.device = args.device or "cpu"
-    with redirect_stdout(sys.stderr):
-        model = YOLO(args.model)
-        if args.warmup:
-            model.predict(
-                np.zeros((args.imgsz, args.imgsz, 3), dtype=np.uint8),
-                verbose=False,
-                conf=0.25,
-                device=args.device,
-                imgsz=args.imgsz,
-            )
+    lease = Residency('detector')
+    model = None
+    def release_model():
+        nonlocal model
+        model = None
+        trim_allocator()
+    def get_model():
+        nonlocal model
+        if model is not None: return
+        with redirect_stdout(sys.stderr):
+            model = YOLO(args.model)
+            if args.warmup:
+                model.predict(
+                    np.zeros((args.imgsz, args.imgsz, 3), dtype=np.uint8),
+                    verbose=False,
+                    conf=0.25,
+                    device=args.device,
+                    imgsz=args.imgsz,
+                )
+
+    if not lease.root: get_model()
 
     emit_lock = threading.Lock()
     commands: queue.Queue[dict[str, Any]] = queue.Queue(maxsize=256)
@@ -563,6 +575,7 @@ def main() -> None:
         return observations
 
     while not shutting_down:
+        lease.yield_if_contended(release_model)
         process_commands()
         if shutting_down:
             break
@@ -572,28 +585,32 @@ def main() -> None:
         process_commands()
         batch = take_batch()
         if batch:
+            results = result = None
             try:
-                min_confidence = min(session.confidence for session, _ in batch)
-                with redirect_stdout(sys.stderr):
-                    results = model.predict(
-                        [packet.frame for _, packet in batch],
-                        verbose=False,
-                        conf=min_confidence,
-                        device=args.device,
-                        imgsz=args.imgsz,
-                    )
-                if len(results) != len(batch):
-                    raise RuntimeError("detector returned an unexpected batch size")
-                for (session, packet), result in zip(batch, results):
-                    observations = observations_for(session, packet, result)
-                    emit_lock_guarded(
-                        emit_lock,
-                        {
-                            "type": "observations",
-                            "request_id": session.request_id,
-                            "observations": observations,
-                        },
-                    )
+                with lease.operation(release_model):
+                    get_model()
+                    min_confidence = min(session.confidence for session, _ in batch)
+                    with redirect_stdout(sys.stderr):
+                        results = model.predict(
+                            [packet.frame for _, packet in batch],
+                            verbose=False,
+                            conf=min_confidence,
+                            device=args.device,
+                            imgsz=args.imgsz,
+                        )
+                    if len(results) != len(batch):
+                        raise RuntimeError("detector returned an unexpected batch size")
+                    for (session, packet), result in zip(batch, results):
+                        observations = observations_for(session, packet, result)
+                        emit_lock_guarded(
+                            emit_lock,
+                            {
+                                "type": "observations",
+                                "request_id": session.request_id,
+                                "observations": observations,
+                            },
+                        )
+                    results = result = None
             except Exception as error:
                 message = f"batched inference failed: {type(error).__name__}: {error}"
                 for session, _ in batch:
@@ -603,6 +620,9 @@ def main() -> None:
                         session.pending = None
                         session.cancelled = True
                         session.condition.notify_all()
+            finally:
+                results = result = None
+            lease.yield_if_contended(release_model)
 
         for request_id, session in list(sessions.items()):
             done, error, has_pending, cancelled = session.snapshot_state()

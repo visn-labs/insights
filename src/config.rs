@@ -43,6 +43,10 @@ pub struct Config {
     pub memory_clip_mode: String,
     pub retrieval_url: Option<String>,
     pub retrieval_timeout_secs: u64,
+    pub resource_dir: Option<PathBuf>,
+    pub resource_wait_secs: u64,
+    pub resource_runner_args: Vec<String>,
+    pub managed_lmstudio: bool,
     pub kafka_enabled: bool,
     #[cfg(feature = "kafka")]
     pub kafka_brokers: String,
@@ -54,6 +58,17 @@ pub struct Config {
 
 impl Config {
     pub fn from_env() -> anyhow::Result<Self> {
+        let resource_wait_secs = nonnegative_u64("VISN_RESOURCE_WAIT_SECS", "180")?;
+        if resource_wait_secs > 3600 {
+            bail!("VISN_RESOURCE_WAIT_SECS must not exceed 3600");
+        }
+        let resource_dir = optional("VISN_RESOURCE_DIR")
+            .map(std::path::absolute)
+            .transpose()?;
+        let managed_lmstudio = bool_value("VISN_MANAGED_LMSTUDIO", false)?;
+        if managed_lmstudio && resource_dir.is_none() {
+            bail!("VISN_MANAGED_LMSTUDIO requires VISN_RESOURCE_DIR");
+        }
         let max_upload_mb = value("VISN_MAX_UPLOAD_MB", "2048")
             .parse::<usize>()
             .context("VISN_MAX_UPLOAD_MB must be a positive integer")?;
@@ -159,6 +174,13 @@ impl Config {
             memory_clip_mode: memory_clip_mode()?,
             retrieval_url: optional("VISN_RETRIEVAL_URL"),
             retrieval_timeout_secs: positive_usize("VISN_RETRIEVAL_TIMEOUT_SECS", "600")? as u64,
+            resource_dir,
+            resource_wait_secs,
+            resource_runner_args: value("VISN_RESOURCE_RUNNER_ARGS", "tools/workflow_resources.py")
+                .split_whitespace()
+                .map(ToOwned::to_owned)
+                .collect(),
+            managed_lmstudio,
             kafka_enabled: bool_value("VISN_KAFKA_ENABLED", false)?,
             #[cfg(feature = "kafka")]
             kafka_brokers: value("VISN_KAFKA_BROKERS", "127.0.0.1:9092"),

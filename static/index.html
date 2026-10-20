@@ -345,6 +345,18 @@
               <span id="memory-job-status" class="badge neutral">idle</span>
             </div>
             <label class="field"><span>Recorded sessions</span><select id="memory-job-select"><option value="">No recordings yet</option></select></label>
+            <section class="visual-index-panel" aria-labelledby="visual-index-title">
+              <h3 id="visual-index-title">Prepare visual search</h3>
+              <p>Build visual representations from every recorded interval before asking a question. Progress survives worker restarts.</p>
+              <p id="visual-index-status" role="status" aria-live="polite">Select a completed recording to begin.</p>
+              <progress id="visual-index-progress" class="hidden" max="1" value="0" aria-label="Intervals prepared for visual search"></progress>
+              <div class="preset-row">
+                <button id="visual-index-start" class="secondary-button" type="button" disabled>Prepare this recording</button>
+                <button id="visual-index-cancel" class="text-button hidden" type="button">Cancel preparation</button>
+                <button id="visual-index-retry" class="secondary-button hidden" type="button">Resume / retry</button>
+              </div>
+              <p id="visual-index-error" class="inline-error hidden" role="alert"></p>
+            </section>
             <button id="memory-build-links" type="button" class="secondary-button" disabled>Build entity memory for this recording</button>
             <p id="memory-links-status" role="status"></p>
             <div id="memory-empty" class="memory-empty"><p>Load a verified camera preset or paste backend camera metadata, then record a short bounded interval.</p></div>
@@ -375,7 +387,8 @@
             <label class="field memory-query-input"><span>Question or visual search</span><input id="memory-query-text" maxlength="1000" placeholder="For example: trucks waiting at a traffic signal" required></label>
             <label class="field"><span>Cluster filter</span><input id="memory-query-cluster" maxlength="120" placeholder="Leave empty for all"></label>
             <label class="field"><span>Camera IDs (optional, comma-separated)</span><input id="memory-query-cameras" placeholder="Leave empty for all cameras"></label>
-            <label class="toggle-row compact-toggle"><span><strong>Visual retrieval</strong><small>Search clip content as well as words. First search indexes uncached clips.</small></span><input id="memory-query-semantic" type="checkbox" checked><i></i></label>
+            <p id="memory-query-queue" class="memory-query-input" role="status" aria-live="polite"></p>
+            <label class="toggle-row compact-toggle"><span><strong>Visual retrieval</strong><small>Search clip content as well as words. Unprepared intervals are still processed during search; partial coverage is disclosed.</small></span><input id="memory-query-semantic" type="checkbox" checked><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>Visual reranking</strong><small>Inspect the shortlist for closer matches.</small></span><input id="memory-query-rerank" type="checkbox" checked><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>VLM synthesis</strong><small>Summarize candidate descriptions; does not verify video.</small></span><input id="memory-query-vlm" type="checkbox"><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>Experiment 2 · Explain visual evidence</strong><small>Read ordered frames and metadata from up to three retrieved clips. Includes uncertainty and frame citations.</small></span><input id="memory-query-temporal" type="checkbox"><i></i></label>
