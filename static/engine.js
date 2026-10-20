@@ -1,6 +1,7 @@
 import * as THREE from './vendor/three.module.min.js';
 import {walkingRoute,walkingTravel,poseWalking} from './assets/walking.js';
 import {CameraRecording} from './assets/camera-recording.js';
+import {poseStreetActivity,posePersonDetails} from './assets/street-activity.js';
 
 // One locally rendered world. Distances are metres; motion uses elapsed seconds.
 const C = { paper: 0xf5eddf, plaster: 0xe3caa1, light: 0xf7e5bf, timber: 0x654732, roof: 0x75523f, brick: 0x9c7054, dark: 0x3e332c, glass: 0x71887d, stone: 0xc2a889, brass: 0xac8853, green: 0x567566, signal: 0xd7f4bf };
@@ -488,7 +489,7 @@ export class TownScene {
   }
   person(index, role='walker') {
     // Adult landmarks in metres: sole 0, ankle .096, knee .516, hip .956,
-    // shoulder 1.435, chin 1.585, crown 1.835. Hats do not count as head height.
+    // shoulder 1.435, chin 1.575, crown 1.825. Hats do not count as head height.
     const g=new THREE.Group(),female=index%3===0;
     const coat=[0x655444,0x9b7857,0xb2a58c,0x6d7b6b,0x765647,0xd9c7a7][index%6];
     const skin=[0xdfb992,0xb88965,0xd4a57d,0xe5c3a1][index%4];
@@ -498,19 +499,24 @@ export class TownScene {
     body.scale.z=.74;
     let skirt,coatHem;
     if(female) {
-      skirt=this.lathe(g,[[.29,.14],[.305,.18],[.285,.37],[.245,.65],[.19,.9],[.15,1.1]],coat,28);skirt.scale.z=.8;
-      for(let i=0;i<14;i++) {
-        const a=i*TAU/14;
-        const fold=this.tube(g,[Math.sin(a)*.294,.18,Math.cos(a)*.235],[Math.sin(a)*.187,.88,Math.cos(a)*.15],.007,coat,.002);
-        fold.castShadow=false;
+      if(!this.geometryCache.has('tailored-skirt')) {
+        const geometry=new THREE.LatheGeometry([[.29,.14],[.305,.18],[.285,.37],[.245,.65],[.19,.9],[.15,1.1]].map(([r,y])=>new THREE.Vector2(r,y)),56);
+        const positions=geometry.attributes.position;
+        for(let i=0;i<positions.count;i++){
+          const x=positions.getX(i),z=positions.getZ(i),y=positions.getY(i),a=Math.atan2(x,z);
+          const fold=1+Math.sin(a*14)*.028*Math.max(0,(1.1-y));
+          positions.setXYZ(i,x*fold,y-1.05,z*fold*.8);
+        }
+        geometry.computeVertexNormals();this.geometryCache.set('tailored-skirt',geometry);
       }
+      skirt=new THREE.Mesh(this.geometryCache.get('tailored-skirt'),this.material(coat));skirt.position.y=1.05;skirt.castShadow=true;g.add(skirt);
       this.rounded(torso,0,1.1,.105,.28,.032,.035,C.timber,.01);
     } else {
       coatHem=this.lathe(torso,[[.205,.76],[.207,.82],[.178,1.05],[.156,1.15]],coat);coatHem.scale.z=.72;
       this.rounded(torso,0,1.27,.13,.17,.34,.028,0xc8bda5,.018);
       this.rounded(torso,0,1.42,.15,.05,.15,.027,C.timber,.008);
     }
-    this.cylinder(torso,0,1.555,0,.042,.051,.1,skin,14);
+    this.cylinder(torso,0,1.55,0,.057,.066,.1,skin,20);
     for(const side of [-1,1]) {
       this.rounded(torso,side*.065,1.466,.093,.088,.056,.032,0xe7d4b2,.013).rotation.z=side*.28;
       this.rounded(torso,side*.10,1.355,.15,.058,.22,.025,coat,.012).rotation.z=side*.32;
@@ -519,13 +525,13 @@ export class TownScene {
     for(let i=0;i<4;i++)this.orb(torso,.043,1.095+i*.078,.123+i*.008,.012,C.brass);
     if(role==='vendor')this.rounded(torso,0,1.0,.139,.3,.5,.022,0xd9cbb0,.024);
     if(role==='porter')this.rounded(torso,0,1.27,.14,.16,.18,.02,0x785641,.02);
-    const head=new THREE.Group();head.position.y=1.71;torso.add(head);
+    const head=new THREE.Group();head.position.y=1.70;head.scale.x=.94+(index%4)*.025;torso.add(head);const eyes=[];
     // A single tapered head surface avoids overlapping primitive seams at the jaw.
     if(!this.geometryCache.has('adult-head')) {
-      const geometry=new THREE.SphereGeometry(1,24,18),position=geometry.attributes.position;
+      const geometry=new THREE.SphereGeometry(1,32,24),position=geometry.attributes.position;
       for(let i=0;i<position.count;i++) {
         const y=position.getY(i),jaw=Math.max(0,-y);
-        position.setXYZ(i,position.getX(i)*.09*(1-jaw*.24),y*.125,position.getZ(i)*.097*(1-jaw*.12)+jaw*.012);
+        position.setXYZ(i,position.getX(i)*.09*(1-jaw*.17),y*.125,position.getZ(i)*.097*(1-jaw*.12)+jaw*.012);
       }
       geometry.computeVertexNormals();this.geometryCache.set('adult-head',geometry);
     }
@@ -534,8 +540,10 @@ export class TownScene {
     this.ellipsoid(head,0,-.049,.088,.022,.0028,.007,0x956953);
     for(const side of [-1,1]) {
       this.ellipsoid(head,side*.088,-.004,-.007,.015,.03,.019,skin);
-      this.ellipsoid(head,side*.034,.014,.09,.015,.006,.006,0xe8dec9);
-      this.orb(head,side*.034,.014,.095,.0045,0x392f29);
+      const eye=new THREE.Group();eye.position.set(side*.034,.014,.09);head.add(eye);eyes.push(eye);
+      this.ellipsoid(eye,0,0,0,.014,.004,.004,0xe8dec9);
+      this.ellipsoid(eye,0,0,.0035,.0042,.0042,.002,0x493a2b);
+      this.ellipsoid(eye,0,0,.005,.002,.0028,.001,0x211d19);
       this.tube(head,[side*.019,.029,.095],[side*.05,.03,.082],.003,hairColor);
     }
     if(!female && index%4===0)this.ellipsoid(head,0,-.039,.092,.027,.005,.009,hairColor);
@@ -593,14 +601,26 @@ export class TownScene {
       this.tube(hand,[side*.024,0,.006],[side*.045,-.036,.018],.01,skin,.008);
       limbs.push(leg,arm);knees.push(knee);elbows.push(elbow);ankles.push(ankle);hands.push(hand);
     }
-    let heldProp=null;
+    let heldProp=null,bag=null,book=null,page=null;
     if(index%5===1 && role==='walker') {
-      this.rounded(elbows[1],0,-.56,0,.25,.27,.12,C.timber,.029);
-      this.torus(elbows[1],0,-.389,0,.077,.01,C.brass);heldProp='bag';
+      bag=new THREE.Group();hands[1].add(bag);
+      this.rounded(bag,0,-.25,0,.25,.27,.12,C.timber,.029);
+      this.torus(bag,0,-.085,0,.077,.01,C.brass);heldProp='bag';
     }
     if(role==='reader') {
-      this.rounded(torso,0,1.24,.37,.37,.012,.26,0xe9ddbf,.004).rotation.x=.32;
-      this.box(torso,0,1.247,.37,.007,.014,.255,0x9b8667).rotation.x=.32;
+      book=new THREE.Group();book.position.set(0,1.24,.37);book.rotation.x=.32;torso.add(book);
+      for(const side of [-1,1])this.rounded(book,side*.094,0,0,.184,.012,.26,0xe9ddbf,.004);
+      page=new THREE.Group();page.position.y=.009;book.add(page);
+      this.rounded(page,.092,0,0,.18,.004,.25,0xf3e5cb,.002);
+      for(const paper of [book,page]) {
+        const points=[];
+        for(let line=0;line<10;line++) {
+          const z=-.10+line*.021;
+          for(const side of (paper===book?[-1]:[1])){const ink=paper===book?.009:.0035;points.push(side*.018,ink,z,side*(.15-(line%3)*.013),ink,z);}
+        }
+        const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(points,3));
+        paper.add(new THREE.LineSegments(geometry,new THREE.LineBasicMaterial({color:0x8b7c64})));
+      }
     }
     if(index%11===3 && role==='walker') {
       heldProp='parasol';
@@ -631,8 +651,8 @@ export class TownScene {
     torso.position.y-=.18;spine.add(torso);
     g.scale.setScalar(.96+(index%6)*.015);
     this.scene.add(g);
-    return {mesh:g,pelvis,spine,torso,head,limbs,knees,elbows,ankles,hands,fingers,skirt,coatHem,heldProp,role,phase:index*1.73,
-      anatomy:{height:1.835,headHeight:.25,hip:.956,upperLeg:.44,lowerLeg:.42,soleOffset:.096,shoulder:1.435,upperArm:.31,lowerArm:.285}};
+    return {mesh:g,pelvis,spine,torso,head,limbs,knees,elbows,ankles,hands,fingers,skirt,coatHem,heldProp,bag,book,page,eyes,role,phase:index*1.73,
+      anatomy:{height:1.825,headHeight:.25,hip:.956,upperLeg:.44,lowerLeg:.42,soleOffset:.096,shoulder:1.435,upperArm:.31,lowerArm:.285}};
   }
   fitHands(actor) {
     // Fit the adult arm chain to its prop; walk timing is handled separately.
@@ -653,14 +673,14 @@ export class TownScene {
       actor.hands[1].rotation.set(-arm.rotation.x-actor.elbows[1].rotation.x,-arm.rotation.y,0);
     }
     if(actor.heldProp==='bag') {
-      actor.limbs[3].rotation.x=0;actor.elbows[1].rotation.x=-.04;
+      actor.limbs[3].rotation.x=0;actor.elbows[1].rotation.x=-.04;actor.hands[1].rotation.x=.04;
     }
     if(actor.worldGrips) {
       actor.mesh.updateWorldMatrix(true,true);
       actor.worldGrips.forEach((point,side)=>{const p=actor.torso.worldToLocal(point.clone());reach(side,p.x,p.y,p.z);});
     } else if(actor.grips)actor.grips.forEach(([x,y,z],side)=>reach(side,x,y,z));
     for(const side of [0,1]) {
-      const holding=actor.grips||(side===1&&actor.heldProp);
+      const holding=actor.grips||actor.worldGrips||actor.role==='reader'||(side===1&&actor.heldProp);
       actor.fingers[side].forEach(({joint,tip})=>{joint.rotation.x=holding?-.85:-.1;tip.rotation.x=holding?-.95:-.15;});
     }
   }
@@ -701,7 +721,19 @@ export class TownScene {
   route(points) {return walkingRoute(points);}
   walkPerson(actor,path,distance,speed,stride,turn=null) {
     poseWalking(actor,{path,distance,speed,stride,turn,ground:(x,z)=>this.groundHeight(x,z)});
+    const phase=distance/stride*TAU;
+    if(actor.skirt){actor.skirt.rotation.x=Math.sin(phase)*.018;actor.skirt.rotation.z=Math.sin(phase*2)*.009;}
+    if(actor.coatHem)actor.coatHem.rotation.x=Math.sin(phase)*.018;
+    const ahead=path.sample(distance+.65).yaw,now=path.sample(distance).yaw;
+    actor.head.rotation.y+=Math.atan2(Math.sin(ahead-now),Math.cos(ahead-now))*.35;
     this.fitHands(actor);
+  }
+  buildVendorActivity(actor) {
+    const stand=new THREE.Group();if(actor.mesh.position.distanceTo(this.cart?.position||new THREE.Vector3(100,0,100))>1.3)actor.mesh.add(stand);
+    this.box(stand,0,.94,.43,.7,.06,.42,C.timber);
+    for(const x of [-.29,.29])for(const z of [.27,.59])this.box(stand,x,.46,z,.045,.9,.045,C.timber);
+    for(let i=0;i<6;i++)this.orb(stand,-.23+i%3*.15,1.01,.38+Math.floor(i/3)*.13,.048,i%2?0xb2965f:0xa17249);
+    actor.produce=this.orb(actor.mesh,.15,1.02,.39,.05,0xb99763);
   }
   buildLife() {
     // Sidewalk promenades round the four right-angle corners, plus crossing flows.
@@ -727,8 +759,11 @@ export class TownScene {
     locals.forEach(([x,z,rotation,role],i)=>{
       const actor=this.person(index++,role);actor.mesh.position.set(x,.23,z);actor.mesh.rotation.y=rotation;actor.idle=true;actor.seated=i===6;
       if(actor.seated)this.seatPerson(actor,.75);
+      if(role==='vendor')this.buildVendorActivity(actor);
       this.actors.push(actor);
     });
+    const pair=this.actors.filter(a=>a.idle&&a.role==='walker').slice(1,3);
+    if(pair.length===2)pair.forEach((actor,i)=>{actor.partner=pair[1-i];actor.conversationPhase=i*5.5;const d=actor.partner.mesh.position.clone().sub(actor.mesh.position);actor.mesh.rotation.y=Math.atan2(d.x,d.z);});
     this.buildCarriage(0);this.buildCarriage(1);this.buildHandcart();
     for(let i=0;i<10;i++) {
       const g=new THREE.Group();this.scene.add(g);
@@ -968,18 +1003,11 @@ export class TownScene {
         } else {distance=(t*actor.speed+actor.offset)%actor.route.length;speed=actor.speed;}
         this.walkPerson(actor,path,distance,speed,actor.stride,turn);
       } else {
-        const breath=Math.sin(t*1.4+actor.phase),gesture=Math.max(0,Math.sin(t*.9+actor.phase))**3;
-        actor.head.rotation.y=Math.sin(t*.45+actor.phase)*.13;
-        actor.head.rotation.x=actor.role==='reader'?.12+breath*.015:breath*.018;
-        actor.spine.rotation.x=breath*.008;
-        if(actor.idle) {
-          actor.limbs[1].rotation.x=actor.role==='reader'?-.82:-.25-gesture*.28;
-          actor.limbs[3].rotation.x=actor.role==='vendor'?-.35-gesture*.48:actor.role==='reader'?-.82:-.15;
-          actor.elbows.forEach(e=>e.rotation.x=-.25);
-        }
+        poseStreetActivity(actor,t);
         this.fitHands(actor);
       }
     }
+    this.actors.forEach(actor=>posePersonDetails(actor,t));
     for(const vehicle of this.vehicles) {
       const phase=(t+10+(vehicle.axis?32:0))%64;
       const motion=walkingTravel(phase,60,27,2);

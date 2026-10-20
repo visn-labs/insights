@@ -15,10 +15,11 @@ const out=path.resolve(process.env.VISN_UI_OUT||'output/playwright/camera-reel-v
   check('The former desk renderer is absent',await page.locator('#atelier-canvas').count()===0);
   check('The street is the initial view',await canvas.getAttribute('data-recording-view')==='street');
   await move(page,1.02);check('Camera chapter selects CAM 04 opposite CAM 01',await canvas.getAttribute('data-selected-camera')==='4'&&await canvas.getAttribute('data-recording-view')==='camera');
+  check('Compact cassette fits entirely inside the housing',await canvas.getAttribute('data-internal-cassette')==='true'&&+await canvas.getAttribute('data-cassette-scale')<.3);check('First view retains a closed camera shell',+await canvas.getAttribute('data-cutaway')===0);
   const a=+await canvas.getAttribute('data-reel-angle');await page.waitForTimeout(450);check('Cinema reels rotate continuously',+await canvas.getAttribute('data-reel-angle')<a);
   await page.screenshot({path:path.join(out,'desktop-camera.png')});
   await move(page,2.5);const roll=+await canvas.getAttribute('data-reel-roll');check('Zoom traverses a continuous intermediate reel pose',roll>0&&roll<30);
-  await move(page,2.98);check('Second view reaches a 30 degree right dip',+await canvas.getAttribute('data-reel-roll')===30);check('Projected film axis is actually 30 degrees on screen',Math.abs(+await canvas.getAttribute('data-projected-film-angle')-30)<.1);check('Same canvas enters the rear reel',await canvas.getAttribute('data-recording-view')==='reel');
+  await move(page,2.98);check('Second view reaches a 30 degree right dip',+await canvas.getAttribute('data-reel-roll')===30);check('Projected film axis is actually 30 degrees on screen',Math.abs(+await canvas.getAttribute('data-projected-film-angle')-30)<.1);check('Same canvas enters the internal reel',await canvas.getAttribute('data-recording-view')==='reel');check('Macro view reveals the internal cutaway',+await canvas.getAttribute('data-cutaway')===1);
   const offset=await canvas.getAttribute('data-film-offset');await page.waitForTimeout(300);check('Physical film keeps travelling',offset!==await canvas.getAttribute('data-film-offset'));
   await page.screenshot({path:path.join(out,'desktop-reel.png')});
   await move(page,1.02);check('Reverse scrolling returns to the same camera',await canvas.getAttribute('data-recording-view')==='camera');

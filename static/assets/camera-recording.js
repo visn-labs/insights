@@ -29,17 +29,19 @@ export class CameraRecording {
     this.head = this.cameraSite.head;
     this.head.children.forEach(child => child.visible = false);
     this.model = new T.Group();
-    this.model.scale.setScalar(.8);
+    this.model.scale.setScalar(.4);
     this.head.add(this.model);
     this.progress = 0;
     this.zoom = 0;
     this.reel = 0;
-    this.scale = .8;
+    this.scale = .4;
     this.halfSpan = .72;
     this.radius = .30;
     this.speed = .31;
-    this.deckCenter = new T.Vector3(0, .83, -.48);
+    this.deckCenter = new T.Vector3(0, .015, -.27);
+    this.transportScale = .26;
     this.materials = {
+      board: new T.MeshStandardMaterial({color:'#344c3c',roughness:.74,metalness:.12}),
       paint: new T.MeshStandardMaterial({color: '#c9c3ae', roughness: .47, metalness: .22}),
       graphite: new T.MeshStandardMaterial({color: '#302f2a', roughness: .44, metalness: .48}),
       metal: new T.MeshStandardMaterial({color: '#9a9b8b', roughness: .29, metalness: .83}),
@@ -49,12 +51,23 @@ export class CameraRecording {
       light: new T.MeshBasicMaterial({color: '#bed7a5'}),
     };
     this.makeEnvironment();
+    this.shellMaterial = this.materials.paint.clone();
+    this.trimMaterial = this.materials.graphite.clone();
     this.buildHousing();
     this.buildTransport();
+    this.head.updateWorldMatrix(true,true);
+    const inverse=this.model.matrixWorld.clone().invert(),bounds=new T.Box3();
+    this.transport.traverse(object=>{if(!object.isMesh)return;object.geometry.computeBoundingBox();bounds.union(object.geometry.boundingBox.clone().applyMatrix4(new T.Matrix4().multiplyMatrices(inverse,object.matrixWorld)));});
+    this.cassetteFits=bounds.min.x>-.31&&bounds.max.x<.31&&bounds.min.y>-.18&&bounds.max.y<.18&&bounds.min.z>-.70&&bounds.max.z<.45;
     this.buildPackets();
     this.buildFog();
     this.model.traverse(object => object.layers.set(1));
     town.scene.traverse(object => { if (object.isLight) object.layers.enable(1); });
+    town.sun.layers.disable(1);
+    this.detailLight=new T.DirectionalLight('#fff0d8',1.8);this.detailLight.layers.set(1);this.detailLight.castShadow=true;
+    this.detailLight.shadow.mapSize.set(town.canvas.clientWidth<760?512:1024,town.canvas.clientWidth<760?512:1024);
+    this.detailLight.shadow.bias=-.00003;this.detailLight.shadow.normalBias=.0004;this.detailLight.shadow.radius=2;
+    Object.assign(this.detailLight.shadow.camera,{near:.01,far:8});town.scene.add(this.detailLight,this.detailLight.target);
     this.captureTarget = new T.WebGLRenderTarget(512, 384, {depthBuffer: true});
     this.captureTarget.texture.colorSpace = T.SRGBColorSpace;
     this.captureCamera = new T.PerspectiveCamera(58, 4 / 3, .1, 80);
@@ -134,8 +147,21 @@ export class CameraRecording {
 
   buildHousing() {
     const m = this.materials;
-    this.box(.73, .46, 1.25, m.paint).position.z = -.12;
-    this.box(.83, .045, 1.48, m.paint).position.set(0, .265, -.03);
+    // Separate walls make a genuine empty enclosure instead of a solid block.
+    const shell = this.shellMaterial, trim = this.trimMaterial;
+    this.box(.73, .035, 1.25, shell).position.set(0, -.215, -.12);
+    this.box(.035, .43, 1.25, shell).position.set(-.35, 0, -.12);
+    this.box(.035, .43, 1.25, shell).position.set(.35, 0, -.12);
+    this.box(.73, .43, .035, shell).position.set(0, 0, -.735);
+    this.box(.68, .035, 1.20, shell).position.set(0, .215, -.12);
+    const board = this.box(.59, .018, .93, m.board);
+    board.position.set(0,-.155,-.17);
+    for(let i=0;i<7;i++) this.box(.035,.018,.12,m.brass).position.set(-.23+i*.075,-.135,.20);
+    this.box(.19,.06,.21,m.graphite).position.set(0,-.1,.23);
+    for(const x of [-.23,.23]) for(const z of [-.56,.25]) {
+      const standoff=this.cylinder(.019,.10,m.brass);standoff.rotation.x=0;standoff.position.set(x,-.1,z);
+    }
+    this.box(.83, .045, 1.48, shell).position.set(0, .265, -.03);
     this.box(.68, .37, .05, m.graphite).position.z = .53;
     for (let i = 0; i < 4; i++) {
       const barrel = this.cylinder(.24 - i * .017, .10, i % 2 ? m.graphite : m.metal);
@@ -153,10 +179,13 @@ export class CameraRecording {
     }
     grip.castShadow = true;
     this.model.add(grip);
-    this.lens = this.mesh(new T.SphereGeometry(.17, 48, 24), m.glass);
+    this.opticalGlass=m.glass.clone();Object.assign(this.opticalGlass,{transparent:true,opacity:.52,roughness:.035,metalness:.12,envMapIntensity:1.2});
+    this.cylinder(.164,.018,m.graphite).position.z=.861;
+    this.cylinder(.073,.012,m.rubber).position.z=.884;
+    this.lens = this.mesh(new T.SphereGeometry(.17, 48, 24), this.opticalGlass);
     this.lens.scale.z = .12;
     this.lens.position.z = .88;
-    for (let i = 0; i < 4; i++) this.ring(.055 + i * .027, .0035, m.glass).position.z = .90;
+    for (const r of [.105,.156]) this.ring(r,.002,m.glass).position.z=.885;
     for (let i = 0; i < 18; i++) {
       const a = i / 18 * Math.PI * 2;
       const diode = this.mesh(new T.SphereGeometry(.012, 10, 8), m.glass);
@@ -164,7 +193,7 @@ export class CameraRecording {
     }
     for (const side of [-1, 1]) {
       for (let i = 0; i < 12; i++) {
-        this.box(.008, .09, .025, m.graphite).position.set(side * .405, -.04, -.59 + i * .064);
+        this.box(.008, .09, .025, trim).position.set(side * .373, -.04, -.59 + i * .064);
       }
       for (const y of [-.16, .16]) {
         const screw = this.cylinder(.017, .016, m.metal);
@@ -173,8 +202,8 @@ export class CameraRecording {
       }
     }
     for (const side of [-1, 1]) {
-      for (const y of [-.155, .155]) this.box(.006, .004, .79, m.graphite).position.set(side * .400, y, -.16);
-      for (const z of [-.555, .235]) this.box(.006, .31, .004, m.graphite).position.set(side * .400, 0, z);
+      for (const y of [-.155, .155]) this.box(.006, .004, .79, trim).position.set(side * .372, y, -.16);
+      for (const z of [-.555, .235]) this.box(.006, .31, .004, trim).position.set(side * .372, 0, z);
     }
     this.box(.20, .055, .01, m.graphite).position.set(.2, -.13, -.76);
     this.recordLED = this.mesh(new T.SphereGeometry(.018, 12, 8), m.light);
@@ -185,8 +214,7 @@ export class CameraRecording {
       new T.Vector3(.30, -.65, -.5), new T.Vector3(0, -.55, -.25),
     ]);
     this.mesh(new T.TubeGeometry(cable, 40, .014, 8, false), m.rubber);
-    for (const x of [-.72, .72]) this.box(.045, .5, .045, m.graphite).position.set(x, .49, -.64);
-    this.box(1.52, .04, .08, m.graphite).position.set(0, .29, -.64);
+
   }
 
   flangeGeometry() {
@@ -210,6 +238,8 @@ export class CameraRecording {
     const m = this.materials;
     this.transport = new T.Group();
     this.transport.position.copy(this.deckCenter);
+    this.transport.scale.setScalar(this.transportScale);
+    this.transport.rotation.y=Math.PI/2;
     this.model.add(this.transport);
     this.reels = [];
     const flange = this.flangeGeometry();
@@ -301,7 +331,7 @@ export class CameraRecording {
       float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
       float fbm(vec2 p){float n=0.,a=.5;for(int i=0;i<4;i++){n+=noise(p)*a;p=p*2.03+7.1;a*=.5;}return n;}
-      void main(){vec2 center=mix(vec2(.41,.56),vec2(.5,.57),uReel);vec2 p=(vUv-center)*vec2(uAspect,1.);float cloud=fbm(p*4.+vec2(uTime*.013,-uTime*.009));float radial=length(p*vec2(.82,1.12));float fog=smoothstep(.16,.78,radial+(cloud-.5)*.15);float textFog=(1.-smoothstep(.30,.57,vUv.y))*mix(smoothstep(.55,.88,vUv.x),1.-smoothstep(.18,.47,vUv.x),uReel);if(uAspect<1.)textFog=1.-smoothstep(.38,.58,vUv.y);float density=max(fog*.985,textFog*.995);density=mix(density,.80+fog*.18,uBackdrop)*uZoom;vec3 cream=mix(vec3(.938,.902,.835),vec3(.961,.929,.875),cloud);gl_FragColor=vec4(cream,density);}`,
+      void main(){vec2 center=mix(vec2(.41,.56),vec2(.5,.57),uReel);vec2 p=(vUv-center)*vec2(uAspect,1.);float cloud=fbm(p*4.+vec2(uTime*.013,-uTime*.009));float radial=length(p*vec2(.82,1.12));float fog=smoothstep(.16,.78,radial+(cloud-.5)*.15);float textFog=(1.-smoothstep(.30,.57,vUv.y))*mix(smoothstep(.55,.88,vUv.x),1.-smoothstep(.33,.58,vUv.x),uReel);if(uAspect<1.)textFog=1.-smoothstep(.38,.58,vUv.y);float density=max(fog*.985,textFog*.995);density=mix(density,.80+fog*.18,uBackdrop)*uZoom;vec3 cream=mix(vec3(.938,.902,.835),vec3(.961,.929,.875),cloud);gl_FragColor=vec4(cream,density);}`,
       transparent: true, depthWrite: false, depthTest: false,
     });
     this.fogScene.add(new T.Mesh(new T.PlaneGeometry(2, 2), this.fogMaterial));
@@ -314,26 +344,43 @@ export class CameraRecording {
     const reel = blend(this.progress, 2.05, 2.95);
     this.zoom = zoom;
     this.reel = reel;
+    const cutaway=blend(reel,.04,.62);
+    const transparent=cutaway>0;
+    if(this.shellMaterial.transparent!==transparent){this.shellMaterial.needsUpdate=true;this.trimMaterial.needsUpdate=true;}
+    this.model.traverse(object=>{if(object.isMesh&&(object.material===this.shellMaterial||object.material===this.trimMaterial))object.castShadow=!transparent;});
+    this.shellMaterial.transparent=cutaway>0;
+    this.shellMaterial.depthWrite=cutaway===0;
+    this.shellMaterial.opacity=1-cutaway*.985;
+    this.trimMaterial.transparent=cutaway>0;this.trimMaterial.depthWrite=cutaway===0;this.trimMaterial.opacity=1-cutaway*.985;
+    this.town.canvas.dataset.internalCassette=String(this.cassetteFits);
+    this.town.canvas.dataset.cassetteScale=this.transportScale.toFixed(2);
+    this.town.canvas.dataset.cutaway=cutaway.toFixed(3);
     this.head.lookAt(new T.Vector3(0, .8, 0));
     this.head.updateWorldMatrix(true, true);
+    this.detailLight.visible=zoom>.015;
+    this.detailLight.position.copy(this.model.localToWorld(new T.Vector3(2,3,3)));
+    this.detailLight.target.position.copy(this.model.localToWorld(new T.Vector3(0,0,-.2)));
+    const extent=T.MathUtils.lerp(.9,.14,reel);
+    Object.assign(this.detailLight.shadow.camera,{left:-extent,right:extent,top:extent,bottom:-extent});this.detailLight.shadow.camera.updateProjectionMatrix();
     const phone = width < 760;
     const base = new T.Vector3(12, 7.8, 12);
     const baseTarget = new T.Vector3(0, 1.65, 0);
-    const close = new T.Vector3(phone ? 2.9 : 2.25, phone ? 1.5 : 1.1, phone ? 3.8 : 2.7);
-    const closeTarget = new T.Vector3(0, .42, -.06);
-    const reelView = this.deckCenter.clone().add(new T.Vector3(0, phone ? 1.65 : .95, phone ? 2.5 : 1.3));
+    const close = new T.Vector3(phone ? 1.9 : 1.5, phone ? 1.05 : .75, phone ? 2.8 : 2.1);
+    const closeTarget = new T.Vector3(0, .02, -.06);
+    const reelView = this.transport.localToWorld(new T.Vector3(0, phone ? 1.65 : .95, phone ? 2.5 : 1.3));
     const world = p => this.model.localToWorld(p);
-    world(close); world(closeTarget); world(reelView);
-    const filmTarget = world(this.deckCenter.clone().add(new T.Vector3(0, phone ? .07 : .23, 0)));
+    world(close); world(closeTarget);
+    const filmTarget = this.transport.localToWorld(new T.Vector3(0, phone ? .07 : .23, 0));
     const travel = base.clone().lerp(close, zoom);
     travel.y += Math.sin(zoom * Math.PI) * 1.0;
     const target = baseTarget.lerp(closeTarget, zoom);
     camera.position.copy(travel.lerp(reelView, reel));
-    camera.up.set(0, 1, 0).lerp(new T.Vector3(0, 1, 0).transformDirection(this.model.matrixWorld), reel).normalize();
+    camera.up.set(0, 1, 0).lerp(new T.Vector3(0, 1, 0).transformDirection(this.transport.matrixWorld), reel).normalize();
     camera.lookAt(target.lerp(filmTarget, reel));
     camera.rotateZ(reel * Math.PI / 6);
     camera.fov = T.MathUtils.lerp(T.MathUtils.lerp(phone ? 65 : 58, phone ? 52 : 38, zoom), phone ? 65 : 33, reel);
     camera.setViewOffset(width, height, width * T.MathUtils.lerp(.08, 0, reel) * zoom, height * (phone ? .18 : T.MathUtils.lerp(.05, 0, reel)) * zoom, width, height);
+    camera.near=T.MathUtils.lerp(.1,.015,reel);
     camera.updateProjectionMatrix();
     camera.layers.enable(1);
     camera.updateMatrixWorld();
@@ -341,6 +388,7 @@ export class CameraRecording {
     this.reels.forEach(spool => spool.rotation.z = -travelDistance / this.radius);
     this.filmTexture.offset.x = -(travelDistance / this.beltLength) % 1;
     this.recordLED.material.color.set('#bed7a5');
+    this.packetCurve.v0.copy(world(new T.Vector3(0,.18,-.7)));
     this.packets.forEach((packet, i) => {
       const t = (time * .14 + i / this.packets.length) % 1;
       packet.position.copy(this.packetCurve.getPoint(t));
@@ -352,8 +400,8 @@ export class CameraRecording {
     this.fogMaterial.uniforms.uTime.value = time;
     this.fogMaterial.uniforms.uAspect.value = width / height;
     this.tick = time;
-    const left = world(this.deckCenter.clone().add(new T.Vector3(-this.halfSpan, this.radius, 0))).project(camera);
-    const right = world(this.deckCenter.clone().add(new T.Vector3(this.halfSpan, this.radius, 0))).project(camera);
+    const left = this.transport.localToWorld(new T.Vector3(-this.halfSpan, this.radius, 0)).project(camera);
+    const right = this.transport.localToWorld(new T.Vector3(this.halfSpan, this.radius, 0)).project(camera);
     this.town.canvas.dataset.projectedFilmAngle = (Math.atan2(-(right.y-left.y)*height,(right.x-left.x)*width)*180/Math.PI).toFixed(2);
     this.town.canvas.dataset.selectedCamera = '4';
     this.town.canvas.dataset.reelRoll = (reel * 30).toFixed(2);
@@ -414,7 +462,7 @@ export class CameraRecording {
     renderer.clearDepth();
     camera.layers.set(1);
     const shadowUpdate = renderer.shadowMap.autoUpdate;
-    renderer.shadowMap.autoUpdate = false;
+    renderer.shadowMap.autoUpdate = true;
     renderer.render(scene, camera);
     renderer.shadowMap.autoUpdate = shadowUpdate;
     this.fogMaterial.uniforms.uBackdrop.value = 0;
@@ -426,7 +474,11 @@ export class CameraRecording {
 
   dispose() {
     this.captureTarget.dispose();
+    this.detailLight.shadow.map?.dispose();
     this.environment.dispose();
+    this.shellMaterial.dispose();
+    this.trimMaterial.dispose();
+    this.opticalGlass.dispose();
     this.filmTexture.dispose();
     this.fogScene.children[0].geometry.dispose();
     this.fogMaterial.dispose();
