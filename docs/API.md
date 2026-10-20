@@ -347,6 +347,10 @@ One Python inference slot is shared by search, interpretation and preparation. D
 
 Worker `/health` includes `background_indexing` and `scheduler` with `active`, `interactive_waiting`, `background_waiting`, `interactive_limit`, `interactive_burst` and policy. Metadata progress/cancellation bypass the inference gate. This local scheduler remains available with cross-process coordination disabled. See [package 4 validation, limitations and rollback](GENERAL_VIDEO_PACKAGE_4.md).
 
+### Optional grouped decoding
+
+Worker decoding can independently select `--decode-policy grouped-select-v1` (default `single-seek-v1`). `/health.decode_policy` and search `retrieval_provenance.work_cache.decode_policy` disclose the choice. Work counters add `grouped_calls` and `grouped_fallbacks`; `ffmpeg_calls` counts both attempted groups and any independent fallback. The bounded candidate preserves existing transforms, output ordering, rounded millisecond PTS, sparse-frame warnings and cache keys. Its scope and pixel/timestamp validation are documented in [package 6](GENERAL_VIDEO_PACKAGE_6.md). Decoder choice does not enable cross-process coordination.
+
 ### Optional cross-process model residency
 
 Set `VISN_RESOURCE_DIR` to the same absolute local directory in Rust and all participating Python workers. The default is unset. A bounded FIFO file-lock queue admits one resident process group; warm weights can stay loaded until a waiter appears. An owner must finish its current unit and unload before releasing the lock. Persistent detector tracker sessions survive weight reloads. Isolated detector children inherit ownership until exit. This does not set a hard memory-byte ceiling, manage unrelated applications or change model precision/sampling.

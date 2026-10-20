@@ -12,6 +12,8 @@ Update: [Milestone B, package 4](GENERAL_VIDEO_PACKAGE_4.md) implements durable 
 
 Update, 19 October 2026: [package 5](GENERAL_VIDEO_PACKAGE_5.md) adds opt-in cross-process residency ownership, unload-before-handoff, dedicated native-v1 external-model recovery and retained-file mixed-load validation. This bounds participating resident owners, not total bytes or uncoordinated applications. Keep it off by default: generic acceptance, live gap/reconnect coverage, actual external-server runtime qualification and production capacity remain open. Next engineering package is P2 grouped decoding, with exact RGB/PTS comparison before promotion; automatic post-recording submission remains deferred.
 
+Update, 20 October 2026: [package 6](GENERAL_VIDEO_PACKAGE_6.md) implements the first P2 increment: bounded grouped FFmpeg selection behind `--decode-policy grouped-select-v1`, independent-seek fallback, source-mutation checks and pixel/timestamp/real-workflow validation. Independent seeks remain default. High-resolution detail sharing, broader source acceptance and actual inference microbatching remain separate work; this package does not declare all of Milestone C complete.
+
 ## 1. Objective and scope
 
 Build a general video evidence and understanding system that improves usefulness, latency, throughput and resource use without sacrificing accuracy or numerical precision to save compute. Highway footage is a high-activity stress case, not the product's domain or the source of universal assumptions.

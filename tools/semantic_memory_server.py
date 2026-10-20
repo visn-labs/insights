@@ -21,6 +21,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from workflow_telemetry import CURRENT, WorkflowTrace, measured, stage
 from workflow_indexing import AdmissionGate, IndexJobs, QueueFull
 from workflow_resources import Residency, ResourceBusy, ManagedLMStudio, trim_allocator
+from grouped_decode import decode_group, eligible
 
 LOG = logging.getLogger("visn.retrieval")
 ROOT = Path(__file__).resolve().parents[1]
@@ -155,13 +156,16 @@ class Retrieval:
         self.vector_policy = getattr(args, 'vector_policy', VECTOR_POLICIES[0])
         if self.vector_policy not in VECTOR_POLICIES:
             raise ValueError('Unknown vector policy')
+        self.decode_policy = getattr(args, 'decode_policy', 'single-seek-v1')
+        if self.decode_policy not in ('single-seek-v1', 'grouped-select-v1'):
+            raise ValueError('Unknown decode policy')
         self.hashes = OrderedDict()
         self.interpreter = None
         self.decode_cache = OrderedDict()
         self.decode_cache_bytes = 0
         self.query_cache = OrderedDict()
         self.rerank_cache = OrderedDict()
-        self.work_stats = dict(decode_hits=0, ffmpeg_calls=0, decode_evictions=0, query_hits=0, query_calls=0, rerank_hits=0, rerank_calls=0)
+        self.work_stats = dict(decode_hits=0, ffmpeg_calls=0, decode_evictions=0, grouped_calls=0, grouped_fallbacks=0, query_hits=0, query_calls=0, rerank_hits=0, rerank_calls=0)
         database = 'semantic-v1.sqlite3' if self.vector_policy == VECTOR_POLICIES[0] else 'semantic-canonical-v2.sqlite3'
         self.db = sqlite3.connect(self.root / database, check_same_thread=False)
         self.db.execute("CREATE TABLE IF NOT EXISTS vectors (key TEXT PRIMARY KEY, version TEXT NOT NULL, vector TEXT NOT NULL)")
@@ -252,19 +256,56 @@ class Retrieval:
         import imageio_ffmpeg
         from PIL import Image
         path, source_sha = self.source(event)
+        source_identity = self.hashes[str(path)][0]
         count = count or self.args.frames
         size = size or self.args.frame_size
         frames = []
         decoded_times = []
         scale = f"scale='min(iw,{size})':'min(ih,{size})':force_original_aspect_ratio=decrease" if no_upscale else f"scale={size}:{size}:force_original_aspect_ratio=decrease"
+        targets = sample_timestamps if sample_timestamps is not None else [event["start_ms"] + (i+.5)/count*(event["end_ms"]-event["start_ms"]) for i in range(count)]
+        seeks = [max(event['start_ms'], target-.5) if sample_timestamps is not None else target for target in targets]
+        enabled = not getattr(self.args,'disable_work_caches',False)
+        def cache_key(timestamp):
+            return (source_sha,event['start_ms'],event['end_ms'],f"{timestamp/1000:.6f}",size,no_upscale)
+        def unchanged():
+            if self.source(event) != (path, source_sha) or self.hashes[str(path)][0] != source_identity:
+                raise ValueError('Evidence changed during frame sampling')
+        prepared = {}
+        if self.decode_policy == 'grouped-select-v1':
+            missing = sorted({f'{t/1000:.6f}' for t in seeks if not enabled or cache_key(t) not in self.decode_cache}, key=float)
+            if missing and eligible([float(t)*1000 for t in missing],event['end_ms'],size):
+                self.work_stats['ffmpeg_calls'] += 1
+                self.work_stats['grouped_calls'] += 1
+                try:
+                    with stage('ffmpeg_grouped_process'):
+                        prepared = decode_group(imageio_ffmpeg.get_ffmpeg_exe(),path,missing,event['end_ms'],scale)
+                except (ValueError,subprocess.CalledProcessError,subprocess.TimeoutExpired) as error:
+                    self.work_stats['grouped_fallbacks'] += 1
+                    LOG.warning('Grouped decode retained independent seeks: %s',error)
+                unchanged()
         @measured('decode_seek')
         def decode(timestamp):
-            cache_key = (source_sha,event['start_ms'],event['end_ms'],f"{timestamp/1000:.6f}",size,no_upscale)
-            enabled = not getattr(self.args,'disable_work_caches',False)
-            if enabled and cache_key in self.decode_cache:
+            key = cache_key(timestamp)
+            if enabled and key in self.decode_cache:
                 self.work_stats['decode_hits'] += 1
-                self.decode_cache.move_to_end(cache_key)
-                return self.decode_cache[cache_key]
+                self.decode_cache.move_to_end(key)
+                return self.decode_cache[key]
+            if key[3] in prepared:
+                value = prepared[key[3]]
+            else:
+                value = independent(timestamp)
+            unchanged()
+            if value[0] and (value[1] is None or not event['start_ms'] <= value[1] < event['end_ms']):
+                raise ValueError('Decoded image has no in-window PTS')
+            if enabled and len(value[0]) <= DECODE_CACHE_MAX_BYTES:
+                self.decode_cache[key] = value
+                self.decode_cache_bytes += len(value[0])
+                while self.decode_cache_bytes > DECODE_CACHE_MAX_BYTES or len(self.decode_cache) > DECODE_CACHE_MAX_ENTRIES:
+                    _, evicted = self.decode_cache.popitem(last=False)
+                    self.decode_cache_bytes -= len(evicted[0])
+                    self.work_stats['decode_evictions'] += 1
+            return value
+        def independent(timestamp):
             self.work_stats['ffmpeg_calls'] += 1
             # Keep every decoded image inside [start,end). An empty late seek
             # means sparse PTS, not necessarily missing evidence for the interval.
@@ -282,18 +323,8 @@ class Retrieval:
             actual = round(float(matches[0])*1000) if matches else None
             if result.stdout and (actual is None or not event['start_ms'] <= actual < event['end_ms']):
                 raise ValueError('Decoded image has no in-window PTS')
-            value = (result.stdout, actual)
-            if enabled and len(result.stdout) <= DECODE_CACHE_MAX_BYTES:
-                self.decode_cache[cache_key] = value
-                self.decode_cache_bytes += len(result.stdout)
-                while self.decode_cache_bytes > DECODE_CACHE_MAX_BYTES or len(self.decode_cache) > DECODE_CACHE_MAX_ENTRIES:
-                    _, evicted = self.decode_cache.popitem(last=False)
-                    self.decode_cache_bytes -= len(evicted[0])
-                    self.work_stats['decode_evictions'] += 1
-            return value
-        targets = sample_timestamps if sample_timestamps is not None else [event["start_ms"] + (i+.5)/count*(event["end_ms"]-event["start_ms"]) for i in range(count)]
-        for target in targets:
-            timestamp = max(event['start_ms'],target-.5) if sample_timestamps is not None else target
+            return result.stdout, actual
+        for timestamp in seeks:
             raw, actual = decode(timestamp)
             if not raw:
                 if frames:
@@ -306,6 +337,7 @@ class Retrieval:
             with Image.open(io.BytesIO(raw)) as image:
                 frames.append(image.convert("RGB"))
                 decoded_times.append(actual)
+        unchanged()
         return (frames, decoded_times) if with_timestamps else frames
 
     @measured('clip_embedding')
@@ -454,6 +486,7 @@ class Retrieval:
                     "elapsed_secs": round(time.monotonic()-started, 3),
                     "vector_policy": self.vector_policy,
                     "work_cache":dict(enabled=not getattr(self.args,'disable_work_caches',False),
+                        decode_policy=self.decode_policy,
                         counters={k:self.work_stats[k]-initial_stats[k] for k in self.work_stats},decode_bytes=self.decode_cache_bytes,
                         decode_entries=len(self.decode_cache),query_entries=len(self.query_cache),rerank_entries=len(self.rerank_cache))}}
 
@@ -478,7 +511,7 @@ def handler_for(service):
             if parsed.path == '/health':
                 return self.reply(200, {"status": "ready", "models_loaded": service.models is not None,
                         "telemetry_enabled": not getattr(service.args,'disable_telemetry',True),
-                        'scheduler': service.lock.snapshot(), 'background_indexing': service.indexer is not None, 'resources':service.resources.snapshot()})
+                        'scheduler': service.lock.snapshot(), 'background_indexing': service.indexer is not None, 'resources':service.resources.snapshot(), 'decode_policy':service.decode_policy})
             if service.indexer and parsed.path == '/index-jobs':
                 scope = parse_qs(parsed.query).get('scope_id', [''])[0]
                 return self.reply(200, {'jobs': service.indexer.list(scope), 'scheduler':service.lock.snapshot(), 'resources':service.resources.snapshot()})
@@ -563,6 +596,7 @@ def main():
     telemetry.add_argument('--disable-telemetry', dest='disable_telemetry', action='store_true', help='Explicitly disable diagnostics for controlled comparison (default)')
     parser.set_defaults(disable_telemetry=os.environ.get('VISN_WORKFLOW_TELEMETRY','').lower() not in ('1','true'))
     parser.add_argument('--vector-policy', choices=VECTOR_POLICIES, default=VECTOR_POLICIES[0], help='Versioned embedding numerical contract; canonical uses an isolated database')
+    parser.add_argument('--decode-policy', choices=('single-seek-v1','grouped-select-v1'), default='single-seek-v1', help='Independent seeks (default) or bounded experimental grouped FFmpeg selection')
     parser.add_argument("--disable-work-caches", action="store_true", help="Disable bounded lossless decode/query/rerank work caches for controlled validation")
     parser.add_argument("--keep-models-loaded", action="store_true", help="Keep both models in memory instead of switching between them")
     parser.add_argument("--interpretation-model", default="Qwen/Qwen3-VL-2B-Instruct")
