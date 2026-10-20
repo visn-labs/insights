@@ -1,5 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
 import {walkingRoute,walkingTravel,poseWalking} from './assets/walking.js';
+import {CameraRecording} from './assets/camera-recording.js';
 
 // One locally rendered world. Distances are metres; motion uses elapsed seconds.
 const C = { paper: 0xf5eddf, plaster: 0xe3caa1, light: 0xf7e5bf, timber: 0x654732, roof: 0x75523f, brick: 0x9c7054, dark: 0x3e332c, glass: 0x71887d, stone: 0xc2a889, brass: 0xac8853, green: 0x567566, signal: 0xd7f4bf };
@@ -63,6 +64,7 @@ export class TownScene {
     this.batchAnimatedMeshes();
     this.buildNetwork();
     this.buildAtmosphere();
+    this.recording = new CameraRecording(this);
     this.resize();
     this.update(0);
   }
@@ -920,6 +922,10 @@ export class TownScene {
     this.rect=rect;
     if(!this.running || this.paused) this.update(0);
   }
+  setRecordingProgress(progress) {
+    this.recording.setProgress(progress);
+    if (!this.running || this.paused) this.update(0);
+  }
   setStage(stage) {
     this.storyOffset=stage*6+.4-this.time%18;
     this.stage=stage;this.onStage(stage);this.update(0);
@@ -947,6 +953,7 @@ export class TownScene {
     this.camera.position.set(12+this.smoothPointer.x*.28,7.8+this.smoothPointer.y*.15,12-this.smoothPointer.x*.28);
     this.camera.lookAt(0,1.65,0);
     this.camera.updateMatrixWorld();
+    this.recording.pose(this.camera, this.width, this.height, t);
     for(const actor of this.actors) {
       if(actor.route) {
         let path=actor.route,distance,speed,turn=null;
@@ -1013,7 +1020,7 @@ export class TownScene {
       const actor=this.actors[24+i];
       const target=actor.mesh.position.clone();target.y+=.9;
       // Each head and frustum follow the same actor used by its track box.
-      const vector=target.clone().sub(cam.origin);cam.head.rotation.y=Math.atan2(vector.x,vector.z);cam.head.rotation.x=-Math.atan2(vector.y,Math.hypot(vector.x,vector.z));
+      const vector=target.clone().sub(cam.origin);if(i!==3){cam.head.rotation.y=Math.atan2(vector.x,vector.z);cam.head.rotation.x=-Math.atan2(vector.y,Math.hypot(vector.x,vector.z));}
       const center=target.clone();center.y=.12;
       const p=cam.cone.geometry.attributes.position;
       p.setXYZ(0,cam.origin.x,cam.origin.y,cam.origin.z);
@@ -1025,11 +1032,12 @@ export class TownScene {
       cam.led.scale.setScalar(.015*(1+Math.exp(-capturePulse*8)*.6));
       cam.targetBox.position.copy(target);cam.targetBox.material.opacity=.18+this.captureWeight*.27;
       const cp=cam.capture.geometry.attributes.position;cp.setXYZ(0,cam.origin.x,cam.origin.y,cam.origin.z);cp.setXYZ(1,target.x,target.y,target.z);cp.needsUpdate=true;cam.capture.geometry.computeBoundingSphere();cam.capture.material.opacity=.1+this.captureWeight*.2;
-      cam.path.material.opacity=.33-this.captureWeight*.21;
+      cam.path.material.opacity=(.33-this.captureWeight*.21)*(1-this.recording.zoom*.9);
+      for(const item of [cam.cone,cam.ring,cam.targetBox,cam.capture])item.visible=this.recording.zoom<.2;
       cam.packets.forEach((packet,j)=>{
         const u=(t*.115+j/10+i*.067)%1;
         cam.curve.getPoint(u,point);packet.position.copy(point);
-        packet.material.opacity=Math.min(1,u*12)*(1-THREE.MathUtils.smoothstep(u,.68,1))*(1-this.captureWeight*.35);
+        packet.material.opacity=Math.min(1,u*12)*(1-THREE.MathUtils.smoothstep(u,.68,1))*(1-this.captureWeight*.35)*(1-this.recording.zoom*.95);
         packet.scale.setScalar((1-u*.55)*(j%3===0?1.6:1));packet.rotation.y=t*1.2+j;
       });
       point.copy(cam.origin).add(new THREE.Vector3(0,.5,0)).project(this.camera);
@@ -1037,7 +1045,7 @@ export class TownScene {
       const px=(point.x*.5+.5)*this.width+canvasRect.left-stageRect.left;
       const py=(-point.y*.5+.5)*this.height+canvasRect.top-stageRect.top;
       cam.label.style.transform=`translate(${px.toFixed(1)}px,${py.toFixed(1)}px) translate(-50%,-100%)`;
-      cam.label.hidden=point.z>1||point.z< -1||px<0||px>stageRect.width||py<100||py>stageRect.height-65;
+      cam.label.hidden=this.recording.zoom>.12||point.z>1||point.z< -1||px<0||px>stageRect.width||py<100||py>stageRect.height-65;
       cam.label.classList.toggle('active',i===Math.floor(t/4)%4);
     });
     this.smoke.forEach(({mesh,source,offset})=>{
@@ -1052,10 +1060,12 @@ export class TownScene {
       batch.sources.forEach((source,i)=>batch.mesh.setMatrixAt(i,source.matrixWorld));
       batch.mesh.instanceMatrix.needsUpdate=true;
     }
-    this.renderer.render(this.scene,this.camera);
+    this.recording.capture(t);
+    this.recording.render(this.renderer,this.scene,this.camera);
   }
   dispose() {
     this.stop();
+    this.recording.dispose();
     const geometries=new Set(),materials=new Set(),textures=new Set();
     this.scene.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);if(obj.material)for(const mat of (Array.isArray(obj.material)?obj.material:[obj.material]))materials.add(mat);});
     materials.forEach(mat=>{if(mat.map)textures.add(mat.map);mat.dispose();});textures.forEach(tex=>tex.dispose());geometries.forEach(geo=>geo.dispose());this.ramp.dispose();this.renderer.dispose();this.labels.replaceChildren();

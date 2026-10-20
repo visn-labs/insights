@@ -1,0 +1,49 @@
+/* The street, camera and film are three views of one world and one canvas. */
+.camera-film-experience { position: relative; isolation: isolate; background: #f5eddf; }
+.cinema-sticky { position: sticky; top: 0; height: 100svh; margin-bottom: -100svh; overflow: hidden; pointer-events: none; }
+#camera-film-experience .town-stage { position: absolute; inset: 0; opacity: 1; min-height: 0; background: #f5eddf; }
+#camera-film-experience .town-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#camera-film-experience .town-poster { width: 100%; height: 100%; object-fit: cover; }
+#camera-film-experience .hero-wash { z-index: 1; opacity: calc(1 - var(--camera-zoom, 0)); background: linear-gradient(90deg,#f5eddf 0%,#f5eddfed 20%,#f5eddf70 45%,transparent 70%),linear-gradient(0deg,#f5eddf,transparent 18%); }
+#camera-film-experience .landing-hero { height: 100svh; min-height: 760px; max-height: none; overflow: visible; padding: 80px 6vw 140px; background: transparent; pointer-events: none; }
+#camera-film-experience .intro-copy { width: 55%; pointer-events: auto; }
+#camera-film-experience .hero-caption,#camera-film-experience .hero-scroll { pointer-events: auto; }
+#camera-film-experience .intro-copy h1 { font-size: clamp(60px,6.8vw,108px); }
+#camera-film-experience .intro-copy .folio { font: 16px Georgia,serif; text-transform: none; letter-spacing: 0; }
+.recording-story { position: relative; z-index: 2; pointer-events: none; }
+.recording-nav { position: sticky; top: 24px; height: 48px; margin: 0 6vw -48px; display: flex; gap: 24px; width: fit-content; z-index: 5; pointer-events: auto; }
+.recording-nav button { display: flex; align-items: center; gap: 9px; color: #68533e; background: #f5eddfd9; border: 0; border-bottom: 1px solid transparent; font-size: 12px; padding: 6px 12px; border-radius: 3px; }
+.recording-nav button[aria-current] { border-bottom-color: #35634d; color: #264c39; }
+.recording-nav button:hover { background: #e5dcc9; }
+.recording-chapter { box-sizing: border-box; min-height: 150svh; position: relative; padding: 58svh 6vw 14svh; }
+.camera-story-copy { position: sticky; top: 58svh; width: min(350px,29vw); margin-left: auto; color: #493327; pointer-events: auto; }
+.camera-story-copy h2 { font: 400 clamp(34px,3.3vw,50px)/1.04 Georgia,serif; letter-spacing: -.045em; margin: 13px 0 20px; }
+.camera-story-copy p { font-size: 15px; line-height: 1.65; margin: 0 0 15px; color: #5b4b3b; }
+.camera-story-copy .recording-index { font: 13px Georgia,serif; color: #35634d; }
+.camera-story-copy .recording-note { font-size: 11px; line-height: 1.55; max-width: 320px; color: #6b5948; }
+.camera-story-copy .text-button,.camera-story-copy .text-link { font-size: 13px; }
+.reel-chapter .camera-story-copy { margin-left: 0; margin-right: auto; width: min(390px,33vw); }
+.recording-fallback { position: absolute; inset: 0; display: none; }
+.recording-fallback picture { position: absolute; inset: 0; opacity: 0; }
+.recording-fallback img { width: 100%; height: 100%; object-fit: cover; }
+#town-intro:not([data-state=ready]) .recording-fallback { display: block; }
+#camera-film-experience[data-phase=camera] .camera-still { opacity: 1; }
+#camera-film-experience[data-phase=reel] .reel-still { opacity: 1; }
+#camera-film-experience[data-phase=street] .recording-nav { visibility: hidden; }
+@media(max-width:760px) {
+  #camera-film-experience .landing-hero { min-height: 100svh; padding: 50px 24px 100px; display: block; }
+  #camera-film-experience .intro-copy { width: 100%; }
+  #camera-film-experience .intro-copy h1 { font-size: clamp(52px,13vw,74px); }
+  #camera-film-experience .intro-description { max-width: 310px; font-size: 14px; }
+  #camera-film-experience .hero-wash { background: linear-gradient(180deg,#f5eddf 0%,#f5eddfed 25%,#f5eddf80 45%,transparent 70%,#f5eddf 100%); }
+  #camera-film-experience .hero-caption { left: 24px; right: 24px; bottom: 92px; }
+  .recording-nav { margin-left: 20px; gap: 8px; top: 14px; }
+  .recording-chapter { min-height: 150svh; padding: 61svh 24px 12svh; }
+  .camera-story-copy,.reel-chapter .camera-story-copy { top: 61svh; width: min(310px,86vw); margin-left: auto; margin-right: 0; }
+  .reel-chapter .camera-story-copy { margin-left: 0; margin-right: auto; }
+  .camera-story-copy h2 { font-size: 31px; margin: 10px 0 13px; }
+  .camera-story-copy p { font-size: 13px; line-height: 1.55; margin-bottom: 11px; }
+  .camera-story-copy .recording-note { font-size: 10px; }
+  .camera-story-copy .recording-index { font-size: 12px; }
+}
+@media(prefers-reduced-motion:reduce) { .recording-nav button { transition: none; } }

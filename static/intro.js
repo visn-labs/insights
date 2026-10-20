@@ -1,129 +1,61 @@
 import {renderContributor} from './assets/contributor.js';
 import {mountJourney} from './assets/journey.js';
-const root = document.querySelector('#town-intro');
-const canvas = document.querySelector('#town-canvas');
-const app = document.querySelector('.app-shell');
-const replay = document.querySelector('#replay-intro');
-const motion = document.querySelector('#intro-motion');
-const status = document.querySelector('#intro-status');
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const stories = [
-  ['It starts with your perspective.', 'Your camera sees a small part of the world. You choose the moment to contribute.', 'YOUR VIEW'],
-  ['Everyday moments. Useful answers.', 'Your footage can help answer questions about activity, arrivals and how places are used.', 'KNOWLEDGE'],
-  ['Knowledge creates shared value.', 'People pay for insights. Our aim is to reward the contributors who help make those answers possible.', 'SHARED VALUE'],
-];
-let scene, dismissed = false, userPaused = reducedMotion.matches;
-let initPromise;
-
-function showStory(index) {
-  document.querySelectorAll('.story-tab').forEach(button => {
-    const active = Number(button.dataset.story) === index;
-    button.classList.toggle('active', active);
-    button.setAttribute('aria-pressed', String(active));
-  });
-  document.querySelector('#signal-title').textContent = stories[index][0];
-  document.querySelector('#signal-description').textContent = stories[index][1];
-  document.querySelector('#signal-state').textContent = stories[index][2];
-  document.querySelector('#signal-source').textContent = index === 0 ? 'CAM 01–04' : 'CONTEXT';
-  document.querySelector('#signal-destination').textContent = index === 2 ? 'INSIGHT' : 'VISN';
+import {motion} from './assets/motion.js';
+const root=document.querySelector('#town-intro'),canvas=document.querySelector('#town-canvas'),app=document.querySelector('.app-shell');
+const shell=document.querySelector('#contributor-shell'),status=document.querySelector('#intro-status');
+const journey=mountJourney();
+let scene,pending,landing=true,heroVisible=true,lastRoute,streetRequested=false;
+const phone=matchMedia('(max-width:760px)'),streetPlay=document.querySelector('#street-play');
+streetPlay.addEventListener('click',()=>{streetRequested=true;syncScene();});
+function syncScene(){
+  streetPlay.hidden=!phone.matches||streetRequested||!motion.enabled;
+  const play=landing&&heroVisible&&motion.enabled&&(!phone.matches||streetRequested||journey.progress>.05);root.dataset.townActive=String(play);
+  if(!scene){if(play)initialize();return;}
+  scene.reduced=!motion.enabled;scene.paused=!play;if(play)scene.start();else scene.stop();
 }
-function motionLabel() {
-  motion.setAttribute('aria-pressed', String(userPaused));
-  motion.setAttribute('aria-label', userPaused ? 'Play scene animation' : 'Pause scene animation');
-  motion.innerHTML = userPaused ? 'Play motion <span aria-hidden="true">▶</span>' : 'Pause motion <span aria-hidden="true">Ⅱ</span>';
-  if (scene) status.textContent = userPaused ? 'A quiet moment · Animation paused' : 'A living illustration · Move your pointer to explore';
+async function initialize(){
+  if(scene||pending||!motion.enabled)return;
+  pending=(async()=>{
+    try{
+      const {TownScene}=await import('./engine.js');
+      if(!landing||!motion.enabled||(phone.matches&&!streetRequested&&journey.progress<=.05))return;
+      scene=new TownScene(canvas,document.querySelector('#camera-labels'),()=>{});
+      scene.setRecordingProgress(journey.progress);scene.resize();scene.update(0);root.dataset.state='ready';syncScene();
+    }catch(error){root.dataset.state='poster';status.textContent='A still illustration. The whole contribution story is available.';}
+    finally{pending=null;}
+  })();return pending;
 }
-function enter(){location.hash='/workspace';}
-function route() {
-  const page=location.hash.replace(/^#\/?/,'').split('?')[0];
-  const contributor=['home','contribute','rewards'].includes(page),workspace=page==='workspace';
-  dismissed=contributor||workspace;
-  document.querySelector('#contribution-preview').pause();
-  root.hidden=dismissed;app.hidden=!workspace;app.inert=!workspace;
-  if(!dismissed)root.scrollTo({top:0,behavior:'instant'});
-  document.querySelector('#contributor-shell').hidden=!contributor;
-  document.body.classList.toggle('landing-open',!dismissed);
-  if(dismissed)scene?.stop();else if(scene){scene.resize();if(heroVisible)scene.start();}else initialize();
-  if(contributor)renderContributor(page);
-  document.title=contributor?({home:'Visn — Contributor home',contribute:'Visn — Your first contribution',rewards:'Visn — How shared value works'}[page]):workspace?'Visn — Analysis workspace':'Visn — Your view. Shared value.';
-  window.scrollTo(0,0);
-  const target=contributor?document.querySelector({home:'#contributor-home-title',contribute:'#onboarding-title',rewards:'#rewards-title'}[page]):workspace?document.querySelector('#page-title'):document.querySelector('#intro-enter');
-  if(target.tagName==='H1')target.setAttribute('tabindex','-1');target.focus({preventScroll:true});
+function route(force=false){
+  const raw=location.hash.replace(/^#\/?/,''),[path]=raw.split('?');
+  if(force!==true&&lastRoute===raw)return;const initial=lastRoute===undefined;lastRoute=raw;
+  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
+  const contributor=['home','contribute','rewards'].includes(path),workspace=path==='workspace',known=contributor||workspace||path==='';
+  landing=path==='';root.hidden=!landing;shell.hidden=landing||workspace;app.hidden=!workspace;app.inert=!workspace;
+  document.body.classList.toggle('landing-open',landing);document.querySelector('#contribution-preview').pause();
+  if(contributor||!known)renderContributor(known?path:'not-found',new URLSearchParams(raw.split('?')[1]||''));
+  const titles={home:'Your local drafts',contribute:'Prepare a local draft',rewards:'Programme status',workspace:'Analysis workspace','not-found':'Outside the frame'};
+  document.title=landing?'Visn | Your corner. A clearer picture.':`Visn | ${titles[known?path:'not-found']}`;
+  document.querySelector('meta[name="description"]').content=landing?'Follow a sample contribution, then prepare a local draft. Your recording stays on your device.':workspace?'Visn local video evidence and analysis workspace.':path==='home'?'Review, edit and delete local draft metadata. No video is stored with your drafts.':path==='rewards'?'What is available now and what is planned for the Visn contributor programme.':'Prepare camera context, choose a recording, select an interval and save local draft details.';
+  window.scrollTo({top:0,behavior:'instant'});syncScene();
+  const target=landing?document.querySelector('#intro-title'):workspace?document.querySelector('#page-title'):document.querySelector({home:'#contributor-home-title',contribute:'#onboarding-title',rewards:'#rewards-title'}[path]||'#not-found-title');
+  if(!initial){target.tabIndex=-1;target.focus({preventScroll:true});}
 }
-let heroVisible=true;
-async function initialize() {
-  if (scene || initPromise) return initPromise;
-  initPromise = (async () => {
-    try {
-      const { TownScene } = await import('./engine.js');
-      scene = new TownScene(canvas, document.querySelector('#camera-labels'), showStory);
-      scene.reduced = reducedMotion.matches;
-      showStory(scene.stage);
-      root.dataset.state = 'ready';
-      scene.paused = userPaused;
-      if (!dismissed) scene.start();
-      motionLabel();
-    } catch (error) {
-      console.error('VISN town scene:', error);
-      root.dataset.state = 'error';
-      status.textContent = '3D scene unavailable. Your workspace is ready.';
-      motion.disabled = true;
-    }
-  })();
-  return initPromise;
+function navigate(path,transition=false){
+  const update=()=>{history.pushState(null,'','#'+path);route(true);};
+  if(transition&&motion.enabled&&document.startViewTransition){const view=document.startViewTransition(update);view.finished.catch(()=>{});}else update();
 }
-document.querySelectorAll('[data-enter]').forEach(button => button.addEventListener('click', enter));
-replay.addEventListener('click',()=>{location.hash='/';});
-document.querySelector('.landing-brand').addEventListener('click', event => { event.preventDefault(); root.scrollTo({top:0,behavior:reducedMotion.matches?'auto':'smooth'});scene?.setStage(0); });
-document.querySelectorAll('[data-story]').forEach(button => button.addEventListener('click', () => {
-  const index = Number(button.dataset.story); showStory(index); scene?.setStage(index);
-}));
-document.querySelector('#intro-tour').addEventListener('click', () => {
-  journey.goTo(0);
-});
-motion.addEventListener('click', () => { userPaused = !userPaused; scene?.setPaused(userPaused); motionLabel(); });
-root.addEventListener('pointermove', event => {
-  if (!scene || reducedMotion.matches) return;
-  scene.pointer.set((event.clientX / innerWidth - .5) * 2, (event.clientY / innerHeight - .5) * 2);
-}, { passive: true });
-root.addEventListener('pointerleave', () => scene?.pointer.set(0, 0));
-window.addEventListener('hashchange',route);
-document.querySelectorAll('[data-scroll]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();if(link.dataset.scroll==='how-it-works')journey.goTo(0);else document.getElementById(link.dataset.scroll).scrollIntoView({behavior:reducedMotion.matches?'instant':'smooth'});}));
-const perspectives = {
-  shop: ['A SHOP ENTRANCE', 'When does this corner come to life?', 'Patterns of arrivals could help a local business understand its busiest hours.', [20,28,42,36,55,74,93,85,62,73,44,26]],
-  loading: ['A LOADING BAY', 'When do deliveries slow things down?', 'Patterns of vehicle arrivals could help an operator plan deliveries around quieter periods.', [28,75,94,66,32,25,47,83,72,39,26,18]],
-  forecourt: ['A FORECOURT', 'How does this space change through the day?', 'Patterns of occupancy could help a business understand when its forecourt is in greatest demand.', [15,24,55,88,73,58,42,63,92,76,48,22]],
-};
-function showPerspective(key) {
-  const [source,question,answer,bars]=perspectives[key];
-  const buttons=[...document.querySelectorAll('[data-perspective]')];
-  buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.perspective===key)));
-  document.querySelector('#perspective-source').textContent=source;
-  document.querySelector('#perspective-question').textContent=question;
-  document.querySelector('#perspective-answer').textContent=answer;
-  document.querySelector('.example-heading>span:last-child').textContent=`0${Object.keys(perspectives).indexOf(key)+1} / 03`;
-  document.querySelectorAll('.chart-bars i').forEach((bar,i)=>bar.style.setProperty('--bar-height',bars[i]+'%'));
-}
-document.querySelectorAll('[data-perspective]').forEach(button=>button.addEventListener('click',()=>showPerspective(button.dataset.perspective)));
-showPerspective('shop');
-window.addEventListener('resize', () => { if (!dismissed) scene?.resize(); });
-// Recompute label offsets when a short mobile viewport scrolls the landing.
-root.addEventListener('scroll', () => { if (!dismissed && scene) { scene.rect = canvas.getBoundingClientRect(); if (userPaused) scene.update(0); } }, { passive: true });
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) scene?.stop(); else if (!dismissed&&heroVisible) scene?.start();
-});
-reducedMotion.addEventListener('change', event => {
-  userPaused = event.matches;
-  if (scene) { scene.reduced = event.matches; scene.setPaused(userPaused); scene.update(0); if (dismissed) scene.stop(); }
-  motionLabel();
-});
-canvas.addEventListener('webglcontextlost', event => {
-  event.preventDefault(); scene?.stop(); root.dataset.state = 'error';
-  status.textContent = 'Scene interrupted. Reload to restore it, or open your workspace.';
-});
-window.addEventListener('pagehide', () => scene?.stop());
-window.addEventListener('pageshow', () => { if (!dismissed&&heroVisible) scene?.start(); });
-new IntersectionObserver(entries=>{heroVisible=entries[0].isIntersecting;if(scene){if(heroVisible&&!dismissed)scene.start();else scene.stop();}},{threshold:.05}).observe(document.querySelector('.landing-hero'));
-motionLabel();
-const journey=mountJourney(root,reducedMotion);
-route();
+window.addEventListener('visn:navigate',event=>navigate(event.detail.path,event.detail.transition));
+window.addEventListener('hashchange',()=>route());window.addEventListener('popstate',()=>route());
+document.querySelector('#replay-intro').addEventListener('click',()=>navigate('/'));
+document.querySelector('#intro-tour').addEventListener('click',()=>journey.goTo(0));
+document.querySelectorAll('[data-scroll]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();journey.goTo(0);}));
+document.querySelector('.skip-link').addEventListener('click',event=>{event.preventDefault();const target=landing?document.querySelector('#main-content'):workspace?app.querySelector('main'):shell.querySelector('main:not([hidden])');target.tabIndex=-1;target.focus();target.scrollIntoView({behavior:'instant'});});
+root.addEventListener('pointermove',event=>{if(scene&&motion.enabled&&landing&&heroVisible)scene.pointer.set((event.clientX/innerWidth-.5)*.5,(event.clientY/innerHeight-.5)*.5);},{passive:true});
+root.addEventListener('pointerleave',()=>scene?.pointer.set(0,0));
+new IntersectionObserver(entries=>{heroVisible=entries[0].isIntersecting;syncScene();},{threshold:0}).observe(document.querySelector('#camera-film-experience'));
+window.addEventListener('resize',()=>{if(landing)scene?.resize();syncScene();});
+window.addEventListener('pagehide',()=>scene?.stop());window.addEventListener('pageshow',syncScene);
+canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();scene?.stop();root.dataset.state='poster';status.textContent='A still illustration. Your choices and the story are still available.';});
+canvas.addEventListener('webglcontextrestored',()=>{if(!scene)return;scene.resize();scene.update(0);root.dataset.state='ready';syncScene();});
+window.addEventListener('visn:recording-progress',event=>{scene?.setRecordingProgress(event.detail);syncScene();});
+route();motion.subscribe(syncScene);
