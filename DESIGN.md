@@ -10,7 +10,7 @@ The original Victorian intersection remains the landing view. CAM 01 is northwes
 
 ## Scene one
 
-A close three-quarter view reveals optics, an aged painted enclosure, weather hood, fasteners, ventilation, cable and recessed optical glass. The compact recording cassette is fully enclosed, with no external projector reels. The unit sits slightly upper-left, with the first story at lower-right. Procedural cloud noise gives the fog a clear optical centre and denser perimeter. A separate background veil keeps the street visible without allowing its adjacent lamp to obstruct the macro subject. Small packets travel into that mist behind the unit.
+A close three-quarter view reveals optics, an aged painted enclosure, thin weather hood, sealed end caps, captive screws, cable and recessed optical glass. The compact recording cassette is fully enclosed, with no external projector reels. The unit sits slightly upper-left, with the first story at lower-right. Procedural cloud noise gives the fog a clear optical centre and denser perimeter. A separate background veil keeps the street visible without allowing its adjacent lamp to obstruct the macro subject. Small packets travel into that mist behind the unit.
 
 ## Scene two
 
@@ -27,3 +27,13 @@ Device-specific lens distance/FOV preserve the two subjects and keep phone text 
 ## People and actions
 
 Adult proportions, a fuller neck and jaw, narrower blinking eyes and integrated pleated clothing refine the existing figures. Standing actors shift weight with both soles planted. Readers follow a hinged page with their hand and gaze; vendors pick up, inspect and replace produce; conversational partners alternate gestures and listening nods. Carried bags attach to the hand and follow the walking phase. The existing grounded walking solver remains in use.
+
+## Temporal refinement
+
+Walking corners use segment arc-length mapping. Smooth pelvis reach constraints prevent abrupt drops when the limiting leg changes, while preserving world-space foot contacts. Action cycles use fifth-order easing and continuous head motion. Gesture with the free hand when carrying a prop. Validate movement with consecutive-frame metrics and continuous recordings, in addition to still-image composition checks.
+
+The recording housing is a continuous radiused extrusion with gaskets and a cast mounting yoke. The cutaway contains a sensor carrier, flexible circuit, processor/heatsink, capacitors, connectors and driven cassette spindles. The film remains the agreed cinematic recording metaphor.
+
+## Logo reveal motion
+
+The logo geometry, colours and final proportions remain frozen. The user subsequently requested a new motion treatment: inverse-depth light streaks converge toward the viewport centre; the same six blades assemble inward; nodes and their pathways expand outward along the aperture gaps. A native dialog provides a skippable initial reveal and explicit replay. The introduction precedes, rather than adds chapters to, the existing two-scene street story.

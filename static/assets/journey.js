@@ -1,4 +1,6 @@
 import {motion,settle} from './motion.js';
+import {recordingState} from './recording-state.js';
+import {mountLogoReveal} from './logo-reveal.js';
 const NS='http://www.w3.org/2000/svg';
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const ease=v=>{v=clamp(v);return v*v*(3-2*v);};
@@ -49,22 +51,59 @@ function poseLogo(mark,closure,hexGrowth,pathGrowth,coreScale=1){
 
 export function mountJourney(){
   const experience=document.querySelector('#camera-film-experience');
-  let progress=0;
+  const viewport=experience.querySelector('.cinema-sticky');
+  const nav=experience.querySelector('.recording-nav');
+  const wash=experience.querySelector('.hero-wash');
+  const buttons=[...experience.querySelectorAll('[data-recording-chapter]')];
+  const copies=[...experience.querySelectorAll('.camera-story-copy')];
+  const navButtons=[...nav.querySelectorAll('button')];
+  const indicator=document.createElement('span');indicator.className='recording-position';indicator.setAttribute('aria-hidden','true');nav.prepend(indicator);
+  const track=document.createElement('span');track.className='recording-track';track.setAttribute('aria-hidden','true');nav.append(track);
+  const fill=document.createElement('span');track.append(fill);
+  let progress=0,scheduled=0,top=0,height=innerHeight,lastChapter=-1,reveal;
+  function measure(){
+    if(!viewport.clientHeight)return;
+    top=experience.getBoundingClientRect().top+scrollY;
+    height=viewport.clientHeight;
+  }
   function update(){
-    const top=experience.getBoundingClientRect().top+scrollY;
-    progress=clamp((scrollY-top)/innerHeight,0,4);
-    const zoom=phase(progress,.08,.95),reel=phase(progress,2.05,2.95);
-    experience.style.setProperty('--camera-zoom',zoom);
-    experience.style.setProperty('--reel-zoom',reel);
-    experience.dataset.phase=reel>.99?'reel':zoom>.99?'camera':'street';
-    document.querySelectorAll('[data-recording-chapter]').forEach(button=>{const active=+button.dataset.recordingChapter===(reel>.5?1:0);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
+    scheduled=0;
+    progress=clamp((scrollY-top)/height,0,4);
+    const state=recordingState(progress);
+    if(progress>.08)reveal?.finishIntro();
+    wash.style.opacity=1-state.zoom;
+    experience.dataset.phase=state.phase;
+    fill.style.transform=`scaleX(${state.journey})`;
+    if(lastChapter!==state.chapter){
+      lastChapter=state.chapter;
+      indicator.style.transform=`translateX(${state.chapter*100}%)`;
+      navButtons.forEach(button=>{if(+button.dataset.recordingChapter===state.chapter)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
+    }
+    copies.forEach((copy,index)=>{
+      const visibility=motion.enabled?(index?state.reelCopy:state.cameraCopy):1;
+      copy.style.opacity=visibility;
+      copy.style.transform=`translateY(${(1-visibility)*14}px)`;
+      // Hidden chapter actions cannot receive an invisible keyboard focus.
+      copy.inert=visibility<.02;
+    });
     window.dispatchEvent(new CustomEvent('visn:recording-progress',{detail:progress}));
   }
-  function goTo(index){const top=experience.getBoundingClientRect().top+scrollY;window.scrollTo({top:top+innerHeight*(index===0?1.02:2.98),behavior:motion.enabled?'smooth':'instant'});}
-  document.querySelectorAll('[data-recording-chapter]').forEach(button=>button.addEventListener('click',()=>goTo(+button.dataset.recordingChapter)));
-  window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);
+  function schedule(){if(!scheduled)scheduled=requestAnimationFrame(update);}
+  function goTo(index,{keyboard=false}={}){
+    measure();
+    window.scrollTo({top:top+height*(index===0?1.02:2.98),behavior:motion.enabled&&!keyboard?'smooth':'instant'});
+    if(keyboard){update();const heading=experience.querySelector(index===0?'#camera-chapter-title':'#reel-chapter-title');heading?.setAttribute('tabindex','-1');heading?.focus({preventScroll:true});}
+  }
+  buttons.forEach(button=>button.addEventListener('click',event=>goTo(+button.dataset.recordingChapter,{keyboard:event.detail===0})));
+  window.addEventListener('scroll',schedule,{passive:true});
+  window.addEventListener('resize',()=>{measure();schedule();});
+  document.fonts?.ready.then(()=>{measure();schedule();});
+  const resize=new ResizeObserver(()=>{measure();schedule();});resize.observe(viewport);
+  motion.subscribe(schedule);
+  measure();
   document.querySelectorAll('.landing-brand,.mini-mark').forEach((brand,i)=>{const svg=element('svg',{viewBox:'-700 -700 1400 1400','aria-hidden':'true',class:'visn-brand-icon'});poseLogo(logo(svg,`signature-${i}`),1,1,1);brand.prepend(svg);});
-  const dialog=document.querySelector('#logo-dialog'),svg=document.querySelector('#logo-exploration');poseLogo(logo(svg,'exploration'),1,1,1);
-  document.querySelector('#logo-replay').addEventListener('click',()=>dialog.showModal());document.querySelector('#logo-close').addEventListener('click',()=>dialog.close());document.querySelector('#logo-play').addEventListener('click',()=>{if(motion.enabled)svg.animate([{transform:'rotate(-30deg) scale(.8)'},{transform:'rotate(0) scale(1)'}],{duration:1000,easing:'cubic-bezier(.2,.8,.2,1)'});});
-  update();return {goTo,get progress(){return progress;}};
+  const dialog=document.querySelector('#logo-dialog'),svg=document.querySelector('#logo-exploration');
+  const mark=logo(svg,'exploration');poseLogo(mark,1,1,1);
+  reveal=mountLogoReveal({dialog,svg,mark,poseLogo});
+  update();return {goTo,get progress(){return progress;},get introPending(){return reveal?.pending||false;}};
 }

@@ -1043,7 +1043,7 @@ export class TownScene {
       mesh.rotation.y=t*.25+phase;
       wings.forEach((wing,j)=>wing.rotation.z=fly?Math.sin(t*18)*(j?1:-1):0);
     });
-    const point=new THREE.Vector3();
+    const point=new THREE.Vector3(),canvasRect=this.canvas.getBoundingClientRect(),stageRect=this.labels.getBoundingClientRect();
     this.cameras.forEach((cam,i)=>{
       const actor=this.actors[24+i];
       const target=actor.mesh.position.clone();target.y+=.9;
@@ -1069,7 +1069,6 @@ export class TownScene {
         packet.scale.setScalar((1-u*.55)*(j%3===0?1.6:1));packet.rotation.y=t*1.2+j;
       });
       point.copy(cam.origin).add(new THREE.Vector3(0,.5,0)).project(this.camera);
-      const canvasRect=this.rect, stageRect=this.labels.getBoundingClientRect();
       const px=(point.x*.5+.5)*this.width+canvasRect.left-stageRect.left;
       const py=(-point.y*.5+.5)*this.height+canvasRect.top-stageRect.top;
       cam.label.style.transform=`translate(${px.toFixed(1)}px,${py.toFixed(1)}px) translate(-50%,-100%)`;

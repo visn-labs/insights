@@ -21,8 +21,15 @@ export function walkingRoute(points) {
   curve.add(new THREE.LineCurve3(start,vertices.at(-1)));
   const length=curve.getLength();
   return {length,sample(distance){
-    const d=clamp(distance,0,length),u=d/length;
-    const point=curve.getPoint(u),direction=curve.getTangent(u).normalize();
+    const d=clamp(distance,0,length);
+    // CurvePath.getPoint uses a curve parameter on the rounded corner, which
+    // accelerates between its ends. Resolve the segment by length, then use
+    // that segment's arc-length map for both the body and planted foot targets.
+    const lengths=curve.getCurveLengths();
+    let index=lengths.findIndex(end=>d<=end);if(index<0)index=lengths.length-1;
+    const segment=curve.curves[index],previous=index?lengths[index-1]:0;
+    const local=clamp((d-previous)/(lengths[index]-previous),0,1);
+    const point=segment.getPointAt(local),direction=segment.getTangentAt(local).normalize();
     point.addScaledVector(direction,distance-d);
     return {point,yaw:Math.atan2(direction.x,direction.z)};
   }};
@@ -59,7 +66,7 @@ function footPlacement(path,distance,stride,side,ground,scale,activity) {
     const u=(phase-stance)/(1-stance),to=sample(plant+stride);
     origin.lerp(to.point,ease(u));
     yaw+=Math.atan2(Math.sin(to.yaw-yaw),Math.cos(to.yaw-yaw))*ease(u);
-    lift=Math.sin(Math.PI*u)**2*.115*scale;
+    lift=64*u**3*(1-u)**3*.115*scale;
     pitch=.40+(-.60)*ease(u);
   }
   pitch*=activity;lift*=activity;
@@ -109,7 +116,7 @@ export function poseWalking(actor,{path,distance,speed,stride,ground,turn=null})
   pelvis.position.z=0;
   const floor=(feet[0].origin.y+feet[1].origin.y)/2;
   const rootHeight=actor.mesh.getWorldPosition(new THREE.Vector3()).y;
-  pelvis.position.y=(floor-rootHeight)/scale+actor.anatomy.hip-.022*activity+Math.sin(phase)**2*.012*activity;
+  pelvis.position.y=(floor-rootHeight)/scale+actor.anatomy.hip-.022*activity+Math.sin(phase)**2*.008*activity;
   actor.spine.rotation.set(.035*activity,-Math.cos(phase)*.06*activity,-Math.sin(phase)*.016*activity);
   actor.torso.rotation.set(0,0,0);
   actor.head.rotation.set(-.025*activity,Math.cos(phase)*.018*activity,Math.sin(phase)*.012*activity);
@@ -121,9 +128,13 @@ export function poseWalking(actor,{path,distance,speed,stride,ground,turn=null})
       const hip=actor.limbs[side*2].getWorldPosition(new THREE.Vector3());
       const target=feet[side].ankle;
       const horizontal=Math.hypot(hip.x-target.x,hip.z-target.z);
-      const reach=(actor.anatomy.upperLeg+actor.anatomy.lowerLeg-.003)*scale;
+      const reach=(actor.anatomy.upperLeg+actor.anatomy.lowerLeg-.025)*scale;
       const maxY=target.y+Math.sqrt(Math.max(.001,reach*reach-horizontal*horizontal));
-      lower=Math.max(lower,(hip.y-maxY)/scale);
+      // A hard max switched the limiting leg in one frame, making the
+      // pelvis visibly drop at corner/step transitions. Smooth upper bound
+      // stays safely below both reach limits without snapping branches.
+      const required=(hip.y-maxY)/scale;
+      lower=(lower+required+Math.hypot(lower-required,.035))/2;
     }
     pelvis.position.y-=lower;actor.mesh.updateWorldMatrix(true,false);
   }
@@ -143,7 +154,7 @@ export function poseWalking(actor,{path,distance,speed,stride,ground,turn=null})
     ankle.quaternion.copy(lower).invert().multiply(inversePelvis).multiply(feet[side].quaternion);
     const arm=actor.limbs[side*2+1];
     // The arm opposite the advancing leg swings forward, with a relaxed elbow.
-    arm.rotation.set(Math.cos(phase+side*Math.PI)*.27*activity,0,(side?1:-1)*.045,'YXZ');
+    arm.rotation.set(Math.cos(phase+side*Math.PI)*.20*activity,0,(side?1:-1)*.045,'YXZ');
     actor.elbows[side].rotation.x=-.13-.12*activity*(.5+.5*Math.sin(phase+side*Math.PI));
   }
   actor.walking={distance,speed,stride,feet};

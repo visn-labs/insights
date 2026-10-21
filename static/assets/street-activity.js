@@ -1,5 +1,5 @@
 import * as T from '../vendor/three.module.min.js';
-const smooth=x=>{x=T.MathUtils.clamp(x,0,1);return x*x*(3-2*x);};
+const smooth=x=>{x=T.MathUtils.clamp(x,0,1);return x*x*x*(10+x*(-15+x*6));};
 const window=(t,a,b)=>smooth((t-a)/(b-a));
 
 const DOWN=new T.Vector3(0,-1,0);
@@ -49,10 +49,11 @@ export function poseStreetActivity(actor,time){
  }else if(actor.partner){
   const t=(time+actor.conversationPhase)%11;
   const speaking=window(t,.4,1.3)*(1-window(t,4.2,5.4));
-  actor.limbs[3].rotation.x=-.08-speaking*.23;
-  actor.elbows[1].rotation.x=-.16-speaking*.55;
-  actor.hands[1].rotation.z=-speaking*.24;
-  actor.head.rotation.x=breath*.02+(speaking?0:Math.sin(t*2)*.025);
+  const side=actor.heldProp?0:1; // Keep the carrying hand on its bag/parasol.
+  actor.limbs[side*2+1].rotation.x=-.08-speaking*.23;
+  actor.elbows[side].rotation.x=-.16-speaking*.55;
+  actor.hands[side].rotation.z=-speaking*.24;
+  actor.head.rotation.x=breath*.02+(1-speaking)*Math.sin((time+actor.conversationPhase)*2)*.025;
  }
 }
 
