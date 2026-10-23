@@ -1,0 +1,24 @@
+[2.1s] Capture and materialize real sanitized evidence metadata
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_metadata_projection.py", line 197, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/anagha/projects/visn_rust/tools/check_metadata_projection.py", line 122, in main
+    request(route+'/analytics',dict(metric='physical_footfall'),422)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/check_metadata_projection.py", line 76, in request
+    value=json.load(response)
+  File "/opt/anaconda3/lib/python3.13/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/opt/anaconda3/lib/python3.13/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/anaconda3/lib/python3.13/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.13/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

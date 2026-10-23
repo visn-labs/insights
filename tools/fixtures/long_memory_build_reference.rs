@@ -110,6 +110,7 @@ fn build_reference(
             });
         }
         entities.push(Entity {
+            source_session_id: camera.source_session_id.clone(),
             entity_id,
             job_id,
             camera_id: camera.camera.camera_id.clone(),
@@ -120,6 +121,6 @@ fn build_reference(
         });
     }
     entities.sort_by_key(|e| e.entity_id);
-    EntityMemory {version:VERSION.into(),source_sha256:digest,detector_model:model,detector_fps:5.0,status:"ready".into(),entities,links,
+    EntityMemory {execution_profile:None,version:VERSION.into(),source_sha256:digest,detector_model:model,detector_fps:5.0,status:"ready".into(),entities,links,
         notes:vec![UNCERTAINTY.into(),format!("{omitted} observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims.")]}
 }

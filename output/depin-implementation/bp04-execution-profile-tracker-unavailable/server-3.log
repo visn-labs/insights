@@ -1,0 +1,2 @@
+{"timestamp":"2026-10-23T12:45:58.682213Z","level":"INFO","fields":{"message":"visn Phase 0 service ready","address":"127.0.0.1:58329","media_workers":4,"detector_threads":1,"persistent_detector":false,"detector_batch_size":4,"vlm_context_length":4096,"vlm_exclusive_media":true},"target":"visn_phase0"}
+{"timestamp":"2026-10-23T12:46:00.981391Z","level":"INFO","fields":{"message":"memory retrieval started","query_id":"01a168cb-fb15-7162-ae98-32c0f4008260","semantic":true,"rerank":true},"target":"visn_phase0::store"}

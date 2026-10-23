@@ -1,0 +1,35 @@
+E...
+======================================================================
+ERROR: test_abrupt_http_body_disconnect_rolls_over (__main__.Checks.test_abrupt_http_body_disconnect_rolls_over)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_capture_reconnect.py", line 86, in test_abrupt_http_body_disconnect_rolls_over
+    report = privacy.capture_sessions(url, root/'capture', 2, FixtureDetector(), reconnect_attempts=1)
+  File "/Users/anagha/projects/visn_rust/tools/privacy_media.py", line 485, in capture_sessions
+    report = sanitize(source, target, float(remaining), detector,
+        _decoded=(current_frames, stream.average_rate or 25, force_arrival, network),
+        _continuation=continuation)
+  File "/Users/anagha/projects/visn_rust/tools/privacy_media.py", line 202, in sanitize
+    for frame, arrival_ns in decoded:
+                             ^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/privacy_media.py", line 453, in frames
+    for frame in container.decode(stream):
+                 ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "av/container/input.py", line 259, in decode
+    for packet in self.demux(*args, **kwargs):
+    ^^^
+  File "av/container/input.py", line 209, in demux
+    self.err_check(ret)
+    
+  File "av/container/core.py", line 361, in av.container.core.Container.err_check
+    return err_check(value, filename=self.name)
+    ^^^
+  File "av/error.py", line 354, in av.error.err_check
+    raise cls(code, message, filename, log)
+    ^^^
+av.error.OSError: [Errno 5] Input/output error: 'http://127.0.0.1:52226/live.ts'
+
+----------------------------------------------------------------------
+Ran 4 tests in 4.198s
+
+FAILED (errors=1)

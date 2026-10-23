@@ -1,0 +1,13 @@
+[0.0s] Seal cached model weights, resolved runtime/device and implementation
+127.0.0.1 - - [23/Oct/2026 18:51:53] "GET /profile HTTP/1.1" 200 -
+[6.6s] Prepare and validate an actual Qwen video embedding
+127.0.0.1 - - [23/Oct/2026 18:51:53] "POST /index-jobs HTTP/1.1" 202 -
+objc[95516]: Class AVFFrameReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x13ef943a8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1595043a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+objc[95516]: Class AVFAudioReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x13ef943f8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1595043f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+`torch_dtype` is deprecated! Use `dtype` instead!
+[33.0s] Run profile-bound actual text/video retrieval and repeat from caches
+127.0.0.1 - - [23/Oct/2026 18:52:20] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 18:52:20] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 18:52:20] "POST /search HTTP/1.1" 409 -
+127.0.0.1 - - [23/Oct/2026 18:52:20] "GET /profile HTTP/1.1" 200 -
+[33.5s] Passed actual cached-Qwen profile, preparation, query, cache parity and mismatch rejection

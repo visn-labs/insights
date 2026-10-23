@@ -1,0 +1,58 @@
+{
+  "binary_sha256": "17ee329dfd7e2770a30f558e0e36e350f31828d465e17005721605dd13f7598f",
+  "observations": [
+    {
+      "case": "hash_mismatch",
+      "rejected": true
+    },
+    {
+      "case": "reader_unsupported",
+      "rejected": true
+    },
+    {
+      "case": "future-contract",
+      "rejected": true,
+      "no_manifest_changes": true
+    },
+    {
+      "case": "unknown-feature",
+      "rejected": true,
+      "no_manifest_changes": true
+    },
+    {
+      "case": "broken-contract",
+      "rejected": true,
+      "no_manifest_changes": true
+    },
+    {
+      "case": "contract-link",
+      "rejected": true,
+      "no_manifest_changes": true
+    },
+    {
+      "case": "future-manifest",
+      "rejected": true,
+      "no_manifest_changes": true
+    },
+    {
+      "case": "typed-manifest",
+      "rejected": true,
+      "no_manifest_changes": true
+    },
+    {
+      "case": "broken-manifest",
+      "rejected": true,
+      "no_manifest_changes": true
+    },
+    {
+      "case": "identity-mismatch",
+      "rejected": true,
+      "no_manifest_changes": true
+    },
+    {
+      "case": "qualified-launch",
+      "started": true,
+      "contract_persisted": true
+    }
+  ]
+}

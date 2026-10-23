@@ -1,0 +1,92 @@
+{
+  "schema": "visn-general-corpus-v1",
+  "description": "Development inventory only. Existing traffic sources; independent general-video coverage is missing.",
+  "sources": [
+    {
+      "path": "data/live-evaluation-2026-10-16/memory/01a1433a-26bf-7e50-b482-4fe9e55d087c/live-3/source.mkv",
+      "sha256": "09193622bad7aa84163598a60a935e8c931187bcf5249dbecd09a667736a0174",
+      "id": "live-3",
+      "source_group": "live-3",
+      "session_group": "01a1433a-26bf-7e50-b482-4fe9e55d087c",
+      "site_group": "camera-host-103151177124",
+      "split": "development",
+      "development_exposed": true,
+      "clips": 5,
+      "families": [
+        "high_activity"
+      ]
+    },
+    {
+      "path": "data/live-evaluation-2026-10-16/memory/01a1433a-26bf-7e50-b482-4ff132722114/live-2/source.mkv",
+      "sha256": "7063fb3ff833221a74d3a22590062fda8c025854cce4a5185fa975ff4cd3cd5e",
+      "id": "live-2",
+      "source_group": "live-2",
+      "session_group": "01a1433a-26bf-7e50-b482-4ff132722114",
+      "site_group": "camera-host-243025259",
+      "split": "development",
+      "development_exposed": true,
+      "clips": 4,
+      "families": [
+        "high_activity",
+        "difficult_capture"
+      ]
+    },
+    {
+      "path": "data/live-evaluation-2026-10-16/memory/01a1433a-26bf-7e50-b482-5007781d97c7/live-1/source.mkv",
+      "sha256": "4b6ea7b34cc3d07696f6226345d0df307472046ada4e9016b902c14a24f724c3",
+      "id": "live-1",
+      "source_group": "live-1",
+      "session_group": "01a1433a-26bf-7e50-b482-5007781d97c7",
+      "site_group": "camera-host-103151177124",
+      "split": "development",
+      "development_exposed": true,
+      "clips": 4,
+      "families": [
+        "high_activity"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "toll-queue",
+      "source_ids": [
+        "live-1"
+      ],
+      "split": "development",
+      "request": {
+        "path": "evals/general-video/requests/toll-queue.json",
+        "sha256": "8c4f267b0e850f5ff3748e6a3c2aee398c32ccbce9d8ad329fcf5141cee110ab"
+      },
+      "label_query_id": "toll-queue"
+    },
+    {
+      "id": "negative-door",
+      "source_ids": [
+        "live-1"
+      ],
+      "split": "development",
+      "request": {
+        "path": "evals/general-video/requests/negative-door.json",
+        "sha256": "72e5a1262bf917e8fa4a07a4ed45071e09426bd26383032b7db903c6b44dd6b4"
+      },
+      "label_query_id": "negative-door"
+    }
+  ],
+  "labels": [
+    {
+      "path": "evals/live-2026-10-16/retrieval-labels.json",
+      "sha256": "88f9533c0fd4fa17f46717bd32277e72d2c51ce7b7f5ab3b7ca5f504fbb00d36",
+      "kind": "assistant_retrieval_pilot"
+    },
+    {
+      "path": "evals/human-state-review-2026-10-16/annotations.json",
+      "sha256": "5a27a1748b6950fe5cf0ad0801d3c06f0fa8040569723e4ff0669e63adcefed7",
+      "kind": "human_state_review"
+    },
+    {
+      "path": "evals/human-state-review-2026-10-16/followup/annotations.json",
+      "sha256": "00c55e4b95b3316ec215f925deb10f8898d975f99caf37dad7c4f46744970acc",
+      "kind": "human_state_review"
+    }
+  ]
+}

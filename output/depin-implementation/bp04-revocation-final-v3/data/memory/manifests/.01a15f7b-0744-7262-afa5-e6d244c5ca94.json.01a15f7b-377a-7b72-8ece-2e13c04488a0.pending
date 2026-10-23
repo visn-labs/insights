@@ -1,0 +1,60 @@
+{
+  "revocation": {
+    "revision": "01a15f7b-29cb-7cc3-8e0a-c0b8b7eada4f",
+    "revoked_at_ms": 1792603269579,
+    "cleanup_state": "pending",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792603277081,
+    "worker_fingerprint": "39e2bd80aad35330a2001139768fd1d1a4a9a65787323b3e4e424e220a438a89",
+    "last_error": "projection_worker_unavailable: incomplete receipt",
+    "receipt": null
+  },
+  "visual_projection": {
+    "retry_requested": false,
+    "revision": "01a15f7b-0ea6-7180-a197-b9c2d62dceb9",
+    "state": "cancelled",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792603273942,
+    "task_id": "8108c059-9a88-5c9c-ac46-49e0a7cf2ee7",
+    "worker_fingerprint": "39e2bd80aad35330a2001139768fd1d1a4a9a65787323b3e4e424e220a438a89",
+    "last_error": null,
+    "receipt": null
+  },
+  "request_fingerprint": "d6d83bce85da65761446084134295c4fd9a3c1f0551e5ea9753ab5389ec88a58",
+  "camera_checkpoints": {},
+  "recovery_attempts": 0,
+  "id": "01a15f7b-0744-7262-afa5-e6d244c5ca94",
+  "request": {
+    "idempotency_key": null,
+    "long_memory_enabled": false,
+    "temporal_enabled": false,
+    "name": "revocation workflow",
+    "cluster_id": null,
+    "cameras": [
+      {
+        "camera_id": "revoke-camera",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 2,
+    "observer_fps": 2.0,
+    "vlm_enabled": false,
+    "vlm_model": null
+  },
+  "status": "cancelled",
+  "created_at_ms": 1792603260740,
+  "started_at_ms": 1792603260749,
+  "completed_at_ms": 1792603269579,
+  "result": null,
+  "error": "recording_revoked"
+}

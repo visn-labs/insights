@@ -1,0 +1,69 @@
+   Compiling visn-phase0 v0.1.0 (/Users/anagha/projects/visn_rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.33s
+     Running unittests src/main.rs (target/debug/deps/visn_phase0-75e383b6c535c171)
+
+running 61 tests
+test detector_worker::tests::redacts_network_sources ... ok
+test adaptive_tracking::tests::routes_to_bytetrack_in_sparse_stable_scenes ... ok
+test adaptive_tracking::tests::routes_to_botsort_when_camera_shakes ... ok
+test adaptive_tracking::tests::executes_handover_to_fidtm_in_dense_crowds ... ok
+test compressed_gating::tests::triggers_on_foreground_motion_vectors ... ok
+test compressed_gating::tests::gates_idle_static_stream ... ok
+test anomaly_cascade::tests::stage1_filters_normal_activity_on_cpu ... ok
+test gemma::tests::accepts_fenced_json ... ok
+test liveness::tests::enf_correlation_matches_identical_trace ... ok
+test liveness::tests::liveness_gate_accepts_authentic ... ok
+test liveness::tests::liveness_gate_rejects_replay ... ok
+test anomaly_cascade::tests::temporal_smoothing_requires_consecutive_frames_before_alert ... ok
+test liveness::tests::pce_calculation_flat_noise ... ok
+test liveness::tests::pce_calculation_sharp_peak ... ok
+test long_memory::tests::benchmark_indexed_entity_build ... ignored, Controlled component timing; run explicitly with --ignored --nocapture
+test event_engine::tests::streaming_rejects_backwards_track_timestamps ... ok
+test detector_worker::tests::parses_observation_envelope ... ok
+test event_engine::tests::sample_produces_confirmed_track_zone_and_line_events ... ok
+test event_engine::tests::class_changes_use_track_consensus_and_report_confidence_is_unknown ... ok
+test event_engine::tests::event_ids_are_stable_on_replay ... ok
+test cluster::tests::no_relationship_does_not_create_all_to_all_associations ... ok
+test cluster::tests::queued_processing_offset_prevents_false_simultaneous_match ... ok
+test cluster::tests::explicit_overlap_group_merges_matching_people ... ok
+test event_engine::tests::streamed_and_batch_analysis_match_for_ordered_frames ... ok
+test interpretation::tests::rejects_invented_timestamp_and_single_frame_action ... ok
+test memory::tests::query_terms_expand_common_camera_language ... ok
+test memory::tests::safe_component_removes_path_syntax ... ok
+test olap_h3::tests::hilbert_encoding_preserves_spatial_locality ... ok
+test olap_h3::tests::lat_lng_generates_consistent_h3_index ... ok
+test olap_h3::tests::olap_aggregates_footfall_and_dwell ... ok
+test poc_engine::tests::distributes_epoch_pool_pro_rata ... ok
+test poc_engine::tests::liveness_gate_zeroes_replayed_stream_payout ... ok
+test long_memory::tests::old_manifests_have_explicit_missing_coverage ... ok
+test long_memory::tests::bounded_anchors_keep_actual_interval_endpoints_without_full_history ... ok
+test privacy_engine::tests::dilates_mask_to_prevent_edge_leakage ... ok
+test privacy_engine::tests::persists_redaction_through_occlusion_grace_window ... ok
+test privacy_engine::tests::recovers_low_confidence_blurred_detection ... ok
+test quantized_diskann::tests::binary_quantization_and_two_stage_rescoring ... ok
+test quantized_diskann::tests::memory_sizing_reaches_90_percent_savings ... ok
+test long_memory::tests::duplicate_observation_and_overlapping_evidence_graphs_match_reference ... ok
+test long_memory::tests::class_lookup_handles_plural_buses_and_old_graph_versions_abstain ... ok
+test long_memory::tests::applies_all_filters_to_expansion_and_abstains_outside_scope ... ok
+test retrieval::tests::rejects_unfiltered_duplicate_and_invalid_scores ... ok
+test store::query_snapshot_tests::benchmark_filtered_snapshot ... ignored, Controlled snapshot timing/RSS; run explicitly with --ignored --nocapture
+test video_rag::tests::query_decoupling_identifies_entities_and_causal_type ... ok
+test telemetry::tests::coordinator_end_to_end_telemetry_flow ... ok
+test telemetry::tests::coordinator_reports_full_blueprint_capabilities ... ok
+test video_rag::tests::spatio_temporal_graph_traversal_gathers_subgraph ... ok
+test long_memory::tests::rejects_unrelated_links_missing_evidence_and_unknown_entities ... ok
+test retrieval::tests::empty_index_is_not_reported_as_keyword_search ... ok
+test retrieval::tests::prefiltered_empty_preserves_original_scope_diagnostic ... ok
+test long_memory::tests::stable_ids_and_no_invented_observations_across_uncovered_intervals ... ok
+test long_memory::tests::separates_similar_objects_and_namespaces_reused_track_ids ... ok
+test retrieval::tests::filters_candidates_and_keeps_keywords_when_worker_is_unavailable ... ok
+test long_memory::tests::follows_one_entity_beyond_retrieval_shortlist_and_preserves_evidence ... ok
+test api::tests::test_telemetry_status_endpoint ... ok
+test gemma::tests::rejects_new_numeric_claim ... ok
+test api::tests::test_telemetry_gating_endpoint ... ok
+test api::tests::test_telemetry_liveness_endpoint ... ok
+test long_memory::tests::interval_index_matches_scan_with_overlap_duplicates_invalid_intervals_and_gaps ... ok
+test store::query_snapshot_tests::filtered_snapshot_preserves_retrieval_graphs_and_scope_diagnostics ... ok
+
+test result: ok. 59 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

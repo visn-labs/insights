@@ -35,6 +35,7 @@ pub struct DetectorWorker {
 
 #[derive(Debug)]
 pub struct DetectorRequest {
+    pub execution_identity: Option<String>,
     pub source: String,
     pub fps: f32,
     pub max_seconds: u64,
@@ -188,6 +189,7 @@ enum ProcessEvent {
 }
 
 struct WorkerProcess {
+    execution_identity: Option<String>,
     generation: u64,
     child: Child,
     stdin: ChildStdin,
@@ -257,7 +259,10 @@ impl Supervisor {
                 events,
                 accepted,
             } => {
-                if let Err(error) = self.ensure_process().await {
+                if let Err(error) = self
+                    .ensure_process(request.execution_identity.as_deref())
+                    .await
+                {
                     let _ =
                         accepted.send(Err(format!("could not start detector worker: {error:#}")));
                     return;
@@ -321,9 +326,16 @@ impl Supervisor {
         }
     }
 
-    async fn ensure_process(&mut self) -> anyhow::Result<()> {
-        if self.process.is_some() {
-            return Ok(());
+    async fn ensure_process(&mut self, identity: Option<&str>) -> anyhow::Result<()> {
+        if let Some(process) = &self.process {
+            if identity.is_none() || process.execution_identity.as_deref() == identity {
+                return Ok(());
+            }
+            anyhow::ensure!(
+                self.pending.is_empty(),
+                "execution_profile_busy: detector generation is serving another recipe"
+            );
+            self.stop_process().await;
         }
         let generation = self.next_generation;
         self.next_generation = self.next_generation.wrapping_add(1).max(1);
@@ -372,6 +384,7 @@ impl Supervisor {
             self.process_events_tx.clone(),
         ));
         self.process = Some(WorkerProcess {
+            execution_identity: identity.map(str::to_owned),
             generation,
             child,
             stdin,

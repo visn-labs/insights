@@ -1,0 +1,6 @@
+{"timestamp":"2026-10-23T10:23:40.933132Z","level":"INFO","fields":{"message":"visn Phase 0 service ready","address":"127.0.0.1:62023","media_workers":4,"detector_threads":1,"persistent_detector":true,"detector_batch_size":4,"vlm_context_length":4096,"vlm_exclusive_media":true},"target":"visn_phase0"}
+{"timestamp":"2026-10-23T10:24:23.656968Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 503 Service Unavailable","latency":"0 ms"},"target":"tower_http::trace::on_failure"}
+{"timestamp":"2026-10-23T10:24:29.667943Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 503 Service Unavailable","latency":"0 ms"},"target":"tower_http::trace::on_failure"}
+{"timestamp":"2026-10-23T10:24:40.166558Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 503 Service Unavailable","latency":"0 ms"},"target":"tower_http::trace::on_failure"}
+{"timestamp":"2026-10-23T10:25:01.166873Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 503 Service Unavailable","latency":"0 ms"},"target":"tower_http::trace::on_failure"}
+{"timestamp":"2026-10-23T10:25:41.666789Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 503 Service Unavailable","latency":"0 ms"},"target":"tower_http::trace::on_failure"}

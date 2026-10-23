@@ -1,0 +1,51 @@
+{
+  "schema": "visn-projection-binding-migration-v1",
+  "original_manifest_sha256": "393c24c21dd81770c9a383619ea9c73df3c63b0c9996345d1243075c9b3c15ec",
+  "previous_revision": "01a16970-532b-7561-bbe1-e928c8d551cb",
+  "deployment_generation": "e237f61c-a697-475a-a9e4-f656b89c65dc",
+  "registry_revision": "20b316f0-9ed7-4c52-a8f8-2c443907282a",
+  "at_ms": 1792770333606,
+  "verification": "exact_current_task_contract_not_historical_attestation",
+  "receipt": {
+    "id": "dd39f2f1-0604-5f75-b8cb-4dab2ddd095c",
+    "scope_id": "01a16970-39b0-7191-a4a2-c8032aa3f0a7",
+    "status": "queued",
+    "created_at": 1792770333.397077,
+    "updated_at": 1792770333.397077,
+    "total": 1,
+    "completed": 0,
+    "failed": 0,
+    "pending": 1,
+    "error": null,
+    "item_errors": [],
+    "vector_policy": "legacy-renormalize-v1",
+    "embedding": {
+      "model": "fixture-a"
+    },
+    "max_attempts": 2,
+    "profile_current": true,
+    "coverage": "prepared_intervals_only_not_exhaustive_scene_coverage",
+    "worker_profile": {
+      "manifest": {
+        "schema": "visn-retrieval-profile-v1",
+        "embedding": {
+          "model": "fixture-a"
+        },
+        "reranker": null,
+        "qualification": "fixture_or_unsealed_model",
+        "vector_policy": "legacy-renormalize-v1",
+        "decode_policy": "single-seek-v1",
+        "index_schema": "vectors-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "index_storage": "16fbdc3958832d43672063b1273741b37c8a1924d1eae455ed46a9927cfb733c",
+        "work_caches": true,
+        "interpretation": {
+          "model": null,
+          "revision": null,
+          "identity": "configuration_only_not_model_weight_attestation"
+        }
+      },
+      "fingerprint": "5a09d47d676a6cb772b548dfd9ddcde463828d66a48f8c1e7a930402cf198ec4"
+    }
+  }
+}

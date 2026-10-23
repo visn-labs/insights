@@ -1,0 +1,10 @@
+Create genuine reset fixture from retained development footage
+Capture and index both source-clock sessions through the API
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_multisession_workflow.py", line 152, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/anagha/projects/visn_rust/tools/check_multisession_workflow.py", line 101, in main
+    assert all(camera['long_memory']['entities'] for camera in cameras),[c['data_quality_notes'] for c in cameras]
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [['Observed 25 frames; capture stopped because source_clock_regressed. Transport times are not verified scene capture times; continuity is not certified.', 'Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.', 'V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.', 'Observer analysis retrieved 2 of 25 consumed source frames.', 'Event clips use stream copy when compatible and fall back to H.264 only when required.', 'Source session 1: initial_capture. Independent source-relative clock; no elapsed time between sessions is inferred. Capture journal state: completed.'], ['Observed 25 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.', 'Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.', 'V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.', 'Observer analysis retrieved 2 of 25 consumed source frames.', 'Event clips use stream copy when compatible and fall back to H.264 only when required.', 'Source session 2: source_clock_regressed. Independent source-relative clock; no elapsed time between sessions is inferred. Capture journal state: completed.']]

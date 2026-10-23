@@ -1,0 +1,8 @@
+[0.1s] Capture and materialize real sanitized evidence metadata
+[4.7s] UI ready; touch OUTPUT/ui-ready-done to continue
+[184.7s] Reject changed projection; retain exact canonical graph answer with explicit fallback
+[184.9s] Interrupt projection publication, restart with durable pending intent, then repair storage
+[189.0s] Reject changed sanitized source before aggregate or graph admission
+[189.0s] Deny revoked projections; fail safely on cleanup symlink and recover after restart
+[191.0s] UI revoked; touch OUTPUT/ui-revoked-done to continue
+[371.3s] Passed exact metadata, graph parity, restart, corruption and local revocation replay: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-metadata-rebuild-ui

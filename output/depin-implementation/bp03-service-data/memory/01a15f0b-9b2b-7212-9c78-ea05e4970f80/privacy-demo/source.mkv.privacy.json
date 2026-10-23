@@ -1,0 +1,51 @@
+{
+  "schema": "visn-sanitized-media-v1",
+  "policy": "sanitized-pixels-v1",
+  "qualification": "integration_candidate_not_general_privacy_acceptance",
+  "sanitizer_code_sha256": "807d2a947432c4ef5f5414b453f7e932f4d31f3df355f91f1d2665bb9f92d44c",
+  "tracker_code_sha256": "5823205be19f0a98ebcc1ae7b1dcd0c1c04242f23e4be2db792c4ce1015cad0c",
+  "models": {
+    "yunet": {
+      "file": "face_detection_yunet_2023mar.onnx",
+      "url": "https://media.githubusercontent.com/media/opencv/opencv_zoo/48b10fa505aeb51fbd127fc60a5c660040e823b7/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+      "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+      "bytes": 232589
+    },
+    "plate": {
+      "file": "yolo-v9-s-608-license-plates-end2end.onnx",
+      "url": "https://github.com/ankandrew/open-image-models/releases/download/assets/yolo-v9-s-608-license-plates-end2end.onnx",
+      "sha256": "2b878b38d9aa07b6ddc3ea75c4ffcb39869bc5c218e0a14002f60ab2f7b0be9a",
+      "bytes": 28612350
+    }
+  },
+  "runtime": {
+    "opencv": "4.14.0",
+    "onnxruntime": "1.31.0",
+    "providers": [
+      "CPUExecutionProvider"
+    ],
+    "threads": 1,
+    "precision": "FP32",
+    "pyav": "19.0.1",
+    "numpy": "2.5.4"
+  },
+  "detector_threshold": 0.1,
+  "sanitizer": "solid_pixel_replacement",
+  "media_sha256": "54233c83df2f82db2c52743725a0a0619eca3c1a0c4fa71a35e10c2061b27c0a",
+  "media_bytes": 2052109,
+  "frames": 8,
+  "width": 512,
+  "height": 512,
+  "audio": "removed",
+  "timestamp_policy": "source_PTS_recorded; relative_PTS_rounded_to_ms; collisions_rejected",
+  "max_timestamp_quantization_ms": 0.5,
+  "requested_seconds": 2.0,
+  "observed_source_end": "7/4",
+  "source_time_base": "1/1000",
+  "ledger_sha256": "65a23816c554b6bb6237f4989a94554bf75d3b56b4c7b105a49bf5e3021b1583",
+  "detections": {
+    "face": 8,
+    "plate": 0
+  },
+  "elapsed_seconds": 0.840278125135228
+}

@@ -1,0 +1,8 @@
+Create genuine reset fixture from retained development footage
+Capture and index both source-clock sessions through the API
+Waiting for current owned recording/projection
+Restart, verify session media, and reuse checkpoint without observer
+Cancel after a committed session, before any camera checkpoint
+UI prefix; touch OUTPUT/ui-prefix-done to continue
+Revoke both sessions and preserve retained-media hashes
+Passed real multi-session capture/query/media/recovery/revocation: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-prefix-recovery-real

@@ -1,0 +1,3 @@
+# Optional Apple Silicon model host. Install into .venv-mlx-evaluation,
+# never into .venv-retrieval (their Transformers requirements differ).
+mlx-vlm==0.7.8

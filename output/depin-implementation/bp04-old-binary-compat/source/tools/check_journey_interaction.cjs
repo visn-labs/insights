@@ -1,0 +1,36 @@
+const {chromium}=require(process.env.VISN_PLAYWRIGHT_MODULE||'playwright');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const base=process.env.VISN_UI_URL||'http://127.0.0.1:8220',out=path.resolve(process.env.VISN_UI_OUT||'output/playwright/reference-refinement/interaction');fs.mkdirSync(out,{recursive:true});
+(async()=>{const browser=await chromium.launch({channel:'chrome',args:['--enable-unsafe-swiftshader']});const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],checks=[];page.on('pageerror',e=>errors.push(e.message));
+ const check=(name,ok)=>{assert.ok(ok,name);checks.push(name);};
+ try{
+  await page.goto(base);await page.waitForFunction(()=>document.querySelector('#town-intro').dataset.state==='ready');
+  if(await page.locator('#logo-dialog').isVisible())await page.locator('#logo-close').click();
+  await page.locator('#intro-tour').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>document.activeElement.id==='camera-chapter-title');
+  await page.locator('.recording-nav [data-recording-chapter="1"]').focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.activeElement.id==='reel-chapter-title');
+  await page.waitForFunction(()=>document.querySelector('#town-canvas').dataset.recordingView==='reel');
+  check('Keyboard chapter navigation focuses the destination immediately',await page.locator('#town-canvas').getAttribute('data-recording-view')==='reel');
+  check('Only the active navigation step is marked current',await page.locator('.recording-nav [aria-current=step]').count()===1);
+  check('Destination copy is readable and interactive',await page.locator('.reel-chapter .camera-story-copy').evaluate(e=>+e.style.opacity===1&&!e.inert));
+  await page.locator('.recording-nav [data-recording-chapter="0"]').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>document.activeElement.id==='camera-chapter-title');
+  await page.evaluate(async()=>{const{CameraRecording}=await import('/assets/camera-recording.js');const original=CameraRecording.prototype.pose;CameraRecording.prototype.pose=function(camera,...args){original.call(this,camera,...args);window.__cameraMotion={position:camera.position.toArray(),pointer:this.pointerX.value};};});
+  await page.mouse.move(720,500);await page.waitForTimeout(500);const before=await page.evaluate(()=>window.__cameraMotion.position);
+  await page.mouse.move(1250,220);await page.waitForTimeout(650);const after=await page.evaluate(()=>window.__cameraMotion.position);
+  const parallax=Math.hypot(...after.map((v,i)=>v-before[i]));check('Fine-pointer inspection has restrained visible parallax',parallax>.0001&&parallax<.03);
+  await page.screenshot({path:path.join(out,'camera-inspection.png')});
+  await page.locator('.recording-nav [data-recording-chapter="1"]').click();await page.waitForTimeout(80);await page.mouse.wheel(0,-600);await page.waitForTimeout(800);
+  const interrupted=await page.evaluate(()=>scrollY);await page.waitForTimeout(400);check('Manual scroll interrupts chapter navigation without a scripted return',Math.abs(await page.evaluate(()=>scrollY)-interrupted)<2);
+  await page.goto(base+'/#/contribute');await page.waitForSelector('#onboarding-title');
+  await page.locator('#contribution-camera').fill('Courtyard');await page.locator('#contribution-context').selectOption({label:'Building entrance'});await page.locator('#contribution-authority').check();await page.locator('#contribution-next').focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>!document.querySelector('[data-onboarding-step="1"]').hidden);
+  check('Keyboard onboarding advances without a decorative reveal',await page.locator('[data-onboarding-step="1"]').evaluate(e=>e.getAnimations().length===0));
+  await page.goto(base+'/#/home');await page.waitForTimeout(100);await page.locator('#contributor-shell a[href="#/"]').first().click();await page.waitForFunction(()=>!document.querySelector('#town-intro').hidden);
+  await page.locator('#intro-tour').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>document.querySelector('#town-canvas').dataset.recordingView==='camera');
+  check('Returning from a contributor route preserves journey measurements',await page.locator('#camera-chapter-title').evaluate(e=>e===document.activeElement));
+  await page.emulateMedia({reducedMotion:'reduce'});await page.waitForTimeout(100);
+  check('Reduced motion keeps chapter copy readable',await page.locator('.camera-story-copy').evaluateAll(nodes=>nodes.every(e=>e.style.opacity==='1'&&!e.inert)));
+  check('No browser errors',errors.length===0);
+  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({passed:true,checks,errors,parallax},null,2));console.log(JSON.stringify({passed:true,checks,parallax}));
+ }finally{await browser.close();}
+})().catch(error=>{console.error(error);process.exitCode=1;});

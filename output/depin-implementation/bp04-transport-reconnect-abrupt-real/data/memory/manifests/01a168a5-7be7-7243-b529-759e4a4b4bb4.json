@@ -1,0 +1,73 @@
+{
+  "metadata_projection": {
+    "revision": "01a168a5-efef-7ef1-959d-9d47f94ff335",
+    "version": "evidence-metadata-v1",
+    "input_fingerprint": "768ab152c073ba5648706e6b5460bcf921dc0b329cf5e2897de7f69d5acd17a4",
+    "state": "cancelled",
+    "output_sha256": null,
+    "attempts": 1,
+    "next_attempt_at_ms": 0,
+    "last_error": null
+  },
+  "revocation": {
+    "local_cleanup_state": "pending",
+    "local_cleanup_error": null,
+    "revision": "01a168a5-f430-7873-a4a1-c00e45b12164",
+    "revoked_at_ms": 1792757068848,
+    "cleanup_state": "pending",
+    "attempts": 0,
+    "next_attempt_at_ms": 0,
+    "worker_fingerprint": null,
+    "last_error": null,
+    "receipt": null
+  },
+  "visual_projection": {
+    "retry_requested": false,
+    "revision": "01a168a5-efef-7ef1-959d-9d589be64856",
+    "state": "cancelled",
+    "attempts": 0,
+    "next_attempt_at_ms": 0,
+    "task_id": null,
+    "worker_fingerprint": null,
+    "last_error": null,
+    "receipt": null
+  },
+  "request_fingerprint": "ce1c3ff75cbda132ea38060c68ebd9d22d37deb3fc1f78d1c29671655ebaefe3",
+  "camera_checkpoints": {},
+  "recovery_attempts": 1,
+  "id": "01a168a5-7be7-7243-b529-759e4a4b4bb4",
+  "request": {
+    "capture_sessions": true,
+    "idempotency_key": null,
+    "long_memory_enabled": true,
+    "temporal_enabled": false,
+    "name": "Real clock reset",
+    "cluster_id": null,
+    "cameras": [
+      {
+        "camera_id": "junction",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 12,
+    "observer_fps": 2.0,
+    "vlm_enabled": false,
+    "vlm_model": null
+  },
+  "status": "cancelled",
+  "created_at_ms": 1792757038055,
+  "started_at_ms": 1792757058587,
+  "completed_at_ms": 1792757068848,
+  "result": null,
+  "error": "recording_revoked"
+}

@@ -1,0 +1,116 @@
+{
+  "schema": "visn-coverage-v1",
+  "coverage": {
+    "development": {
+      "high_activity": {
+        "sources": 3,
+        "clips": 13
+      },
+      "quiet_rare": {
+        "sources": 0,
+        "clips": 0
+      },
+      "object_interactions": {
+        "sources": 0,
+        "clips": 0
+      },
+      "state_changes": {
+        "sources": 0,
+        "clips": 0
+      },
+      "people_animals": {
+        "sources": 0,
+        "clips": 0
+      },
+      "text_detail": {
+        "sources": 0,
+        "clips": 0
+      },
+      "long_history": {
+        "sources": 0,
+        "clips": 0
+      },
+      "difficult_capture": {
+        "sources": 1,
+        "clips": 4
+      }
+    },
+    "validation": {
+      "high_activity": {
+        "sources": 0,
+        "clips": 0
+      },
+      "quiet_rare": {
+        "sources": 0,
+        "clips": 0
+      },
+      "object_interactions": {
+        "sources": 0,
+        "clips": 0
+      },
+      "state_changes": {
+        "sources": 0,
+        "clips": 0
+      },
+      "people_animals": {
+        "sources": 0,
+        "clips": 0
+      },
+      "text_detail": {
+        "sources": 0,
+        "clips": 0
+      },
+      "long_history": {
+        "sources": 0,
+        "clips": 0
+      },
+      "difficult_capture": {
+        "sources": 0,
+        "clips": 0
+      }
+    },
+    "acceptance": {
+      "high_activity": {
+        "sources": 0,
+        "clips": 0
+      },
+      "quiet_rare": {
+        "sources": 0,
+        "clips": 0
+      },
+      "object_interactions": {
+        "sources": 0,
+        "clips": 0
+      },
+      "state_changes": {
+        "sources": 0,
+        "clips": 0
+      },
+      "people_animals": {
+        "sources": 0,
+        "clips": 0
+      },
+      "text_detail": {
+        "sources": 0,
+        "clips": 0
+      },
+      "long_history": {
+        "sources": 0,
+        "clips": 0
+      },
+      "difficult_capture": {
+        "sources": 0,
+        "clips": 0
+      }
+    }
+  },
+  "cases": 2,
+  "source_count": 3,
+  "label_files": 3,
+  "acceptance_ready": false,
+  "limitations": [
+    "Counts overlap between families; source counts are not independent site counts.",
+    "Coverage inventory is not evidence of reviewed label quality or accuracy.",
+    "Acceptance promotion requires reviewed labels and the plan quality gates."
+  ]
+}

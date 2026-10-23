@@ -1,0 +1,32 @@
+Capture and prepare actual sanitized evidence
+127.0.0.1 - - [21/Oct/2026 23:17:52] "GET /face-sequence.mkv HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 23:17:55] "POST /index-jobs HTTP/1.1" 202 -
+127.0.0.1 - - [21/Oct/2026 23:18:02] "GET /index-jobs/26937ff4-545a-5887-af7f-e03b0d991cab HTTP/1.1" 200 -
+Revoke while a semantic response is in flight; suppress cleanup initially
+127.0.0.1 - - [21/Oct/2026 23:18:02] "POST /search HTTP/1.1" 200 -
+Worker outage and hard Rust restart preserve access denial and pending cleanup
+127.0.0.1 - - [21/Oct/2026 23:18:06] "POST /revocations HTTP/1.1" 200 -
+Restart both services after cleanup commit but before its acknowledgement
+127.0.0.1 - - [21/Oct/2026 23:18:06] "POST /revocations HTTP/1.1" 200 -
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 595, in process_post
+    result = service.search(body)
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 465, in search
+    raise ValueError('Evidence source is revoked')
+ValueError: Evidence source is revoked
+127.0.0.1 - - [21/Oct/2026 23:18:06] "POST /search HTTP/1.1" 410 -
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 587, in process_post
+    return self.reply(202, service.indexer.submit(body))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/workflow_indexing.py", line 125, in submit
+    raise ValueError('Recording scope is revoked')
+ValueError: Recording scope is revoked
+127.0.0.1 - - [21/Oct/2026 23:18:06] "POST /index-jobs HTTP/1.1" 410 -
+127.0.0.1 - - [21/Oct/2026 23:18:06] "POST /index-jobs/26937ff4-545a-5887-af7f-e03b0d991cab/retry HTTP/1.1" 410 -
+Passed revocation, in-flight query, denial, outage and lost-ack restart replay: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-metadata-revocation-regression

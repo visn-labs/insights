@@ -1,0 +1,15 @@
+   Compiling visn-phase0 v0.1.0 (/Users/anagha/projects/visn_rust)
+error[E0425]: cannot find value `config` in this scope
+   --> src/retrieval.rs:149:18
+    |
+149 |     let response=config.pin_retrieval(client.post(format!("{}/search",url.trim_end_matches('/')))
+    |                  ^^^^^^ not found in this scope
+
+error[E0425]: cannot find value `config` in this scope
+   --> src/retrieval.rs:158:5
+    |
+158 |     config.verify_retrieval_profile(&body.provenance["worker_profile"])?;
+    |     ^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `visn-phase0` (bin "visn-phase0" test) due to 2 previous errors

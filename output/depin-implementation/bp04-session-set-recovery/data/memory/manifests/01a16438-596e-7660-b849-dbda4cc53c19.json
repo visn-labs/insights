@@ -1,0 +1,42 @@
+{
+  "metadata_projection": null,
+  "revocation": null,
+  "visual_projection": null,
+  "request_fingerprint": "08437893499c6c3ac6a7be64258a8249ca61a31e79fc4d51357658fd835421d5",
+  "camera_checkpoints": {},
+  "recovery_attempts": 0,
+  "id": "01a16438-596e-7660-b849-dbda4cc53c19",
+  "request": {
+    "idempotency_key": "before-capture-operation-0123456789",
+    "long_memory_enabled": false,
+    "temporal_enabled": false,
+    "name": "cancel before capture",
+    "cluster_id": null,
+    "cameras": [
+      {
+        "camera_id": "camera-a",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 2,
+    "observer_fps": 2.0,
+    "vlm_enabled": false,
+    "vlm_model": null
+  },
+  "status": "cancelled",
+  "created_at_ms": 1792682776942,
+  "started_at_ms": 1792682776952,
+  "completed_at_ms": 1792682777344,
+  "result": null,
+  "error": "recording_cancelled: only already committed evidence can be resumed"
+}

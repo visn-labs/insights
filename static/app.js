@@ -33,11 +33,19 @@ const MEMORY_CAMERA_PRESETS = {
 
 const state = {
   capabilities: null,
+  retrievalConfigured: null,
+  visualIndexRetryJob: null,
+  visualIndexRetryAt: 0,
+  visualIndexFailures: 0,
   models: [],
   configuredVlms: [...KNOWN_VLM_MODELS],
   jobs: [],
   clusterJobs: [],
   memoryJobs: [],
+  knownRevokedMemoryIds: new Set(),
+  memoryAccessRevision: 0,
+  evidenceStatistics: null,
+  evidenceStatisticsBusy: false,
   sample: null,
   selectedJobId: null,
   selectedJobKind: null,
@@ -46,6 +54,8 @@ const state = {
   memoryJobOptions: null,
   searchAllRecordings: false,
   memoryQueryBusy: false,
+  memoryRecordingActionBusy: false,
+  pendingMemorySubmission: null,
   visualIndex: null,
   visualIndexBusy: false,
   visualIndexPolling: false,
@@ -85,6 +95,14 @@ function showView(name) {
 }
 
 function bindMemory() {
+  $('#memory-recording-cancel').addEventListener('click', () => changeMemoryRecording('cancel'));
+  $('#memory-recording-resume').addEventListener('click', () => changeMemoryRecording('resume'));
+  $('#memory-metadata-show').addEventListener('click', () => loadEvidenceStatistics(false));
+  $('#memory-metadata-rebuild').addEventListener('click', () => loadEvidenceStatistics(true));
+  $('#memory-recording-revoke').addEventListener('click', () => {
+    const job = state.memoryJobs.find(job => job.id === state.selectedMemoryJobId);
+    if (job?.revocation || confirm('Revoke access to this recording? It will leave search and playback, and its derived caches will be cleared. Retained media follows the existing retention policy. Access cannot be restored.')) changeMemoryRecording('revoke');
+  });
   $('#visual-index-start').addEventListener('click', () => changeVisualIndex());
   $('#visual-index-cancel').addEventListener('click', () => changeVisualIndex('cancel'));
   $('#visual-index-retry').addEventListener('click', () => changeVisualIndex('retry'));
@@ -125,6 +143,12 @@ function bindMemory() {
     if (job) { inspectMemoryJob(job); loadVisualIndex(); }
   });
   $('#memory-query-form').addEventListener('submit', submitMemoryQuery);
+  $('#memory-query-form').addEventListener('input', clearMemoryAnswer);
+  $('#memory-query-session').addEventListener('change', () => {
+    $('#memory-query-entity').value = '';
+    renderMemoryEntityOptions(state.memoryJobs.find(job => job.id === state.selectedMemoryJobId));
+    clearMemoryAnswer();
+  });
   for (const [sequence, caption] of [['#memory-temporal-enabled', '#memory-vlm-enabled']]) {
     $(sequence).addEventListener('change', () => { $(caption).disabled = $(sequence).checked; });
   }
@@ -133,6 +157,8 @@ function bindMemory() {
     $('#memory-query-entity').value = '';
     $('#memory-query-cluster').value = '';
     $('#memory-query-cameras').value = '';
+    $('#memory-query-session').value = '';
+    renderMemoryEntityOptions(state.memoryJobs.find(job => job.id === state.selectedMemoryJobId));
     updateMemorySearchScope();
   });
   $('#memory-vlm-model').addEventListener('change', () => renderModels());
@@ -221,6 +247,7 @@ async function api(path, options = {}) {
 }
 
 async function refreshAll() {
+  state.visualIndexRetryAt = 0;
   $('#refresh-button').disabled = true;
   await Promise.all([loadCapabilities(), loadRetrievalStatus(), loadModels(), refreshJobLists()]);
   $('#refresh-button').disabled = false;
@@ -230,6 +257,7 @@ async function refreshAll() {
 async function loadRetrievalStatus() {
   try {
     const status = await api('/api/v1/retrieval-status');
+    state.retrievalConfigured = status.configured;
     $('#retrieval-status').textContent = status.message;
     $('#retrieval-status').dataset.available = String(status.available);
   } catch (error) {
@@ -241,6 +269,7 @@ async function loadRetrievalStatus() {
 async function loadCapabilities() {
   try {
     state.capabilities = await api('/api/v1/capabilities');
+    $('#memory-capture-sessions').disabled = state.capabilities.media_policy !== 'sanitized-v1';
     const durationInput = $('#monitor-duration');
     durationInput.max = state.capabilities.max_analysis_secs;
     if (Number(durationInput.value) > state.capabilities.max_analysis_secs) {
@@ -454,14 +483,33 @@ async function submitMemoryJob(event) {
       observer_fps: Number($('#memory-observer-fps').value),
       vlm_enabled: $('#memory-vlm-enabled').checked && !$('#memory-temporal-enabled').checked,
       long_memory_enabled: $('#memory-long-enabled').checked,
+      capture_sessions: $('#memory-capture-sessions').checked ? true : undefined,
       temporal_enabled: $('#memory-temporal-enabled').checked,
       vlm_model: $('#memory-vlm-model').value,
     };
+    // Keep only a digest and operation key across an uncertain acknowledgement.
+    // The camera URL/credentials are never persisted in browser storage here.
+    const intentJson = JSON.stringify(request);
+    const digest = globalThis.crypto?.subtle
+      ? Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(intentJson))), b => b.toString(16).padStart(2, '0')).join('')
+      : null;
+    let pending = state.pendingMemorySubmission;
+    if (digest) {
+      try { pending = JSON.parse(sessionStorage.getItem('visn.pending-recording.v1')) || pending; } catch (_) {}
+    }
+    if (!pending || pending.fingerprint !== (digest || intentJson)) {
+      pending = {fingerprint: digest || intentJson, key: Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('')};
+    }
+    state.pendingMemorySubmission = pending;
+    if (digest) { try { sessionStorage.setItem('visn.pending-recording.v1', JSON.stringify(pending)); } catch (_) {} }
+    request.idempotency_key = pending.key;
     const job = await api('/api/v1/memory-jobs', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(request),
     });
+    state.pendingMemorySubmission = null;
+    try { sessionStorage.removeItem('visn.pending-recording.v1'); } catch (_) {}
     state.selectedMemoryJobId = job.id;
     $('#memory-query-cluster').value = clusterId;
     $('#memory-query-cameras').value = job.request.cameras.map(camera => camera.camera_id).join(', ');
@@ -479,6 +527,7 @@ async function submitMemoryJob(event) {
 async function loadMemoryJobs() {
   try {
     state.memoryJobs = await api('/api/v1/memory-jobs');
+    noticeRevocations(state.memoryJobs);
     $('#memory-count').textContent = state.memoryJobs.length;
     const options = state.memoryJobs.map(job => `<option value="${job.id}">${escapeHtml(job.request.name)} · ${escapeHtml(job.status)} · ${new Date(job.created_at_ms).toLocaleString()}</option>`).join('');
     if (state.memoryJobOptions !== options) {
@@ -500,20 +549,139 @@ async function loadMemoryJobs() {
   }
 }
 
+async function changeMemoryRecording(action) {
+  const id = state.selectedMemoryJobId;
+  if (!id || state.memoryRecordingActionBusy) return;
+  state.memoryRecordingActionBusy = true;
+  $('#memory-recording-cancel').disabled = $('#memory-recording-resume').disabled = true;
+  $('#memory-recording-revoke').disabled = true;
+  const status = $('#memory-recording-action-status');
+  status.textContent = action === 'revoke' ? 'Revoking recording access…' : action === 'cancel' ? 'Stopping recording…' : 'Checking saved evidence…';
+  try {
+    const job = await api(`/api/v1/memory-jobs/${id}/${action}`, {method: 'POST'});
+    noticeRevocations([job]);
+    if (id === state.selectedMemoryJobId) {
+      state.renderedMemoryJob = null;
+      inspectMemoryJob(job);
+      status.textContent = action === 'revoke' ? revocationMessage(job) : action === 'cancel' ? 'Recording stopped. Already committed evidence remains available for recovery.' : 'Resuming saved evidence only. No new live interval is being opened.';
+      $('#memory-job-select').focus();
+    }
+  } catch (error) {
+    status.textContent = `Recording action unavailable: ${error.message}`;
+  } finally {
+    state.memoryRecordingActionBusy = false;
+    await loadMemoryJobs();
+  }
+}
+
+function revocationMessage(job) {
+  const cleanup = job.revocation?.cleanup_state;
+  const local = job.revocation?.local_cleanup_state;
+  return `Access revoked. ${cleanup === 'completed' && local === 'completed' ? 'Derived cache cleanup completed.' : cleanup === 'blocked' || local === 'blocked' ? 'Cache cleanup is blocked; check storage and worker configuration, then retry.' : 'Cache cleanup is saved and will resume when storage and the worker are available.'} Retained media follows the existing retention policy.`;
+}
+
+async function loadEvidenceStatistics(rebuild) {
+  const id = state.selectedMemoryJobId;
+  if (!id || state.evidenceStatisticsBusy) return;
+  const accessRevision = state.memoryAccessRevision;
+  state.evidenceStatisticsBusy = true;
+  state.evidenceStatistics = null;
+  renderEvidenceStatistics(state.memoryJobs.find(job => job.id === id));
+  try {
+    const report = await api(`/api/v1/memory-jobs/${id}/${rebuild ? 'metadata/rebuild' : 'analytics'}`, {method:'POST', headers:{'content-type':'application/json'}, body:'{}'});
+    if (accessRevision === state.memoryAccessRevision && id === state.selectedMemoryJobId && !rebuild) state.evidenceStatistics = {id, report};
+  } catch (error) {
+    if (accessRevision === state.memoryAccessRevision && id === state.selectedMemoryJobId) state.evidenceStatistics = {id, error:error.message};
+  } finally {
+    state.evidenceStatisticsBusy = false;
+    await loadMemoryJobs();
+  }
+}
+
+function renderEvidenceStatistics(job) {
+  const metadata = job?.metadata_projection;
+  const available = job?.status === 'completed' && !job.revocation;
+  $('#memory-metadata-show').disabled = state.evidenceStatisticsBusy || !available || metadata?.state !== 'completed';
+  $('#memory-metadata-rebuild').disabled = state.evidenceStatisticsBusy || !available || metadata?.state === 'pending';
+  const saved = state.evidenceStatistics?.id === job?.id ? state.evidenceStatistics : null;
+  const status = $('#memory-metadata-status');
+  if (job?.revocation) { status.textContent = 'Access revoked. Evidence statistics are unavailable.'; return; }
+  if (state.evidenceStatisticsBusy) { status.textContent = 'Checking saved evidence metadata…'; return; }
+  if (saved?.error) { status.textContent = `Evidence statistics unavailable: ${saved.error}`; return; }
+  if (saved?.report && saved.report.revision === metadata?.revision) {
+    status.textContent = saved.report.cameras.map(camera => `${camera.camera_id}${camera.source_session_id ? ` · source ${camera.source_session_id.slice(0,8)}` : ''}: ${camera.indexed_events} indexed intervals, ${camera.indexed_interval_ms} ms of interval coverage; ${camera.observed_tracker_entities === null ? 'tracker counts unavailable' : `${camera.observed_tracker_entities} observed tracker histories`}.`).join(' ') + (saved.report.failed_cameras.length ? ` ${saved.report.failed_cameras.length} cameras have no committed result.` : '');
+    return;
+  }
+  status.textContent = !available ? 'Select a completed recording.' : !metadata ? 'No saved metadata projection yet. Rebuild it from retained evidence.' : metadata.state === 'completed' ? `Saved ${metadata.version} projection. Statistics are verified when requested.` : metadata.state === 'blocked' ? `Metadata preparation blocked: ${metadata.last_error || 'check retained evidence, then rebuild'}` : 'Evidence metadata is queued. It survives a service restart.';
+}
+
+function clearMemoryAnswer() {
+  $('#memory-query-result').querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); });
+  $('#memory-query-result').classList.add('hidden');
+  for (const id of ['memory-query-json','memory-query-title','memory-query-summary','memory-query-mode','memory-query-notes','memory-query-journeys','memory-query-matches']) $(`#${id}`).textContent = '';
+}
+
+function noticeRevocations(jobs) {
+  const newlyRevoked = jobs.filter(job => job.revocation && !state.knownRevokedMemoryIds.has(job.id));
+  if (!newlyRevoked.length) return;
+  newlyRevoked.forEach(job => state.knownRevokedMemoryIds.add(job.id));
+  state.memoryAccessRevision += 1;
+  state.evidenceStatistics = null;
+  clearMemoryAnswer();
+}
+
+function renderMemoryEntityOptions(job) {
+  const select = $('#memory-query-entity');
+  const previous = select.value;
+  const session = $('#memory-query-session').value;
+  const entities = (job?.result?.camera_results || []).map(c => c.long_memory)
+    .filter(g => g && (!state.capabilities?.entity_memory_version || g.version === state.capabilities.entity_memory_version))
+    .flatMap(g => g.entities).filter(entity => !session || entity.source_session_id === session);
+  select.innerHTML = '<option value="">Find candidates from question</option>' + entities.map(entity => `<option value="${entity.entity_id}">${escapeHtml(entity.class_name)} · track ${escapeHtml(entity.track_id)}${entity.source_session_id ? ` · source ${escapeHtml(entity.source_session_id.slice(0,8))}` : ''} · ${escapeHtml(entity.camera_id)}</option>`).join('');
+  if (entities.some(entity => entity.entity_id === previous)) select.value = previous;
+}
+
 function inspectMemoryJob(job) {
-  const renderKey = `${job.id}:${job.status}:${job.completed_at_ms}:${JSON.stringify(job.result?.camera_results.map(c => [c.long_memory?.version, c.long_memory?.source_sha256, c.long_memory?.entities.length]))}`;
-  if (state.renderedMemoryJob === renderKey) return;
+  const renderKey = `${job.id}:${job.status}:${job.completed_at_ms}:${Object.keys(job.camera_checkpoints || {}).length}:${job.recovery_attempts || 0}:${JSON.stringify(job.result?.camera_results.map(c => [c.long_memory?.version, c.long_memory?.source_sha256, c.long_memory?.entities.length]))}`;
+  const active = ['queued', 'running'].includes(job.status);
+  const recoverable = !job.revocation && ['failed', 'cancelled'].includes(job.status) && state.capabilities?.media_policy === 'sanitized-v1';
+  $('#memory-recording-cancel').classList.toggle('hidden', !active);
+  $('#memory-recording-resume').classList.toggle('hidden', !recoverable);
+  $('#memory-recording-cancel').disabled = $('#memory-recording-resume').disabled = state.memoryRecordingActionBusy;
+  $('#memory-recording-revoke').disabled = state.memoryRecordingActionBusy;
+  $('#memory-recording-revoke').classList.toggle('hidden', !!job.revocation && job.revocation.cleanup_state !== 'blocked' && job.revocation.local_cleanup_state !== 'blocked');
+  $('#memory-recording-revoke').textContent = job.revocation ? 'Retry revocation cleanup' : 'Revoke recording access';
+  if (job.revocation) {
+    $('#memory-query-session').innerHTML = '<option value="">All source sessions</option>';
+    $('#memory-query-session').disabled = true;
+    $('#memory-recording-action-status').textContent = revocationMessage(job);
+    state.visualIndex = null;
+    $('#memory-query-result').classList.add('hidden');
+    $('#memory-camera-results').querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); });
+    $('#memory-camera-results').textContent = '';
+    $('#memory-raw-json').textContent = '';
+  }
+  renderEvidenceStatistics(job);
+  if (state.renderedMemoryJob === renderKey) { renderVisualIndex(); return; }
   if (state.selectedMemoryJobId !== job.id) { state.visualIndex = null; setInlineError('#visual-index-error', ''); }
   state.renderedMemoryJob = renderKey;
+  if (!state.memoryRecordingActionBusy && !job.revocation) {
+    $('#memory-recording-action-status').textContent = `${Object.keys(job.camera_checkpoints || {}).length}/${job.request.cameras.length} camera checkpoints saved. Recovery uses saved evidence only; a new live interval requires a new recording.`;
+  }
   state.selectedMemoryJobId = job.id;
   state.searchAllRecordings = false;
   $('#memory-query-cluster').value = job.request.cluster_id || '';
-  $('#memory-query-cameras').value = (job.result?.camera_results || []).map(result => result.camera.camera_id).join(', ');
+  $('#memory-query-cameras').value = [...new Set((job.result?.camera_results || []).map(result => result.camera.camera_id))].join(', ');
   $('#memory-query-result').classList.add('hidden');
   const memories = (job.result?.camera_results || []).map(c => c.long_memory).filter(Boolean);
+  const sourceSessions = (job.result?.camera_results || []).filter(c => c.source_session_id);
+  const selectedSourceSession = $('#memory-query-session').value;
+  $('#memory-query-session').innerHTML = '<option value="">All source sessions</option>' + sourceSessions.map((camera,index) => `<option value="${escapeHtml(camera.source_session_id)}">Source ${index+1} · ${escapeHtml(camera.source_session_id.slice(0,8))} · ${escapeHtml(camera.camera.camera_id)}</option>`).join('');
+  $('#memory-query-session').disabled = !!job.revocation || !sourceSessions.length;
+  if (sourceSessions.some(c => c.source_session_id === selectedSourceSession)) $('#memory-query-session').value = selectedSourceSession;
   const outdated = memories.some(g => state.capabilities?.entity_memory_version && g.version !== state.capabilities.entity_memory_version);
   const entities = memories.filter(g => !state.capabilities?.entity_memory_version || g.version === state.capabilities.entity_memory_version).flatMap(g => g.entities);
-  $('#memory-query-entity').innerHTML = '<option value="">Find candidates from question</option>' + entities.map(e => `<option value="${e.entity_id}">${escapeHtml(e.class_name)} · ${escapeHtml(e.camera_id)} · track ${escapeHtml(e.track_id)}</option>`).join('');
+  renderMemoryEntityOptions(job);
   if (!state.buildingEntityMemory) $('#memory-links-status').textContent = outdated ? 'Saved tracker memory uses an older sampling version. Rebuild entity memory for this recording.' : entities.length ? `${entities.length} tracker histories saved. Same-track links are not verified identities.` : (job.result?.camera_results.some(c => c.long_memory?.status === 'ready') ? 'Entity memory built; no confirmed tracks found.' : 'No linked entity memory for this recording yet.');
   updateMemorySearchScope(job);
   renderVisualIndex();
@@ -523,7 +691,7 @@ function inspectMemoryJob(job) {
   badge.textContent = job.status;
   badge.className = `badge ${job.status}`;
   $('#memory-processing').classList.toggle('hidden', !['queued', 'running'].includes(job.status));
-  $('#memory-job-error').classList.toggle('hidden', job.status !== 'failed');
+  $('#memory-job-error').classList.toggle('hidden', !['failed', 'cancelled'].includes(job.status));
   $('#memory-job-error').textContent = job.error || '';
   if (!job.result) {
     $('#memory-result').classList.add('hidden');
@@ -535,6 +703,7 @@ function inspectMemoryJob(job) {
   $('#memory-metric-events').textContent = result.events_indexed;
   $('#memory-metric-frames').textContent = result.observer_frames_decoded;
   $('#memory-metric-duration').textContent = formatDuration(result.source_duration_ms);
+  $('#memory-metric-duration-label').textContent = job.request.capture_sessions ? 'Longest session' : 'Duration';
   $('#memory-camera-results').innerHTML = result.camera_results.map(renderMemoryCamera).join('') +
     (result.camera_failures || []).map((failure) => `<article class="camera-result-card error"><div class="camera-result-head"><strong>${escapeHtml(failure.camera_id)}</strong><small>failed</small></div><p>${escapeHtml(failure.error)}</p></article>`).join('');
   $('#memory-raw-json').textContent = JSON.stringify(result, null, 2);
@@ -542,11 +711,25 @@ function inspectMemoryJob(job) {
 
 async function loadVisualIndex() {
   const id = state.selectedMemoryJobId;
+  if (state.memoryJobs.find(job => job.id === id)?.revocation) {
+    state.visualIndex = null;
+    renderVisualIndex();
+    $('#memory-query-queue').textContent = 'Recording access is revoked. It is excluded from search and playback.';
+    return;
+  }
   if (!id || state.visualIndexPolling || state.visualIndexBusy) return;
+  if (state.visualIndexRetryJob !== id) {
+    state.visualIndexRetryJob = id;
+    state.visualIndexRetryAt = 0;
+    state.visualIndexFailures = 0;
+  }
+  if (Date.now() < state.visualIndexRetryAt) return;
   state.visualIndexPolling = true;
   try {
     const result = await api(`/api/v1/memory-jobs/${id}/visual-index`);
     if (id !== state.selectedMemoryJobId) return;
+    state.visualIndexFailures = 0;
+    state.visualIndexRetryAt = 0;
     state.visualIndex = result.jobs.find(job => job.profile_current === true) || result.jobs[0] || null;
     const queue = result.scheduler || {};
     $('#memory-query-queue').textContent = queue.active || queue.interactive_waiting
@@ -561,10 +744,27 @@ async function loadVisualIndex() {
     renderVisualIndex();
   } catch (error) {
     if (id === state.selectedMemoryJobId) {
-      $('#visual-index-status').textContent = `Visual preparation unavailable: ${error.message}`;
-      $('#memory-query-queue').textContent = 'Queue status unavailable. Each search reports the retrieval mode actually used.';
+      state.visualIndexFailures += 1;
+      const retryMs = Math.min(60000, 5000 * 2 ** Math.min(state.visualIndexFailures - 1, 4));
+      state.visualIndexRetryAt = Date.now() + retryMs;
+      const recording = state.memoryJobs.find(job => job.id === id);
+      $('#visual-index-status').textContent = `${visualProjectionMessage(recording) || 'Visual preparation unavailable.'} Worker status unavailable: ${error.message}`;
+      $('#memory-query-queue').textContent = `Queue status unavailable. Retrying in ${retryMs / 1000}s. Each search reports the retrieval mode actually used.`;
     }
   } finally { state.visualIndexPolling = false; }
+}
+
+function visualProjectionMessage(recording) {
+  if (recording?.revocation) return revocationMessage(recording);
+  const projection = recording?.visual_projection;
+  if (!projection) return '';
+  if (projection.state === 'pending') return state.retrievalConfigured === false
+    ? 'Visual preparation intent is saved. Configure the visual worker to continue.'
+    : 'Visual preparation intent is saved and will be retried automatically. Closing this page does not discard it.';
+  if (projection.state === 'submitted') return 'Visual preparation was accepted by the worker. Waiting for verified completion.';
+  if (projection.state === 'blocked') return 'Saved visual preparation is blocked. Check the source and worker configuration, then prepare again.';
+  if (projection.state === 'completed') return 'The saved worker receipt reports all requested intervals prepared. Check the current worker profile before relying on readiness.';
+  return '';
 }
 
 function renderVisualIndex() {
@@ -581,7 +781,7 @@ function renderVisualIndex() {
   progress.max = task?.total || 1;
   progress.value = task?.completed || 0;
   $('#visual-index-status').textContent = !task
-    ? 'No visual preparation task for this recording. You can prepare it now or search directly.'
+    ? visualProjectionMessage(recording) || 'No visual preparation task for this recording. You can prepare it now or search directly.'
     : `${label(task.status)} · ${task.completed}/${task.total} intervals prepared${task.failed ? ` · ${task.failed} failed` : ''}. ${task.status === 'completed' ? 'All requested intervals prepared; this does not certify scene or action accuracy.' : task.status === 'cancelled' ? 'Completed artifacts are retained. An interval already in progress may finish.' : task.status === 'failed' ? 'Coverage is incomplete. Retry, or prepare again if the source or model changed.' : 'Questions may run between intervals. Closing this page does not stop the task.'}`;
   if (task?.status === 'completed' && task.profile_current !== true) {
     $('#visual-index-status').textContent += task.profile_current === false
@@ -598,16 +798,60 @@ async function changeVisualIndex(action = '') {
   setInlineError('#visual-index-error', '');
   renderVisualIndex();
   try {
-    const suffix = action ? `/${task.id}/${action}` : '';
+    const suffix = action ? `/${task.id}/${action}${task.deployment_generation ? `?deployment_generation=${encodeURIComponent(task.deployment_generation)}` : ''}` : '';
     const result = await api(`/api/v1/memory-jobs/${id}/visual-index${suffix}`, {method:'POST'});
     if (id === state.selectedMemoryJobId) state.visualIndex = result;
   } catch (error) {
     if (id === state.selectedMemoryJobId) setInlineError('#visual-index-error', error.message);
   } finally {
     state.visualIndexBusy = false;
+    state.visualIndexRetryAt = 0;
     renderVisualIndex();
     loadVisualIndex();
   }
+}
+
+function renderCaptureSessions(events) {
+  const source = events.find(event => event.privacy?.source?.capture)?.privacy.source;
+  const capture = source?.capture;
+  const sessions = capture?.association_sessions || [];
+  if (!sessions.length) return '<section class="capture-timeline"><h3>Observation timeline</h3><p>Session boundaries are unavailable for this recording. Continuous capture has not been verified.</p></section>';
+  const seconds = ms => `${(ms / 1000).toFixed(3)}s`;
+  const sourceClock = source.clock_kind === 'source_pts';
+  return `<section class="capture-timeline"><h3>Observation timeline</h3>
+    <p>${sourceClock ? 'Times come from source presentation timestamps, relative to the first frame.' : 'Times are observed decoder arrival times, not verified camera capture times.'} These ranges show observed frames; they do not certify continuous coverage or real-world identity.</p>
+    <details><summary>${sessions.length} observation session${sessions.length === 1 ? '' : 's'} · ${sessions.length - 1} timing boundar${sessions.length === 2 ? 'y' : 'ies'}</summary>
+      <ol>${sessions.map((session, index) => `<li>
+        ${index ? `<p class="capture-boundary">${seconds(session.first_observed_ms - sessions[index - 1].last_observed_ms)} between observed frames. Variable frame rate and missing observations cannot be distinguished; tracker association restarts here.</p>` : ''}
+        <strong>Session ${index + 1} · ${seconds(session.first_observed_ms)}–${seconds(session.last_observed_ms)}</strong>
+        <p>${session.last_frame_index - session.first_frame_index + 1} consumed frames · ${index ? 'Starts after an observation timing boundary' : 'Starts with the first observed frame'}</p>
+        <small>Session ID: ${escapeHtml(session.session_id)}</small>
+      </li>`).join('')}</ol>
+    </details>
+    <p>Capture ended: ${escapeHtml(label(capture.termination))}. Recording and transport times do not establish when the scene occurred.</p>
+  </section>`;
+}
+
+function renderProducerProfile(events) {
+  const source = events.find(event => event.privacy?.source)?.privacy.source;
+  if (!source) return '';
+  if (!source.sanitizer_code_sha256 || !source.models || !source.runtime) {
+    return '<section class="capture-timeline"><h3>Processing details unavailable</h3><p>This saved record does not contain a complete producer recipe. Its processing profile cannot be inferred from the current server settings.</p></section>';
+  }
+  const runtime = source.runtime;
+  const fields = [
+    ['Sanitizer', `${label(source.sanitizer || 'unavailable')} · audio ${source.audio || 'unknown'}`],
+    ['Detection threshold', source.detector_threshold],
+    ...['yunet', 'plate'].map(kind => [kind === 'yunet' ? 'Face model SHA-256' : 'Plate model SHA-256', source.models[kind]?.sha256 || 'Unavailable']),
+    ['Sanitizer code SHA-256', source.sanitizer_code_sha256],
+    ['Redaction tracker code SHA-256', source.tracker_code_sha256 || 'Unavailable'],
+    ['Runtime', `OpenCV ${runtime.opencv || '?'} · ONNX Runtime ${runtime.onnxruntime || '?'} · PyAV ${runtime.pyav || '?'} · NumPy ${runtime.numpy || '?'}`],
+    ['Inference', `${runtime.precision || 'Unknown precision'} · ${(Array.isArray(runtime.providers) ? runtime.providers : []).join(', ') || 'Unknown provider'} · ${runtime.threads ?? '?'} thread(s)`],
+  ];
+  return `<details class="capture-timeline"><summary>Processing details · sanitized evidence</summary>
+    <p>This recipe belongs to the saved footage. It is an integration candidate; general privacy detection accuracy has not been established.</p>
+    <dl>${fields.map(([key, value]) => `<dt>${escapeHtml(key)}</dt><dd>${escapeHtml(String(value ?? 'Unavailable'))}</dd>`).join('')}</dl>
+  </details>`;
 }
 
 function renderMemoryCamera(cameraResult) {
@@ -620,6 +864,9 @@ function renderMemoryCamera(cameraResult) {
       <span>${events.length} event${events.length === 1 ? '' : 's'} · ${cameraResult.frames_decoded} source frames</span>
     </div>
     ${camera.description ? `<p class="memory-camera-description">${escapeHtml(camera.description)}</p>` : ''}
+    ${cameraResult.capture_extent === 'retained_prefix' ? '<aside class="capture-timeline"><strong>Recovered footage only</strong><p>The original capture was interrupted. Recovery indexed only committed sessions; missing footage remains unavailable and no new live interval was recorded.</p></aside>' : ''}
+    ${renderCaptureSessions(events)}
+    ${renderProducerProfile(events)}
     <div class="memory-event-grid">${events.map(event => renderMemoryEvent(event)).join('')}</div>
     ${(cameraResult.data_quality_notes || []).length ? `<div class="report-notes">${cameraResult.data_quality_notes.map((note) => `<span>${escapeHtml(note)}</span>`).join('')}</div>` : ''}
   </section>`;
@@ -682,9 +929,28 @@ function updateMemorySearchScope(selected = null) {
   $('#memory-search-scope').textContent = state.searchAllRecordings
     ? 'Searching all indexed recordings, subject to the filters below.'
     : ready ? `Searching selected recording: ${job.request.name} · ${job.result.events_indexed} indexed clips.`
+    : job?.revocation ? 'Selected recording access is revoked. Search another recording or all permitted recordings.'
     : `Selected recording is ${job?.status || 'not available'}. Choose a completed recording with indexed clips, or search all recordings.`;
   $('#memory-query-button').disabled = state.memoryQueryBusy || !ready;
   $('#memory-build-links').disabled = state.buildingEntityMemory || job?.status !== 'completed' || !job?.result?.events_indexed;
+}
+
+function memoryQueryRequest() {
+  return {
+    query: $('#memory-query-text').value.trim(),
+    job_id: state.searchAllRecordings ? null : state.selectedMemoryJobId,
+    semantic_enabled: $('#memory-query-semantic').checked,
+    rerank_enabled: $('#memory-query-rerank').checked,
+    cluster_id: $('#memory-query-cluster').value.trim() || null,
+    camera_ids: $('#memory-query-cameras').value.split(',').map(id => id.trim()).filter(Boolean),
+    source_session_ids: $('#memory-query-session').value ? [$('#memory-query-session').value] : [],
+    limit: 12,
+    vlm_enabled: $('#memory-query-vlm').checked && !$('#memory-query-temporal').checked && !$('#memory-query-long').checked,
+    temporal_enabled: $('#memory-query-temporal').checked,
+    long_memory_enabled: $('#memory-query-long').checked,
+    entity_id: ($('#memory-query-long').checked || $('#memory-query-temporal').checked) ? ($('#memory-query-entity').value || null) : null,
+    vlm_model: $('#memory-vlm-model').value,
+  };
 }
 
 async function submitMemoryQuery(event) {
@@ -695,25 +961,15 @@ async function submitMemoryQuery(event) {
   state.memoryQueryBusy = true;
   button.querySelector('span').textContent = $('#memory-query-temporal').checked ? 'Retrieving and reading frames…' : 'Searching…';
   try {
-    const clusterId = $('#memory-query-cluster').value.trim();
+    const accessRevision = state.memoryAccessRevision;
+    const submittedRequest = JSON.stringify(memoryQueryRequest());
     const response = await api('/api/v1/memory-query', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        query: $('#memory-query-text').value.trim(),
-        job_id: state.searchAllRecordings ? null : state.selectedMemoryJobId,
-        semantic_enabled: $('#memory-query-semantic').checked,
-        rerank_enabled: $('#memory-query-rerank').checked,
-        cluster_id: clusterId || null,
-        camera_ids: $('#memory-query-cameras').value.split(',').map(id => id.trim()).filter(Boolean),
-        limit: 12,
-        vlm_enabled: $('#memory-query-vlm').checked && !$('#memory-query-temporal').checked && !$('#memory-query-long').checked,
-        temporal_enabled: $('#memory-query-temporal').checked,
-        long_memory_enabled: $('#memory-query-long').checked,
-        entity_id: ($('#memory-query-long').checked || $('#memory-query-temporal').checked) ? ($('#memory-query-entity').value || null) : null,
-        vlm_model: $('#memory-vlm-model').value,
-      }),
+      body: submittedRequest,
     });
+    if (accessRevision !== state.memoryAccessRevision) throw new Error('Recording access changed while searching. Search again using permitted recordings.');
+    if (submittedRequest !== JSON.stringify(memoryQueryRequest())) throw new Error('Search inputs changed while searching. Search again using the current filters.');
     renderMemoryQuery(response);
     loadRetrievalStatus();
   } catch (error) {

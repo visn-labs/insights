@@ -1,0 +1,27 @@
+[0.0s] Record real sanitized evidence through Rust
+[9.2s] Stage both complete index/profile targets; activate A
+[9.7s] Hold an actual A response, activate B, then finish both on their declared generations
+[9.8s] Rollback, reject stale operator revision, preserve selection across Rust restart
+[9.9s] Tampered registry fails closed; exact restore recovers without recapture
+[10.0s] Revoke across both active and historical worker storage roots
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 678, in process_post
+    result = service.search(body)
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 516, in search
+    raise ValueError('Evidence source is revoked')
+ValueError: Evidence source is revoked
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 678, in process_post
+    result = service.search(body)
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 516, in search
+    raise ValueError('Evidence source is revoked')
+ValueError: Evidence source is revoked
+[12.1s] Passed atomic cutover, request binding, rollback, CAS, restart, tamper and cross-target revocation

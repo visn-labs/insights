@@ -1,0 +1,53 @@
+{
+  "scope": "Actual cached privacy models and real MPEG-TS clock reset; capture layer only",
+  "sessions": [
+    {
+      "file": "session-0000.mkv",
+      "frames": 10,
+      "detections": {
+        "face": 10,
+        "plate": 0
+      },
+      "source_clock": "source_pts",
+      "source_sha256": "0d038eb6f8483ea81f324caab0468688953d2d4dc91f4c6793a9137477c7b686",
+      "models": {
+        "yunet": {
+          "file": "face_detection_yunet_2023mar.onnx",
+          "url": "https://media.githubusercontent.com/media/opencv/opencv_zoo/48b10fa505aeb51fbd127fc60a5c660040e823b7/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+          "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+          "bytes": 232589
+        },
+        "plate": {
+          "file": "yolo-v9-s-608-license-plates-end2end.onnx",
+          "url": "https://github.com/ankandrew/open-image-models/releases/download/assets/yolo-v9-s-608-license-plates-end2end.onnx",
+          "sha256": "2b878b38d9aa07b6ddc3ea75c4ffcb39869bc5c218e0a14002f60ab2f7b0be9a",
+          "bytes": 28612350
+        }
+      }
+    },
+    {
+      "file": "session-0001.mkv",
+      "frames": 10,
+      "detections": {
+        "face": 10,
+        "plate": 0
+      },
+      "source_clock": "source_pts",
+      "source_sha256": "9f89a932f73efe9638c578355e297480a5506f1c69550fc03bf1591bacd52ae8",
+      "models": {
+        "yunet": {
+          "file": "face_detection_yunet_2023mar.onnx",
+          "url": "https://media.githubusercontent.com/media/opencv/opencv_zoo/48b10fa505aeb51fbd127fc60a5c660040e823b7/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+          "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+          "bytes": 232589
+        },
+        "plate": {
+          "file": "yolo-v9-s-608-license-plates-end2end.onnx",
+          "url": "https://github.com/ankandrew/open-image-models/releases/download/assets/yolo-v9-s-608-license-plates-end2end.onnx",
+          "sha256": "2b878b38d9aa07b6ddc3ea75c4ffcb39869bc5c218e0a14002f60ab2f7b0be9a",
+          "bytes": 28612350
+        }
+      }
+    }
+  ]
+}

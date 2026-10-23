@@ -55,3 +55,11 @@ The original SVG asset and factory/pose hashes remain unchanged. This adds a sep
 - Existing logo freeze, scene, contributor, walking, action-contact and transport tests remain in use.
 
 Logo captures/video/report: `output/playwright/logo-convergence/`. Journey interaction report: `output/playwright/reference-refinement/interaction/`. Screenshots establish composition only; continuous recording and temporal checks establish the tested movement behavior. Local browser results do not constitute physical-phone validation or user artistic acceptance.
+
+## Final validation
+
+All 76 browser checks passed: 14 logo-reveal checks, 23 scene checks, 30 contributor workflow checks and 9 interaction checks. Logo geometry/factory hash checks and 1,201 directional timeline samples passed.
+
+After deferring street construction, the final recorded introduction measured 333 frame intervals: median 16.7 ms, p95 16.7 ms, maximum 16.8 ms. The earlier run with competing street construction had a 650 ms interval. These are local Chrome measurements with video recording enabled, not physical-phone guarantees.
+
+Final recording: `output/playwright/logo-convergence/logo-convergence.webm`.

@@ -1,0 +1,72 @@
+{
+  "metadata_projection": {
+    "revision": "01a168ae-ed69-7511-8813-45401b4a38e8",
+    "version": "evidence-metadata-v1",
+    "input_fingerprint": "52c2ab60a8acb28f5ba534a2280a5f553fbc80bcb1f4477177ad46afb4a82d41",
+    "state": "cancelled",
+    "output_sha256": null,
+    "attempts": 1,
+    "next_attempt_at_ms": 0,
+    "last_error": null
+  },
+  "revocation": {
+    "local_cleanup_state": "pending",
+    "local_cleanup_error": null,
+    "revision": "01a168ae-f68f-7a61-a0bc-6a86711e6372",
+    "revoked_at_ms": 1792757659279,
+    "cleanup_state": "pending",
+    "attempts": 0,
+    "next_attempt_at_ms": 0,
+    "worker_fingerprint": null,
+    "last_error": null,
+    "receipt": null
+  },
+  "visual_projection": {
+    "retry_requested": false,
+    "revision": "01a168ae-ed69-7511-8813-4556d58ddd53",
+    "state": "cancelled",
+    "attempts": 0,
+    "next_attempt_at_ms": 0,
+    "task_id": null,
+    "worker_fingerprint": null,
+    "last_error": null,
+    "receipt": null
+  },
+  "request_fingerprint": "639c6f9e8a07a05d34f8b687845cf7c92fe923f7020852667ac1484918cce8ac",
+  "camera_checkpoints": {},
+  "recovery_attempts": 2,
+  "id": "01a168ae-b922-71f2-a9ce-2fff2fc4d7bc",
+  "request": {
+    "idempotency_key": null,
+    "long_memory_enabled": false,
+    "temporal_enabled": false,
+    "name": "Producer profile replay",
+    "cluster_id": null,
+    "cameras": [
+      {
+        "camera_id": "profile-camera",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 2,
+    "observer_fps": 2.0,
+    "vlm_enabled": false,
+    "vlm_model": null
+  },
+  "status": "cancelled",
+  "created_at_ms": 1792757643554,
+  "started_at_ms": 1792757656811,
+  "completed_at_ms": 1792757659279,
+  "result": null,
+  "error": "recording_revoked"
+}

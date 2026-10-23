@@ -1,0 +1,73 @@
+{
+  "metadata_projection": {
+    "revision": "01a1644f-af69-7613-9396-10ecd463b517",
+    "version": "evidence-metadata-v1",
+    "input_fingerprint": "3202829e546e2d88fe183c7a5441b22ec231f31a32b2f73062a11ed7f6a8386e",
+    "state": "cancelled",
+    "output_sha256": null,
+    "attempts": 1,
+    "next_attempt_at_ms": 0,
+    "last_error": null
+  },
+  "revocation": {
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a1645b-4e91-7270-9755-aeabec63b1a2",
+    "revoked_at_ms": 1792685067921,
+    "cleanup_state": "pending",
+    "attempts": 0,
+    "next_attempt_at_ms": 0,
+    "worker_fingerprint": null,
+    "last_error": null,
+    "receipt": null
+  },
+  "visual_projection": {
+    "retry_requested": false,
+    "revision": "01a1644f-af69-7613-9396-10f327e2f01d",
+    "state": "cancelled",
+    "attempts": 0,
+    "next_attempt_at_ms": 0,
+    "task_id": null,
+    "worker_fingerprint": null,
+    "last_error": null,
+    "receipt": null
+  },
+  "request_fingerprint": "7ddcd6cf69c8ddef504f3c72ff78ce379b2ad1033caa4a996273b88f85d1b3fb",
+  "camera_checkpoints": {},
+  "recovery_attempts": 0,
+  "id": "01a1644f-7f91-7e52-99ff-ef0b7b6c219a",
+  "request": {
+    "capture_sessions": true,
+    "idempotency_key": "a0a1fa8b65cd6f62aa777adb34dc77c0",
+    "long_memory_enabled": true,
+    "temporal_enabled": false,
+    "name": "UI clock reset validation fixed",
+    "cluster_id": "local-test-cluster",
+    "cameras": [
+      {
+        "camera_id": "camera-1-ec2e5cfd",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 15,
+    "observer_fps": 2.0,
+    "vlm_enabled": false,
+    "vlm_model": "google/gemma-4-26b-a4b-qat"
+  },
+  "status": "cancelled",
+  "created_at_ms": 1792684294033,
+  "started_at_ms": 1792684294049,
+  "completed_at_ms": 1792685067921,
+  "result": null,
+  "error": "recording_revoked"
+}

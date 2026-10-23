@@ -83,6 +83,7 @@ def configure_threads(thread_count: int) -> None:
 class FramePacket:
     frame: Any
     source_time_ms: int
+    continuity_epoch: int = 0
 
 
 class CameraSession:
@@ -120,6 +121,7 @@ class CameraSession:
         self.best_frame_time_ms = 0
         self.best_frame_quality = float("-inf")
         self.appearance_sample_times: dict[str, int] = {}
+        self.tracker_epoch = 0
         self.thread = threading.Thread(
             target=self._capture_loop,
             name=f"capture-{self.request_id[:8]}",
@@ -213,6 +215,7 @@ class CameraSession:
         deadline = wall_start + self.max_seconds
         frame_index = 0
         sampler = runner.TimestampSampler(self.requested_fps)
+        continuity = runner.TrackingContinuity()
         capture = None
         try:
             while not self.cancelled:
@@ -260,19 +263,21 @@ class CameraSession:
                         reconnect = False
                         break
                     frame_index += 1
+                    epoch = continuity.observe(source_time_ms)
                     if not sampler.accept(source_time_ms):
                         continue
                     if frame is None:
                         ok, frame = capture.retrieve()
                         if not ok:
                             break
-                    if not self._offer(FramePacket(frame, source_time_ms)):
+                    if not self._offer(FramePacket(frame, source_time_ms, epoch)):
                         break
 
                 capture.release()
                 capture = None
                 if not reconnect or self.cancelled:
                     break
+                continuity.reconnect()
                 time.sleep(min(0.5, max(0.0, deadline - time.monotonic())))
         except BaseException as error:
             if isinstance(error, (KeyboardInterrupt, SystemExit)):
@@ -505,6 +510,10 @@ def main() -> None:
     ) -> list[dict[str, Any]]:
         frame = packet.frame
         frame_time_ms = packet.source_time_ms
+        if packet.continuity_epoch != session.tracker_epoch:
+            session.tracker.reset()
+            session.appearance_sample_times.clear()
+            session.tracker_epoch = packet.continuity_epoch
         height, width = frame.shape[:2]
         quality = runner.representative_frame_quality(cv2, frame)
         if quality > session.best_frame_quality:
@@ -529,7 +538,7 @@ def main() -> None:
         observations: list[dict[str, Any]] = []
         for row in tracks:
             x1, y1, x2, y2 = (float(value) for value in row[:4])
-            track_id = str(int(row[4]))
+            track_id = runner.TrackingContinuity.track_id(packet.continuity_epoch, int(row[4]))
             confidence = float(row[5])
             class_id = int(row[6])
             if confidence < session.confidence:

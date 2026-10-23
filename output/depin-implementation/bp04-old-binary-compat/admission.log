@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_old_binary_compatibility.py", line 68, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/anagha/projects/visn_rust/tools/check_old_binary_compatibility.py", line 57, in main
+    if name=='current':assert status in (400,409),(status,body[:500])
+                              ^^^^^^^^^^^^^^^^^^^
+AssertionError: (404, b'{"error":"memory artifact not found"}')

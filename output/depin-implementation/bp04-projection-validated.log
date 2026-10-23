@@ -1,0 +1,14 @@
+Capture while indexing worker is unavailable
+127.0.0.1 - - [21/Oct/2026 22:13:22] "GET /face-sequence.mkv HTTP/1.1" 200 -
+Waiting for owned browser probe; touch OUTPUT/ui-done to continue
+Start real indexing queue; deliberately lose the first committed-task acknowledgement
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_projection_replay.py", line 204, in <module>
+    def db_event(worker):
+        ^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/check_projection_replay.py", line 122, in main
+    def complete():
+            ^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/check_recording_recovery.py", line 38, in wait_until
+    raise TimeoutError('expected state did not become true')
+TimeoutError: expected state did not become true

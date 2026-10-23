@@ -1,0 +1,24 @@
+   Compiling visn-phase0 v0.1.0 (/Users/anagha/projects/visn_rust)
+warning: unused import: `Sha256`
+ --> src/store.rs:8:20
+  |
+8 | use sha2::{Digest, Sha256};
+  |                    ^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+error[E0063]: missing fields `camera_checkpoints`, `recovery_attempts` and `request_fingerprint` in initializer of `MemoryJobRecord`
+   --> src/store.rs:431:22
+    |
+431 |         let record = MemoryJobRecord {
+    |                      ^^^^^^^^^^^^^^^ missing `camera_checkpoints`, `recovery_attempts` and `request_fingerprint`
+
+warning: unused import: `Digest`
+ --> src/store.rs:8:12
+  |
+8 | use sha2::{Digest, Sha256};
+  |            ^^^^^^
+
+For more information about this error, try `rustc --explain E0063`.
+warning: `visn-phase0` (bin "visn-phase0" test) generated 2 warnings
+error: could not compile `visn-phase0` (bin "visn-phase0" test) due to 1 previous error; 2 warnings emitted

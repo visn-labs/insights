@@ -1,0 +1,1453 @@
+{
+  "scope": "Atomic cutover/rollback through Rust; fixtures by default, --actual uses cached Qwen.",
+  "actual_qwen": true,
+  "generations": [
+    "77426688-dc27-44a1-b7ef-48c7795bdaa1",
+    "36e7f6dc-3ae4-402c-8369-711930fcf360"
+  ],
+  "inflight_a": {
+    "deployment_generation": "77426688-dc27-44a1-b7ef-48c7795bdaa1",
+    "elapsed_secs": 1.711,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "legacy-renormalize-v1",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 380,
+      "decode_entries": 2,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 1,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "6e3e2424998c784cf74cc2ba6a8fa751625915556aa62f5101b9e83c13eda06a",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "b6a2475d6e6df8965b064c8a4f2db6be7faa150d875e94351aef1c986087c439",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "vector_policy": "legacy-renormalize-v1",
+        "work_caches": true
+      }
+    }
+  },
+  "selected_b": {
+    "deployment_generation": "36e7f6dc-3ae4-402c-8369-711930fcf360",
+    "elapsed_secs": 1.678,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "canonical-unit-v2",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 380,
+      "decode_entries": 2,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 1,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "413d0b7418a35a2cd95d5e3205cd6fdc9682fb74b877a3a10b73db7786449254",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "e0e9be32ddd4ee6ed6a847b6bd81705a8fb296132a2038dcfe7c34df7c71c97f",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-canonical-v2.sqlite3",
+        "vector_policy": "canonical-unit-v2",
+        "work_caches": true
+      }
+    }
+  },
+  "rolled_back": {
+    "deployment_generation": "77426688-dc27-44a1-b7ef-48c7795bdaa1",
+    "elapsed_secs": 0.324,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "legacy-renormalize-v1",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 760,
+      "decode_entries": 4,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 2,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "6e3e2424998c784cf74cc2ba6a8fa751625915556aa62f5101b9e83c13eda06a",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "b6a2475d6e6df8965b064c8a4f2db6be7faa150d875e94351aef1c986087c439",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "vector_policy": "legacy-renormalize-v1",
+        "work_caches": true
+      }
+    }
+  },
+  "failed_stage_generation": "f696b929-648a-4286-9bb6-31b6793eba23",
+  "retired_projection": {
+    "deployment_generation": "77426688-dc27-44a1-b7ef-48c7795bdaa1",
+    "retry_requested": false,
+    "revision": "01a1694f-5fbf-7483-8844-efa9c65f902d",
+    "state": "cancelled",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792768183144,
+    "task_id": "ac8543da-7e62-5529-b5c1-9a0ccd88beb6",
+    "worker_fingerprint": "a8f62b058592bf7574bf261239d315d68599edd3d63f7c78fa8cc5214a98565f",
+    "last_error": "projection_deployment_retired",
+    "receipt": {
+      "completed": 0,
+      "coverage": "prepared_intervals_only_not_exhaustive_scene_coverage",
+      "created_at": 1792768173.058914,
+      "embedding": {
+        "decode_policy": "single-seek-v1",
+        "frames": 2,
+        "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+        "instruction": "Retrieve camera video segments that visually match the search query.",
+        "model": "Qwen/Qwen3-VL-Embedding-2B",
+        "pixels": 64,
+        "runtime": {
+          "attention": "sdpa",
+          "cuda_tf32": false,
+          "cuda_version": null,
+          "cudnn_benchmark": false,
+          "cudnn_deterministic": false,
+          "cudnn_tf32": true,
+          "cudnn_version": null,
+          "deterministic_algorithms": false,
+          "device": "cpu",
+          "dtype": "float32",
+          "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+          "float32_matmul_precision": "highest",
+          "interop_threads": 16,
+          "machine": "arm64",
+          "packages": {
+            "imageio-ffmpeg": "0.6.0",
+            "numpy": "2.5.4",
+            "pillow": "12.3.0",
+            "qwen-vl-utils": "0.0.14",
+            "torch": "2.8.0",
+            "transformers": "4.57.3"
+          },
+          "threads": 2,
+          "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+        },
+        "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+        "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+        "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+      },
+      "error": null,
+      "failed": 0,
+      "id": "ac8543da-7e62-5529-b5c1-9a0ccd88beb6",
+      "item_errors": [],
+      "max_attempts": 2,
+      "pending": 1,
+      "profile_current": true,
+      "scope_id": "01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": "queued",
+      "total": 1,
+      "updated_at": 1792768173.058914,
+      "vector_policy": "legacy-renormalize-v1",
+      "worker_profile": {
+        "fingerprint": "6e3e2424998c784cf74cc2ba6a8fa751625915556aa62f5101b9e83c13eda06a",
+        "manifest": {
+          "decode_policy": "single-seek-v1",
+          "embedding": {
+            "decode_policy": "single-seek-v1",
+            "frames": 2,
+            "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+            "instruction": "Retrieve camera video segments that visually match the search query.",
+            "model": "Qwen/Qwen3-VL-Embedding-2B",
+            "pixels": 64,
+            "runtime": {
+              "attention": "sdpa",
+              "cuda_tf32": false,
+              "cuda_version": null,
+              "cudnn_benchmark": false,
+              "cudnn_deterministic": false,
+              "cudnn_tf32": true,
+              "cudnn_version": null,
+              "deterministic_algorithms": false,
+              "device": "cpu",
+              "dtype": "float32",
+              "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+              "float32_matmul_precision": "highest",
+              "interop_threads": 16,
+              "machine": "arm64",
+              "packages": {
+                "imageio-ffmpeg": "0.6.0",
+                "numpy": "2.5.4",
+                "pillow": "12.3.0",
+                "qwen-vl-utils": "0.0.14",
+                "torch": "2.8.0",
+                "transformers": "4.57.3"
+              },
+              "threads": 2,
+              "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+            },
+            "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+            "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+            "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+          },
+          "index_schema": "vectors-v1",
+          "index_storage": "b6a2475d6e6df8965b064c8a4f2db6be7faa150d875e94351aef1c986087c439",
+          "interpretation": {
+            "identity": "configuration_only_not_model_weight_attestation",
+            "model": null,
+            "revision": null
+          },
+          "qualification": "integration_candidate_not_quality_acceptance",
+          "reranker": {
+            "implementation": "90b3890c2ca4ab043213903f283757eb98676ffdc2d102a09c0100ae1b2bf973",
+            "model": "Qwen/Qwen3-VL-Reranker-2B",
+            "runtime": {
+              "attention": "sdpa",
+              "cuda_tf32": false,
+              "cuda_version": null,
+              "cudnn_benchmark": false,
+              "cudnn_deterministic": false,
+              "cudnn_tf32": true,
+              "cudnn_version": null,
+              "deterministic_algorithms": false,
+              "device": "cpu",
+              "dtype": "float32",
+              "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+              "float32_matmul_precision": "highest",
+              "interop_threads": 16,
+              "machine": "arm64",
+              "packages": {
+                "imageio-ffmpeg": "0.6.0",
+                "numpy": "2.5.4",
+                "pillow": "12.3.0",
+                "qwen-vl-utils": "0.0.14",
+                "torch": "2.8.0",
+                "transformers": "4.57.3"
+              },
+              "threads": 2,
+              "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+            },
+            "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+          },
+          "schema": "visn-retrieval-profile-v1",
+          "vector_database": "semantic-v1.sqlite3",
+          "vector_policy": "legacy-renormalize-v1",
+          "work_caches": true
+        }
+      }
+    }
+  },
+  "revocation": {
+    "target_receipts": {
+      "a8f62b058592bf7574bf261239d315d68599edd3d63f7c78fa8cc5214a98565f": {
+        "cleanup_complete": true,
+        "index_storage": "b6a2475d6e6df8965b064c8a4f2db6be7faa150d875e94351aef1c986087c439",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a1694f-90ce-7720-9359-db9cdd36d05c",
+        "scope_id": "01a1694e-c070-7361-bf1a-9a6710e56617",
+        "status": "revoked"
+      },
+      "fd54a458cd09dab50867363efa8ccd4b798dbbd47db8bdf47b7d477632382edb": {
+        "cleanup_complete": true,
+        "index_storage": "e0e9be32ddd4ee6ed6a847b6bd81705a8fb296132a2038dcfe7c34df7c71c97f",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a1694f-90ce-7720-9359-db9cdd36d05c",
+        "scope_id": "01a1694e-c070-7361-bf1a-9a6710e56617",
+        "status": "revoked"
+      }
+    },
+    "registry_revision": "4ebbefb8-975d-41f0-89d2-d9ede6af5283",
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a1694f-90ce-7720-9359-db9cdd36d05c",
+    "revoked_at_ms": 1792768184526,
+    "cleanup_state": "completed",
+    "attempts": 1,
+    "next_attempt_at_ms": 0,
+    "worker_fingerprint": "a8f62b058592bf7574bf261239d315d68599edd3d63f7c78fa8cc5214a98565f",
+    "last_error": null,
+    "receipt": {
+      "cleanup_complete": true,
+      "index_storage": "e0e9be32ddd4ee6ed6a847b6bd81705a8fb296132a2038dcfe7c34df7c71c97f",
+      "media_erased": false,
+      "pending_policies": [],
+      "revision": "01a1694f-90ce-7720-9359-db9cdd36d05c",
+      "scope_id": "01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": "revoked"
+    }
+  },
+  "source_requests": [
+    "/source.mp4",
+    "/source.mp4"
+  ],
+  "observations": [
+    {
+      "path": "/api/v1/memory-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a/visual-index/ac8543da-7e62-5529-b5c1-9a0ccd88beb6/retry?deployment_generation=77426688-dc27-44a1-b7ef-48c7795bdaa1",
+      "status": 409
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a/visual-index/ac8543da-7e62-5529-b5c1-9a0ccd88beb6/retry?deployment_generation=77426688-dc27-44a1-b7ef-48c7795bdaa1",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 400
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694f-460c-7022-938b-53c1acd8594a/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a1694e-c070-7361-bf1a-9a6710e56617",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    }
+  ]
+}

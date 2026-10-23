@@ -1,0 +1,50 @@
+{
+  "execution_profile_fingerprint": "7067009a1fe14f4467de89e16b2d57bcb4169e60dde6075e09aba0b52b8b7157",
+  "version": "evidence-metadata-v1",
+  "job_id": "01a1699a-764f-74e2-841a-2a6cbe95d6ba",
+  "revision": "01a1699a-909b-7d51-b055-23b759e39860",
+  "media_policy": "sanitized-v1",
+  "input_fingerprint": "c00f97068907ad1290fe5da04c6acb45c0f7aafe3e5ae215378dc0fc20c9ea64",
+  "cameras": {
+    "[\"pending\",\"b16ca8f9bfac4f1c9a14534f290369bc\"]": {
+      "source_provenance_sha256": "6610e811d509bd17ad8283ceadfcaafc5824cd20be728f1a1c3d978494941c32",
+      "camera_id": "pending",
+      "source_session_id": "b16ca8f9bfac4f1c9a14534f290369bc",
+      "capture_timeline": {
+        "association_sessions": [
+          {
+            "session_id": "b16ca8f9bfac4f1c9a14534f290369bc:0",
+            "first_frame_index": 0,
+            "last_frame_index": 9,
+            "first_observed_ms": 0,
+            "last_observed_ms": 900,
+            "start_reason": "initial_capture"
+          }
+        ],
+        "session_id": "b16ca8f9bfac4f1c9a14534f290369bc",
+        "requested_seconds": 1.0,
+        "termination": "requested_limit_reached",
+        "observed_frames": 10,
+        "last_observed_frame_ms": 900,
+        "transport_started_wall_ms": 1792773095745,
+        "transport_finished_wall_ms": 1792773096440,
+        "transport_time_is_not_capture_time": true,
+        "continuity_certified": false,
+        "timestamp_jump_threshold_ms": 1000,
+        "timestamp_jump_count": 0,
+        "timestamp_jump_samples": [],
+        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+      },
+      "duration_ms": 1000,
+      "source_sha256": "98f45e927cf34aa5fcbe5b7a19541872bf04d771a7a569f54b9d1e8b0681980b",
+      "intervals": [
+        {
+          "event_id": "7649d8ff-2d17-59a6-b502-aa58aa73fd99",
+          "start_ms": 0,
+          "end_ms": 1000
+        }
+      ],
+      "graph": null
+    }
+  }
+}

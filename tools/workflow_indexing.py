@@ -9,6 +9,7 @@ import fcntl
 import hashlib
 import json
 import logging
+from pathlib import Path
 import sqlite3
 import threading
 import time
@@ -108,16 +109,20 @@ class IndexJobs:
             ''')
             db.execute("UPDATE items SET state='pending' WHERE state='running'")
             db.execute("UPDATE jobs SET state='queued',updated=? WHERE state='running'", (time.time(),))
+        with service.revocations:
+            service.revocations.execute("INSERT OR IGNORE INTO revocation_cleanup SELECT scope,?,'pending' FROM revocations",(service.vector_policy,))
 
     def connect(self):
         db = sqlite3.connect(self.path, timeout=10)
         db.row_factory = sqlite3.Row
         return db
 
-    def submit(self, body):
+    def identity(self, body):
         events, scope = body.get('events'), body.get('scope_id')
         if not isinstance(scope, str) or not 1 <= len(scope) <= 128:
             raise ValueError('A scope_id of 1..128 characters is required')
+        if self.scope_revoked(scope):
+            raise ValueError('Recording scope is revoked')
         if not isinstance(events, list) or not 1 <= len(events) <= 10000:
             raise ValueError('Index jobs require 1..10000 events')
         if any(not isinstance(e, dict) or not isinstance(e.get('event_id'), str) for e in events):
@@ -130,9 +135,19 @@ class IndexJobs:
         for event in sorted(events, key=lambda e: e['event_id']):
             path, sha = self.service.source(event)
             clean = dict(event_id=event['event_id'], source_path=str(path), start_ms=event['start_ms'], end_ms=event['end_ms'])
+            if event.get('expected_source_sha256') is not None:
+                clean['expected_source_sha256'] = event['expected_source_sha256']
             items.append((clean, sha, self.service.embedding_key(clean, sha)))
         contract = json.dumps([scope, self.service.vector_policy, version, items], sort_keys=True)
         job_id = str(uuid.uuid5(uuid.NAMESPACE_URL, hashlib.sha256(contract.encode()).hexdigest()))
+        return job_id,scope,version,items
+
+    def resolve(self, body):
+        job_id,_,_,_=self.identity(body)
+        return self.get(job_id)
+
+    def submit(self, body):
+        job_id,scope,version,items=self.identity(body)
         with closing(self.connect()) as db, db:
             db.execute('BEGIN IMMEDIATE')
             previous = db.execute('SELECT state FROM jobs WHERE id=?', (job_id,)).fetchone()
@@ -177,9 +192,11 @@ class IndexJobs:
     def action(self, job_id, action):
         with closing(self.connect()) as db, db:
             db.execute('BEGIN IMMEDIATE')
-            row = db.execute('SELECT state FROM jobs WHERE id=?', (job_id,)).fetchone()
+            row = db.execute('SELECT state,scope FROM jobs WHERE id=?', (job_id,)).fetchone()
             if not row:
                 return None
+            if self.scope_revoked(row['scope']):
+                raise ValueError('Recording scope is revoked')
             if action == 'cancel' and row[0] not in TERMINAL:
                 db.execute("UPDATE jobs SET state='cancelled',updated=? WHERE id=?", (time.time(),job_id))
             elif action == 'retry' and row[0] in ('failed','cancelled'):
@@ -191,15 +208,129 @@ class IndexJobs:
         self.wake.set()
         return self.get(job_id)
 
+    def scope_revoked(self, scope):
+        return self.service.revocations.execute('SELECT 1 FROM revocations WHERE scope=?',(scope,)).fetchone() is not None
+
+    def scope_sources(self,scope):
+        paths=set()
+        for policy,filename in self.service.vector_databases.items():
+            queue=self.service.root/('index-jobs-'+policy+'-v1.sqlite3')
+            if queue.exists():
+                with closing(sqlite3.connect(queue,timeout=10)) as db:
+                    for (event,) in db.execute('SELECT items.event FROM items JOIN jobs ON items.job=jobs.id WHERE jobs.scope=?',(scope,)):
+                        paths.add(json.loads(event)['source_path'])
+            cache=self.service.root/filename
+            if cache.exists():
+                with closing(sqlite3.connect(cache,timeout=10)) as db:
+                    if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='artifact_sources'").fetchone():
+                        paths.update(row[0] for row in db.execute('SELECT DISTINCT source_path FROM artifact_sources WHERE source_path LIKE ?',('%/memory/'+scope+'/%',)))
+        paths={str(Path(path).resolve()) for path in paths}
+        if len(paths)>10000 or any(not Path(path).is_relative_to(self.service.root) for path in paths):
+            raise ValueError('Invalid worker scope source contract')
+        return paths
+
+    def revoke(self, body):
+        if not isinstance(body,dict):
+            raise ValueError('Expected a revocation object')
+        scope, revision, paths = body.get('scope_id'), body.get('revision'), body.get('source_paths')
+        mode=body.get('source_contract','paths-v1')
+        if not isinstance(scope,str) or not 1 <= len(scope) <= 128 or not isinstance(revision,str):
+            raise ValueError('Invalid revocation scope/revision')
+        uuid.UUID(revision)
+        if mode not in ('paths-v1','recording-scope-v1'):raise ValueError('Unknown revocation source contract')
+        if mode=='recording-scope-v1':
+            if str(uuid.UUID(scope))!=scope:raise ValueError('Recording scope must be a canonical UUID')
+            paths=sorted(self.scope_sources(scope))
+        if not isinstance(paths,list) or not (0 if mode=='recording-scope-v1' else 1) <= len(paths) <= 10000 or any(not isinstance(p,str) for p in paths):
+            raise ValueError('Revocation requires 1..10000 source paths')
+        paths = sorted({str(Path(p).resolve()) for p in paths})
+        if any(not Path(p).is_relative_to(self.service.root) for p in paths):
+            raise ValueError('Revocation source outside configured evidence directory')
+        db = self.service.revocations
+        with db:
+            old = db.execute('SELECT revision FROM revocations WHERE scope=?',(scope,)).fetchone()
+            if old and old[0] != revision:
+                raise ValueError('Revocation revision conflict')
+            previous={r[0] for r in db.execute('SELECT path FROM revoked_sources WHERE scope=?',(scope,))}
+            if mode=='recording-scope-v1':paths=sorted(set(paths)|previous)
+            if old and mode=='paths-v1' and paths != sorted(previous):
+                raise ValueError('Revocation source contract conflict')
+            db.execute('INSERT OR IGNORE INTO revocations VALUES (?,?,?)',(scope,revision,time.time()))
+            db.executemany('INSERT OR IGNORE INTO revoked_sources VALUES (?,?)',[(p,scope) for p in paths])
+            for policy, filename in self.service.vector_databases.items():
+                if (self.service.root / filename).exists():
+                    db.execute("INSERT OR IGNORE INTO revocation_cleanup VALUES (?,?,'pending')",(scope,policy))
+                    if set(paths)-previous:db.execute("UPDATE revocation_cleanup SET state='pending' WHERE scope=? AND policy=?",(scope,policy))
+        # Source denial is durable before the first cache deletion. Repeated delivery is safe.
+        receipt=self.cleanup_revocation(scope, revision)
+        receipt['source_contract']=mode
+        return receipt
+
+    @staticmethod
+    def purge_artifacts(db, paths):
+        db.execute('CREATE TABLE IF NOT EXISTS artifact_sources (kind TEXT NOT NULL,key TEXT NOT NULL,source_path TEXT NOT NULL,PRIMARY KEY(kind,key,source_path))')
+        db.execute('CREATE TEMP TABLE IF NOT EXISTS revoked_paths(path TEXT PRIMARY KEY)')
+        db.execute('DELETE FROM revoked_paths')
+        db.executemany('INSERT INTO revoked_paths VALUES (?)',[(p,) for p in paths])
+        for kind, table in [('vector','vectors'),('interpretation','interpretations')]:
+            if not db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",(table,)).fetchone():
+                continue
+            # Keep a shared artifact only if another non-revoked source independently references it.
+            # Legacy untracked rows cannot be attributed safely, so invalidate them conservatively.
+            db.execute(f'''DELETE FROM {table} WHERE key NOT IN (
+                SELECT key FROM artifact_sources WHERE kind=? AND source_path NOT IN (SELECT path FROM revoked_paths)
+            )''',(kind,))
+        db.execute('DELETE FROM artifact_sources WHERE source_path IN (SELECT path FROM revoked_paths)')
+        db.commit()
+
+    @staticmethod
+    def cancel_scope(path, scope):
+        if not path.exists(): return
+        with closing(sqlite3.connect(path,timeout=10)) as db, db:
+            db.execute("UPDATE jobs SET state='cancelled',error='scope_revoked',updated=? WHERE scope=?",(time.time(),scope))
+            db.execute("UPDATE items SET state='cancelled',error='scope_revoked' WHERE job IN (SELECT id FROM jobs WHERE scope=?)",(scope,))
+
+    def cleanup_revocation(self, scope, revision):
+        db = self.service.revocations
+        paths = [r[0] for r in db.execute('SELECT DISTINCT path FROM revoked_sources')]
+        pending = [r[0] for r in db.execute("SELECT policy FROM revocation_cleanup WHERE scope=? AND state='pending'",(scope,))]
+        for policy in pending:
+            queue = self.service.root / ('index-jobs-' + policy + '-v1.sqlite3')
+            owner = None
+            try:
+                if policy != self.service.vector_policy:
+                    owner = open(str(queue)+'.lock','a')
+                    try: fcntl.flock(owner,fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    except OSError: continue  # Active policy owner replays its own pending cleanup.
+                self.cancel_scope(queue,scope)
+                if policy == self.service.vector_policy:
+                    self.purge_artifacts(self.service.db,paths)
+                    self.service.decode_cache.clear();self.service.decode_cache_bytes=0
+                    self.service.hashes.clear();self.service.query_cache.clear();self.service.rerank_cache.clear()
+                else:
+                    with closing(sqlite3.connect(self.service.root/self.service.vector_databases[policy],timeout=10)) as cache:
+                        self.purge_artifacts(cache,paths)
+                with db:
+                    db.execute("UPDATE revocation_cleanup SET state='completed' WHERE scope=? AND policy=?",(scope,policy))
+            finally:
+                if owner: owner.close()
+        remaining = [r[0] for r in db.execute("SELECT policy FROM revocation_cleanup WHERE scope=? AND state!='completed'",(scope,))]
+        return dict(scope_id=scope,revision=revision,status='revoked',cleanup_complete=not remaining,
+                    pending_policies=remaining,media_erased=False)
+
     def run_one(self):
         # The background thread yields the model/cache connection between clips.
         # Kernels are not preempted and task cancellation is cooperative.
         with closing(self.connect()) as db:
-            if not db.execute("SELECT 1 FROM jobs WHERE state IN ('queued','running') LIMIT 1").fetchone():
+            revocation = self.service.revocations.execute('''SELECT r.scope,r.revision FROM revocations r
+                JOIN revocation_cleanup c ON r.scope=c.scope WHERE c.state='pending' ORDER BY r.created LIMIT 1''').fetchone()
+            if not revocation and not db.execute("SELECT 1 FROM jobs WHERE state IN ('queued','running') LIMIT 1").fetchone():
                 return False
         if not self.service.lock.acquire(timeout=0.5, background=True):
             return False
         try:
+            if revocation:
+                return self.cleanup_revocation(*revocation)['cleanup_complete']
             with self.service.inference_resources(timeout=0.5):
                 return self.run_admitted()
         except ResourceBusy:

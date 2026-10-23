@@ -115,6 +115,24 @@ impl PipelineService {
         self.sink.name()
     }
 
+    pub async fn sanitize_upload(
+        &self,
+        encoded: Vec<u8>,
+        output: &std::path::Path,
+    ) -> anyhow::Result<crate::privacy_media::SanitizedMedia> {
+        let _permit = self.detector_gate.acquire().await?;
+        let result = crate::privacy_media::sanitize(
+            &self.config,
+            None,
+            Some(encoded),
+            output,
+            self.config.max_analysis_secs,
+        )
+        .await?;
+        crate::privacy_media::render_playback(&self.config, output).await?;
+        Ok(result)
+    }
+
     pub async fn models(&self) -> anyhow::Result<Vec<crate::gemma::ModelInfo>> {
         self.gemma.models().await
     }
@@ -144,6 +162,7 @@ impl PipelineService {
         source: PathBuf,
         seconds: u64,
         evidence_intervals: &[(u64, u64)],
+        detector_identity: Option<&str>,
     ) -> anyhow::Result<(String, Analysis)> {
         let request = JobRequest {
             name: "entity memory".into(),
@@ -164,6 +183,7 @@ impl PipelineService {
                 &request.policy,
                 DetectorAppearanceMode::Off,
                 evidence_intervals,
+                detector_identity,
             )
             .await?;
         Ok((result.model, result.analysis))
@@ -222,8 +242,16 @@ impl PipelineService {
                 }
             }
             BackendKind::Yolo26Command => {
-                self.run_yolo26(job_id, request, &source, &policy, appearance_mode, &[])
-                    .await?
+                self.run_yolo26(
+                    job_id,
+                    request,
+                    &source,
+                    &policy,
+                    appearance_mode,
+                    &[],
+                    None,
+                )
+                .await?
             }
         };
         let analysis = detector.analysis;
@@ -405,13 +433,42 @@ impl PipelineService {
         policy: &AnalyticsPolicy,
         appearance_mode: DetectorAppearanceMode,
         evidence_intervals: &[(u64, u64)],
+        detector_identity: Option<&str>,
     ) -> anyhow::Result<ProcessedDetection> {
         let _permit = self
             .detector_gate
             .acquire()
             .await
             .context("acquire global detector-process gate")?;
-        let source = source.detector_value()?;
+        let source = if self.config.media_policy == "sanitized-v1" {
+            match source {
+                ResolvedSource::Upload(path) => {
+                    crate::privacy_media::verify(path).await?;
+                    path.to_string_lossy().into_owned()
+                }
+                ResolvedSource::Http(_) | ResolvedSource::Rtsp(_) => {
+                    let directory = self
+                        .config
+                        .data_dir
+                        .join("sanitized-analysis")
+                        .join(job_id.to_string());
+                    tokio::fs::create_dir_all(&directory).await?;
+                    let target = directory.join("source.mkv");
+                    crate::privacy_media::sanitize(
+                        &self.config,
+                        Some(&source.detector_value()?),
+                        None,
+                        &target,
+                        request.monitor_duration_secs,
+                    )
+                    .await?;
+                    target.to_string_lossy().into_owned()
+                }
+                ResolvedSource::Sample => source.detector_value()?,
+            }
+        } else {
+            source.detector_value()?
+        };
         if self.detector_worker.enabled() {
             match self
                 .run_yolo26_persistent(
@@ -421,6 +478,7 @@ impl PipelineService {
                     policy,
                     appearance_mode,
                     evidence_intervals,
+                    detector_identity,
                 )
                 .await
             {
@@ -457,10 +515,12 @@ impl PipelineService {
         policy: &AnalyticsPolicy,
         appearance_mode: DetectorAppearanceMode,
         evidence_intervals: &[(u64, u64)],
+        detector_identity: Option<&str>,
     ) -> Result<ProcessedDetection, PersistentDetectionFailure> {
         let mut session = self
             .detector_worker
             .start(DetectorRequest {
+                execution_identity: detector_identity.map(str::to_owned),
                 source: source.to_owned(),
                 fps: request.detector_fps,
                 max_seconds: request.monitor_duration_secs,

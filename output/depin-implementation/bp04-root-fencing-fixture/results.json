@@ -1,0 +1,1681 @@
+{
+  "scope": "Atomic cutover/rollback through Rust; fixtures by default, --actual uses cached Qwen.",
+  "actual_qwen": false,
+  "lost_ack": false,
+  "replace_pending": false,
+  "legacy_binding": null,
+  "backup": {
+    "snapshot": "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-root-fencing-fixture/snapshot",
+    "snapshot_sha256": "fd39761e5f35d45ebb451b22e7be6d4638a692961a525b72c0e1b841c1800c80",
+    "source_state_sha256": "80cce8ef49e3a4ea7fb4a2784d8e3fb142852b447c09bc6d4f66f5aa510bdf9a",
+    "lineage": {
+      "id": "71def4b2-bff6-425f-bb67-cdd0f15806ff",
+      "schema": "visn-recovery-lineage-v1"
+    }
+  },
+  "restore": {
+    "destination": "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-root-fencing-fixture/restored-data",
+    "current_state_sha256": "0865a979f19da21b6be318622306d9c14dc1a580ffcca0b0ed58cb70b418f51c",
+    "cutover_transaction": "a92b8b4d-c646-4fa7-8700-7f72ceb49529",
+    "excluded_new_nonrevoked_job_ids": [],
+    "external_cleanup": "pending; prior acknowledgements are not copied as completion",
+    "lineage": {
+      "id": "71def4b2-bff6-425f-bb67-cdd0f15806ff",
+      "schema": "visn-recovery-lineage-v1"
+    },
+    "revoked_job_ids": [
+      "01a16997-c476-7131-83f6-d9f3a0cc58e2"
+    ],
+    "schema": "visn-evidence-restore-v1",
+    "snapshot_sha256": "fd39761e5f35d45ebb451b22e7be6d4638a692961a525b72c0e1b841c1800c80",
+    "source_root": "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-root-fencing-fixture/data",
+    "visual_preparation": "explicit_rebuild_required",
+    "cutover_already_committed": false,
+    "crash_before_publish": "SIGKILL; destination absent; current state unchanged; retry succeeded",
+    "cutover_crashes": [
+      "source fenced before publish",
+      "published destination pending",
+      "source committed destination pending"
+    ],
+    "restored_generation": "dca82f59-ecb0-4250-8370-df63d526dc71",
+    "remote_cleanup": {
+      "source_paths": [
+        "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-root-fencing-fixture/data/memory/01a16997-c476-7131-83f6-d9f3a0cc58e2/junction/source.mkv"
+      ],
+      "target_receipts": {
+        "220a9de31e01e7ab7fb46218facbd6819a99a0d707d6e927ab972d3d0c40b741": {
+          "cleanup_complete": true,
+          "index_storage": "641d9b6373b5130b3edb7dcd895ec77eb02e18dbe733bbd6cdd5ff113d2c9ffc",
+          "media_erased": false,
+          "pending_policies": [],
+          "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+          "scope_id": "01a16997-c476-7131-83f6-d9f3a0cc58e2",
+          "source_contract": "recording-scope-v1",
+          "status": "revoked"
+        },
+        "fa507c015113ef9040ed1d0e0700b882ae574648651458377cf6de8ee7fabf8b": {
+          "cleanup_complete": true,
+          "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+          "media_erased": false,
+          "pending_policies": [],
+          "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+          "scope_id": "01a16997-c476-7131-83f6-d9f3a0cc58e2",
+          "source_contract": "recording-scope-v1",
+          "status": "revoked"
+        }
+      },
+      "registry_revision": "a1c793e6-5194-4a44-bf07-78c5a8930176",
+      "local_cleanup_state": "completed",
+      "local_cleanup_error": null,
+      "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+      "revoked_at_ms": 1792772942417,
+      "cleanup_state": "completed",
+      "attempts": 4,
+      "next_attempt_at_ms": 0,
+      "worker_fingerprint": "fa507c015113ef9040ed1d0e0700b882ae574648651458377cf6de8ee7fabf8b",
+      "last_error": null,
+      "receipt": {
+        "cleanup_complete": true,
+        "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+        "scope_id": "01a16997-c476-7131-83f6-d9f3a0cc58e2",
+        "source_contract": "recording-scope-v1",
+        "status": "revoked"
+      }
+    },
+    "post_restore_revocation": {
+      "source_paths": [
+        "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-root-fencing-fixture/restored-data/memory/01a16997-e6a8-7e82-861d-50fb22e96cb0/pending/source.mkv"
+      ],
+      "target_receipts": {
+        "220a9de31e01e7ab7fb46218facbd6819a99a0d707d6e927ab972d3d0c40b741": {
+          "cleanup_complete": true,
+          "index_storage": "641d9b6373b5130b3edb7dcd895ec77eb02e18dbe733bbd6cdd5ff113d2c9ffc",
+          "media_erased": false,
+          "pending_policies": [],
+          "revision": "01a16998-49be-7153-b523-f9f9a413362c",
+          "scope_id": "01a16997-e6a8-7e82-861d-50fb22e96cb0",
+          "source_contract": "recording-scope-v1",
+          "status": "revoked"
+        },
+        "fa507c015113ef9040ed1d0e0700b882ae574648651458377cf6de8ee7fabf8b": {
+          "cleanup_complete": true,
+          "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+          "media_erased": false,
+          "pending_policies": [],
+          "revision": "01a16998-49be-7153-b523-f9f9a413362c",
+          "scope_id": "01a16997-e6a8-7e82-861d-50fb22e96cb0",
+          "source_contract": "recording-scope-v1",
+          "status": "revoked"
+        }
+      },
+      "registry_revision": "f4032fd8-288f-4873-83a8-186bec6aecbe",
+      "local_cleanup_state": "completed",
+      "local_cleanup_error": null,
+      "revision": "01a16998-49be-7153-b523-f9f9a413362c",
+      "revoked_at_ms": 1792772950462,
+      "cleanup_state": "completed",
+      "attempts": 1,
+      "next_attempt_at_ms": 0,
+      "worker_fingerprint": null,
+      "last_error": null,
+      "receipt": {
+        "cleanup_complete": true,
+        "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16998-49be-7153-b523-f9f9a413362c",
+        "scope_id": "01a16997-e6a8-7e82-861d-50fb22e96cb0",
+        "source_contract": "recording-scope-v1",
+        "status": "revoked"
+      }
+    },
+    "source_recapture": false
+  },
+  "generations": [
+    "52e61275-ade2-4f39-b999-4dc77b7759f1",
+    "2c98ddc4-19c7-441c-afd3-9158eb46d7fc"
+  ],
+  "inflight_a": {
+    "deployment_generation": "52e61275-ade2-4f39-b999-4dc77b7759f1",
+    "elapsed_secs": 0.001,
+    "embedding": {
+      "model": "fixture-a"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "legacy-renormalize-v1",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 380,
+      "decode_entries": 2,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 1,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "ebadcb98530a14eb86dbd687b92921e4e7351f677e97d36eee144aff243e0ae6",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "model": "fixture-a"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "fixture_or_unsealed_model",
+        "reranker": null,
+        "revocation_contract": "recording-scope-v1",
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "vector_policy": "legacy-renormalize-v1",
+        "work_caches": true
+      }
+    }
+  },
+  "selected_b": {
+    "deployment_generation": "2c98ddc4-19c7-441c-afd3-9158eb46d7fc",
+    "elapsed_secs": 0.0,
+    "embedding": {
+      "model": "fixture-b"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "canonical-unit-v2",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 380,
+      "decode_entries": 2,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 1,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "c9f2beaa79a557b366290829b42807c13bc71036ece6382caa3341b1dfaafff1",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "model": "fixture-b"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "641d9b6373b5130b3edb7dcd895ec77eb02e18dbe733bbd6cdd5ff113d2c9ffc",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "fixture_or_unsealed_model",
+        "reranker": null,
+        "revocation_contract": "recording-scope-v1",
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-canonical-v2.sqlite3",
+        "vector_policy": "canonical-unit-v2",
+        "work_caches": true
+      }
+    }
+  },
+  "rolled_back": {
+    "deployment_generation": "52e61275-ade2-4f39-b999-4dc77b7759f1",
+    "elapsed_secs": 0.001,
+    "embedding": {
+      "model": "fixture-a"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "legacy-renormalize-v1",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 760,
+      "decode_entries": 4,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 2,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "ebadcb98530a14eb86dbd687b92921e4e7351f677e97d36eee144aff243e0ae6",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "model": "fixture-a"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "fixture_or_unsealed_model",
+        "reranker": null,
+        "revocation_contract": "recording-scope-v1",
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "vector_policy": "legacy-renormalize-v1",
+        "work_caches": true
+      }
+    }
+  },
+  "wrong_storage_rejection": {
+    "source_paths": [
+      "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-root-fencing-fixture/data/memory/01a16997-c476-7131-83f6-d9f3a0cc58e2/junction/source.mkv"
+    ],
+    "target_receipts": {
+      "220a9de31e01e7ab7fb46218facbd6819a99a0d707d6e927ab972d3d0c40b741": {
+        "cleanup_complete": true,
+        "index_storage": "641d9b6373b5130b3edb7dcd895ec77eb02e18dbe733bbd6cdd5ff113d2c9ffc",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+        "scope_id": "01a16997-c476-7131-83f6-d9f3a0cc58e2",
+        "source_contract": "recording-scope-v1",
+        "status": "revoked"
+      }
+    },
+    "registry_revision": "0dac37f7-7687-42e4-af99-a4bec48f164d",
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+    "revoked_at_ms": 1792772942417,
+    "cleanup_state": "blocked",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792772949915,
+    "worker_fingerprint": "fa507c015113ef9040ed1d0e0700b882ae574648651458377cf6de8ee7fabf8b",
+    "last_error": "revocation_storage_changed",
+    "receipt": {
+      "cleanup_complete": true,
+      "index_storage": "641d9b6373b5130b3edb7dcd895ec77eb02e18dbe733bbd6cdd5ff113d2c9ffc",
+      "media_erased": false,
+      "pending_policies": [],
+      "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+      "scope_id": "01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "source_contract": "recording-scope-v1",
+      "status": "revoked"
+    }
+  },
+  "failed_stage_generation": "f62652c3-d036-45c9-b7f0-df118cb97780",
+  "retired_projection": {
+    "deployment_generation": "52e61275-ade2-4f39-b999-4dc77b7759f1",
+    "retry_requested": false,
+    "revision": "01a16997-ff72-73a2-8d5e-bc9c9ee4e99c",
+    "state": "cancelled",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792772943301,
+    "task_id": "2357eba9-47a9-5aae-9615-1a9faa3f73a1",
+    "worker_fingerprint": "fa507c015113ef9040ed1d0e0700b882ae574648651458377cf6de8ee7fabf8b",
+    "last_error": "projection_deployment_retired",
+    "receipt": {
+      "completed": 0,
+      "coverage": "prepared_intervals_only_not_exhaustive_scene_coverage",
+      "created_at": 1792772933.243016,
+      "embedding": {
+        "model": "fixture-a"
+      },
+      "error": null,
+      "failed": 0,
+      "id": "2357eba9-47a9-5aae-9615-1a9faa3f73a1",
+      "item_errors": [],
+      "max_attempts": 2,
+      "pending": 1,
+      "profile_current": true,
+      "scope_id": "01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": "queued",
+      "total": 1,
+      "updated_at": 1792772933.243016,
+      "vector_policy": "legacy-renormalize-v1",
+      "worker_profile": {
+        "fingerprint": "ebadcb98530a14eb86dbd687b92921e4e7351f677e97d36eee144aff243e0ae6",
+        "manifest": {
+          "decode_policy": "single-seek-v1",
+          "embedding": {
+            "model": "fixture-a"
+          },
+          "index_schema": "vectors-v1",
+          "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+          "interpretation": {
+            "identity": "configuration_only_not_model_weight_attestation",
+            "model": null,
+            "revision": null
+          },
+          "qualification": "fixture_or_unsealed_model",
+          "reranker": null,
+          "revocation_contract": "recording-scope-v1",
+          "schema": "visn-retrieval-profile-v1",
+          "vector_database": "semantic-v1.sqlite3",
+          "vector_policy": "legacy-renormalize-v1",
+          "work_caches": true
+        }
+      }
+    }
+  },
+  "revocation": {
+    "source_paths": [
+      "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-root-fencing-fixture/data/memory/01a16997-c476-7131-83f6-d9f3a0cc58e2/junction/source.mkv"
+    ],
+    "target_receipts": {
+      "220a9de31e01e7ab7fb46218facbd6819a99a0d707d6e927ab972d3d0c40b741": {
+        "cleanup_complete": true,
+        "index_storage": "641d9b6373b5130b3edb7dcd895ec77eb02e18dbe733bbd6cdd5ff113d2c9ffc",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+        "scope_id": "01a16997-c476-7131-83f6-d9f3a0cc58e2",
+        "source_contract": "recording-scope-v1",
+        "status": "revoked"
+      },
+      "fa507c015113ef9040ed1d0e0700b882ae574648651458377cf6de8ee7fabf8b": {
+        "cleanup_complete": true,
+        "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+        "scope_id": "01a16997-c476-7131-83f6-d9f3a0cc58e2",
+        "source_contract": "recording-scope-v1",
+        "status": "revoked"
+      }
+    },
+    "registry_revision": "0dac37f7-7687-42e4-af99-a4bec48f164d",
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+    "revoked_at_ms": 1792772942417,
+    "cleanup_state": "completed",
+    "attempts": 3,
+    "next_attempt_at_ms": 0,
+    "worker_fingerprint": "fa507c015113ef9040ed1d0e0700b882ae574648651458377cf6de8ee7fabf8b",
+    "last_error": null,
+    "receipt": {
+      "cleanup_complete": true,
+      "index_storage": "2ce8b3e580a7e9e06247ec4d1d359fada06006a9796c0e5949bb3e60d331f8b9",
+      "media_erased": false,
+      "pending_policies": [],
+      "revision": "01a16998-2a51-7dc1-8301-04ff5b2e0d06",
+      "scope_id": "01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "source_contract": "recording-scope-v1",
+      "status": "revoked"
+    }
+  },
+  "source_requests": [
+    "/source.mp4",
+    "/source.mp4"
+  ],
+  "observations": [
+    {
+      "path": "/api/v1/memory-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0/visual-index/2357eba9-47a9-5aae-9615-1a9faa3f73a1/retry?deployment_generation=52e61275-ade2-4f39-b999-4dc77b7759f1",
+      "status": 409
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0/visual-index/2357eba9-47a9-5aae-9615-1a9faa3f73a1/retry?deployment_generation=52e61275-ade2-4f39-b999-4dc77b7759f1",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 400
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2/visual-index",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-events/d99b5922-ecaa-5462-be3c-d0fcc1ccac63/source",
+      "status": 404
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-c476-7131-83f6-d9f3a0cc58e2",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16997-e6a8-7e82-861d-50fb22e96cb0",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    }
+  ]
+}

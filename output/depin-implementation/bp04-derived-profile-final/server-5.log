@@ -1,0 +1,3 @@
+{"timestamp":"2026-10-23T13:07:19.341240Z","level":"INFO","fields":{"message":"visn Phase 0 service ready","address":"127.0.0.1:61656","media_workers":4,"detector_threads":1,"persistent_detector":false,"detector_batch_size":4,"vlm_context_length":4096,"vlm_exclusive_media":true},"target":"visn_phase0"}
+{"timestamp":"2026-10-23T13:07:20.503629Z","level":"INFO","fields":{"message":"experiment 3 tracking retained source","job_id":"01a168de-38f6-7be1-80c2-d334c4eccd71","camera_id":"junction"},"target":"visn_phase0::store"}
+{"timestamp":"2026-10-23T13:07:25.978142Z","level":"INFO","fields":{"message":"memory retrieval started","query_id":"01a168df-969a-74a3-8472-07082de9c4d8","semantic":true,"rerank":true},"target":"visn_phase0::store"}

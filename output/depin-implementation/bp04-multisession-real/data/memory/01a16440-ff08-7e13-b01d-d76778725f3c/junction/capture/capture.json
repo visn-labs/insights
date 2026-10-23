@@ -1,0 +1,33 @@
+{
+  "schema": "visn-sanitized-capture-v1",
+  "capture_id": "02b5d2c9ac084a27b48316e610693290",
+  "state": "completed",
+  "requested_seconds": 15.0,
+  "observed_session_span": "48/25",
+  "time_semantics": "Independent source-relative timelines; session spans are not elapsed wall time or continuous coverage",
+  "sessions": [
+    {
+      "file": "session-0000.mkv",
+      "session_id": "d0ac6e6746a547a29fb7c65a2d99f44f",
+      "start_reason": "initial_capture",
+      "termination": "source_clock_regressed",
+      "frames": 25,
+      "source_clock_kind": "source_pts",
+      "media_sha256": "593fd6c6b68ade2fc43b3d756e701c1f2eeeae91fbc75577d2d85d9765eb4aaa",
+      "ledger_sha256": "a3b3b209eb0e3271c49a7524501660300d8d9afb9401be6451958cd3359738a7",
+      "manifest_sha256": "303d404aefba3817b5fc2b39a49018b77ad08572f81ccda3db8e5da11f0c4637"
+    },
+    {
+      "file": "session-0001.mkv",
+      "session_id": "73160c85a5c94e82b01e1fa0ab21af83",
+      "start_reason": "source_clock_regressed",
+      "termination": "end_of_stream",
+      "frames": 25,
+      "source_clock_kind": "source_pts",
+      "media_sha256": "a24f12d3a38c25100e222497fce6d493839501ad19ec02e3c8417fdf80e63a10",
+      "ledger_sha256": "b4d772c13ecfdb98453f5983b19acbc9f7081de136fdc28adbe8ff430a326605",
+      "manifest_sha256": "a680ed4dd300a46be07cf8053e5c60b52537dd7e8c3692f5d99b5ee9578974a0"
+    }
+  ],
+  "error_code": null
+}

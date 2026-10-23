@@ -52,6 +52,16 @@ Open <http://127.0.0.1:8080>, leave **Sample** and **Deterministic simulator** s
 
 The built-in sample processes two tracks through a line and restricted zone. No model, database, Kafka broker, video file, or network connection is required.
 
+## Versioned storage and release launch
+
+The native service rejects unsupported storage/recording versions before recovery or API startup. Existing unversioned manifests are supported as legacy records; missing privacy provenance is not filled in automatically.
+
+For a pinned local release, use `tools/run_visn_release.py` with the reviewed executable SHA-256 and explicit data directory. Start with `--check` for a read-only preflight. The [release admission guide](docs/DEPIN_BP04_RELEASE_ADMISSION.md) covers commands, tests and remaining qualification gates. Older executables must not be run directly against sanitized-v1 state; the tested Git `9d7e124` is incompatible with its integrity contract. Local development via `cargo run` remains available.
+
+For offline canonical evidence recovery, use the [revocation-preserving snapshot/restore workflow](docs/DEPIN_BP04_BACKUP_RESTORE.md). Restoring an older directory by itself can omit later revocations; the supported tool requires an authoritative current state cut and leaves visual indexing inactive until explicitly rebuilt.
+
+The [fenced cutover workflow](docs/DEPIN_BP04_ROOT_FENCING.md) blocks old roots, snapshot payloads and pending destinations from startup. Resume an interrupted restore with the same pinned command; do not delete its journal or fence.
+
 ## Connect LM Studio
 
 1. Start LM Studio's local server on port `1234` with OpenAI-compatible endpoints enabled.

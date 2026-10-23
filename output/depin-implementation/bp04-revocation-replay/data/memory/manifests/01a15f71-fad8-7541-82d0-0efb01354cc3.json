@@ -1,0 +1,41 @@
+{
+  "revocation": null,
+  "visual_projection": null,
+  "request_fingerprint": "c29a1dee42eb42b9459be86f2e9b4ee9ba9671a9bb35e789f485a4f64e3101b7",
+  "camera_checkpoints": {},
+  "recovery_attempts": 0,
+  "id": "01a15f71-fad8-7541-82d0-0efb01354cc3",
+  "request": {
+    "idempotency_key": null,
+    "long_memory_enabled": false,
+    "temporal_enabled": false,
+    "name": "revocation workflow",
+    "cluster_id": null,
+    "cameras": [
+      {
+        "camera_id": "revoke-camera",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 2,
+    "observer_fps": 2.0,
+    "vlm_enabled": false,
+    "vlm_model": null
+  },
+  "status": "running",
+  "created_at_ms": 1792602667736,
+  "started_at_ms": 1792602667747,
+  "completed_at_ms": null,
+  "result": null,
+  "error": null
+}

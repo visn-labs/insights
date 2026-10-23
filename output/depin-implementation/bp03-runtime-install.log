@@ -1,0 +1,9 @@
+Using Python 3.13.9 environment at: .venv-retrieval
+Resolved 5 packages in 507ms
+Downloading onnxruntime (19.9MiB)
+ Downloaded onnxruntime
+Prepared 3 packages in 6.67s
+Installed 3 packages in 45ms
+ + flatbuffers==25.12.19
+ + onnxruntime==1.31.0
+ + protobuf==7.36.2

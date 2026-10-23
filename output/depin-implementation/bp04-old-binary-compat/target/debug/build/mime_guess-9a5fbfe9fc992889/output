@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-old-binary-compat/target/debug/build/mime_guess-9a5fbfe9fc992889/out/mime_types_generated.rs

@@ -1,0 +1,140 @@
+{
+  "annotation_basis": "Assistant review of exact sampled images before either model run. New recordings from the same cameras; not independent human annotations or independent-camera testing.",
+  "sampling": {
+    "frames": 8,
+    "frame_size": 384,
+    "prompt_version": "independent-target-audit-v6"
+  },
+  "cases": [
+    {
+      "id": "heldout-toll-tarp-truck",
+      "source_path": "data/live-evaluation-2026-10-16/heldout-model-comparison/heldout-1.mkv",
+      "source_sha256": "9157cf20c1e17327ed08477053dff66c72d6190a3450e11c5169d0260540c6fc",
+      "start_ms": 0,
+      "end_ms": 14000,
+      "query": "Is the yellow-cab truck with a green tarpaulin in the left-center lane moving toward the camera or away from it? Compare the same truck in visible frames.",
+      "expected": "toward_camera",
+      "metadata": {
+        "camera_id": "heldout-1",
+        "source": "separate live capture, no model annotation"
+      },
+      "expected_target_visibility": [
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible"
+      ]
+    },
+    {
+      "id": "heldout-toll-container-truck",
+      "source_path": "data/live-evaluation-2026-10-16/heldout-model-comparison/heldout-1.mkv",
+      "source_sha256": "9157cf20c1e17327ed08477053dff66c72d6190a3450e11c5169d0260540c6fc",
+      "start_ms": 0,
+      "end_ms": 14000,
+      "query": "Is the green-cab truck carrying the red shipping container in the center-right lane moving toward the camera or away from it? Compare its size and position.",
+      "expected": "toward_camera",
+      "metadata": {
+        "camera_id": "heldout-1",
+        "source": "separate live capture, no model annotation"
+      },
+      "expected_target_visibility": [
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible"
+      ]
+    },
+    {
+      "id": "heldout-night-static",
+      "source_path": "data/live-evaluation-2026-10-16/heldout-model-comparison/heldout-2.mkv",
+      "source_sha256": "ea2257d551a076c070078dfce279a8bf6fee1cb0dfe74175ce0f49970068a265",
+      "start_ms": 0,
+      "end_ms": 12000,
+      "query": "Can you establish whether the car near the left crosswalk moves toward or away from the camera in these images?",
+      "expected": "uncertain_static",
+      "metadata": {
+        "camera_id": "heldout-2",
+        "source": "separate live capture, no model annotation"
+      },
+      "expected_target_visibility": null
+    },
+    {
+      "id": "heldout-highway-yellow-truck",
+      "source_path": "data/live-evaluation-2026-10-16/heldout-model-comparison/heldout-3.mkv",
+      "source_sha256": "5929d83f45fe9aaf9573a1f46c13df8f84cd08e2dd5c19ac2f63b5aeb29ac53c",
+      "start_ms": 0,
+      "end_ms": 3200,
+      "query": "Is the yellow truck in the nearest lane of the near carriageway moving toward the camera or away from it? Compare its size and position.",
+      "expected": "toward_camera",
+      "metadata": {
+        "camera_id": "heldout-3",
+        "source": "separate live capture, no model annotation"
+      },
+      "expected_target_visibility": [
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "visible",
+        "unclear"
+      ]
+    },
+    {
+      "id": "heldout-highway-negative-train",
+      "source_path": "data/live-evaluation-2026-10-16/heldout-model-comparison/heldout-3.mkv",
+      "source_sha256": "5929d83f45fe9aaf9573a1f46c13df8f84cd08e2dd5c19ac2f63b5aeb29ac53c",
+      "start_ms": 0,
+      "end_ms": 8000,
+      "query": "Is a passenger train travelling through this sequence?",
+      "expected": "no_visual_support",
+      "metadata": {
+        "camera_id": "heldout-3",
+        "source": "separate live capture, no model annotation"
+      },
+      "expected_target_visibility": [
+        "absent",
+        "absent",
+        "absent",
+        "absent",
+        "absent",
+        "absent",
+        "absent",
+        "absent"
+      ]
+    },
+    {
+      "id": "heldout-toll-negative-helicopter",
+      "source_path": "data/live-evaluation-2026-10-16/heldout-model-comparison/heldout-1.mkv",
+      "source_sha256": "9157cf20c1e17327ed08477053dff66c72d6190a3450e11c5169d0260540c6fc",
+      "start_ms": 0,
+      "end_ms": 10000,
+      "query": "Is a helicopter landing in this sequence?",
+      "expected": "no_visual_support",
+      "metadata": {
+        "camera_id": "heldout-1",
+        "source": "separate live capture, no model annotation"
+      },
+      "expected_target_visibility": [
+        "absent",
+        "absent",
+        "absent",
+        "absent",
+        "absent",
+        "absent",
+        "absent",
+        "absent"
+      ]
+    }
+  ],
+  "freeze_note": "Queries, windows, expected answers and visibility labels finalized from sampled contact sheets before model inference. Do not edit to fit model outputs."
+}

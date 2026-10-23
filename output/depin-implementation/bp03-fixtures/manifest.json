@@ -1,0 +1,17 @@
+{
+  "scope": "Public author/demo images; integration smoke tests only, not held-out project acceptance",
+  "files": [
+    {
+      "file": "lena.jpg",
+      "url": "https://raw.githubusercontent.com/opencv/opencv/4.12.0/samples/data/lena.jpg",
+      "sha256": "7de7ed51a1594fff247f4cae2301eceacf5313d6011e37b4a4c8733f7bb72c07",
+      "bytes": 91814
+    },
+    {
+      "file": "plate.png",
+      "url": "https://raw.githubusercontent.com/ankandrew/fast-alpr/c5a94706f175590b2bc09aa86f46182d4c267fae/assets/test_image.png",
+      "sha256": "c154c3e0873fa35076ecf4f611d345c092450217fe75737b2a77183018218255",
+      "bytes": 353058
+    }
+  ]
+}

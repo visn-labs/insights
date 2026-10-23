@@ -1,0 +1,34 @@
+Capture and prepare actual sanitized evidence
+127.0.0.1 - - [21/Oct/2026 22:42:56] "GET /face-sequence.mkv HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:42:59] "POST /index-jobs HTTP/1.1" 202 -
+127.0.0.1 - - [21/Oct/2026 22:43:05] "GET /index-jobs/5ce5acfb-e94f-52a3-8ebc-d01c3d353dbc HTTP/1.1" 200 -
+UI phase ready; touch OUTPUT/ui-ready-done to continue
+Revoke while a semantic response is in flight; suppress cleanup initially
+127.0.0.1 - - [21/Oct/2026 22:44:03] "POST /search HTTP/1.1" 200 -
+UI phase revoked; touch OUTPUT/ui-revoked-done to continue
+Worker outage and hard Rust restart preserve access denial and pending cleanup
+127.0.0.1 - - [21/Oct/2026 22:44:05] "POST /revocations HTTP/1.1" 200 -
+Restart both services after cleanup commit but before its acknowledgement
+127.0.0.1 - - [21/Oct/2026 22:44:08] "POST /revocations HTTP/1.1" 200 -
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 595, in process_post
+    result = service.search(body)
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 465, in search
+    raise ValueError('Evidence source is revoked')
+ValueError: Evidence source is revoked
+127.0.0.1 - - [21/Oct/2026 22:44:08] "POST /search HTTP/1.1" 410 -
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 587, in process_post
+    return self.reply(202, service.indexer.submit(body))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/workflow_indexing.py", line 125, in submit
+    raise ValueError('Recording scope is revoked')
+ValueError: Recording scope is revoked
+127.0.0.1 - - [21/Oct/2026 22:44:08] "POST /index-jobs HTTP/1.1" 410 -
+127.0.0.1 - - [21/Oct/2026 22:44:08] "POST /index-jobs/5ce5acfb-e94f-52a3-8ebc-d01c3d353dbc/retry HTTP/1.1" 410 -
+Passed revocation, in-flight query, denial, outage and lost-ack restart replay: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-revocation-browser

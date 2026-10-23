@@ -1,0 +1,9 @@
+[     191ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0
+[    6189ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0
+[   16686ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0
+[   37688ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0
+[   78188ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0
+[  139688ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0
+[  939094ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0
+[ 1448628ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0
+[ 1508654ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:63831/api/v1/memory-jobs/01a16855-cbd3-7f63-9166-5b70a4647b57/visual-index:0

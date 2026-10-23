@@ -1,0 +1,110 @@
+Capture and prepare actual sanitized evidence
+127.0.0.1 - - [21/Oct/2026 22:44:51] "GET /face-sequence.mkv HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:44:54] "POST /index-jobs HTTP/1.1" 202 -
+127.0.0.1 - - [21/Oct/2026 22:45:00] "GET /index-jobs/ed6b1aad-4406-5532-95f3-1692f81f52d4 HTTP/1.1" 200 -
+UI phase ready; touch OUTPUT/ui-ready-done to continue
+127.0.0.1 - - [21/Oct/2026 22:45:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:21] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:22] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:24] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:25] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:27] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:28] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:30] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:31] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:33] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:34] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:36] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:37] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:39] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:40] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:42] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:43] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:45] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:46] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:48] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:49] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:51] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:52] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:54] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:55] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:57] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:45:58] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:00] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:01] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:03] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:05] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:06] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:07] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:09] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:10] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:12] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:13] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:15] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:16] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:18] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:19] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:21] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:22] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:24] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:25] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:27] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:28] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:30] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:31] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:33] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:34] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:36] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:37] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:39] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:40] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:42] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:43] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:45] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:46] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:48] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:49] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:51] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:52] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:54] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:55] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:57] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:46:58] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:47:00] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:47:01] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:47:03] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:47:23] "GET /index-jobs?scope_id=01a15f75-60b2-71f1-afac-f5825ba90e05 HTTP/1.1" 200 -
+Browser already revoked the recording; in-flight query test is covered by the non-browser replay
+UI phase revoked; touch OUTPUT/ui-revoked-done to continue
+127.0.0.1 - - [21/Oct/2026 22:47:24] "POST /revocations HTTP/1.1" 503 -
+127.0.0.1 - - [21/Oct/2026 22:47:26] "POST /revocations HTTP/1.1" 503 -
+127.0.0.1 - - [21/Oct/2026 22:47:30] "POST /revocations HTTP/1.1" 503 -
+127.0.0.1 - - [21/Oct/2026 22:47:38] "POST /revocations HTTP/1.1" 503 -
+127.0.0.1 - - [21/Oct/2026 22:47:54] "POST /revocations HTTP/1.1" 503 -
+Worker outage and hard Rust restart preserve access denial and pending cleanup
+127.0.0.1 - - [21/Oct/2026 22:49:32] "POST /revocations HTTP/1.1" 200 -
+Restart both services after cleanup commit but before its acknowledgement
+127.0.0.1 - - [21/Oct/2026 22:49:33] "POST /revocations HTTP/1.1" 200 -
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 595, in process_post
+    result = service.search(body)
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 465, in search
+    raise ValueError('Evidence source is revoked')
+ValueError: Evidence source is revoked
+127.0.0.1 - - [21/Oct/2026 22:49:33] "POST /search HTTP/1.1" 410 -
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 587, in process_post
+    return self.reply(202, service.indexer.submit(body))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/workflow_indexing.py", line 125, in submit
+    raise ValueError('Recording scope is revoked')
+ValueError: Recording scope is revoked
+127.0.0.1 - - [21/Oct/2026 22:49:33] "POST /index-jobs HTTP/1.1" 410 -
+127.0.0.1 - - [21/Oct/2026 22:49:33] "POST /index-jobs/ed6b1aad-4406-5532-95f3-1692f81f52d4/retry HTTP/1.1" 410 -
+Passed revocation, in-flight query, denial, outage and lost-ack restart replay: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-revocation-ui-final

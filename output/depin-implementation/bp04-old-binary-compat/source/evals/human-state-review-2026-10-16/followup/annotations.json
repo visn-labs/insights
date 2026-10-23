@@ -1,0 +1,68 @@
+{
+  "packet_sha256": "67be3330aa44d087af42fa3a840c829d676786af143452164e3ea15b6180e939",
+  "reviewer": "Anagha Sharma",
+  "review_method": "human",
+  "reviewed_utc": "2026-10-16T11:32:53.957Z",
+  "cases": [
+    {
+      "id": "live-1-dce234f8",
+      "annotation_scope": "target",
+      "object": "A blurry vehicle, probably an SUV",
+      "identity": "same",
+      "reference_visible": true,
+      "notes": "",
+      "frames": [
+        {
+          "timestamp_ms": 14160,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 14920,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 15160,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 17360,
+          "visibility": "unclear",
+          "state": "far"
+        }
+      ]
+    },
+    {
+      "id": "live-1-387fecde",
+      "annotation_scope": "target",
+      "object": "Very unclear, probably a white SUV",
+      "identity": "same",
+      "reference_visible": true,
+      "notes": "",
+      "frames": [
+        {
+          "timestamp_ms": 14160,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 14920,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 15160,
+          "visibility": "unclear",
+          "state": "far"
+        },
+        {
+          "timestamp_ms": 17640,
+          "visibility": "visible",
+          "state": "far"
+        }
+      ]
+    }
+  ]
+}

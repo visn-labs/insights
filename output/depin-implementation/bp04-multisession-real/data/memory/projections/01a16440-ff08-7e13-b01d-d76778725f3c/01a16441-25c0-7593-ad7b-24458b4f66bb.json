@@ -1,0 +1,111 @@
+{
+  "version": "evidence-metadata-v1",
+  "job_id": "01a16440-ff08-7e13-b01d-d76778725f3c",
+  "revision": "01a16441-25c0-7593-ad7b-24458b4f66bb",
+  "media_policy": "sanitized-v1",
+  "input_fingerprint": "8a311b1d6bb26a8f73fbc409c34fb359ccb24b68fd321b95e4a97be18c314e7f",
+  "cameras": {
+    "[\"junction\",\"73160c85a5c94e82b01e1fa0ab21af83\"]": {
+      "camera_id": "junction",
+      "source_session_id": "73160c85a5c94e82b01e1fa0ab21af83",
+      "capture_timeline": {
+        "association_sessions": [
+          {
+            "session_id": "73160c85a5c94e82b01e1fa0ab21af83:0",
+            "first_frame_index": 0,
+            "last_frame_index": 24,
+            "first_observed_ms": 0,
+            "last_observed_ms": 960,
+            "start_reason": "initial_capture"
+          }
+        ],
+        "session_id": "73160c85a5c94e82b01e1fa0ab21af83",
+        "requested_seconds": 12.876485000131652,
+        "termination": "end_of_stream",
+        "observed_frames": 25,
+        "last_observed_frame_ms": 960,
+        "transport_started_wall_ms": 1792683346896,
+        "transport_finished_wall_ms": 1792683348880,
+        "transport_time_is_not_capture_time": true,
+        "continuity_certified": false,
+        "timestamp_jump_threshold_ms": 1000,
+        "timestamp_jump_count": 0,
+        "timestamp_jump_samples": [],
+        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+      },
+      "duration_ms": 1000,
+      "source_sha256": "a24f12d3a38c25100e222497fce6d493839501ad19ec02e3c8417fdf80e63a10",
+      "intervals": [
+        {
+          "event_id": "83a6d9a2-d1df-56ce-b3f9-165284d39825",
+          "start_ms": 0,
+          "end_ms": 1000
+        }
+      ],
+      "graph": {
+        "version": "entity-memory-v2-pts",
+        "source_sha256": "a24f12d3a38c25100e222497fce6d493839501ad19ec02e3c8417fdf80e63a10",
+        "detector_model": "/Users/anagha/projects/visn_rust/yolo26s.pt",
+        "detector_fps": 5.0,
+        "status": "ready",
+        "entities": [],
+        "links": [],
+        "notes": [
+          "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred.",
+          "0 observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims."
+        ]
+      }
+    },
+    "[\"junction\",\"d0ac6e6746a547a29fb7c65a2d99f44f\"]": {
+      "camera_id": "junction",
+      "source_session_id": "d0ac6e6746a547a29fb7c65a2d99f44f",
+      "capture_timeline": {
+        "association_sessions": [
+          {
+            "session_id": "d0ac6e6746a547a29fb7c65a2d99f44f:0",
+            "first_frame_index": 0,
+            "last_frame_index": 24,
+            "first_observed_ms": 0,
+            "last_observed_ms": 960,
+            "start_reason": "initial_capture"
+          }
+        ],
+        "session_id": "d0ac6e6746a547a29fb7c65a2d99f44f",
+        "requested_seconds": 14.977565542096272,
+        "termination": "source_clock_regressed",
+        "observed_frames": 25,
+        "last_observed_frame_ms": 960,
+        "transport_started_wall_ms": 1792683344795,
+        "transport_finished_wall_ms": 1792683346802,
+        "transport_time_is_not_capture_time": true,
+        "continuity_certified": false,
+        "timestamp_jump_threshold_ms": 1000,
+        "timestamp_jump_count": 0,
+        "timestamp_jump_samples": [],
+        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+      },
+      "duration_ms": 1000,
+      "source_sha256": "593fd6c6b68ade2fc43b3d756e701c1f2eeeae91fbc75577d2d85d9765eb4aaa",
+      "intervals": [
+        {
+          "event_id": "50096d33-41d9-5b30-9fa6-c98ffc590a81",
+          "start_ms": 0,
+          "end_ms": 1000
+        }
+      ],
+      "graph": {
+        "version": "entity-memory-v2-pts",
+        "source_sha256": "593fd6c6b68ade2fc43b3d756e701c1f2eeeae91fbc75577d2d85d9765eb4aaa",
+        "detector_model": "/Users/anagha/projects/visn_rust/yolo26s.pt",
+        "detector_fps": 5.0,
+        "status": "ready",
+        "entities": [],
+        "links": [],
+        "notes": [
+          "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred.",
+          "0 observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims."
+        ]
+      }
+    }
+  }
+}

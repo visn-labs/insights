@@ -1,0 +1,5 @@
+[1.5s] Capture real sanitized evidence and retain the full producer recipe
+[6.2s] Reject changed model/code/threshold/runtime and unknown fields at every evidence boundary
+[13.8s] Restart with inference unavailable: saved producer stays explicit and media remain valid
+[14.4s] Reject changed producer metadata during anchored retained-only checkpoint recovery
+[17.2s] Passed full producer provenance, restart, recovery and revocation replay

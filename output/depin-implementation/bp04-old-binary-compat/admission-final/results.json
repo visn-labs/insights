@@ -1,0 +1,22 @@
+{
+  "scope": "Compare actual old/current media admission on isolated copies of owned evidence.",
+  "results": [
+    {
+      "binary": "current",
+      "binary_sha256": "442d3efcaf025e26ac11613ee1c2dc0c896c7e8d45b3aeb25c2b762f8051b9a4",
+      "original_source_sha256": "378cf651cc5082d823a8018a521d2b6f4433350ecd728f70514aef624cbe2097",
+      "tampered_status": 404,
+      "tampered_bytes_served": false,
+      "outcome": "rejects_tampered_evidence"
+    },
+    {
+      "binary": "old",
+      "binary_sha256": "8efb0ab850c2a5c02e2e65cbd43c5c1f8a1af60b1311b0a996b89e64c471f849",
+      "original_source_sha256": "378cf651cc5082d823a8018a521d2b6f4433350ecd728f70514aef624cbe2097",
+      "tampered_status": 200,
+      "tampered_bytes_served": true,
+      "outcome": "unsupported_for_sanitized_v1_rollback"
+    }
+  ],
+  "decision": "Do not deploy this old binary against sanitized-v1 state; compatible-generation rollback remains the qualified route."
+}

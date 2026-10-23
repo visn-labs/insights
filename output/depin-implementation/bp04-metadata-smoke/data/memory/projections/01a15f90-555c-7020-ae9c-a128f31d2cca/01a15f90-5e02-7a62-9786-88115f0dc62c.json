@@ -1,0 +1,21 @@
+{
+  "version": "evidence-metadata-v1",
+  "job_id": "01a15f90-555c-7020-ae9c-a128f31d2cca",
+  "revision": "01a15f90-5e02-7a62-9786-88115f0dc62c",
+  "media_policy": "sanitized-v1",
+  "input_fingerprint": "6884fe9f6e7a0dbdf6924db686c65ea5e9ba9e14061c2563728060c10ec2463c",
+  "cameras": {
+    "evidence-camera": {
+      "duration_ms": 2000,
+      "source_sha256": "1a6926824ada93d5694647b962abbc4259ad784cb4c3d37b8165a69176e47e64",
+      "intervals": [
+        {
+          "event_id": "64980abb-11ff-5f43-99ff-d9b3b917bae1",
+          "start_ms": 0,
+          "end_ms": 2000
+        }
+      ],
+      "graph": null
+    }
+  }
+}

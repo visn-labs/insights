@@ -1,0 +1,85 @@
+{
+  "reviewer": "Assistant visual inspection; not an independent human or held-out evaluation",
+  "results": [
+    {
+      "case": "toll-truck-direction",
+      "frames": 8,
+      "verdict": "direction_correct",
+      "note": "Toward-camera answer agrees with visible growth/approach.",
+      "latency_secs": 20.539,
+      "result_file_sha256": "da13a3b3ef230b91e89e93c7a08282229d0bf5ce71b3938c18363034b98f5c36"
+    },
+    {
+      "case": "night-crossing-car",
+      "frames": 8,
+      "verdict": "partially_grounded",
+      "note": "Correctly sees the car appear, but approaching the intersection does not establish a completed crossing; trajectory explanation is weak.",
+      "latency_secs": 27.562,
+      "result_file_sha256": "95ee46a07d5efae0530019bb9688793d0aa8c1bef0805e70fe9e7882e8d783d0"
+    },
+    {
+      "case": "highway-turquoise-direction",
+      "frames": 8,
+      "verdict": "incorrect_direction",
+      "note": "The car grows and approaches before exiting; away-from-camera is incorrect.",
+      "latency_secs": 30.5,
+      "result_file_sha256": "f5be88bc3083452530eac0bf715cfbed7b43872ee79d367afaaefa481d98f10d"
+    },
+    {
+      "case": "night-negative-aircraft",
+      "frames": 8,
+      "verdict": "correct_rejection",
+      "note": "No aircraft is shown; uncertainty is appropriate.",
+      "latency_secs": 26.812,
+      "result_file_sha256": "c8998f5d543d6348969e41c941ced05ad17106ebeb544141808de1214c896252"
+    },
+    {
+      "case": "toll-negative-boat",
+      "frames": 8,
+      "verdict": "correct_rejection_with_unverified_extra_claims",
+      "note": "Rejects the boat premise but adds unrelated truck motion/identity assertions.",
+      "latency_secs": 29.555,
+      "result_file_sha256": "1890eb24dbfa9202a6754d325d1f04cdb001e1e654b14e79b45bc14db0787e24"
+    },
+    {
+      "case": "toll-truck-direction",
+      "frames": 16,
+      "verdict": "direction_correct_with_unverified_detail",
+      "note": "Toward-camera label is correct; additional lateral direction is not established by the cited endpoints.",
+      "latency_secs": 42.244,
+      "result_file_sha256": "239761e49c50a81c81f6ea8c012d8c1e9ef002ed8b6cb198ab16f5bd8c424ea3"
+    },
+    {
+      "case": "night-crossing-car",
+      "frames": 16,
+      "verdict": "partially_grounded",
+      "note": "Recognizes a moving car, but the claimed left-to-right trajectory conflicts with the visible progression toward the lower-left.",
+      "latency_secs": 31.435,
+      "result_file_sha256": "e4481e2bf5fdf6e392e6792525504b633e16d09f221ecd17b6aaa0f732387f80"
+    },
+    {
+      "case": "highway-turquoise-direction",
+      "frames": 16,
+      "verdict": "direction_correct_but_citation_incorrect",
+      "note": "Toward-camera label is correct, but the car is absent from the final supplied image. The claimed final-frame car position is unsupported.",
+      "latency_secs": 35.569,
+      "result_file_sha256": "b85dfdbfb16950ede67548cb05421582b26a7c8a495af62adc56cc3fc8251ff1"
+    },
+    {
+      "case": "night-negative-aircraft",
+      "frames": 16,
+      "verdict": "correct_rejection_status_inconsistent",
+      "note": "No aircraft is shown, but status changed to supported despite the prompt requesting uncertainty for absent targets.",
+      "latency_secs": 31.612,
+      "result_file_sha256": "78c5f1ff02040f8e244283316c80571b259d6167def0c7760a6f8d2414692234"
+    },
+    {
+      "case": "toll-negative-boat",
+      "frames": 16,
+      "verdict": "correct_rejection_with_unverified_extra_claims",
+      "note": "Rejects the boat premise but claims a blue truck remains visible throughout, which is not established.",
+      "latency_secs": 34.491,
+      "result_file_sha256": "17a8910433dafea1f16398efe974606d96bf68f41513e99f8a0c256ef1d75e93"
+    }
+  ]
+}

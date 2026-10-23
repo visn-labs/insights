@@ -1,0 +1,58 @@
+{
+  "reviewer": "Assistant visual review, not independent annotation",
+  "labels_sha256": "0a2bd0075a0b7eae631e674518dea23c0f77f7d22835d19e60391d1a4ba94b6e",
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "prompt_version": "independent-target-audit-v6",
+  "completed": 6,
+  "positive_direction_correct": 1,
+  "positive_total": 3,
+  "positive_abstentions": 2,
+  "negative_false_supported_presence": 1,
+  "negative_correct_sampled_absence": 1,
+  "negative_total": 2,
+  "static_guard_correct": 1,
+  "results": [
+    {
+      "case": "heldout-toll-tarp-truck",
+      "verdict": "abstained_positive",
+      "note": "The truck visibly approaches; the motion synthesis abstained.",
+      "status": "uncertain",
+      "result_sha256": "241a7658e80c80c67bd2f4cdd899d8aa95870c80bfdd6d0b60255d6a7f7b54cf"
+    },
+    {
+      "case": "heldout-toll-container-truck",
+      "verdict": "abstained_positive",
+      "note": "The container truck approaches; motion synthesis abstained.",
+      "status": "uncertain",
+      "result_sha256": "84217673ad25b10e951a2a5dea66b81b1020c33ffaf612fd3725c6d29ba5c19a"
+    },
+    {
+      "case": "heldout-night-static",
+      "verdict": "correct_static_abstention",
+      "note": "All sampled images are unchanged; deterministic static guard abstains. This does not measure model action accuracy.",
+      "status": "uncertain",
+      "result_sha256": "77d0df7b0985d7aeb12094eba8a100697c907616d2ce30d594fcbd943561898b"
+    },
+    {
+      "case": "heldout-highway-yellow-truck",
+      "verdict": "direction_correct_with_spatial_error",
+      "note": "Approaching label agrees with visible growth, but the extra middle-lane description is not grounded in the requested nearest lane.",
+      "status": "supported",
+      "result_sha256": "d952c47e2c2fd381dc88c12aff9e7cfc28f5139096bdecce3948079c2c815157"
+    },
+    {
+      "case": "heldout-highway-negative-train",
+      "verdict": "false_supported_presence",
+      "note": "No train is visible; the model invents one in samples 5\u20137.",
+      "status": "supported",
+      "result_sha256": "3ee5f217bf0b1259e48eaae0d029767dee9b661a4b1fa644cca488549b82484c"
+    },
+    {
+      "case": "heldout-toll-negative-helicopter",
+      "verdict": "correct_sampled_absence",
+      "note": "No helicopter visible; answer limits absence to sampled evidence.",
+      "status": "not_observed",
+      "result_sha256": "28de4ebe055ec1c6162a713d96e57602b20b32edf25fcf41528a3f21d831dba2"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "basis": "User correction: three scene-named entries describe the whole scene. Original annotations preserved byte-for-byte.",
+  "cases": {
+    "live-3-9788af39": "target",
+    "live-3-27804ec1": "target",
+    "live-2-untracked": "scene",
+    "live-1-dce234f8": "scene",
+    "live-1-387fecde": "scene"
+  }
+}

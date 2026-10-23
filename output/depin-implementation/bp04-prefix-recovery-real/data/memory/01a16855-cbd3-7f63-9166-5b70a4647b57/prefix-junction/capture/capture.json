@@ -1,0 +1,22 @@
+{
+  "schema": "visn-sanitized-capture-v1",
+  "capture_id": "751210c12de942529ab7b6c5300ed557",
+  "state": "capturing",
+  "requested_seconds": 15.0,
+  "observed_session_span": "97/25",
+  "time_semantics": "Independent source-relative timelines; session spans are not elapsed wall time or continuous coverage",
+  "sessions": [
+    {
+      "file": "session-0000.mkv",
+      "session_id": "4e09d75fcfe24071a413585dcb90866c",
+      "start_reason": "initial_capture",
+      "termination": "source_clock_regressed",
+      "frames": 23,
+      "source_clock_kind": "source_pts",
+      "media_sha256": "eed6a1342fd9d2a0afdc7d65ecfb30e6a9f12dc818a3394c243906030b6873c6",
+      "ledger_sha256": "c1c78e86892650a1ad3a901f21b1bbd39dcc97922eba99d7b3ed12bce4b385f1",
+      "manifest_sha256": "8ce576621b56aee96a5a4d207fbf61a5c0037efe2a84bfc2006e989009eeb96a"
+    }
+  ],
+  "error_code": null
+}
