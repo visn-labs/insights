@@ -1,5 +1,112 @@
 # Implementation Plan: Large-Scale Camera Analytics Platform
 
+## Research implementation review — 2026-10-23
+
+This review covers **the `insights` repository only**. The supplied research
+report describes a different four-phase roadmap from the production delivery
+program below. Neither roadmap's milestones should be inferred from the other's
+phase numbers. Current code is a local Phase 0 analytics/retrieval lab; the
+research roadmap's Phase 1 is incomplete. Existing extraction and retrieval
+features partially overlap later phases, without satisfying their exit gates.
+
+### Implementation evidence and gaps
+
+| Research phase / capability | Repository evidence | Assessment |
+|---|---|---|
+| 1: Compressed-domain motion gate | `tools/yolo26_runner.py` uses timestamp sampling and OpenCV/FFmpeg; `tools/event_memory_runner.py` computes visual novelty from decoded frames | Not implemented. Sparse inference, `grab()` and grouped seeking are not a NAL/macroblock motion gate or proof of avoided decoding. No measured 3,000/3,600 FPS gate or 60–70% GPU reduction. |
+| 1: Privacy shield | Runner retains representative frames and appearance descriptors; memory runner records source evidence, thumbnails and MP4 derivatives | Not implemented. There is no YuNet/plate redaction cascade before analytics, persistent redaction mask, or zero-raw-retention mode. URI credential redaction is unrelated to image privacy. Current persisted evidence directly conflicts with the proposed privacy boundary. |
+| 1: Source authentication | No PRNU enrollment/PCE or ENF reference verification implementation found | Not implemented. Uptime, decoded frames and source availability do not establish live capture. |
+| 2: Tracking and bounded execution | `tools/yolo26_worker.py` uses one pending-frame slot per camera, per-camera ByteTrack, batching and residency coordination | Partial. This review pins both local paths to `runtime/bytetrack.yaml`. No density/shake router, density-estimation handover, TensorRT runtime qualification or anomaly cascade. DeepStream files are templates/contracts. |
+| 3: Structured metrics and vectors | `src/event_engine.rs` computes deterministic events; `src/store.rs` stores local manifests; `tools/semantic_memory_server.py` stores vectors in SQLite | Partial foundations. No ClickHouse/H3 deployment, binary ANN/DiskANN implementation, jurisdiction sharding or representative OLAP/vector load qualification. |
+| 4: Retrieval and event chains | `src/long_memory.rs`, `src/retrieval.rs` and `tools/semantic_memory_server.py` implement local evidence retrieval, entity history and optional interpretation | Partial foundations. These are not validated TRACE/HyperGLM, VideoStir, EC-RAG or token-merging integrations. No demonstrated research QA uplift. |
+| 4: Contribution rewards | Contributor UI is explicitly a preview in `README.md` | No operational PoC/payout engine in this repository. Do not infer deployed rewards from UI examples. |
+| Commercial validation | Deterministic line/zone/dwell rules and local evaluation tools exist | No evidence here of buyer commitments, renewal, qualified continuous observation windows, commercial reuse entitlements or business-metric accuracy sign-off. Sparse memory observation cannot substitute for continuous entrance counting. |
+
+### Corrections to the research assumptions
+
+- FFmpeg's `export_mvs` exports motion-vector side data **for supported codecs**;
+  enabling it does not by itself establish partial/zero decoding, universal
+  H.265 support or the report's throughput. Prototype and measure native decoder
+  work on the selected build before introducing this into counting workflows.
+  [FFmpeg codec documentation](https://ffmpeg.org/ffmpeg-codecs.html).
+- Explicit tracker selection is warranted: current Ultralytics documentation
+  specifies TrackTrack as the default. The previous isolated runner omitted the
+  tracker while the persistent worker explicitly created ByteTrack, so fallback
+  could silently change track semantics. Both now use a repository-owned policy;
+  this pins configuration, not the package implementation or accuracy.
+  [Ultralytics tracking documentation](https://docs.ultralytics.com/modes/track/).
+- Under the report's own index formula, 100 million 384-dimensional vectors with
+  degree 16 require 183.04 GB FP32 versus 19.36 GB binary, approximately **9.45x**
+  compression / **89.4%** reduction. The 32x claim applies to vector payload alone,
+  not graph overhead, full-precision rescoring copies or the complete service.
+- PRNU is source-consistency evidence; replay of the same sensor can preserve it.
+  ENF requires suitable illumination, sampling and an independently timed grid
+  reference. Neither should be called cryptographic proof or a universal replay
+  guarantee without an adversarial evaluation and explicit unavailable states.
+- Masking detected regions does not prove zero identity leakage or zero mutual
+  information across an image. Missed regions, body appearance and context remain
+  relevant. Privacy validation must cover faces **and** plates, detector failures,
+  missed detections, temporal gaps, thumbnails, crops, VLM inputs and disk writes.
+- Numerical model, latency, legal and market claims in the supplied report are
+  not adopted as measured project results. This review checks implementation;
+  it is not an independent reproduction of every cited paper or legal claim.
+
+### Validation performed for this increment
+
+- `cargo test --quiet`: 30 passed, 2 ignored. Ignored external-service tests were
+  not executed; this establishes local regressions, not production readiness.
+- `.venv/bin/python tools/check_detector_sampling.py`: 3 passed.
+- `.venv/bin/python tools/check_grouped_decode.py`: 11 passed, including actual
+  RGB/PTS parity and conservative fallback checks.
+- `.venv/bin/python tools/check_evaluation_metrics.py`: 3 passed.
+- `.venv/bin/python tools/check_tracker_policy.py`: 2 passed; exercises the fallback's effective call, shared
+  absolute policy path and real installed ByteTrack continuity across a short
+  synthetic occlusion. Synthetic continuity is not HOTA, IDF1 or count accuracy.
+- Real local YOLO26s CPU inference on a blank synthetic frame succeeds through
+  the pinned fallback helper. Formatting and diff whitespace checks pass.
+- Installed local Ultralytics version at review: 8.4.171. Requirements still
+  permit upgrades; a complete reproducible model/runtime release is pending.
+
+`docs/GENERAL_VIDEO_PACKAGE_6.md` records 520→65 FFmpeg launches and 0.175→0.100s
+median 256px sampling, but p95 regressed 0.220→0.311s and timing gaps limit the
+measurements. Grouped decoding remains opt-in. Those historical measurements
+were not rerun as a performance benchmark here: their referenced `output/`
+artifacts are absent in this checkout. Newly passing parity tests validate
+correctness fixtures, not the recorded timing or broad accuracy claims.
+
+### Continuation and exit gates
+
+The concrete continuation in this review fixes tracker consistency and freezes
+its configuration. It does **not** close research Phase 1 or promote experimental
+decoding. The next engineering slice should address the privacy boundary before
+any claim of an aggregate-only contribution network:
+
+1. Add an explicit privacy processing policy distinct from the existing authorized
+   evidence-lab workflow. Reject unsupported pipeline/backend combinations rather
+   than claiming sanitized output. Inventory every upload, source copy, crop,
+   representative frame, derivative, model input and evidence-serving route.
+2. Implement at-site face and plate redaction before downstream inference/export,
+   with bounded temporal mask persistence and fail-closed handling. Choose and
+   version the required detector artifacts; benchmark the complete cascade,
+   including crowded/night/occluded frames. YuNet alone does not detect plates.
+3. Establish independent reviewed labels and interception tests that detect raw
+   writes and unsanitized downstream inputs. Report redaction misses per condition,
+   utility degradation and p50/p95/p99 latency; do not promise zero leakage from
+   average detector recall. Existing lab recordings are not automatically approved
+   privacy evaluation data.
+4. Separately prototype compressed-motion export with codec capability checks and
+   a paired no-gate baseline. Measure CPU, actual decoder work, GPU calls and
+   downstream count errors on retained identical windows. Fail open to analytics
+   on unavailable motion data, without bypassing privacy. Reject gates that hide
+   observation gaps or reduce the measurability of the metric being sold.
+5. Keep PRNU/ENF experimental until enrollment, same-camera replay, transcoding,
+   low-light and missing-reference cases are evaluated. Defer payout dependence
+   on those signals until their availability and false acceptance are measured.
+
+No available evidence satisfies the research report's Phase 1 privacy/performance
+SLAs, Phase 2 steady-state/anomaly SLAs, Phase 3 latency/recall targets or Phase 4
+QA/Sybil-resistance claims. These remain acceptance targets, not shipped behavior.
+
 ## 1. Purpose and delivery outcome
 
 This plan turns the supplied production architecture into an executable, greenfield delivery program for a regional, multi-tenant camera analytics platform built around Rust, DeepStream/GStreamer, YOLO26, deterministic event processing, Redpanda, ClickHouse, object storage, and selectively invoked Gemma models.
