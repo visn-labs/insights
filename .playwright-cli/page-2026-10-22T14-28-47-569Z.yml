@@ -1,0 +1,233 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e10]:
+        - strong [ref=e11]: VISN
+        - generic [ref=e12]: Pipeline Lab
+      - navigation "Primary navigation" [ref=e13]:
+        - button "⌁ Detector analytics" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15]: ⌁
+          - text: Detector analytics
+        - button "⌕ Video memory 1" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: ⌕
+          - text: Video memory
+          - generic [ref=e18]: "1"
+        - button "◫ Runs 0" [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: ◫
+          - text: Runs
+          - generic [ref=e21]: "0"
+        - button "◇ System" [ref=e22] [cursor=pointer]:
+          - generic [ref=e23]: ◇
+          - text: System
+      - generic [ref=e24]:
+        - generic [ref=e25]: Service
+        - generic [ref=e26]: Service ready
+        - generic [ref=e29]: Optional captions offline
+        - paragraph [ref=e32]: v0.1.0 · No-op sink
+    - main [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - paragraph [ref=e36]: VIDEO ANALYTICS / LOCAL V1
+          - heading "Video memory · Experiment 1" [level=1] [ref=e37]
+        - generic [ref=e38]:
+          - generic [ref=e39]: Local-first
+          - button "Replay town introduction" [ref=e41] [cursor=pointer]: ♜
+          - button "Refresh data" [ref=e42] [cursor=pointer]: ↻
+      - text: + +
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - strong [ref=e45]: Experiment 1 · Record → index → search → review evidence
+          - status [ref=e46]: Visual search is not configured. Start scripts/run_memory.sh, or set VISN_RETRIEVAL_URL and run the Qwen worker. Keyword search remains available.
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - generic [ref=e50]:
+                - paragraph [ref=e51]: V1 / INDEX
+                - heading "Build searchable camera memory" [level=2] [ref=e52]
+              - generic [ref=e53]: Retrieval first
+            - generic [ref=e54]:
+              - generic [ref=e55]:
+                - generic [ref=e56]: Camera stream URL
+                - textbox "Camera stream URL Use a single stream here, or leave it empty and supply camera JSON below." [ref=e57]:
+                  - /placeholder: http://camera/mjpg/video.mjpg
+                - generic [ref=e58]: Use a single stream here, or leave it empty and supply camera JSON below.
+              - generic [ref=e59]:
+                - generic [ref=e60]:
+                  - generic [ref=e61]: Index run name
+                  - textbox "Index run name" [ref=e62]: Authorized camera memory test
+                - generic [ref=e63]:
+                  - generic [ref=e64]: Cluster ID (optional)
+                  - textbox "Cluster ID (optional)" [ref=e65]:
+                    - /placeholder: local-test-cluster
+                    - text: local-test-cluster
+                - generic [ref=e66]:
+                  - generic [ref=e67]: Monitor duration
+                  - generic [ref=e68]:
+                    - spinbutton "Monitor duration SEC" [ref=e69]: "15"
+                    - generic [ref=e70]: SEC
+                - generic [ref=e71]:
+                  - generic [ref=e72]: Observer rate
+                  - generic [ref=e73]:
+                    - spinbutton "Observer rate FPS" [ref=e74]: "1"
+                    - generic [ref=e75]: FPS
+              - generic [ref=e76] [cursor=pointer]:
+                - generic [ref=e77]:
+                  - strong [ref=e78]: Enrich highest-priority events with the selected VLM
+                  - generic [ref=e79]: The lightweight observer indexes every interval. VLM calls are capped and failures use metadata-only descriptions.
+                - checkbox "Enrich highest-priority events with the selected VLM The lightweight observer indexes every interval. VLM calls are capped and failures use metadata-only descriptions." [ref=e80]
+              - generic [ref=e82] [cursor=pointer]:
+                - generic [ref=e83]:
+                  - strong [ref=e84]: Experiment 2 · Interpret ordered frames
+                  - generic [ref=e85]: Use timestamped sequences for priority events instead of single-frame captions. Slower; Qwen worker required.
+                - checkbox "Experiment 2 · Interpret ordered frames Use timestamped sequences for priority events instead of single-frame captions. Slower; Qwen worker required." [ref=e86]
+              - generic [ref=e88] [cursor=pointer]:
+                - generic [ref=e89]:
+                  - strong [ref=e90]: Experiment 3 · Build linked entity memory
+                  - generic [ref=e91]: Track the retained recording and link observations to evidence. Adds detector processing; identity remains uncertain.
+                - checkbox "Experiment 3 · Build linked entity memory Track the retained recording and link observations to evidence. Adds detector processing; identity remains uncertain." [ref=e92]
+              - generic [ref=e94]:
+                - generic [ref=e95]: Vision-language model for indexing and queries
+                - combobox "Vision-language model for indexing and queries" [ref=e96]:
+                  - option "prism-ml/bonsai-27b"
+                  - option "moondream2"
+                  - option "qwen/qwen3.6-35b-a3b"
+                  - option "google/gemma-4-26b-a4b-qat" [selected]
+                  - option "zai-org/glm-4.6v-flash"
+              - generic [ref=e97]:
+                - generic [ref=e98]: Backend camera payloads
+                - textbox "Backend camera payloads" [ref=e99]:
+                  - /placeholder: "[{\"liveurl\":\"http://camera/mjpg/video.mjpg\",\"Country\":\"...\",\"description\":\"...\"}]"
+              - generic [ref=e100]:
+                - button "Cluster A" [ref=e101] [cursor=pointer]
+                - button "Cluster B" [ref=e102] [cursor=pointer]
+                - button "High movement" [ref=e103] [cursor=pointer]
+                - button "Format JSON" [ref=e104] [cursor=pointer]
+              - paragraph [ref=e105]: The textarea accepts the backend field names exactly as supplied. Exact duplicate live URLs are rejected to avoid processing one physical stream twice.
+              - button "Record and index →" [ref=e106] [cursor=pointer]:
+                - generic [ref=e107]: Record and index
+                - generic [ref=e108]: →
+          - generic [ref=e109]:
+            - generic [ref=e110]:
+              - generic [ref=e111]:
+                - paragraph [ref=e112]: V1 / EVIDENCE
+                - heading "Indexed events" [level=2] [ref=e113]
+              - generic [ref=e114]: completed
+            - generic [ref=e115]:
+              - generic [ref=e116]: Recorded sessions
+              - combobox "Recorded sessions" [ref=e117]:
+                - option "Metadata projection replay · completed · 22/10/2026, 19:57:59" [selected]
+            - generic "Recording controls" [ref=e118]:
+              - button "Revoke recording access" [ref=e119] [cursor=pointer]
+            - status [ref=e120]: 1/1 camera checkpoints saved. Recovery uses saved evidence only; a new live interval requires a new recording.
+            - region [ref=e121]:
+              - heading "Evidence statistics" [level=3] [ref=e122]
+              - paragraph [ref=e123]: Indexed intervals and observed tracker histories across committed cameras. These are not verified people counts or proof of continuous capture.
+              - status [ref=e124]: Saved evidence-metadata-v1 projection. Statistics are verified when requested.
+              - generic [ref=e125]:
+                - button "Show evidence statistics" [ref=e126] [cursor=pointer]
+                - button "Rebuild saved metadata" [ref=e127] [cursor=pointer]
+            - region [ref=e128]:
+              - heading "Prepare visual search" [level=3] [ref=e129]
+              - paragraph [ref=e130]: Build visual representations from every recorded interval before asking a question. Progress survives worker restarts.
+              - status [ref=e131]: Visual preparation intent is saved. Configure the visual worker to continue.
+              - button "Prepare this recording" [ref=e133] [cursor=pointer]
+            - button "Build entity memory for this recording" [ref=e134] [cursor=pointer]
+            - status [ref=e135]: No linked entity memory for this recording yet.
+            - generic [ref=e136]:
+              - button "Search these indexed cameras →" [ref=e137] [cursor=pointer]
+              - generic [ref=e138]:
+                - article [ref=e139]:
+                  - generic [ref=e140]: Cameras
+                  - strong [ref=e141]: 1/1
+                - article [ref=e142]:
+                  - generic [ref=e143]: Events
+                  - strong [ref=e144]: "1"
+                - article [ref=e145]:
+                  - generic [ref=e146]: Decoded
+                  - strong [ref=e147]: "8"
+                - article [ref=e148]:
+                  - generic [ref=e149]: Duration
+                  - strong [ref=e150]: 2s
+              - generic [ref=e152]:
+                - generic [ref=e153]:
+                  - generic [ref=e154]:
+                    - strong [ref=e155]: evidence-camera
+                    - generic [ref=e156]: Metadata pending
+                  - generic [ref=e157]: 1 event · 8 source frames
+                - article [ref=e159]:
+                  - img "Representative evidence frame from evidence-camera" [ref=e160]
+                  - generic [ref=e161]:
+                    - generic [ref=e162]:
+                      - generic [ref=e163]: 0ms–2s
+                      - generic [ref=e164]: activity 0.00
+                    - strong [ref=e165]: Recorded evidence
+                    - paragraph [ref=e166]: No generated caption. Visual retrieval examines the recorded clip directly.
+                    - group [ref=e167]:
+                      - generic "Caption status" [ref=e168]
+                - generic [ref=e169]:
+                  - generic [ref=e170]: Observed 8 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.
+                  - generic [ref=e171]: "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending."
+                  - generic [ref=e172]: V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.
+                  - generic [ref=e173]: Observer analysis retrieved 4 of 8 consumed source frames.
+                  - generic [ref=e174]: Event clips use stream copy when compatible and fall back to H.264 only when required.
+              - group [ref=e175]:
+                - generic "Raw memory result" [ref=e176] [cursor=pointer]
+        - generic [ref=e177]:
+          - generic [ref=e178]:
+            - generic [ref=e179]:
+              - paragraph [ref=e180]: EXPERIMENT 1 / RETRIEVE
+              - heading "Search indexed camera evidence" [level=2] [ref=e181]
+            - generic [ref=e182]: Evidence linked
+          - status [ref=e183]: "Searching selected recording: Metadata projection replay · 1 indexed clips."
+          - button "Search all recordings · clear filters" [ref=e184] [cursor=pointer]
+          - generic [ref=e185]:
+            - generic [ref=e186]:
+              - generic [ref=e187]: Question or visual search
+              - textbox "Question or visual search" [ref=e188]:
+                - /placeholder: "For example: trucks waiting at a traffic signal"
+            - generic [ref=e189]:
+              - generic [ref=e190]: Cluster filter
+              - textbox "Cluster filter" [ref=e191]:
+                - /placeholder: Leave empty for all
+            - generic [ref=e192]:
+              - generic [ref=e193]: Camera IDs (optional, comma-separated)
+              - textbox "Camera IDs (optional, comma-separated)" [ref=e194]:
+                - /placeholder: Leave empty for all cameras
+                - text: evidence-camera
+            - status
+            - generic [ref=e195] [cursor=pointer]:
+              - generic [ref=e196]:
+                - strong [ref=e197]: Visual retrieval
+                - generic [ref=e198]: Search clip content as well as words. Unprepared intervals are still processed during search; partial coverage is disclosed.
+              - checkbox "Visual retrieval Search clip content as well as words. Unprepared intervals are still processed during search; partial coverage is disclosed." [checked] [ref=e199]
+            - generic [ref=e201] [cursor=pointer]:
+              - generic [ref=e202]:
+                - strong [ref=e203]: Visual reranking
+                - generic [ref=e204]: Inspect the shortlist for closer matches.
+              - checkbox "Visual reranking Inspect the shortlist for closer matches." [checked] [ref=e205]
+            - generic [ref=e207] [cursor=pointer]:
+              - generic [ref=e208]:
+                - strong [ref=e209]: VLM synthesis
+                - generic [ref=e210]: Summarize candidate descriptions; does not verify video.
+              - checkbox "VLM synthesis Summarize candidate descriptions; does not verify video." [ref=e211]
+            - generic [ref=e213] [cursor=pointer]:
+              - generic [ref=e214]:
+                - strong [ref=e215]: Experiment 2 · Explain visual evidence
+                - generic [ref=e216]: Read ordered frames and metadata from up to three retrieved clips. Includes uncertainty and frame citations.
+              - checkbox "Experiment 2 · Explain visual evidence Read ordered frames and metadata from up to three retrieved clips. Includes uncertainty and frame citations." [ref=e217]
+            - generic [ref=e219] [cursor=pointer]:
+              - generic [ref=e220]:
+                - strong [ref=e221]: Experiment 3 · Follow linked observations
+                - generic [ref=e222]: Retrieve a source-cited history. Similar objects and unrelated recordings remain separate.
+              - checkbox "Experiment 3 · Follow linked observations Retrieve a source-cited history. Similar objects and unrelated recordings remain separate." [ref=e223]
+            - generic [ref=e225]:
+              - generic [ref=e226]: Entity track (optional)
+              - combobox "Entity track (optional) Track IDs are local to a recording and camera, not verified identities. Enable visual explanation to compare this track using crops matched to decoded frames." [ref=e227]:
+                - option "Find candidates from question" [selected]
+              - generic [ref=e228]: Track IDs are local to a recording and camera, not verified identities. Enable visual explanation to compare this track using crops matched to decoded frames.
+            - button "Search memory ⌕" [ref=e229] [cursor=pointer]:
+              - generic [ref=e230]: Search memory
+              - generic [ref=e231]: ⌕
+  - status

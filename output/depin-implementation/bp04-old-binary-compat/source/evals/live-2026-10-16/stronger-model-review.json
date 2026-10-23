@@ -1,0 +1,114 @@
+{
+  "reviewer": "Assistant visual review; not independent human annotation",
+  "labels_sha256": "0a2bd0075a0b7eae631e674518dea23c0f77f7d22835d19e60391d1a4ba94b6e",
+  "model_comparison": "2B PyTorch float16 versus cached 4B MLX 4-bit; runtime and quantization differ",
+  "prompt_version": "independent-target-audit-v6",
+  "heldout_after_guard": {
+    "baseline_correct_supported_direction_labels": 1,
+    "candidate_correct_supported_direction_labels": 2,
+    "positive_cases": 3,
+    "baseline_positive_abstentions": 2,
+    "candidate_positive_abstentions": 1,
+    "baseline_not_observed_negatives": 1,
+    "candidate_not_observed_negatives": 2,
+    "negative_cases": 2,
+    "static_guard_abstentions_each": 1
+  },
+  "heldout": [
+    {
+      "case": "heldout-toll-tarp-truck",
+      "baseline_status": "uncertain",
+      "candidate_status": "supported",
+      "verdict": "correct_direction_weak_explanation",
+      "note": "Toward label and visible target citations agree with the images; explanation relies on facing the camera rather than clearly comparing growth.",
+      "identical_input_frames": true,
+      "baseline_sha256": "14369d9938bc705c130b576a950dd7eccb826244fb6ad16f355dd38227e07b08",
+      "candidate_sha256": "d60b74fda183f1da1045095015d358823d4c8179cf6514b31263a1d62cf83041"
+    },
+    {
+      "case": "heldout-toll-container-truck",
+      "baseline_status": "uncertain",
+      "candidate_status": "supported",
+      "verdict": "correct_direction",
+      "note": "Larger/closer comparison and cited target images support approaching.",
+      "identical_input_frames": true,
+      "baseline_sha256": "f4125c9f6dbcb5b0e8e971071a9d6f14c6a40b7ea06196d286932d279ac39980",
+      "candidate_sha256": "c196869b0a0ff416a3ecbac65174eb22c46f00ca593945c05be4a5836d859336"
+    },
+    {
+      "case": "heldout-night-static",
+      "baseline_status": "uncertain",
+      "candidate_status": "uncertain",
+      "verdict": "correct_static_guard_abstention",
+      "note": "Application safeguard, not model action recognition.",
+      "identical_input_frames": true,
+      "baseline_sha256": "164877f63b3678d4ce764470d184db48e38fc971ba6ffde0dae3217c3177dd17",
+      "candidate_sha256": "32f54ba43300159ec4e148649871fee22e90ebf2d700e88521078eb8869061ab"
+    },
+    {
+      "case": "heldout-highway-yellow-truck",
+      "baseline_status": "supported",
+      "candidate_status": "uncertain",
+      "verdict": "correct_guard_abstention",
+      "note": "Raw model named the right direction but cited identical images. The cached-answer safeguard now abstains.",
+      "identical_input_frames": true,
+      "baseline_sha256": "e9411545d8f6ec58eab278c1f6220becc2481f23d112372584baa3a9296dfba0",
+      "candidate_sha256": "fcd3c300ae796c1e6b13137cc07e50d1f67ab775623edafebcfd368a0b36182c"
+    },
+    {
+      "case": "heldout-highway-negative-train",
+      "baseline_status": "uncertain",
+      "candidate_status": "not_observed",
+      "verdict": "correct_sampled_absence",
+      "note": "No train visible; 4B rejects the premise. 2B hallucinated train presence before the same repeated-image guard rejected that claim.",
+      "identical_input_frames": true,
+      "baseline_sha256": "d0019dce7348dd9b854dd3fca0f050f857f66ea4bc2e875ba2e04ce9f9eb87f4",
+      "candidate_sha256": "4a1eba9eab7c441c89424a121029cf8d24c21607b79774d887aeb7f01e615461"
+    },
+    {
+      "case": "heldout-toll-negative-helicopter",
+      "baseline_status": "not_observed",
+      "candidate_status": "not_observed",
+      "verdict": "correct_sampled_absence",
+      "note": "No helicopter visible in the samples.",
+      "identical_input_frames": true,
+      "baseline_sha256": "1bb5a0700186edb6b7456291f9a5331a7f423f10f14a1c19f11ddf74a5c636e6",
+      "candidate_sha256": "19ad7e8b3126f088791648fba77deff8c3d5ae549e25d4c17bb6e107ff181a49"
+    }
+  ],
+  "original": [
+    {
+      "case": "toll-truck-direction",
+      "verdict": "abstained_positive",
+      "note": "All single-image responses invalid; abstains.",
+      "result_sha256": "0eb23b6da980600ecbd45f60d271c00f8d3a9c865e7e99bc1f3c571e38148207"
+    },
+    {
+      "case": "night-crossing-car",
+      "verdict": "wrong_trajectory",
+      "note": "Sees a car but claims left-to-right; actual movement is toward lower-left. Also adds an unverified traffic-rule implication.",
+      "result_sha256": "df41b57a8eb3708b6a49dd04c5b28b697519d7c063ae02ea7717506c5a8283a8"
+    },
+    {
+      "case": "highway-turquoise-direction",
+      "verdict": "contradictory_explanation",
+      "note": "Toward-camera answer conflicts with its cited observation saying away; not fully grounded.",
+      "result_sha256": "7fa74ddc10b211e8740facb7c5f696e79a33855f7ecb0c34ba2e8ea3e0fdd67e"
+    },
+    {
+      "case": "night-negative-aircraft",
+      "verdict": "correct_sampled_absence",
+      "note": "No aircraft in supplied images.",
+      "result_sha256": "81cb0115c54b84b562aedc64c0cf2806e8ad81dd8b9e7d8a687ac13d3331e0fb"
+    },
+    {
+      "case": "toll-negative-boat",
+      "verdict": "correct_sampled_absence",
+      "note": "No boat in supplied images.",
+      "result_sha256": "460275216665df16008db8a113144a0f8df934d9a23ba18c7d1c6025ad1bee39"
+    }
+  ],
+  "quality_gate": "failed: do not promote to default or convert interpretations into entity facts",
+  "annotation_limit": "The final yellow-truck visibility label was frozen as unclear, but the saved sample clearly contains a held image of the truck. The label is unchanged; no aggregate visibility accuracy is claimed. Its motion answer is independently rejected because both cited images are identical.",
+  "validation_limit": "The duplicate-citation guard was motivated by this development set; guarded results are development validation, not an untouched final holdout."
+}

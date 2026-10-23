@@ -293,6 +293,7 @@
               </label>
               <label class="toggle-row memory-toggle"><span><strong>Experiment 2 · Interpret ordered frames</strong><small>Use timestamped sequences for priority events instead of single-frame captions. Slower; Qwen worker required.</small></span><input id="memory-temporal-enabled" type="checkbox"><i></i></label>
               <label class="toggle-row memory-toggle"><span><strong>Experiment 3 · Build linked entity memory</strong><small>Track the retained recording and link observations to evidence. Adds detector processing; identity remains uncertain.</small></span><input id="memory-long-enabled" type="checkbox"><i></i></label>
+              <label class="toggle-row memory-toggle"><span><strong>Keep separate sessions on clock reset</strong><small>Requires sanitized capture. Keeps independent timelines instead of joining reset clocks. Transport reconnect is not automatic.</small></span><input id="memory-capture-sessions" type="checkbox" disabled><i></i></label>
               <label class="field"><span>Vision-language model for indexing and queries</span><select id="memory-vlm-model"></select></label>
               <label class="field"><span>Backend camera payloads</span><textarea id="memory-cameras-json" class="memory-json-editor" spellcheck="false" placeholder='[{"liveurl":"http://camera/mjpg/video.mjpg","Country":"...","description":"..."}]'></textarea></label>
               <div class="preset-row">
@@ -313,6 +314,21 @@
               <span id="memory-job-status" class="badge neutral">idle</span>
             </div>
             <label class="field"><span>Recorded sessions</span><select id="memory-job-select"><option value="">No recordings yet</option></select></label>
+            <div class="preset-row" aria-label="Recording controls">
+              <button id="memory-recording-cancel" class="text-button hidden" type="button">Stop recording</button>
+              <button id="memory-recording-resume" class="secondary-button hidden" type="button">Resume saved evidence</button>
+              <button id="memory-recording-revoke" class="text-button hidden" type="button">Revoke recording access</button>
+            </div>
+            <p id="memory-recording-action-status" role="status" aria-live="polite">Recovery uses saved evidence only; a new live interval requires a new recording.</p>
+            <section class="visual-index-panel" aria-labelledby="memory-metadata-title">
+              <h3 id="memory-metadata-title">Evidence statistics</h3>
+              <p>Indexed intervals and observed tracker histories across committed cameras. These are not verified people counts or proof of continuous capture.</p>
+              <p id="memory-metadata-status" role="status" aria-live="polite">Select a completed recording.</p>
+              <div class="preset-row">
+                <button id="memory-metadata-show" class="secondary-button" type="button" disabled>Show evidence statistics</button>
+                <button id="memory-metadata-rebuild" class="text-button" type="button" disabled>Rebuild saved metadata</button>
+              </div>
+            </section>
             <section class="visual-index-panel" aria-labelledby="visual-index-title">
               <h3 id="visual-index-title">Prepare visual search</h3>
               <p>Build visual representations from every recorded interval before asking a question. Progress survives worker restarts.</p>
@@ -336,7 +352,7 @@
                 <article><span>Cameras</span><strong id="memory-metric-cameras">0</strong></article>
                 <article><span>Events</span><strong id="memory-metric-events">0</strong></article>
                 <article><span>Decoded</span><strong id="memory-metric-frames">0</strong></article>
-                <article><span>Duration</span><strong id="memory-metric-duration">0s</strong></article>
+                <article><span id="memory-metric-duration-label">Duration</span><strong id="memory-metric-duration">0s</strong></article>
               </div>
               <div id="memory-camera-results" class="memory-camera-results"></div>
               <details class="raw-result"><summary>Raw memory result</summary><pre id="memory-raw-json"></pre></details>
@@ -355,6 +371,7 @@
             <label class="field memory-query-input"><span>Question or visual search</span><input id="memory-query-text" maxlength="1000" placeholder="For example: trucks waiting at a traffic signal" required></label>
             <label class="field"><span>Cluster filter</span><input id="memory-query-cluster" maxlength="120" placeholder="Leave empty for all"></label>
             <label class="field"><span>Camera IDs (optional, comma-separated)</span><input id="memory-query-cameras" placeholder="Leave empty for all cameras"></label>
+            <label class="field"><span>Source session</span><select id="memory-query-session" disabled><option value="">All source sessions</option></select><small>Times are relative to each session. Choose one for a time-based question.</small></label>
             <p id="memory-query-queue" class="memory-query-input" role="status" aria-live="polite"></p>
             <label class="toggle-row compact-toggle"><span><strong>Visual retrieval</strong><small>Search clip content as well as words. Unprepared intervals are still processed during search; partial coverage is disclosed.</small></span><input id="memory-query-semantic" type="checkbox" checked><i></i></label>
             <label class="toggle-row compact-toggle"><span><strong>Visual reranking</strong><small>Inspect the shortlist for closer matches.</small></span><input id="memory-query-rerank" type="checkbox" checked><i></i></label>

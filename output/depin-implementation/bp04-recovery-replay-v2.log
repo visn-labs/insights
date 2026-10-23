@@ -1,0 +1,5 @@
+Checking single writer, durable acknowledgements and idempotency
+Hard-killing only owned Rust parent; checking worker and descendant exit
+Checking cancellation and retained-only recovery
+Checking restart persistence of completed checkpoints
+Passed 52 HTTP checks plus crash/ownership/child checks: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-recovery-replay-v2

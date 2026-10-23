@@ -1,0 +1,51 @@
+[0.0s] Record real sanitized evidence through Rust
+[7.7s] Stage both complete index/profile targets; activate A
+objc[11610]: Class AVFFrameReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x105f8c3a8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1355d83a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+objc[11610]: Class AVFAudioReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x105f8c3f8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1355d83f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+`torch_dtype` is deprecated! Use `dtype` instead!
+[30.8s] Queue another real recording under A before cutover
+[41.1s] Quarantine an attempted legacy intent; reconcile only its exact saved task offline
+[42.0s] Retain a failed inactive stage; never activate incomplete coverage
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 674, in process_post
+    receipt = service.indexer.resolve(body) if lookup else service.indexer.submit(body)
+                                                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/workflow_indexing.py", line 150, in submit
+    job_id,scope,version,items=self.identity(body)
+                               ~~~~~~~~~~~~~^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/workflow_indexing.py", line 136, in identity
+    path, sha = self.service.source(event)
+                ~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 310, in source
+    raise ValueError('Sanitized source hash differs from committed evidence')
+ValueError: Sanitized source hash differs from committed evidence
+[42.3s] Hold an actual A response, activate B, then finish both on their declared generations
+[48.1s] Rollback, reject stale operator revision, preserve selection across Rust restart
+[53.2s] Tampered registry fails closed; exact restore recovers without recapture
+[53.3s] Reject URL reuse and refuse cleanup acknowledgement from a different storage root
+[61.9s] Revoke across both active and historical worker storage roots
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 686, in process_post
+    result = service.search(body)
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 520, in search
+    raise ValueError('Evidence source is revoked')
+ValueError: Evidence source is revoked
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 686, in process_post
+    result = service.search(body)
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 520, in search
+    raise ValueError('Evidence source is revoked')
+ValueError: Evidence source is revoked
+[68.7s] Passed atomic cutover, request binding, rollback, CAS, restart, tamper and cross-target revocation

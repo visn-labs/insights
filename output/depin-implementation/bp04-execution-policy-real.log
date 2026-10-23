@@ -1,0 +1,6 @@
+[1.2s] Pin recipe before acknowledgement; capture a real sanitized source then cancel
+[6.1s] Reject settings/model drift without reopening the source; restore recipe and recover
+[16.1s] Publish an anchored checkpoint with active inference unavailable and a different recipe
+[18.7s] Keep saved sanitized policy when the active deployment switches to research mode
+[20.1s] Detect in-place script drift before a checkpoint can be anchored
+[34.3s] Passed recipe admission, drift rejection, restored execution, read-only compatibility and revocation

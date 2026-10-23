@@ -41,7 +41,12 @@ pub struct Config {
     pub max_concurrent_cameras: usize,
     pub max_ephemeral_jobs: usize,
     pub memory_clip_mode: String,
+    pub media_policy: String,
+    pub privacy_python: String,
+    pub privacy_model_dir: PathBuf,
     pub retrieval_url: Option<String>,
+    pub retrieval_expected_profile: Option<String>,
+    pub retrieval_deployment_generation: Option<uuid::Uuid>,
     pub retrieval_timeout_secs: u64,
     pub resource_dir: Option<PathBuf>,
     pub resource_wait_secs: u64,
@@ -58,6 +63,13 @@ pub struct Config {
 
 impl Config {
     pub fn from_env() -> anyhow::Result<Self> {
+        let retrieval_expected_profile =
+            optional("VISN_RETRIEVAL_EXPECTED_PROFILE").map(|value| value.to_ascii_lowercase());
+        if retrieval_expected_profile.as_ref().is_some_and(|value| {
+            value.len() != 64 || !value.bytes().all(|byte| byte.is_ascii_hexdigit())
+        }) {
+            bail!("VISN_RETRIEVAL_EXPECTED_PROFILE must be a SHA-256 fingerprint");
+        }
         let resource_wait_secs = nonnegative_u64("VISN_RESOURCE_WAIT_SECS", "180")?;
         if resource_wait_secs > 3600 {
             bail!("VISN_RESOURCE_WAIT_SECS must not exceed 3600");
@@ -110,6 +122,14 @@ impl Config {
             bail!("VISN_DETECTOR_BATCH_WAIT_MS must not exceed 1000");
         }
 
+        let media_policy = value("VISN_MEDIA_POLICY", "research-raw-v1");
+        if !matches!(media_policy.as_str(), "research-raw-v1" | "sanitized-v1") {
+            bail!("VISN_MEDIA_POLICY must be research-raw-v1 or sanitized-v1");
+        }
+        let clip_mode = memory_clip_mode()?;
+        if media_policy == "sanitized-v1" && clip_mode == "reference" {
+            bail!("sanitized-v1 requires copy or transcode clips for browser-compatible sanitized playback");
+        }
         Ok(Self {
             bind: value("VISN_BIND", "127.0.0.1:8080"),
             data_dir: PathBuf::from(value("VISN_DATA_DIR", "./data")),
@@ -171,8 +191,16 @@ impl Config {
             max_cluster_cameras,
             max_concurrent_cameras,
             max_ephemeral_jobs: positive_usize("VISN_MAX_EPHEMERAL_JOBS", "128")?,
-            memory_clip_mode: memory_clip_mode()?,
+            media_policy,
+            privacy_python: value("VISN_PRIVACY_PYTHON", ".venv-retrieval/bin/python"),
+            privacy_model_dir: PathBuf::from(value(
+                "VISN_PRIVACY_MODEL_DIR",
+                ".retrieval/privacy-models",
+            )),
+            memory_clip_mode: clip_mode,
             retrieval_url: optional("VISN_RETRIEVAL_URL"),
+            retrieval_expected_profile,
+            retrieval_deployment_generation: None,
             retrieval_timeout_secs: positive_usize("VISN_RETRIEVAL_TIMEOUT_SECS", "600")? as u64,
             resource_dir,
             resource_wait_secs,
@@ -193,6 +221,23 @@ impl Config {
 
     pub fn upload_dir(&self) -> PathBuf {
         self.data_dir.join("uploads")
+    }
+
+    pub fn pin_retrieval(&self, request: reqwest::RequestBuilder) -> reqwest::RequestBuilder {
+        match &self.retrieval_expected_profile {
+            Some(profile) => request.header("X-Visn-Expected-Profile", profile),
+            None => request,
+        }
+    }
+
+    pub fn verify_retrieval_profile(&self, profile: &serde_json::Value) -> anyhow::Result<()> {
+        if let Some(expected) = &self.retrieval_expected_profile {
+            anyhow::ensure!(
+                profile["fingerprint"].as_str() == Some(expected.as_str()),
+                "retrieval_profile_changed_or_unbound"
+            );
+        }
+        Ok(())
     }
 
     pub fn detector_worker_idle_duration(&self) -> std::time::Duration {

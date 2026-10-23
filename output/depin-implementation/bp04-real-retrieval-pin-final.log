@@ -1,0 +1,20 @@
+[0.0s] Seal cached model weights, resolved runtime/device and implementation
+127.0.0.1 - - [23/Oct/2026 19:50:16] "GET /profile HTTP/1.1" 200 -
+objc[98310]: Class AVFFrameReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x12c0d83a8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x13d5b03a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+objc[98310]: Class AVFAudioReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x12c0d83f8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x13d5b03f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+[9.6s] Prepare and validate an actual Qwen video embedding
+127.0.0.1 - - [23/Oct/2026 19:50:16] "POST /index-jobs HTTP/1.1" 202 -
+`torch_dtype` is deprecated! Use `dtype` instead!
+[12.6s] Run profile-bound actual text/video retrieval and repeat from caches
+127.0.0.1 - - [23/Oct/2026 19:50:20] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 19:50:20] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 19:50:20] "POST /search HTTP/1.1" 409 -
+127.0.0.1 - - [23/Oct/2026 19:50:20] "GET /profile HTTP/1.1" 200 -
+[13.4s] Verify the Rust recording/search workflow honors the selected worker profile
+127.0.0.1 - - [23/Oct/2026 19:50:30] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 19:50:30] "GET /index-jobs?scope_id=01a16922-5e7a-7770-8074-ed7b4fda3f85 HTTP/1.1" 503 -
+127.0.0.1 - - [23/Oct/2026 19:50:30] "POST /index-jobs HTTP/1.1" 202 -
+127.0.0.1 - - [23/Oct/2026 19:50:30] "GET /index-jobs?scope_id=01a16922-5e7a-7770-8074-ed7b4fda3f85 HTTP/1.1" 503 -
+127.0.0.1 - - [23/Oct/2026 19:50:30] "GET /index-jobs?scope_id=01a16922-5e7a-7770-8074-ed7b4fda3f85 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 19:50:30] "POST /search HTTP/1.1" 409 -
+[23.7s] Passed actual cached-Qwen profile, preparation, query, cache parity and mismatch rejection

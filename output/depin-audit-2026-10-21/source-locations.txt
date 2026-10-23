@@ -1,0 +1,98 @@
+src/olap_h3.rs:12:pub fn hilbert_encode(mut x: u32, mut y: u32, order: u32) -> u64 {
+src/olap_h3.rs:35:pub fn lat_lng_to_h3_index(lat: f64, lng: f64, resolution: u8) -> u64 {
+src/olap_h3.rs:95:pub fn generate_clickhouse_schema() -> String {
+src/olap_h3.rs:131:    pub fn new() -> Self {
+src/olap_h3.rs:137:    pub fn insert_batch(&mut self, mut records: Vec<TrajectoryOlapRecord>) {
+src/olap_h3.rs:148:    pub fn execute_footfall_query(&self, query: &OlapFootfallQuery) -> OlapFootfallReport {
+src/olap_h3.rs:214:            execution_latency_ms: elapsed.max(0.85), // Typical ClickHouse query ~0.85 - 15.0 ms
+src/poc_engine.rs:53:    /// Maximum forward loyalty boost alpha_max (0.50 -> 1.0 to 1.5 multiplier)
+src/poc_engine.rs:65:            loyalty_alpha_max: 0.50,
+src/poc_engine.rs:109:pub fn calculate_node_weight(
+src/poc_engine.rs:176:pub fn distribute_epoch_rewards(
+src/poc_engine.rs:276:            motion_entropy: 0.50,
+src/poc_engine.rs:277:            visual_entropy: 0.50,
+src/video_rag.rs:71:    pub fn new() -> Self {
+src/video_rag.rs:78:    pub fn insert_clip(&mut self, clip: ClipNode) {
+src/video_rag.rs:84:    pub fn add_edge(&mut self, edge: GraphEdge) {
+src/video_rag.rs:102:    pub fn traverse_subgraph(
+src/video_rag.rs:161:pub fn decouple_enterprise_query(query: &str) -> DecoupledQuery {
+src/video_rag.rs:194:pub fn execute_video_rag(
+src/video_rag.rs:222:    // Phase 3: Intent-Aware Reranking (VideoStir scorer simulation)
+src/video_rag.rs:226:            // Compute simulated intent alignment score
+src/video_rag.rs:255:        .take(target_keyframes.max(14))
+src/video_rag.rs:277:        latency_ms: elapsed.max(1.2),
+src/quantized_diskann.rs:25:pub fn calculate_vector_memory_sizing(
+src/quantized_diskann.rs:69:    pub fn from_f32_slice(id: u64, vector: &[f32]) -> Self {
+src/quantized_diskann.rs:88:    pub fn hamming_distance(&self, other: &BinaryQuantizedVector) -> u32 {
+src/quantized_diskann.rs:113:    disk_fp32_vectors: Vec<(u64, Vec<f32>)>,
+src/quantized_diskann.rs:117:    pub fn new(dimension: usize) -> Self {
+src/quantized_diskann.rs:121:            disk_fp32_vectors: Vec::new(),
+src/quantized_diskann.rs:125:    pub fn insert(&mut self, id: u64, vector: &[f32]) {
+src/quantized_diskann.rs:133:        self.disk_fp32_vectors.push((id, vector.to_vec()));
+src/quantized_diskann.rs:139:    pub fn search(
+src/quantized_diskann.rs:166:                let (id, ref full_vec) = self.disk_fp32_vectors[idx];
+src/quantized_diskann.rs:193:pub fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
+src/adaptive_tracking.rs:82:    pub expected_fps: f32,
+src/adaptive_tracking.rs:88:pub fn evaluate_tracking_routing(
+src/adaptive_tracking.rs:120:            expected_fps: 45.0, // FIDTM real-time point localization
+src/adaptive_tracking.rs:137:            expected_fps: 85.0,
+src/adaptive_tracking.rs:153:            expected_fps: 22.0, // BoT-SORT with CMC adds 8-15 ms overhead
+src/adaptive_tracking.rs:169:        expected_fps: 32.5,
+src/anomaly_cascade.rs:32:    /// Fixed-camera weakly-supervised MIL (BN-WVAD / RTFM) - 30-50 ms on edge
+src/anomaly_cascade.rs:119:    pub fn new(config: AnomalyCascadeConfig) -> Self {
+src/anomaly_cascade.rs:128:    pub fn evaluate_frame(
+src/anomaly_cascade.rs:133:        raw_classifier_score: Option<f32>,
+src/anomaly_cascade.rs:168:        let raw_score = raw_classifier_score.unwrap_or(stage1_score);
+src/anomaly_cascade.rs:216:                token_pruning_ratio: 0.50, // vid-TLDR 50% token reduction
+src/compressed_gating.rs:58:    pub fn magnitude_squared(&self) -> f32 {
+src/compressed_gating.rs:62:    pub fn magnitude(&self) -> f32 {
+src/compressed_gating.rs:117:    pub cpu_throughput_fps: f32,
+src/compressed_gating.rs:123:pub fn evaluate_compressed_gating(
+src/compressed_gating.rs:140:            cpu_throughput_fps: 3600.0,
+src/compressed_gating.rs:255:        cpu_throughput_fps: 3450.0, // Benchmark verified ~3,450-3,600 FPS on CPU
+src/liveness.rs:20:    /// Number of initial calibration frames used to establish reference PRNU fingerprint (M=200)
+src/liveness.rs:21:    pub calibration_frames: usize,
+src/liveness.rs:30:            calibration_frames: 200,
+src/liveness.rs:46:    /// Number of calibration frames accumulated
+src/liveness.rs:47:    pub accumulated_calibration_frames: usize,
+src/liveness.rs:66:pub fn compute_pce(correlation_matrix: &[f32], width: usize, height: usize) -> f32 {
+src/liveness.rs:111:pub fn compute_enf_correlation(candidate: &[f32], reference: &[f32]) -> f32 {
+src/liveness.rs:142:pub fn verify_stream_liveness(
+src/liveness.rs:149:    if accumulated_frames < config.calibration_frames {
+src/liveness.rs:151:            is_authentic: true, // Allow provisional streaming while calibrating
+src/liveness.rs:155:            accumulated_calibration_frames: accumulated_frames,
+src/liveness.rs:159:                accumulated_frames, config.calibration_frames
+src/liveness.rs:217:        accumulated_calibration_frames: accumulated_frames,
+src/privacy_engine.rs:160:pub fn box_iou(a: [f32; 4], b: [f32; 4]) -> f32 {
+src/privacy_engine.rs:189:    pub fn new(config: PrivacyConfig) -> Self {
+src/privacy_engine.rs:199:    pub fn process_frame(&mut self, detections: &[FaceDetection]) -> Vec<RedactionMask> {
+src/privacy_engine.rs:389:            bbox: [0.505, 0.505, 0.1, 0.1],
+src/telemetry.rs:76:    pub fn new() -> Self {
+src/telemetry.rs:98:    pub fn status(&self) -> TelemetrySystemStatus {
+src/telemetry.rs:117:    pub fn evaluate_gating(
+src/telemetry.rs:127:    pub fn verify_liveness(
+src/telemetry.rs:144:    pub fn process_privacy(&self, detections: &[FaceDetection]) -> Vec<RedactionMask> {
+src/telemetry.rs:145:        self.privacy_manager.lock().unwrap().process_frame(detections)
+src/telemetry.rs:149:    pub fn route_tracking(
+src/telemetry.rs:159:    pub fn evaluate_anomaly(
+src/telemetry.rs:168:        self.anomaly_manager.lock().unwrap().evaluate_frame(
+src/telemetry.rs:179:    pub fn query_olap(&self, query: &OlapFootfallQuery) -> OlapFootfallReport {
+src/telemetry.rs:180:        self.olap_table.lock().unwrap().execute_footfall_query(query)
+src/telemetry.rs:184:    pub fn ingest_olap_records(&self, records: Vec<TrajectoryOlapRecord>) {
+src/telemetry.rs:185:        self.olap_table.lock().unwrap().insert_batch(records);
+src/telemetry.rs:189:    pub fn clickhouse_ddl(&self) -> String {
+src/telemetry.rs:194:    pub fn vector_sizing(&self, dim: usize, m: usize, count: usize) -> VectorStorageSizingReport {
+src/telemetry.rs:199:    pub fn search_quantized(
+src/telemetry.rs:205:        self.quantized_index.lock().unwrap().search(query, top_k, oversample)
+src/telemetry.rs:209:    pub fn insert_quantized_vector(&self, id: u64, vector: &[f32]) {
+src/telemetry.rs:210:        self.quantized_index.lock().unwrap().insert(id, vector);
+src/telemetry.rs:214:    pub fn query_video_rag(&self, query: &str) -> VideoRagResponse {
+src/telemetry.rs:215:        let graph = self.video_graph.lock().unwrap();
+src/telemetry.rs:220:    pub fn compute_pce(&self, correlation_matrix: &[f32], width: usize, height: usize) -> f32 {
+src/telemetry.rs:225:    pub fn hilbert_encode(&self, x: u32, y: u32, order: u32) -> u64 {
+src/telemetry.rs:230:    pub fn lat_lng_to_h3_index(&self, lat: f64, lng: f64, resolution: u8) -> u64 {
+src/telemetry.rs:235:    pub fn insert_rag_clip(&self, clip: crate::video_rag::ClipNode) {
+src/telemetry.rs:236:        self.video_graph.lock().unwrap().insert_clip(clip);
+src/telemetry.rs:240:    pub fn add_rag_edge(&self, edge: crate::video_rag::GraphEdge) {
+src/telemetry.rs:241:        self.video_graph.lock().unwrap().add_edge(edge);
+src/telemetry.rs:245:    pub fn distribute_poc(

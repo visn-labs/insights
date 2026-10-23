@@ -1,0 +1,632 @@
+[     134ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:57645/api/v1/memory-jobs/01a16461-4565-78a3-baf3-f3746fd5abf4/visual-index:0
+[    6136ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:57645/api/v1/memory-jobs/01a16461-4565-78a3-baf3-f3746fd5abf4/visual-index:0
+[    9125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[    9125ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[    9125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[    9125ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[    9125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[    9125ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   10626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   10626ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   10626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   10626ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   10626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   10626ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   12123ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   12123ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   12124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   12124ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   12124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   12124ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   13624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   13624ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   13624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   13624ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   13624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   13624ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   15124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   15124ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   15124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   15124ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   15124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   15124ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   16626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   16626ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   16627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   16627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   16627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   16627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   18127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   18127ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   18127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   18127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   18128ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   18128ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   19624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   19624ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   19624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   19624ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   19625ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   19625ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   21126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   21126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   21127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   21127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   21127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   21127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   22626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   22626ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   22627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   22627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   22627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   22627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   24125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   24126ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   24126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   24126ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   24126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   24126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   25626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   25626ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   25626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   25626ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   25627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   25627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   27126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   27127ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   27127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   27127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   27127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   27127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   28624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   28624ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   28624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   28624ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   28624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   28624ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   30124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   30124ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   30124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   30124ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   30124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   30124ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   31624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   31624ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   31624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   31624ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   31624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   31624ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   33126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   33126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   33127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   33127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   33127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   33127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   34625ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   34626ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   34626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   34626ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   34626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   34627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   36126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   36126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   36126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   36126ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   36126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   36127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   37626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   37626ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   37627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   37627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   37627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   37627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   39126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   39126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   39127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   39127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   39127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   39127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   40628ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   40628ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   40629ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   40629ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   40629ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   40629ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   42126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   42126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   42127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   42127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   42127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   42127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   43626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   43626ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   43626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   43626ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   43627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   43627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   45126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   45126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   45126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   45126ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   45126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   45126ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   46625ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   46625ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   46625ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   46625ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   46625ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   46625ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   48124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   48125ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   48125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   48125ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   48125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   48125ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   49626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   49626ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   49627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   49627ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   49627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   49627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   51124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   51124ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   51124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   51124ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   51124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   51124ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   52626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   52626ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   52627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   52627ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   52627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   52627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   54125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   54125ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   54126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   54126ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   54126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   54126ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   55626ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   55626ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   55627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   55627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   55627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   55627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   57126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   57127ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   57127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   57127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   57127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   57127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   58627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   58627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   58627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   58627ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   58627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   58627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   60127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   60127ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   60127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   60127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   60128ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   60128ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   61627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   61627ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   61627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   61627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   61628ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   61628ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   63126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   63126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   63127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   63127ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   63127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   63127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   64627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   64627ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   64627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   64627ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   64627ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   64627ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   66126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   66126ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   66126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   66126ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   66127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   66127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   67624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   67624ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   67624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   67624ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   67624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   67624ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   69126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   69126ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   69126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   69127ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   69127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   69127ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546
+[   70623ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/jobs:0
+[   70623ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadJobs (http://127.0.0.1:57645/app.js:978:24)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:22) @ http://127.0.0.1:57645/app.js:986
+[   70623ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/cluster-jobs:0
+[   70623ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadClusterJobs (http://127.0.0.1:57645/app.js:993:31)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:34) @ http://127.0.0.1:57645/app.js:1000
+[   70624ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:57645/api/v1/memory-jobs:0
+[   70624ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:57645/app.js:241:26)
+    at loadMemoryJobs (http://127.0.0.1:57645/app.js:528:30)
+    at refreshJobLists (http://127.0.0.1:57645/app.js:1006:53) @ http://127.0.0.1:57645/app.js:546

@@ -41,6 +41,10 @@ pub struct MemoryService {
 
 #[derive(Debug, Deserialize)]
 struct RunnerOutput {
+    #[serde(default)]
+    capture_extent: Option<crate::domain::CaptureExtent>,
+    #[serde(default)]
+    storage_session_id: Option<Uuid>,
     evidence_file: String,
     duration_ms: u64,
     frames_decoded: usize,
@@ -99,7 +103,12 @@ impl MemoryService {
         vlm_enabled: bool,
         temporal_enabled: bool,
         requested_vlm_model: Option<&str>,
-    ) -> anyhow::Result<MemoryCameraResult> {
+        retained_only: bool,
+        capture_sessions: bool,
+    ) -> anyhow::Result<Vec<MemoryCameraResult>> {
+        if capture_sessions && self.config.media_policy != "sanitized-v1" {
+            bail!("source_sessions_require_sanitized_profile");
+        }
         if camera.camera_id.trim().is_empty() {
             let generated = Uuid::new_v5(&Uuid::NAMESPACE_URL, camera.live_url.as_bytes());
             camera.camera_id = format!("camera-{}", &generated.simple().to_string()[..12]);
@@ -123,21 +132,98 @@ impl MemoryService {
                 &directory,
                 monitor_duration_secs,
                 observer_fps,
+                retained_only,
+                capture_sessions,
             )
             .await?;
+        let mut results = Vec::new();
+        let mut sessions = HashSet::new();
+        for output in output {
+            anyhow::ensure!(
+                capture_sessions == output.storage_session_id.is_some()
+                    && capture_sessions == output.capture_extent.is_some()
+                    && sessions.insert(output.storage_session_id),
+                "memory_runner_session_scope_invalid"
+            );
+            let scoped_directory = match output.storage_session_id {
+                Some(id) => {
+                    let parent = directory.join("sessions");
+                    let path = parent.join(id.to_string());
+                    anyhow::ensure!(
+                        !tokio::fs::symlink_metadata(&parent)
+                            .await?
+                            .file_type()
+                            .is_symlink()
+                            && !tokio::fs::symlink_metadata(&path)
+                                .await?
+                                .file_type()
+                                .is_symlink(),
+                        "memory_session_directory_symlink"
+                    );
+                    path
+                }
+                None => directory.clone(),
+            };
+            results.push(
+                self.materialize_camera_output(
+                    job_id,
+                    cluster_id,
+                    camera.clone(),
+                    output,
+                    &scoped_directory,
+                    vlm_enabled,
+                    temporal_enabled,
+                    requested_vlm_model,
+                )
+                .await?,
+            );
+        }
+        Ok(results)
+    }
+
+    async fn materialize_camera_output(
+        &self,
+        job_id: Uuid,
+        cluster_id: Option<&str>,
+        camera: CameraProfile,
+        output: RunnerOutput,
+        directory: &Path,
+        vlm_enabled: bool,
+        temporal_enabled: bool,
+        requested_vlm_model: Option<&str>,
+    ) -> anyhow::Result<MemoryCameraResult> {
         let source_evidence_path = artifact_path(&directory, &output.evidence_file)?;
         ensure_file(&source_evidence_path).await?;
+        let privacy_source = if self.config.media_policy == "sanitized-v1" {
+            Some(crate::privacy_media::verify(&source_evidence_path).await?)
+        } else {
+            None
+        };
 
         let mut selected = BTreeSet::new();
+        let source_session_id = privacy_source
+            .as_ref()
+            .and_then(|p| p.capture.as_ref())
+            .map(|c| c.session_id.clone());
+        anyhow::ensure!(
+            output.storage_session_id.is_none_or(|id| source_session_id
+                .as_deref()
+                .and_then(|s| Uuid::parse_str(s).ok())
+                == Some(id)),
+            "memory_session_provenance_changed"
+        );
         if vlm_enabled || temporal_enabled {
             selected = select_vlm_events(&output.events, self.config.max_vlm_events_per_camera);
         }
 
         let mut events = Vec::with_capacity(output.events.len());
         for (index, event) in output.events.into_iter().enumerate() {
-            let event_id = Uuid::new_v5(
-                &job_id,
-                format!("{}:{}:{}", camera.camera_id, event.start_ms, event.end_ms).as_bytes(),
+            let event_id = crate::domain::memory_event_id(
+                job_id,
+                &camera.camera_id,
+                source_session_id.as_deref(),
+                event.start_ms,
+                event.end_ms,
             );
             let runner_thumbnail_path = artifact_path(&directory, &event.thumbnail_file)?;
             ensure_file(&runner_thumbnail_path).await?;
@@ -203,6 +289,17 @@ impl MemoryService {
                 )
             };
             events.push(MemoryEvent {
+                capture_extent: output.capture_extent,
+                source_session_id: source_session_id.clone(),
+                privacy: if let Some(source) = &privacy_source {
+                    Some(crate::privacy_media::SanitizedEventEvidence {
+                        source: source.clone(),
+                        thumbnail_sha256: crate::privacy_media::file_hash(&thumbnail_path).await?,
+                        clip_sha256: crate::privacy_media::file_hash(&clip_path).await?,
+                    })
+                } else {
+                    None
+                },
                 source_duration_ms: output.duration_ms,
                 interpretation: None,
                 event_id,
@@ -247,6 +344,9 @@ impl MemoryService {
         info!(%job_id, camera_id = %camera.camera_id, events = events.len(), duration_ms = output.duration_ms,
             frames_consumed = output.frames_decoded, "memory evidence indexed");
         Ok(MemoryCameraResult {
+            capture_extent: output.capture_extent,
+            storage_session_id: output.storage_session_id,
+            source_session_id,
             long_memory: None,
             camera,
             duration_ms: output.duration_ms,
@@ -267,7 +367,15 @@ impl MemoryService {
         directory: &Path,
         monitor_duration_secs: u64,
         observer_fps: f32,
-    ) -> anyhow::Result<RunnerOutput> {
+        retained_only: bool,
+        capture_sessions: bool,
+    ) -> anyhow::Result<Vec<RunnerOutput>> {
+        if retained_only && !capture_sessions {
+            if self.config.media_policy != "sanitized-v1" {
+                bail!("retained_recovery_requires_sanitized_profile");
+            }
+            crate::privacy_media::verify(&directory.join("source.mkv")).await?;
+        }
         let waiting = std::time::Instant::now();
         let _permit = self
             .observer_gate
@@ -278,9 +386,16 @@ impl MemoryService {
         if let Err(error) = self.detector_worker.shutdown_if_idle().await {
             warn!(%error, "could not release an idle detector before sparse observation");
         }
-        let mut command = Command::new(&self.config.detector_executable);
+        let executable = if self.config.media_policy == "sanitized-v1" {
+            &self.config.privacy_python
+        } else {
+            &self.config.detector_executable
+        };
+        let mut command = Command::new(executable);
         command
             .env("VISN_TRACE_ID", job_id.to_string())
+            .env("VISN_MEDIA_POLICY", &self.config.media_policy)
+            .env("VISN_PRIVACY_MODEL_DIR", &self.config.privacy_model_dir)
             .args(&self.config.memory_runner_args)
             .arg("--source")
             .arg("-")
@@ -300,9 +415,17 @@ impl MemoryService {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .kill_on_drop(true);
+        if retained_only {
+            command.arg("--resume-retained");
+        }
+        if capture_sessions {
+            command.arg("--capture-sessions");
+        }
+        let lifeline = crate::durable::isolate_worker(&mut command)?;
         let mut child = command
             .spawn()
             .with_context(|| format!("launch {} memory runner", self.config.detector_executable))?;
+        let mut group = crate::durable::WorkerGroup::new(child.id(), lifeline);
         let mut stdin = child.stdin.take().context("open memory runner stdin")?;
         stdin
             .write_all(source.as_bytes())
@@ -314,6 +437,7 @@ impl MemoryService {
         let stdout_task = tokio::spawn(capture_bounded_head(stdout, MAX_RUNNER_STDOUT_BYTES));
         let stderr_task = tokio::spawn(capture_bounded_tail(stderr, MAX_RUNNER_STDERR_BYTES));
         let status = child.wait().await.context("wait for memory runner")?;
+        group.finish();
         let stdout = stdout_task
             .await
             .context("join memory runner stdout task")??;
@@ -369,19 +493,7 @@ pub fn retrieve<'a>(
     let mut document_frequency: HashMap<String, usize> = HashMap::new();
     let prepared: Vec<_> = candidates
         .into_iter()
-        .filter(|(event, _)| {
-            request
-                .cluster_id
-                .as_ref()
-                .is_none_or(|cluster| event.cluster_id.as_deref() == Some(cluster.as_str()))
-                && (request.camera_ids.is_empty()
-                    || request
-                        .camera_ids
-                        .iter()
-                        .any(|camera| camera == &event.camera_id))
-                && request.start_ms.is_none_or(|start| event.end_ms >= start)
-                && request.end_ms.is_none_or(|end| event.start_ms <= end)
-        })
+        .filter(|(event, _)| crate::retrieval::eligible(request, event))
         .map(|(event, camera)| {
             let terms = document_terms(event, camera);
             for term in &terms {
@@ -624,14 +736,28 @@ fn redacted_source_label(source: &str) -> &'static str {
     }
 }
 
-fn decode_runner_output(stdout: &[u8]) -> anyhow::Result<RunnerOutput> {
+fn decode_runner_output(stdout: &[u8]) -> anyhow::Result<Vec<RunnerOutput>> {
     let text = String::from_utf8_lossy(stdout);
     let payload = text
         .lines()
         .rev()
         .find_map(|line| line.trim().strip_prefix(OUTPUT_PREFIX))
         .context("memory runner returned no framed result")?;
-    serde_json::from_str(payload).context("decode memory runner JSON")
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Capture {
+        One(RunnerOutput),
+        Sessions { sessions: Vec<RunnerOutput> },
+    }
+    let outputs = match serde_json::from_str(payload).context("decode memory runner JSON")? {
+        Capture::One(output) => vec![output],
+        Capture::Sessions { sessions } => sessions,
+    };
+    anyhow::ensure!(
+        !outputs.is_empty() && outputs.len() <= 256,
+        "memory_runner_session_limit"
+    );
+    Ok(outputs)
 }
 
 fn fallback_description(
@@ -806,6 +932,24 @@ const SYNONYMS: &[&[&str]] = &[
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn framed_observer_outputs_accept_legacy_and_bounded_typed_session_sets() {
+        let one = serde_json::json!({"evidence_file":"source.mkv","duration_ms":1000,"frames_decoded":2,"events":[]});
+        let framed =
+            |value: serde_json::Value| format!("diagnostic\n{OUTPUT_PREFIX}{value}\n").into_bytes();
+        assert_eq!(decode_runner_output(&framed(one.clone())).unwrap().len(), 1);
+        let mut scoped = one;
+        scoped["storage_session_id"] = serde_json::json!(Uuid::from_u128(1));
+        let parsed =
+            decode_runner_output(&framed(serde_json::json!({"sessions":[scoped.clone()]})))
+                .unwrap();
+        assert_eq!(parsed[0].storage_session_id, Some(Uuid::from_u128(1)));
+        assert!(decode_runner_output(&framed(serde_json::json!({"sessions":[]}))).is_err());
+        scoped["storage_session_id"] = serde_json::json!("../escape");
+        assert!(decode_runner_output(&framed(serde_json::json!({"sessions":[scoped]}))).is_err());
+        assert!(decode_runner_output(b"unframed result").is_err());
+    }
 
     #[test]
     fn safe_component_removes_path_syntax() {

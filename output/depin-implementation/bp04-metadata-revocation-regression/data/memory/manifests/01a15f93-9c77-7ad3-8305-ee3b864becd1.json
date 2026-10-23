@@ -1,0 +1,79 @@
+{
+  "metadata_projection": {
+    "revision": "01a15f93-a468-7383-a393-bd6f1bcc5178",
+    "version": "evidence-metadata-v1",
+    "input_fingerprint": "741f6e159dfd66d0f2e69db6bbc040bb725687797f45ffc96ba99e5dd9784f4c",
+    "state": "cancelled",
+    "output_sha256": null,
+    "attempts": 1,
+    "next_attempt_at_ms": 0,
+    "last_error": null
+  },
+  "revocation": {
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a15f93-c714-76f2-adff-bc17b3fe3ee0",
+    "revoked_at_ms": 1792604882708,
+    "cleanup_state": "completed",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792604886129,
+    "worker_fingerprint": "eeb06895981064b79c146e047700819dc256ba61f8625636d4c0a2bcef4cc41a",
+    "last_error": null,
+    "receipt": {
+      "cleanup_complete": true,
+      "media_erased": false,
+      "pending_policies": [],
+      "revision": "01a15f93-c714-76f2-adff-bc17b3fe3ee0",
+      "scope_id": "01a15f93-9c77-7ad3-8305-ee3b864becd1",
+      "status": "revoked"
+    }
+  },
+  "visual_projection": {
+    "retry_requested": false,
+    "revision": "01a15f93-a468-7383-a393-bd70fdcd39d8",
+    "state": "cancelled",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792604887089,
+    "task_id": "26937ff4-545a-5887-af7f-e03b0d991cab",
+    "worker_fingerprint": "eeb06895981064b79c146e047700819dc256ba61f8625636d4c0a2bcef4cc41a",
+    "last_error": null,
+    "receipt": null
+  },
+  "request_fingerprint": "9daec853413155f066bd08d66068d0a78d68daaa20aa298a66afcd53b6073f66",
+  "camera_checkpoints": {},
+  "recovery_attempts": 0,
+  "id": "01a15f93-9c77-7ad3-8305-ee3b864becd1",
+  "request": {
+    "idempotency_key": null,
+    "long_memory_enabled": false,
+    "temporal_enabled": false,
+    "name": "revocation workflow",
+    "cluster_id": null,
+    "cameras": [
+      {
+        "camera_id": "revoke-camera",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 2,
+    "observer_fps": 2.0,
+    "vlm_enabled": false,
+    "vlm_model": null
+  },
+  "status": "cancelled",
+  "created_at_ms": 1792604871799,
+  "started_at_ms": 1792604871812,
+  "completed_at_ms": 1792604882708,
+  "result": null,
+  "error": "recording_revoked"
+}

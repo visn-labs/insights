@@ -1,0 +1,7 @@
+.Embedding failed for missing: [Errno 2] No such file or directory: '/private/var/folders/m9/t5q0cyl936sbj46dm933jp4w0000gr/T/tmp6zgqfy08/missing.mp4'
+Reranker unavailable: intentional reranker failure
+..
+----------------------------------------------------------------------
+Ran 3 tests in 0.707s
+
+OK

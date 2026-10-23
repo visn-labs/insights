@@ -1,0 +1,7 @@
+{
+  "basis": "Explicit target scope in the user-completed v2 follow-up.",
+  "cases": {
+    "live-1-dce234f8": "target",
+    "live-1-387fecde": "target"
+  }
+}

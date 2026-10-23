@@ -1,0 +1,7 @@
+.objc[20042]: Class AVFFrameReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x103f383a8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1101943a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+objc[20042]: Class AVFAudioReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x103f383f8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1101943f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+......
+----------------------------------------------------------------------
+Ran 7 tests in 2.130s
+
+OK

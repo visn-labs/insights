@@ -1,0 +1,26 @@
+{
+  "binary": "/Users/anagha/projects/visn_rust/target/debug/visn-phase0",
+  "binary_sha256": "c4660e02d2fee262c2b9a041fab8eaeefb8924352910b966ab00d0f39b986ce1",
+  "data_dir": "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-restore-release-regression/launch-data",
+  "capabilities": {
+    "code_sha256": "d96818390cf83fe0badc26083c8719c09f0db2f396eeda29d6b6207f0f881d42",
+    "features": [
+      "committed-media-hash-admission",
+      "saved-privacy-policy",
+      "durable-revocation",
+      "revocation-source-contract",
+      "worker-recording-scope-revocation",
+      "retrieval-generation-binding",
+      "legacy-projection-quarantine"
+    ],
+    "manifest_versions": [
+      1
+    ],
+    "reader": "visn-storage-reader-v1",
+    "storage_versions": [
+      1
+    ]
+  },
+  "compatible": true
+}
+{"timestamp":"2026-10-23T16:15:16.986559Z","level":"INFO","fields":{"message":"visn Phase 0 service ready","address":"127.0.0.1:54677","media_workers":4,"detector_threads":1,"persistent_detector":true,"detector_batch_size":4,"vlm_context_length":4096,"vlm_exclusive_media":true},"target":"visn_phase0"}

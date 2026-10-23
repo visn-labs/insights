@@ -1,0 +1,165 @@
+[
+  {
+    "route": "/api/v1/uploads",
+    "status": 400,
+    "response": {
+      "error": "privacy_processing_blocked: detector/decode/verification failed; raw fallback prohibited"
+    }
+  },
+  {
+    "route": "/api/v1/memory-jobs",
+    "status": 202,
+    "response": {
+      "id": "01a15f0e-a9c7-77c0-91b5-3df3fde08784",
+      "request": {
+        "long_memory_enabled": false,
+        "temporal_enabled": false,
+        "name": "privacy failure probe",
+        "cluster_id": null,
+        "cameras": [
+          {
+            "camera_id": "failed-camera",
+            "live_url": "http://***",
+            "country": "",
+            "country_code": "",
+            "region": "",
+            "city": "",
+            "latitude": null,
+            "longitude": null,
+            "zip": null,
+            "timezone": "",
+            "manufacturer": "",
+            "description": ""
+          }
+        ],
+        "monitor_duration_secs": 1,
+        "observer_fps": 1.0,
+        "vlm_enabled": false,
+        "vlm_model": null
+      },
+      "status": "queued",
+      "created_at_ms": 1792596158919,
+      "started_at_ms": null,
+      "completed_at_ms": null,
+      "result": null,
+      "error": null
+    }
+  },
+  {
+    "route": "/api/v1/memory-jobs/01a15f0e-a9c7-77c0-91b5-3df3fde08784",
+    "status": 200,
+    "response": {
+      "id": "01a15f0e-a9c7-77c0-91b5-3df3fde08784",
+      "request": {
+        "long_memory_enabled": false,
+        "temporal_enabled": false,
+        "name": "privacy failure probe",
+        "cluster_id": null,
+        "cameras": [
+          {
+            "camera_id": "failed-camera",
+            "live_url": "http://***",
+            "country": "",
+            "country_code": "",
+            "region": "",
+            "city": "",
+            "latitude": null,
+            "longitude": null,
+            "zip": null,
+            "timezone": "",
+            "manufacturer": "",
+            "description": ""
+          }
+        ],
+        "monitor_duration_secs": 1,
+        "observer_fps": 1.0,
+        "vlm_enabled": false,
+        "vlm_model": null
+      },
+      "status": "running",
+      "created_at_ms": 1792596158919,
+      "started_at_ms": 1792596158919,
+      "completed_at_ms": null,
+      "result": null,
+      "error": null
+    }
+  },
+  {
+    "route": "/api/v1/memory-jobs/01a15f0e-a9c7-77c0-91b5-3df3fde08784",
+    "status": 200,
+    "response": {
+      "id": "01a15f0e-a9c7-77c0-91b5-3df3fde08784",
+      "request": {
+        "long_memory_enabled": false,
+        "temporal_enabled": false,
+        "name": "privacy failure probe",
+        "cluster_id": null,
+        "cameras": [
+          {
+            "camera_id": "failed-camera",
+            "live_url": "http://***",
+            "country": "",
+            "country_code": "",
+            "region": "",
+            "city": "",
+            "latitude": null,
+            "longitude": null,
+            "zip": null,
+            "timezone": "",
+            "manufacturer": "",
+            "description": ""
+          }
+        ],
+        "monitor_duration_secs": 1,
+        "observer_fps": 1.0,
+        "vlm_enabled": false,
+        "vlm_model": null
+      },
+      "status": "running",
+      "created_at_ms": 1792596158919,
+      "started_at_ms": 1792596158919,
+      "completed_at_ms": null,
+      "result": null,
+      "error": null
+    }
+  },
+  {
+    "route": "/api/v1/memory-jobs/01a15f0e-a9c7-77c0-91b5-3df3fde08784",
+    "status": 200,
+    "response": {
+      "id": "01a15f0e-a9c7-77c0-91b5-3df3fde08784",
+      "request": {
+        "long_memory_enabled": false,
+        "temporal_enabled": false,
+        "name": "privacy failure probe",
+        "cluster_id": null,
+        "cameras": [
+          {
+            "camera_id": "failed-camera",
+            "live_url": "http://***",
+            "country": "",
+            "country_code": "",
+            "region": "",
+            "city": "",
+            "latitude": null,
+            "longitude": null,
+            "zip": null,
+            "timezone": "",
+            "manufacturer": "",
+            "description": ""
+          }
+        ],
+        "monitor_duration_secs": 1,
+        "observer_fps": 1.0,
+        "vlm_enabled": false,
+        "vlm_model": null
+      },
+      "status": "failed",
+      "created_at_ms": 1792596158919,
+      "started_at_ms": 1792596158919,
+      "completed_at_ms": 1792596159312,
+      "result": null,
+      "error": "all memory cameras failed: failed-camera: event-memory runner failed with exit status: 2: 2026-10-21 20:52:39,244 INFO Recording bounded camera interval: 1.0s\nprivacy_model_missing_or_changed:yunet"
+    }
+  }
+]

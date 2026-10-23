@@ -1,0 +1,99 @@
+{
+  "schema": "retrieval-pilot-v1",
+  "cluster_id": "live-evaluation",
+  "job_ids": [
+    "01a1433a-26bf-7e50-b482-5007781d97c7",
+    "01a1433a-26bf-7e50-b482-4ff132722114",
+    "01a1433a-26bf-7e50-b482-4fe9e55d087c"
+  ],
+  "annotation_basis": "Assistant visual review of 1 FPS contact sheets before any retrieval runs. Relevance means clear visible evidence in reviewed samples. This is a small diagnostic pilot, not exhaustive action or identity ground truth; no held-out set or confidence intervals. Labels were created by the assistant, not an independent human annotator.",
+  "sources": [
+    {
+      "camera": "live-1",
+      "job_id": "01a1433a-26bf-7e50-b482-5007781d97c7",
+      "source_sha256": "4b6ea7b34cc3d07696f6226345d0df307472046ada4e9016b902c14a24f724c3"
+    },
+    {
+      "camera": "live-2",
+      "job_id": "01a1433a-26bf-7e50-b482-4ff132722114",
+      "source_sha256": "7063fb3ff833221a74d3a22590062fda8c025854cce4a5185fa975ff4cd3cd5e"
+    },
+    {
+      "camera": "live-3",
+      "job_id": "01a1433a-26bf-7e50-b482-4fe9e55d087c",
+      "source_sha256": "09193622bad7aa84163598a60a935e8c931187bcf5249dbecd09a667736a0174"
+    }
+  ],
+  "queries": [
+    {
+      "id": "toll-queue",
+      "query": "Vehicles queueing in marked toll lanes",
+      "relevant_event_ids": [
+        "dac61d5f-3ac6-55ab-ba3f-2d1c1c1733c2",
+        "cfbf0ee1-58ef-5c2b-8b99-71826c63761b",
+        "ee6eb552-fd74-5e7b-b2be-0612177ab227",
+        "d4dec473-1a60-5572-8d5c-78819430a6aa"
+      ]
+    },
+    {
+      "id": "vest-person",
+      "query": "A person in a high visibility vest walking between traffic lanes",
+      "relevant_event_ids": [
+        "dac61d5f-3ac6-55ab-ba3f-2d1c1c1733c2",
+        "cfbf0ee1-58ef-5c2b-8b99-71826c63761b"
+      ]
+    },
+    {
+      "id": "night-crosswalk",
+      "query": "An illuminated road intersection with striped pedestrian crossings at night",
+      "relevant_event_ids": [
+        "0bb68ce2-1697-53e3-b74f-2a2d6bf65f0c",
+        "e361638f-045c-5373-b1ef-c7587f1ee1d3",
+        "0069f0b3-44a3-535e-a483-3e39782efaa3",
+        "26c3dfb5-8858-5e81-87f3-1cf2a385ca81"
+      ]
+    },
+    {
+      "id": "night-car",
+      "query": "A car crossing the intersection at night",
+      "relevant_event_ids": [
+        "e361638f-045c-5373-b1ef-c7587f1ee1d3",
+        "0069f0b3-44a3-535e-a483-3e39782efaa3"
+      ]
+    },
+    {
+      "id": "day-highway",
+      "query": "Daytime traffic on a divided highway beside a concrete barrier and low buildings",
+      "relevant_event_ids": [
+        "c3ca8788-e02f-5522-8aa4-ae839cd4b9dd",
+        "503de629-a608-5128-b0f6-4c3112593301",
+        "c0e52f22-f0da-5e5d-a4a2-6eaf933617ee",
+        "72de829f-90d6-54ea-a96a-fffd45e205e3",
+        "9457308d-d0cc-5458-8ee0-f68eb4b09902"
+      ]
+    },
+    {
+      "id": "turquoise-car",
+      "query": "A turquoise car travelling alongside a red container truck",
+      "relevant_event_ids": [
+        "c3ca8788-e02f-5522-8aa4-ae839cd4b9dd",
+        "503de629-a608-5128-b0f6-4c3112593301"
+      ]
+    },
+    {
+      "id": "negative-boat",
+      "query": "A boat travelling across open water",
+      "relevant_event_ids": []
+    },
+    {
+      "id": "negative-door",
+      "query": "A person opening an indoor door",
+      "relevant_event_ids": []
+    },
+    {
+      "id": "negative-aircraft",
+      "query": "An aircraft taking off from an airport runway",
+      "relevant_event_ids": []
+    }
+  ]
+}

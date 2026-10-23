@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Visn · Walking study</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#e9decd;color:#41362d;font:14px system-ui}canvas{position:fixed;inset:0;width:100%;height:100%;display:block}header,footer{position:fixed;left:28px;right:28px;display:flex;align-items:center;gap:16px;z-index:2}header{top:22px;justify-content:space-between}h1{font:26px Georgia;margin:0 0 6px}p{margin:0;color:#756451}footer{bottom:22px;background:#f5efdfeb;padding:14px 18px;border:1px solid #b9a68d;border-radius:8px;flex-wrap:wrap}button,select,input{font:inherit;background:#fff9ed;border:1px solid #a99880;color:#41362d;border-radius:4px;padding:8px}button{cursor:pointer}input{width:82px}.readout{font:12px ui-monospace;line-height:1.8;text-align:right}label{display:flex;gap:8px;align-items:center}#phase{min-width:200px;margin-left:auto}small{color:#796b5c}@media(max-width:650px){header,footer{left:12px;right:12px}h1{font-size:20px}footer{gap:6px;padding:8px}label{font-size:12px}.readout{display:none}}</style>
+<canvas aria-label="Close-up of the production Visn pedestrian walking across a marked ground plane"></canvas>
+<header><div><h1>Walking, one step at a time.</h1><p>Production character · world-space foot placement</p></div><div class="readout">Heel contact → weight transfer → toe push → swing<br><span id="stats"></span></div></header>
+<footer><button id="play">Pause</button><label>Speed<select id="speed"><option value="0.55">Stroll</option><option value="0.9" selected>Walk</option><option value="1.1">Brisk</option></select></label><label>View<select id="view"><option value="side">Side</option><option value="three">Three-quarter</option><option value="front">Front</option></select></label><label>Action<select id="action"><option value="walk">Walk</option><option value="turn">Corner</option><option value="stop">Start / stop</option></select></label><label>Slow motion<input id="slow" type="checkbox"></label><label>Time<input id="frame" type="number" value="0" min="0" max="60" step="0.033333"></label><span id="phase"></span></footer>
+<script type="module">
+import * as THREE from '../static/vendor/three.module.min.js';
+import {TownScene} from '../static/engine.js';
+import {walkingRoute,walkingTravel} from '../static/assets/walking.js';
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xe9decd);scene.fog=new THREE.Fog(0xe9decd,18,45);
+const town=Object.assign(Object.create(TownScene.prototype),{scene,materials:new Map(),geometryCache:new Map(),ramp:null,boxGeometry:new THREE.BoxGeometry(1,1,1),sphereGeometry:new THREE.SphereGeometry(1,16,12),groundHeight:()=>0});
+const actor=town.person(2);scene.add(new THREE.HemisphereLight(0xfff5e4,0x9a8b76,2));
+const sun=new THREE.DirectionalLight(0xffebcb,2.4);sun.position.set(-3,6,4);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8});sun.shadow.normalBias=.005;scene.add(sun);scene.add(sun.target);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:0xd4c3a8,roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-.001;floor.receiveShadow=true;scene.add(floor);
+const grid=new THREE.GridHelper(180,360,0xa48e73,0xc0ad92);grid.position.y=.001;grid.material.transparent=true;grid.material.opacity=.5;scene.add(grid);
+const marks=[0,1].map(()=>{const g=new THREE.Mesh(new THREE.RingGeometry(.045,.053,32),new THREE.MeshBasicMaterial({color:0x6d8853,side:THREE.DoubleSide}));g.rotation.x=-Math.PI/2;scene.add(g);return g;});
+const renderer=new THREE.WebGLRenderer({canvas:document.querySelector('canvas'),antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const camera=new THREE.PerspectiveCamera(34,innerWidth/innerHeight,.05,100);let time=0,last=performance.now(),playing=true;
+const straight=walkingRoute([[0,-8],[0,40]]),corner=walkingRoute([[0,-3],[0,0],[7,0]]);
+const ui=id=>document.getElementById(id);
+function render(){
+ const speed=+ui('speed').value,action=ui('action').value,path=action==='turn'?corner:straight;
+ let distance=time*speed+1,speedNow=speed,stride=(.86+speed*.21)*actor.mesh.scale.y;
+ if(action==='stop'){const motion=walkingTravel(time%16-1,8,10);distance=motion.distance;speedNow=motion.speed;stride=1;}
+ if(action==='turn')distance=(time*speed)%corner.length;
+ town.walkPerson(actor,path,distance,speedNow,stride);
+ const p=actor.mesh.position;let offset=ui('view').value==='side'?[4.8,1.2,.3]:ui('view').value==='front'?[.05,1.45,5.2]:[3.5,1.7,4];
+ camera.position.set(p.x+offset[0],1.05+offset[1]*.35,p.z+offset[2]);camera.lookAt(p.x,.98,p.z);
+ sun.position.set(p.x-3,6,p.z+4);sun.target.position.copy(p);
+ actor.walking.feet.forEach((f,i)=>{marks[i].position.copy(f.origin);marks[i].position.y=.003;marks[i].material.color.setHex(f.stance?0x648451:0xb6834a);});
+ ui('phase').textContent=actor.walking.feet.map((f,i)=>(i?'R: ':'L: ')+(f.stance?(f.phase<.11?'heel contact':f.phase>.43?'toe push':'planted'):'swing')).join(' · ');
+ ui('stats').textContent=`${speedNow.toFixed(2)} m/s · ${Math.round(speedNow/stride*120)} steps/min`;
+ renderer.render(scene,camera);document.body.dataset.ready='true';
+}
+function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();render();}addEventListener('resize',resize);
+ui('play').onclick=()=>{playing=!playing;ui('play').textContent=playing?'Pause':'Play';};
+ui('frame').oninput=()=>{time=+ui('frame').value;playing=false;ui('play').textContent='Play';render();};
+for(const id of ['speed','view','action','slow'])ui(id).onchange=()=>{if(id==='action')time=0;render();};
+resize();function tick(now){const dt=Math.min((now-last)/1000,.05);last=now;if(playing){time+=dt*(ui('slow').checked?.25:1);ui('frame').value=time.toFixed(3);render();}requestAnimationFrame(tick);}requestAnimationFrame(tick);
+</script></html>

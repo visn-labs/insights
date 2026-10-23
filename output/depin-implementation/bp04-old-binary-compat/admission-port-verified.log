@@ -1,0 +1,18 @@
+[
+  {
+    "binary": "current",
+    "binary_sha256": "442d3efcaf025e26ac11613ee1c2dc0c896c7e8d45b3aeb25c2b762f8051b9a4",
+    "original_source_sha256": "2fcb7ccb4f6fee38c27311cdb34e023f5ba490ede03f130113636a43881cef3c",
+    "tampered_status": 404,
+    "tampered_bytes_served": false,
+    "outcome": "rejects_tampered_evidence"
+  },
+  {
+    "binary": "old",
+    "binary_sha256": "8efb0ab850c2a5c02e2e65cbd43c5c1f8a1af60b1311b0a996b89e64c471f849",
+    "original_source_sha256": "2fcb7ccb4f6fee38c27311cdb34e023f5ba490ede03f130113636a43881cef3c",
+    "tampered_status": 200,
+    "tampered_bytes_served": true,
+    "outcome": "unsupported_for_sanitized_v1_rollback"
+  }
+]

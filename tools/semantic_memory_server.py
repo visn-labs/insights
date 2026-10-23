@@ -16,12 +16,15 @@ import sqlite3
 import sys
 import subprocess
 import time
+import weakref
+import uuid
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from workflow_telemetry import CURRENT, WorkflowTrace, measured, stage
 from workflow_indexing import AdmissionGate, IndexJobs, QueueFull
 from workflow_resources import Residency, ResourceBusy, ManagedLMStudio, trim_allocator
 from grouped_decode import decode_group, eligible
+from retrieval_profile import FrozenFiles, model_files, runtime_identity, worker_profile, storage_identity, ProfileConflict
 
 LOG = logging.getLogger("visn.retrieval")
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,8 +35,12 @@ QUERY_CACHE_MAX_ENTRIES = 32
 RERANK_CACHE_MAX_ENTRIES = 256
 SOURCE_CACHE_MAX_ENTRIES = 256
 VECTOR_POLICIES = ('legacy-renormalize-v1', 'canonical-unit-v2')
+VECTOR_DATABASES = dict(zip(VECTOR_POLICIES, ('semantic-v1.sqlite3', 'semantic-canonical-v2.sqlite3')))
 
 INSTRUCTION = "Retrieve camera video segments that visually match the search query."
+LOADED_SERVER_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+LOADED_LOCAL_SOURCES = {name:hashlib.sha256(Path(sys.modules[name].__file__).read_bytes()).hexdigest()
+    for name in ['grouped_decode','workflow_resources','workflow_indexing','workflow_telemetry','retrieval_profile']}
 
 
 def normalize(vector):
@@ -75,21 +82,58 @@ class QwenModels:
         self.snapshot_download = snapshot_download
         # A resolved snapshot identifies the exact weights used by every cached vector.
         self.embedding_path = snapshot_download(args.embedding_model, revision=args.embedding_revision)
-        self.version = json.dumps({"model": args.embedding_model, "snapshot": self.embedding_path,
+        self.reranker_path = snapshot_download(args.reranker_model, revision=args.reranker_revision)
+        import torch
+        # Resolve wrapper imports before freezing numerical runtime settings.
+        from src.models.qwen3_vl_embedding import Qwen3VLEmbedder
+        from src.models.qwen3_vl_reranker import Qwen3VLReranker
+        self.device = args.device
+        if self.device == 'auto':
+            self.device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
+        if hashlib.sha256(Path(__file__).read_bytes()).hexdigest() != LOADED_SERVER_SHA256:
+            raise ValueError('Retrieval implementation changed since process startup')
+        if any(hashlib.sha256(Path(sys.modules[name].__file__).read_bytes()).hexdigest() != expected for name,expected in LOADED_LOCAL_SOURCES.items()):
+            raise ValueError('Loaded retrieval helper changed since process startup')
+        self.artifacts = [model_files(self.embedding_path), model_files(self.reranker_path)]
+        code = {str(path.relative_to(ROOT)):path for path in (ROOT/'tools').glob('*.py')}
+        code.update({f'qwen/{path.relative_to(args.qwen_source)}':path for path in Path(args.qwen_source).rglob('*.py') if '.git' not in path.parts})
+        self.artifacts.append(FrozenFiles(code, [(ROOT/'tools','*.py'),(Path(args.qwen_source),'**/*.py')]))
+        implementation = self.artifacts[-1].identity['sha256']
+        import imageio_ffmpeg
+        self.ffmpeg_path = str(Path(imageio_ffmpeg.get_ffmpeg_exe()).resolve())
+        executable = FrozenFiles({'ffmpeg':Path(self.ffmpeg_path)})
+        self.artifacts.append(executable)
+        runtime = runtime_identity(torch, self.device)
+        runtime['ffmpeg_sha256'] = executable.identity['files']['ffmpeg']
+        self.runtime_identity = runtime
+        common = dict(runtime=runtime, implementation=implementation)
+        self.reranker_identity = dict(model=args.reranker_model, weights=self.artifacts[1].identity['sha256'], **common)
+        self.version = json.dumps({"model": args.embedding_model, "weights":self.artifacts[0].identity['sha256'], **common,
                                    "upstream": UPSTREAM_REVISION, "frames": args.frames,
+                                   "decode_policy":getattr(args,'decode_policy','single-seek-v1'),
                                    "pixels": args.frame_size, "instruction": INSTRUCTION,
                                    "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last"}, sort_keys=True)
+
+    def verify_profile(self):
+        import imageio_ffmpeg
+        import torch
+        runtime = runtime_identity(torch, self.device)
+        runtime['ffmpeg_sha256'] = self.runtime_identity['ffmpeg_sha256']
+        if runtime != self.runtime_identity:
+            raise ProfileConflict('Retrieval numerical runtime changed; stage a new profile')
+        if str(Path(imageio_ffmpeg.get_ffmpeg_exe()).resolve()) != self.ffmpeg_path:
+            raise ProfileConflict('Retrieval decoder selection changed; stage a new profile')
+        for artifact in self.artifacts: artifact.verify()
 
     @measured('retrieval_model_load')
     def load(self, kind):
         import torch
         from src.models.qwen3_vl_embedding import Qwen3VLEmbedder
         from src.models.qwen3_vl_reranker import Qwen3VLReranker
+        self.verify_profile()
         if getattr(self, kind) is not None:
             return getattr(self, kind)
-        device = self.args.device
-        if device == "auto":
-            device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+        device = self.device
         if not self.args.keep_models_loaded:
             other = "reranker" if kind == "embedder" else "embedder"
             setattr(self, other, None)
@@ -98,8 +142,7 @@ class QwenModels:
                 torch.cuda.empty_cache()
             if torch.backends.mps.is_available():
                 torch.mps.empty_cache()
-        model_path = self.embedding_path if kind == "embedder" else (self.reranker_snapshot or self.snapshot_download(
-            self.args.reranker_model, revision=self.args.reranker_revision))
+        model_path = self.embedding_path if kind == "embedder" else self.reranker_path
         if kind == "reranker":
             self.reranker_snapshot = model_path
         LOG.info("Loading %s on %s", kind, device)
@@ -166,9 +209,21 @@ class Retrieval:
         self.query_cache = OrderedDict()
         self.rerank_cache = OrderedDict()
         self.work_stats = dict(decode_hits=0, ffmpeg_calls=0, decode_evictions=0, grouped_calls=0, grouped_fallbacks=0, query_hits=0, query_calls=0, rerank_hits=0, rerank_calls=0)
-        database = 'semantic-v1.sqlite3' if self.vector_policy == VECTOR_POLICIES[0] else 'semantic-canonical-v2.sqlite3'
+        self.vector_databases = VECTOR_DATABASES
+        database = VECTOR_DATABASES[self.vector_policy]
         self.db = sqlite3.connect(self.root / database, check_same_thread=False)
         self.db.execute("CREATE TABLE IF NOT EXISTS vectors (key TEXT PRIMARY KEY, version TEXT NOT NULL, vector TEXT NOT NULL)")
+        self.db.execute('CREATE TABLE IF NOT EXISTS artifact_sources (kind TEXT NOT NULL,key TEXT NOT NULL,source_path TEXT NOT NULL,PRIMARY KEY(kind,key,source_path))')
+        self.revocations = sqlite3.connect(self.root / 'revocations-v1.sqlite3', timeout=10, check_same_thread=False)
+        weakref.finalize(self, self.revocations.close)
+        self.revocations.executescript('''
+            CREATE TABLE IF NOT EXISTS retrieval_storage_instance(version INTEGER PRIMARY KEY CHECK(version=1),id TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS revocations(scope TEXT PRIMARY KEY,revision TEXT NOT NULL,created REAL NOT NULL);
+            CREATE TABLE IF NOT EXISTS revoked_sources(path TEXT NOT NULL,scope TEXT NOT NULL,PRIMARY KEY(path,scope));
+            CREATE TABLE IF NOT EXISTS revocation_cleanup(scope TEXT NOT NULL,policy TEXT NOT NULL,state TEXT NOT NULL,PRIMARY KEY(scope,policy));
+        ''')
+        self.revocations.execute('INSERT OR IGNORE INTO retrieval_storage_instance VALUES (1,?)',(uuid.uuid4().hex,))
+        self.revocations.commit()
         self.lock = AdmissionGate(getattr(args, 'interactive_queue_limit', 8))
         self.indexer = None
         self.resources = Residency('retrieval')
@@ -220,6 +275,7 @@ class Retrieval:
     def ensure_models(self):
         if self.models is None:
             self.models = QwenModels(self.args)
+        if hasattr(self.models, 'verify_profile'): self.models.verify_profile()
 
     def mps_ready(self):
         models = self.models
@@ -230,6 +286,8 @@ class Retrieval:
     @measured('source_validation')
     def source(self, event):
         path = Path(event["source_path"]).resolve(strict=True)
+        if self.source_revoked(path):
+            raise ValueError('Evidence source is revoked')
         if not path.is_relative_to(self.root) or not path.is_file():
             raise ValueError("Evidence must be a file inside the configured data directory")
         start, end = event["start_ms"], event["end_ms"]
@@ -247,9 +305,25 @@ class Retrieval:
                 raise ValueError("Evidence changed while fingerprinting")
             self.hashes[key] = (identity, digest)
         self.hashes.move_to_end(key)
+        expected = event.get('expected_source_sha256')
+        if expected is not None and expected != self.hashes[key][1]:
+            raise ValueError('Sanitized source hash differs from committed evidence')
         while len(self.hashes) > SOURCE_CACHE_MAX_ENTRIES:
             self.hashes.popitem(last=False)
         return path, self.hashes[key][1]
+
+    def source_revoked(self, path):
+        path=Path(path).resolve()
+        if self.revocations.execute('SELECT 1 FROM revoked_sources WHERE path=? LIMIT 1',(str(path),)).fetchone():return True
+        # Canonical Visn media keeps its recording namespace when restored under
+        # another root. Do not let a new absolute path bypass the scope tombstone.
+        if path.is_relative_to(self.root):
+            for parent in path.parents:
+                if parent.parent.name=='memory' and parent.is_relative_to(self.root):
+                    try:scope=str(uuid.UUID(parent.name))
+                    except ValueError:continue
+                    if self.revocations.execute('SELECT 1 FROM revocations WHERE scope=?',(scope,)).fetchone():return True
+        return False
 
     @measured('frame_sampling')
     def frames(self, event, count=None, size=None, with_timestamps=False, sample_timestamps=None, no_upscale=False):
@@ -342,11 +416,13 @@ class Retrieval:
 
     @measured('clip_embedding')
     def embedding(self, event, expected_digest=None):
-        _, digest = self.source(event)
+        self.ensure_models()
+        path, digest = self.source(event)
         if expected_digest is not None and digest != expected_digest:
             raise ValueError('Source changed since index submission')
         version = self.models.version
         key = self.embedding_key(event, digest)
+        self.record_artifact_source('vector', key, path)
         with stage('vector_cache_read'):
             row = self.db.execute("SELECT vector FROM vectors WHERE key=?", (key,)).fetchone()
         if row:
@@ -358,6 +434,7 @@ class Retrieval:
         vector = self.models.embed({"video": self.frames(event), "instruction": INSTRUCTION})
         if self.vector_policy == 'canonical-unit-v2':
             unit_vector(vector)
+        self.ensure_models()
         if self.source(event)[1] != digest or self.models.version != version:
             raise ValueError('Source or embedding profile changed during inference; artifact was not committed')
         with stage('vector_cache_write'):
@@ -368,6 +445,11 @@ class Retrieval:
     def embedding_key(self, event, digest):
         raw = json.dumps([digest, event["start_ms"], event["end_ms"], self.models.version])
         return hashlib.sha256(raw.encode()).hexdigest()
+
+    def record_artifact_source(self, kind, key, path):
+        cursor = self.db.execute('INSERT OR IGNORE INTO artifact_sources VALUES (?,?,?)',(kind,key,str(Path(path).resolve())))
+        if cursor.rowcount:
+            self.db.commit()
 
     def artifact_valid(self, key):
         row = self.db.execute('SELECT vector FROM vectors WHERE key=?',(key,)).fetchone()
@@ -381,6 +463,8 @@ class Retrieval:
 
     @measured('query_embedding')
     def query_embedding(self, query):
+        self.ensure_models()
+        version = self.models.version
         key = (self.models.version, query)
         enabled = not getattr(self.args,'disable_work_caches',False)
         if enabled and key in self.query_cache:
@@ -393,6 +477,8 @@ class Retrieval:
             unit_vector(vector)
         if not vector or any(type(v) not in (float,int) or not math.isfinite(v) for v in vector):
             raise ValueError('Invalid query embedding')
+        self.ensure_models()
+        if version != self.models.version: raise ProfileConflict('Query embedding profile changed during inference')
         if enabled:
             self.query_cache[key] = vector
             while len(self.query_cache)>QUERY_CACHE_MAX_ENTRIES:self.query_cache.popitem(last=False)
@@ -400,10 +486,12 @@ class Retrieval:
 
     @measured('clip_reranking')
     def rerank_event(self, query, event):
+        self.ensure_models()
+        version = self.models.version
         # Validate scope/source even on hits. Revision is resolved once per model session.
         _, sha = self.source(event)
         snapshot = getattr(self.models,'reranker_snapshot',None)
-        key = (self.models.version,snapshot,query,sha,event['start_ms'],event['end_ms'])
+        key = (self.models.version,json.dumps(getattr(self.models,'reranker_identity',None),sort_keys=True),snapshot,query,sha,event['start_ms'],event['end_ms'])
         enabled = not getattr(self.args,'disable_work_caches',False)
         if enabled and snapshot and key in self.rerank_cache:
             self.rerank_cache.move_to_end(key)
@@ -411,10 +499,12 @@ class Retrieval:
             return self.rerank_cache[key]
         self.work_stats['rerank_calls'] += 1
         score = self.models.rerank(query,self.frames(event))
+        self.ensure_models()
+        if version != self.models.version: raise ProfileConflict('Reranker profile changed during inference')
         if not math.isfinite(score) or not 0<=score<=1:raise ValueError('Invalid rerank score')
         snapshot = getattr(self.models,'reranker_snapshot',None)
         if enabled and snapshot:
-            key = (self.models.version,snapshot,query,sha,event['start_ms'],event['end_ms'])
+            key = (self.models.version,json.dumps(getattr(self.models,'reranker_identity',None),sort_keys=True),snapshot,query,sha,event['start_ms'],event['end_ms'])
             self.rerank_cache[key] = score
             while len(self.rerank_cache)>RERANK_CACHE_MAX_ENTRIES:self.rerank_cache.popitem(last=False)
         return score
@@ -436,6 +526,8 @@ class Retrieval:
             raise ValueError("Invalid candidate set (maximum 10000 events)")
         if any(not isinstance(e, dict) or not isinstance(e.get("event_id"), str) for e in events):
             raise ValueError("Each event needs a string event_id")
+        if any(isinstance(e.get('source_path'),str) and self.source_revoked(e['source_path']) for e in events):
+            raise ValueError('Evidence source is revoked')
         by_id = {e["event_id"]: e for e in events}
         if len(by_id) != len(events):
             raise ValueError("Duplicate event IDs")
@@ -493,6 +585,16 @@ class Retrieval:
 
 def handler_for(service):
     class Handler(BaseHTTPRequestHandler):
+        def inspect_profile(self):
+            if not service.lock.acquire(timeout=0): raise ResourceBusy('Profile inspection is busy; retry')
+            try:
+                profile=worker_profile(service)
+                expected=self.headers.get('X-Visn-Expected-Profile')
+                if expected is not None and expected != profile['fingerprint']:
+                    raise ProfileConflict('retrieval_profile_changed: worker no longer matches the selected profile')
+                return profile
+            finally:service.lock.release()
+
         def reply(self, status, body):
             if status >= 400 and CURRENT.get() and CURRENT.get().status == 'ok':
                 CURRENT.get().status = 'http_error'
@@ -508,15 +610,23 @@ def handler_for(service):
                 LOG.warning("Client disconnected; completed cache writes remain reusable")
         def do_GET(self):
             parsed = urlparse(self.path)
+            if parsed.path == '/profile':
+                try: return self.reply(200, self.inspect_profile())
+                except Exception as error: return self.reply(409 if isinstance(error,ProfileConflict) else 503, {'error':str(error)})
+            profile=None
+            if parsed.path.startswith('/index-jobs') and self.headers.get('X-Visn-Expected-Profile') is not None:
+                try:profile=self.inspect_profile()
+                except Exception as error:return self.reply(409 if isinstance(error,ProfileConflict) else 503, {'error':str(error)})
             if parsed.path == '/health':
                 return self.reply(200, {"status": "ready", "models_loaded": service.models is not None,
                         "telemetry_enabled": not getattr(service.args,'disable_telemetry',True),
                         'scheduler': service.lock.snapshot(), 'background_indexing': service.indexer is not None, 'resources':service.resources.snapshot(), 'decode_policy':service.decode_policy})
             if service.indexer and parsed.path == '/index-jobs':
                 scope = parse_qs(parsed.query).get('scope_id', [''])[0]
-                return self.reply(200, {'jobs': service.indexer.list(scope), 'scheduler':service.lock.snapshot(), 'resources':service.resources.snapshot()})
+                return self.reply(200, {'jobs': service.indexer.list(scope), 'scheduler':service.lock.snapshot(), 'resources':service.resources.snapshot(),'worker_profile':profile})
             if service.indexer and parsed.path.startswith('/index-jobs/'):
                 result = service.indexer.get(parsed.path.split('/')[-1])
+                if result is not None and profile is not None:result['worker_profile']=profile
                 return self.reply(200 if result else 404, result or {'error':'Index job not found'})
             self.reply(404, {'error':'Unknown endpoint'})
         def do_POST(self):
@@ -530,11 +640,19 @@ def handler_for(service):
             index_action = re.fullmatch(r'/index-jobs/([^/]+)/(cancel|retry)', self.path)
             if index_action and service.indexer:
                 try:
+                    profile=self.inspect_profile() if self.headers.get('X-Visn-Expected-Profile') is not None else None
                     result = service.indexer.action(*index_action.groups())
+                    if result is not None and profile is not None:result['worker_profile']=profile
                     return self.reply(200 if result else 404, result or {'error':'Index job not found'})
+                except ProfileConflict as error:
+                    return self.reply(409, {'error':str(error)})
+                except ResourceBusy as error:
+                    return self.reply(503, {'error':str(error)})
+                except ValueError as error:
+                    return self.reply(410, {'error':str(error)})
                 except QueueFull as error:
                     return self.reply(429, {'error':str(error)})
-            if self.path not in ("/search", "/interpret", '/index-jobs') or (self.path == '/index-jobs' and not service.indexer):
+            if self.path not in ("/search", "/interpret", '/index-jobs', '/revocations') or (self.path in ('/index-jobs','/revocations') and not service.indexer):
                 return self.reply(404, {"error": "Unknown endpoint"})
             try:
                 length = int(self.headers.get("Content-Length", "0"))
@@ -550,9 +668,24 @@ def handler_for(service):
             try:
                 with stage('request_deserialization'):
                     body = json.loads(self.rfile.read(length))
+                if self.path == '/revocations':
+                    receipt = service.indexer.revoke(body)
+                    receipt['index_storage']=storage_identity(service)
+                    return self.reply(200 if receipt['cleanup_complete'] else 503, receipt)
+                profile = worker_profile(service)
+                expected = self.headers.get('X-Visn-Expected-Profile')
+                if expected is not None and expected != profile['fingerprint']:
+                    raise ProfileConflict('retrieval_profile_changed: request requires a different worker profile')
                 if self.path == '/index-jobs':
                     if not isinstance(body, dict): raise ValueError('Expected an index request object')
-                    return self.reply(202, service.indexer.submit(body))
+                    if 'resolve_only' in body and not isinstance(body['resolve_only'],bool):
+                        raise ValueError('resolve_only must be a boolean')
+                    lookup=body.get('resolve_only',False)
+                    receipt = service.indexer.resolve(body) if lookup else service.indexer.submit(body)
+                    if worker_profile(service) != profile: raise ProfileConflict('retrieval_profile_changed_during_admission')
+                    if receipt is None:return self.reply(404, {'error':'No exact preparation task exists','worker_profile':profile})
+                    receipt['worker_profile'] = profile
+                    return self.reply(200 if lookup else 202, receipt)
                 with service.inference_resources(external=self.path == '/interpret' and bool(getattr(service.args,'interpretation_api_url',None))):
                     if self.path == '/interpret':
                         from temporal_interpretation import SequenceInterpreter
@@ -561,6 +694,11 @@ def handler_for(service):
                         result = service.interpreter.interpret(body)
                     else:
                         result = service.search(body)
+                if worker_profile(service) != profile:
+                    raise ProfileConflict('retrieval_profile_changed_during_inference')
+                if self.path == '/search': result.setdefault('provenance', {})['worker_profile'] = profile
+                else:
+                    for item in result['interpretations']: item.setdefault('provenance', {})['worker_profile'] = profile
                 if CURRENT.get():
                     snapshot = CURRENT.get().report()
                     if self.path == '/search':
@@ -569,6 +707,8 @@ def handler_for(service):
                         for item in result['interpretations']:
                             item['provenance']['telemetry'] = snapshot
                 self.reply(200, result)
+            except ProfileConflict as error:
+                self.reply(409, {'error':str(error)})
             except QueueFull as error:
                 self.reply(429, {'error':str(error)})
             except ResourceBusy as error:
@@ -577,7 +717,7 @@ def handler_for(service):
             except Exception as error:
                 if CURRENT.get(): CURRENT.get().status = 'error'
                 LOG.exception("Retrieval request failed")
-                self.reply(400 if self.path == '/index-jobs' and isinstance(error,(ValueError,KeyError)) else 500, {"error": str(error)})
+                self.reply(410 if 'revoked' in str(error).lower() else 400 if self.path in ('/index-jobs','/revocations') and isinstance(error,(ValueError,KeyError)) else 500, {"error": str(error)})
             finally:
                 service.lock.release()
                 with stage('request_cleanup'):
@@ -641,6 +781,7 @@ def main():
         service.resources.release(service.release_models)
         server.server_close()
         service.db.close()
+        service.revocations.close()
 
 
 if __name__ == "__main__":

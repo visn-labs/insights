@@ -1,0 +1,80 @@
+{
+  "schema": "visn-sanitized-media-v1",
+  "policy": "sanitized-pixels-v1",
+  "qualification": "integration_candidate_not_general_privacy_acceptance",
+  "sanitizer_code_sha256": "783098476145b2b0876bd4ee0a2ce98f61f25448ba97ebcdbf4024224dd3a74a",
+  "tracker_code_sha256": "5823205be19f0a98ebcc1ae7b1dcd0c1c04242f23e4be2db792c4ce1015cad0c",
+  "models": {
+    "yunet": {
+      "file": "face_detection_yunet_2023mar.onnx",
+      "url": "https://media.githubusercontent.com/media/opencv/opencv_zoo/48b10fa505aeb51fbd127fc60a5c660040e823b7/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+      "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+      "bytes": 232589
+    },
+    "plate": {
+      "file": "yolo-v9-s-608-license-plates-end2end.onnx",
+      "url": "https://github.com/ankandrew/open-image-models/releases/download/assets/yolo-v9-s-608-license-plates-end2end.onnx",
+      "sha256": "2b878b38d9aa07b6ddc3ea75c4ffcb39869bc5c218e0a14002f60ab2f7b0be9a",
+      "bytes": 28612350
+    }
+  },
+  "runtime": {
+    "opencv": "4.14.0",
+    "onnxruntime": "1.31.0",
+    "providers": [
+      "CPUExecutionProvider"
+    ],
+    "threads": 1,
+    "precision": "FP32",
+    "pyav": "19.0.1",
+    "numpy": "2.5.4"
+  },
+  "source_pixel_format": "yuv420p",
+  "decoded_pixel_contract": "8-bit BGR; higher-bit input rejected, never silently reduced",
+  "detector_threshold": 0.1,
+  "sanitizer": "solid_pixel_replacement",
+  "media_sha256": "1826a0aec4119494e9c79808d656a3e6b432f1b0e4662aadac957b35bec4bc98",
+  "media_bytes": 1416406,
+  "frames": 23,
+  "width": 480,
+  "height": 360,
+  "audio": "removed",
+  "timestamp_policy": "source_PTS_recorded; relative_PTS_rounded_to_ms; collisions_rejected",
+  "max_timestamp_quantization_ms": 0.5,
+  "requested_seconds": 11.12,
+  "observed_source_end": "97/25",
+  "source_time_base": "1/90000",
+  "clock_kind": "source_pts",
+  "capture": {
+    "session_id": "bab2191d5ecb4e0baf0a65beb36d6b32",
+    "requested_seconds": 11.12,
+    "termination": "end_of_stream",
+    "association_sessions": [
+      {
+        "session_id": "bab2191d5ecb4e0baf0a65beb36d6b32:0",
+        "first_frame_index": 0,
+        "last_frame_index": 22,
+        "first_observed_ms": 0,
+        "last_observed_ms": 3880,
+        "start_reason": "initial_capture"
+      }
+    ],
+    "observed_frames": 23,
+    "last_observed_frame_ms": 3880,
+    "transport_started_wall_ms": 1792685766013,
+    "transport_finished_wall_ms": 1792685767830,
+    "transport_time_is_not_capture_time": true,
+    "continuity_certified": false,
+    "timestamp_jump_threshold_ms": 1000,
+    "timestamp_jump_count": 0,
+    "timestamp_jump_samples": [],
+    "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+  },
+  "clock_limitations": [],
+  "ledger_sha256": "5716164492e6de45ca06bb709e5e2cbec3ff1f99cac650dde49746a4f9464f2a",
+  "detections": {
+    "face": 20,
+    "plate": 23
+  },
+  "elapsed_seconds": 1.878238125005737
+}

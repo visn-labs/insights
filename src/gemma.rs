@@ -527,7 +527,10 @@ impl GemmaClient {
             .map(|candidate| {
                 json!({
                     "event_id": candidate.event.event_id,
+                    "job_id": candidate.event.job_id,
                     "camera_id": candidate.event.camera_id,
+                    "source_session_id": candidate.event.source_session_id,
+                    "capture_extent": candidate.event.capture_extent,
                     "start_ms": candidate.event.start_ms,
                     "end_ms": candidate.event.end_ms,
                     "retrieval_score": candidate.score,
@@ -546,7 +549,7 @@ impl GemmaClient {
             "temperature": 0.1,
             "stream": false,
             "messages": [
-                {"role": "system", "content": "Answer a camera-memory query using only the supplied candidate records. Do not invent objects, people, actions, counts, identities, locations, or timestamps. Refer only to supplied event IDs. If evidence is weak, say so. Return one JSON object and no markdown."},
+                {"role": "system", "content": "Answer a camera-memory query using only the supplied candidate records. Timestamps are local to each source session; do not infer temporal order or identity across sessions or recordings. Do not invent objects, people, actions, counts, identities, locations, or timestamps. Refer only to supplied event IDs. If evidence is weak, say so. Return one JSON object and no markdown."},
                 {"role": "user", "content": format!(
                     "QUERY:\n{}\n\nCANDIDATE RECORDS:\n{}\n\nReturn {{\"summary\":\"concise evidence-grounded answer\",\"relevant_event_ids\":[\"UUIDs from candidates only\"],\"confidence\":0.0}}.",
                     query,

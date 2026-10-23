@@ -1,0 +1,14 @@
+..../Users/anagha/projects/visn_rust/tools/semantic_memory_server.py:609: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x102cf2a70>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py:609: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x102cf3100>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py:609: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x102cf23e0>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+......
+----------------------------------------------------------------------
+Ran 10 tests in 1.237s
+
+OK

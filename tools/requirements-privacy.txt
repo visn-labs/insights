@@ -1,0 +1,5 @@
+# Install in the existing retrieval environment; no Ultralytics/pickle model loader.
+av==19.0.1
+onnxruntime==1.31.0
+opencv-python>=4.10,<5
+numpy>=2,<3

@@ -1,0 +1,18 @@
+[0.0s] Seal cached model weights, resolved runtime/device and implementation
+127.0.0.1 - - [23/Oct/2026 19:48:30] "GET /profile HTTP/1.1" 200 -
+[5.5s] Prepare and validate an actual Qwen video embedding
+127.0.0.1 - - [23/Oct/2026 19:48:30] "POST /index-jobs HTTP/1.1" 202 -
+objc[97981]: Class AVFFrameReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1323e03a8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1473283a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+objc[97981]: Class AVFAudioReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1323e03f8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1473283f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+`torch_dtype` is deprecated! Use `dtype` instead!
+[15.4s] Run profile-bound actual text/video retrieval and repeat from caches
+127.0.0.1 - - [23/Oct/2026 19:48:40] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 19:48:40] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 19:48:40] "POST /search HTTP/1.1" 409 -
+127.0.0.1 - - [23/Oct/2026 19:48:40] "GET /profile HTTP/1.1" 200 -
+[16.1s] Verify the Rust recording/search workflow honors the selected worker profile
+127.0.0.1 - - [23/Oct/2026 19:48:51] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 19:48:51] "GET /index-jobs?scope_id=01a16920-dc6d-7c22-ab89-3b4b2aff2451 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 19:48:52] "POST /index-jobs HTTP/1.1" 409 -
+127.0.0.1 - - [23/Oct/2026 19:48:52] "POST /search HTTP/1.1" 409 -
+[27.8s] Passed actual cached-Qwen profile, preparation, query, cache parity and mismatch rejection

@@ -1,0 +1,8 @@
+{
+  "schema": "visn-sanitized-playback-v1",
+  "source_sha256": "3cc206416396a15d82cf9c14926772c9ed451c662c2c84fa61acdf75fecd12e8",
+  "media_sha256": "72c03294eb475d38515735e6519abb155fc474ac53c409a038c0424e537e557b",
+  "frames": 8,
+  "codec": "h264",
+  "audio": "removed"
+}

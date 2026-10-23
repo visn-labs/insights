@@ -1,19 +1,36 @@
+mod adaptive_tracking;
+mod anomaly_cascade;
 mod api;
 mod cluster;
+mod compressed_gating;
 mod config;
 mod detector_worker;
 mod domain;
+mod durable;
 mod event_engine;
+mod execution_profile;
 mod gemma;
 mod interpretation;
+mod liveness;
 mod long_memory;
 mod memory;
+mod metadata_projection;
+mod olap_h3;
 mod pipeline;
+mod poc_engine;
+mod privacy_engine;
+mod privacy_media;
+mod quantized_diskann;
 mod resources;
 mod retrieval;
+mod retrieval_deployment;
+mod revocation_witness;
 mod sink;
+mod storage_contract;
 mod store;
+mod telemetry;
 mod ui;
+mod video_rag;
 
 use std::{net::SocketAddr, sync::Arc};
 
@@ -32,8 +49,49 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    if std::env::args().nth(1).as_deref() == Some("--init-revocation-witness") {
+        let path = std::env::args()
+            .nth(2)
+            .context("witness initialization requires a new directory")?;
+        let id = revocation_witness::initialize(std::path::Path::new(&path))?;
+        println!(
+            "{}",
+            serde_json::json!({"instance":id,"directory":std::fs::canonicalize(path)?})
+        );
+        return Ok(());
+    }
+    if std::env::args().nth(1).as_deref() == Some("--storage-capabilities") {
+        println!("{}", storage_contract::capabilities());
+        return Ok(());
+    }
+    if std::env::args().nth(1).as_deref() == Some("--storage-check") {
+        let path = std::env::args()
+            .nth(2)
+            .context("storage-check requires a data directory")?;
+        storage_contract::check(std::path::Path::new(&path))?;
+        println!(
+            "{}",
+            serde_json::json!({"compatible":true,"reader":storage_contract::READER})
+        );
+        return Ok(());
+    }
+    if std::env::args().nth(1).as_deref() == Some("--storage-check-recovery") {
+        let path = std::env::args()
+            .nth(2)
+            .context("storage-check-recovery requires a data directory")?;
+        storage_contract::check_recovery(std::path::Path::new(&path))?;
+        println!(
+            "{}",
+            serde_json::json!({"compatible":true,"recovery_inspection_only":true,"reader":storage_contract::READER})
+        );
+        return Ok(());
+    }
     let config = Arc::new(Config::from_env()?);
     init_telemetry(&config.log_filter);
+    let _data_owner = durable::DataOwner::acquire(&config.data_dir)?;
+    _data_owner.register_workers()?;
+    storage_contract::admit(&config.data_dir)?;
+    revocation_witness::reconcile(&config.data_dir)?;
 
     tokio::fs::create_dir_all(config.upload_dir())
         .await
@@ -60,13 +118,15 @@ async fn main() -> anyhow::Result<()> {
         media_worker_gate,
         detector_worker,
     );
-    let state = AppState::new(config.clone(), pipeline, memory);
+    let state = AppState::new(config.clone(), pipeline, memory)?;
+    let _projection_replay = state.start_projection_replay();
     let app = api::router(state);
 
     let address: SocketAddr = config.bind.parse().context("parse VISN_BIND")?;
     let listener = TcpListener::bind(address)
         .await
         .context("bind HTTP listener")?;
+    let address = listener.local_addr().context("read bound HTTP address")?;
     info!(
         %address,
         media_workers = config.max_concurrent_cameras,

@@ -1,0 +1,58 @@
+{
+  "reviewer": "Assistant visual inspection; not independent human evaluation or held-out evidence",
+  "prompt_version": "independent-target-audit-v6",
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "software_completed": 5,
+  "positive_correct_action_answers": 0,
+  "positive_cases": 3,
+  "positive_abstentions": 2,
+  "incorrect_supported_actions": 1,
+  "negative_cases": 2,
+  "negative_not_observed": 1,
+  "negative_uncertain": 1,
+  "mean_end_to_end_secs": 39.696,
+  "results": [
+    {
+      "case": "toll-truck-direction",
+      "verdict": "incorrect_direction",
+      "note": "Truck approaches and grows between cited frames 0 and 6. The model answers away and also infers motion from individual still images.",
+      "status": "supported",
+      "result_sha256": "39936ad7caa6c267925af9af72fa97be6d4998a6833adec671ddb2334b25caaa"
+    },
+    {
+      "case": "night-crossing-car",
+      "verdict": "abstained_positive",
+      "note": "Action output abstains, but single-image observations hallucinate early car presence and refer to nonexistent second images. Not a correct grounded action answer.",
+      "status": "uncertain",
+      "result_sha256": "d8166e194b5c28839297395fd707593a79f05915c37d2856f788e3a90a528cda"
+    },
+    {
+      "case": "highway-turquoise-direction",
+      "verdict": "abstained_positive",
+      "note": "Action output abstains. Car is visible in samples 0\u20134 and absent in 5\u20137; audit incorrectly marks late samples visible.",
+      "status": "uncertain",
+      "result_sha256": "2e754b227b3f29a0cd5036a8bc352a2b923913e282a43d9c49d94ac645f43185"
+    },
+    {
+      "case": "night-negative-aircraft",
+      "verdict": "correct_sampled_absence",
+      "note": "All audited samples mark absent. Answer appropriately limits absence to sampled images.",
+      "status": "not_observed",
+      "result_sha256": "7e85e28cecf833f48c4ad2a1f47ecb068767defc75cf059925a2700b49bac49e"
+    },
+    {
+      "case": "toll-negative-boat",
+      "verdict": "abstained_negative_with_bad_observations",
+      "note": "No boat shown. Answer abstains, but audit alternates absent/visible and substitutes trucks; some descriptions contradict visibility labels.",
+      "status": "uncertain",
+      "result_sha256": "f41cb27530eff13111380724b599c902948a20b305588991e88dfe9e84e70295"
+    }
+  ],
+  "source_sha256": {
+    "tools/temporal_interpretation.py": "ae8b2765fe907a8c19bb2cc42a318e5f27c00c9d82f56c150b489eb25604cf6b",
+    "src/interpretation.rs": "1331ec49b1905c14adbf6d8a8e7cb8aa658041be7cd6e944d26e101c8010658f",
+    "src/domain.rs": "f7abcfe8ddfefbc7c19fad6d7ca5425258819f83fb1ba619eece822f2208ff04",
+    "static/app.js": "fb10d7147cb25a10da817d5f72f47ea7f1d107c9c9863b8bbc3937f99c909514",
+    "evals/live-2026-10-16/temporal-labels.json": "7085ce013d99a96c4bf4fbb54ef7839b09290bf678a7883b9caa192d6347afa5"
+  }
+}

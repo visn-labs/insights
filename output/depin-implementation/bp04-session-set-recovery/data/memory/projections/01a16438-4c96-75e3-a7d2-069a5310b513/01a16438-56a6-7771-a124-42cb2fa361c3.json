@@ -1,0 +1,48 @@
+{
+  "version": "evidence-metadata-v1",
+  "job_id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+  "revision": "01a16438-56a6-7771-a124-42cb2fa361c3",
+  "media_policy": "sanitized-v1",
+  "input_fingerprint": "ad227a0ccc8bde3c23d708d8956ce15738966e8fe50eb625f53370d6faa58857",
+  "cameras": {
+    "[\"camera-a\",\"596668f658cd4edabb547b2e19895d44\"]": {
+      "camera_id": "camera-a",
+      "source_session_id": "596668f658cd4edabb547b2e19895d44",
+      "capture_timeline": {
+        "association_sessions": [
+          {
+            "session_id": "596668f658cd4edabb547b2e19895d44:0",
+            "first_frame_index": 0,
+            "last_frame_index": 7,
+            "first_observed_ms": 0,
+            "last_observed_ms": 1750,
+            "start_reason": "initial_capture"
+          }
+        ],
+        "session_id": "596668f658cd4edabb547b2e19895d44",
+        "requested_seconds": 2.0,
+        "termination": "end_of_stream",
+        "observed_frames": 8,
+        "last_observed_frame_ms": 1750,
+        "transport_started_wall_ms": 1792682774359,
+        "transport_finished_wall_ms": 1792682775163,
+        "transport_time_is_not_capture_time": true,
+        "continuity_certified": false,
+        "timestamp_jump_threshold_ms": 1000,
+        "timestamp_jump_count": 0,
+        "timestamp_jump_samples": [],
+        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+      },
+      "duration_ms": 2000,
+      "source_sha256": "65e645407e5b71ccb6a3a1a0edbfe53251c473fca622bbbb21b7376b6049594a",
+      "intervals": [
+        {
+          "event_id": "55f6d851-adf9-5814-ab52-b2aa97e26e37",
+          "start_ms": 0,
+          "end_ms": 2000
+        }
+      ],
+      "graph": null
+    }
+  }
+}

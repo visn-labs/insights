@@ -47,10 +47,11 @@ pub async fn interpret_with_tracks(
         let (start,end) = window(event);
         let grounding = if let Some(id) = entity_id {
             let graph = cameras.iter().filter(|camera| camera.camera.camera_id == event.camera_id
+                && camera.source_session_id == event.source_session_id
                 && camera.events.iter().any(|e| e.event_id == event.event_id && e.job_id == event.job_id))
                 .filter_map(|camera| camera.long_memory.as_ref())
                 .find(|graph| graph.version == crate::long_memory::VERSION
-                    && graph.entities.iter().any(|entity| entity.entity_id == id && entity.job_id == event.job_id && entity.camera_id == event.camera_id))
+                    && graph.entities.iter().any(|entity| entity.entity_id == id && entity.job_id == event.job_id && entity.camera_id == event.camera_id && entity.source_session_id == event.source_session_id))
                 .context("Selected entity has no current tracker evidence in this recording")?;
             let entity = graph.entities.iter().find(|entity| entity.entity_id == id).unwrap();
             let observations: Vec<_> = entity.observations.iter().filter(|o| o.bbox.is_some()
@@ -59,7 +60,10 @@ pub async fn interpret_with_tracks(
                 "class_name":entity.class_name,"observations":observations}))
         } else { None };
         Ok(json!({"grounding":grounding,"event_id":event.event_id, "source_path":std::path::absolute(&event.source_evidence_path)?,
+            "expected_source_sha256":event.privacy.as_ref().map(|p| &p.source.media_sha256),
             "start_ms":start,"end_ms":end, "metadata":{"camera_id":event.camera_id,
+            "source_session_id":event.source_session_id,
+            "capture_extent":event.capture_extent,
             "original_start_ms":event.start_ms,"original_end_ms":event.end_ms,
             "summary":event.description.summary,"activity_mean":event.activity_mean,
             "activity_peak":event.activity_peak}}))
@@ -68,14 +72,17 @@ pub async fn interpret_with_tracks(
     struct Response {
         interpretations: Vec<SequenceInterpretation>,
     }
-    let response = reqwest::Client::new()
-        .post(format!("{}/interpret", url.trim_end_matches('/')))
-        .header(
-            "X-Visn-Query-ID",
-            query_id.unwrap_or_else(uuid::Uuid::now_v7).to_string(),
+    let response = config
+        .pin_retrieval(
+            reqwest::Client::new()
+                .post(format!("{}/interpret", url.trim_end_matches('/')))
+                .header(
+                    "X-Visn-Query-ID",
+                    query_id.unwrap_or_else(uuid::Uuid::now_v7).to_string(),
+                )
+                .timeout(Duration::from_secs(config.retrieval_timeout_secs))
+                .json(&json!({"query":query,"events":candidates})),
         )
-        .timeout(Duration::from_secs(config.retrieval_timeout_secs))
-        .json(&json!({"query":query,"events":candidates}))
         .send()
         .await?
         .error_for_status()?
@@ -86,6 +93,7 @@ pub async fn interpret_with_tracks(
     }
     let mut seen = HashSet::new();
     for result in &response.interpretations {
+        config.verify_retrieval_profile(&result.provenance["worker_profile"])?;
         let event = selected
             .iter()
             .find(|event| event.event_id == result.event_id)

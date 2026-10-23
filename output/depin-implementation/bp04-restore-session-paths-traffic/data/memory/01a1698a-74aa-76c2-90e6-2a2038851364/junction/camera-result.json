@@ -1,0 +1,1904 @@
+[
+  {
+    "capture_extent": "finished",
+    "storage_session_id": "e29ba076-602a-4f63-89fd-a6288ba12740",
+    "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+    "long_memory": {
+      "execution_profile": {
+        "version": "tracker-enrichment-v1",
+        "fingerprint": "d08fcb1d8e31ac988315270c2787f2fb751c45fa313f440c9b5d4581c3c31fcf",
+        "components": {
+          "code:tools/adaptive_cv_worker.py": "db2199c4147c8f18b67d8b0bdc04e0442a1b7e2b33af1b8d9334d490ffb2f8a5",
+          "code:tools/audit_depin_implementation.py": "31b69d991d6d00157fe5c27cfc56656123763cc86e1ecbb379d78cd570a6a496",
+          "code:tools/benchmark_memory_workflow.py": "ce566314e606d803dc779a134fedaf49d95e317e25c01899d1a1fe839c3a9797",
+          "code:tools/bitstream_gater.py": "b63b42ee7068a6d01ed9e68479312910140c5b1cf4bebfeb0d5dd75512d8dc3e",
+          "code:tools/capture_evaluation_streams.py": "2029cfa33d9b524c71333742b61cf6e62e283b72d3f4f8eb36da59164ff77892",
+          "code:tools/check_background_index_workflow.py": "2dc623dd80f989799934ea94ef1dbb239169b8b409e4118dc6d300eca108e46a",
+          "code:tools/check_background_indexing.py": "d131ca187f47e5aba5ca2c656e3e53fe5f3f865dc4c767d3eebebe3115e08bca",
+          "code:tools/check_canonical_vectors.py": "95b4d97d2efdd2655738520ed53a3c4e718786451c941d1faf09ea25091c40a3",
+          "code:tools/check_capture_reconnect.py": "6477c9f3e9bffd2e62ba3266b376545e9e91abd2c8dffbaef586ffa26744288f",
+          "code:tools/check_capture_sessions.py": "7db937e17f9add323cc3fc8c4c1c8c0f2c7b16ed44e3b5498b85963787f88f1b",
+          "code:tools/check_crop_comparison.py": "1b0daf3057941b7f9098ad043cddac28796c19f675ec0acc57a971321cf885c6",
+          "code:tools/check_depin_contracts.py": "5d737272fac93a29cbe1520c92af2876870f97fa758cf904ddbd5af7eb5cf765",
+          "code:tools/check_depin_pipeline.py": "6013d590a21d8acb9a477ea4ad0fa783e920583448c94485557d8ca683a46792",
+          "code:tools/check_detector_sampling.py": "75bcb436fcb0bdb5134bb205b0d578bb2cff4593df0ab3dcf7291c78685f5628",
+          "code:tools/check_evaluation_metrics.py": "51c9b4ff309de50a1bc9d2beb4949e0db4d83d19c67c117eaaac808cb66c69fd",
+          "code:tools/check_execution_profiles.py": "92b360d146b1bba834b25aaf650ff78a0db1b63d99a1c160c5e62816397bae84",
+          "code:tools/check_general_video_experiment.py": "4844df2500336f27a86ee7a5b3888c9b8079b6a9649e4999493c5f384672a26b",
+          "code:tools/check_grouped_decode.py": "fb864208bad21ea9e682ebeb92c1385de0f683eb12051528569c08886c8812db",
+          "code:tools/check_grouped_decode_workflow.py": "6a9f55438f94329c7aa2394bf7f0ec0d914b9f50735738d8ee9a8aa1d8bb53bc",
+          "code:tools/check_interpretation.py": "fb67ff60472db10501a4da519788037d080d90639a31196c223b75cd51e7867c",
+          "code:tools/check_interpretation_api.py": "6260f62b5a79cd058f0bc60bc4b4cf63b094f793b08d5e4a834abac7cdc8af85",
+          "code:tools/check_long_memory.py": "48f9a29ab5d30bb7d24cae159f496bb7ab470a3b9ec2f10748818b6d64f3c086",
+          "code:tools/check_long_memory_index.py": "4312a244b3b4551f2d51ce02bc4cfa96217ac676f5fe119fd2fa158342c32a06",
+          "code:tools/check_memory_runner.py": "ca600cd413a4cacc7cd8e62d95d1f8c596b037244bee61eeffa797dadc389be9",
+          "code:tools/check_metadata_projection.py": "907c281b522a5aad56c49633ae2c5e6d831d0c0ef578f3ab0c3e52c71726e983",
+          "code:tools/check_multisession_workflow.py": "94266d157c0c72cd49fe30387bddf4a9592ee742b8bc2b8ec584123eb0fd48a8",
+          "code:tools/check_old_binary_compatibility.py": "9867dc90cef7975cc4e7f8710ac8f183b4e2f02fb8300c1b1a39e39346bc7cfe",
+          "code:tools/check_privacy_media.py": "e9d53dc033579153a809a1ae175d0b3c7d75bf45a8a373aee376a35e03b36662",
+          "code:tools/check_privacy_workflow.py": "a95ea790f3beced296ec9b53a4336c4693ffa822c5764089c95727088b1c541d",
+          "code:tools/check_producer_provenance.py": "19114c0493f1a20ce5f56f143667cd8f0d8956c1d69235b3113a4108ca91d640",
+          "code:tools/check_projection_replay.py": "1e3ff4bab7a9a308a54373c8bae48559ff707f90ca2000168465850c14ef9163",
+          "code:tools/check_query_snapshot_comparison.py": "03365aff83b5d4a5901e722fcbfe203dac047e8d249722f80a86f15c51eec2bf",
+          "code:tools/check_query_snapshot_workflow.py": "5679a96dfeeddcad152d02f9496d30bd89a765c11bc95a3dd2b01a65ae4f3d69",
+          "code:tools/check_real_retrieval_profile.py": "b3f023be9c4d75d1c8811f25d3b358c440b2e8f41ff453c3f95bd6446f91e5e1",
+          "code:tools/check_recording_recovery.py": "aea73a9056ec2c067297ceac2ea0f1a104de75231ec041ca4fb5d79ae677b01a",
+          "code:tools/check_recording_revocation.py": "1571251ce250a3c8e66fecf17a1aa1f58a53fcdf149c643d0816e91d5c547ff8",
+          "code:tools/check_release_admission.py": "04f9841b7aa8b3b2a0bacd11d282c2459f4de98c45dfc52df7b18b4b88904df5",
+          "code:tools/check_resource_coordination.py": "cb2ba2c9ca8f5d61fa50be4040e0f947bde44512f790e5ab5941a55d7eebe817",
+          "code:tools/check_resource_load.py": "10e465ca18f4a7fff4696a69c01bf031fd0d6bb543c1240ab34e5a938a3378fb",
+          "code:tools/check_resource_native_workflow.py": "5dcfe2f3295e2fb70691d2e97feb52e32c2de90cc624ebb0c73c7734f3d8af6f",
+          "code:tools/check_retrieval.py": "e73366a5917515ad60092c94b5fdfcbe8c63759416ee1884743ae443d19f1a62",
+          "code:tools/check_retrieval_deployments.py": "fef30264bc168547da513ed02d767f813b17b24145001a1ca62f2c66a4550141",
+          "code:tools/check_retrieval_profiles.py": "7eca65670a4a82221eeb691565114bb3da7bfec37cc57f35fc22d1643c3bbf12",
+          "code:tools/check_reviewed_states.py": "69bc67e8ae54e4428538a22d5183b340048f7dab184d8226e36e23280bd06bed",
+          "code:tools/check_source_crops.py": "b9a56080484569e4ec62f3ea8ada5f3853a685fef3b55a043506f577a07f6915",
+          "code:tools/check_state_review.py": "36c6cec3835c4a54a68eaa7e38fd383e4272e6c5fa59d36b269791acdc9ddc21",
+          "code:tools/check_state_verification.py": "8bfb3f5efe16bc9eed8bd82978b1aef3da09d50c2db55c770444d61be4d32b93",
+          "code:tools/check_temporal_corpus.py": "edd9bb23c5db306027baa66561f2f768a21347a29ac2f0d476891d1d9997629b",
+          "code:tools/check_temporal_index.py": "500cf21edf268594c228eed1c80b2841f162b3678e3c1ecd97e74e0974a792f4",
+          "code:tools/check_track_grounding.py": "f296a776d9d494b9b5d2bd48862f1a363ff89227e5d4575b01c03f08ef4aeaf8",
+          "code:tools/check_track_visibility.py": "07f4ffa85d0d172794707383f6034e4c9691d359f438fd5eb72356f6e27a164d",
+          "code:tools/check_tracking_continuity.py": "25299bce92dc02a1572700181923fefe9b3dafa881a23f128ed05f42fc14a8c9",
+          "code:tools/check_tracking_continuity_replay.py": "44a61eff1ff7ee1bc45db003d6115885e233b59f364d147ca307b8178298867b",
+          "code:tools/check_work_caches.py": "6f4fd79350f8e97cf7bfaf5bb6756deee929112e7118dd95bf705ecb071c9a07",
+          "code:tools/check_workflow_telemetry.py": "e984f21921b202b94d0c824e4bc6c637a834aab0ecbc7be63205ae5fcf1941f9",
+          "code:tools/compare_yolo26_backends.py": "832dcf284f28c6f70bc1967b440bcd571d6ee310038eb0d147259a5ee62b076c",
+          "code:tools/evaluate_crop_modes.py": "f6ea62dc62c91c9e5593dea0f1c247b9d599316148635e5a6df3bc7c74a35da8",
+          "code:tools/evaluate_retrieval_corpus.py": "7cf73f565ccb85fe97dfc8df378857231c6ff1e7e3973879391b05db817fa128",
+          "code:tools/evaluate_reviewed_states.py": "ea15e999131280413959c5bbcfcb71cc17f0d28eed10ea79e3fed18af1e5132b",
+          "code:tools/evaluate_stream_behaviors.py": "9f6edaf48a58ee3280b0f72fccc56ad4e740c8744fcb2351fcb4ab6eebd55f31",
+          "code:tools/evaluate_temporal.py": "95932cebd9f62ffd1850600ab54d0b4e6406307ce108f31bf0ae71d3214495c1",
+          "code:tools/evaluate_temporal_corpus.py": "d9f0af36a25da2497368f261e43321df6a45d0a73acb06b67d8741c6e1389bc3",
+          "code:tools/evaluate_track_grounding.py": "bba1aa2d93540a94696f0b0e244ace9da102831270029b0bf23fb08899e97c5e",
+          "code:tools/event_memory_runner.py": "547d29cd6c69de06d5df6551e6d0351857c1ea4a0ce30ed15f693515db3d4303",
+          "code:tools/evidence_backup.py": "8b674ba1b2aa4e16deb04b670dbaf9f26c67285086f9546b4859e02088a28c53",
+          "code:tools/execution_runtime.py": "3a9c57371b819752b0155a9ae96e418d6c5206d9f8fc091de02d9a16b6982223",
+          "code:tools/export_yolo26.py": "3867f4065ec6f20127bc2a5b2bfb15e256455e09b2c79db20f7e062c02bf05ed",
+          "code:tools/fixtures/paused_multisession_runner.py": "0ff974f987a4e198d1a6a94e880f1285a50c82340f1cea5df6677111c86a4a6f",
+          "code:tools/fixtures/profile_memory_runner.py": "34cde8e43f86ac269cc7a4453bc17b69b6853356c4c333098256fda822cd115e",
+          "code:tools/fixtures/recovery_memory_runner.py": "477fe9153a0fbe27a57b1731139eae33dc0349a82cb3006a9457777354facd99",
+          "code:tools/general_video_experiment.py": "cede724247124cb9660272ba281adb50464b03249cc6ddaa2a5263c34fdb4a31",
+          "code:tools/grouped_decode.py": "2490f10c9b91badf94c743c4cf7b54d42024c561362b1078c9c89e391c5c240a",
+          "code:tools/liveness_verifier.py": "909012932d332831363ef71178814392ab574cd70c6b66629ea759b229ff4879",
+          "code:tools/make_contribution_samples.py": "7d6c9740abc89d7c79b00f779fa94f6500ec895583c8dc5f9757587c651f64ce",
+          "code:tools/prepare_privacy_models.py": "5d8fc91a9db6e5bd48f035f795ace8afd9563e5314361c1efff747bd94add731",
+          "code:tools/prepare_state_review.py": "0c3e50c4193e82ac31f7c7a37513ff6570440fb6925b2c160cb3f9a6697845b3",
+          "code:tools/privacy_media.py": "a5b051943960f960e0f55b513784e406b59acd040bad194311bf2f526b1f20d5",
+          "code:tools/privacy_redactor.py": "5823205be19f0a98ebcc1ae7b1dcd0c1c04242f23e4be2db792c4ce1015cad0c",
+          "code:tools/reconcile_projection_binding.py": "257b7c397fded06f69347ad4e459a9357e5a38fe7a9ec528aa5354645802e05e",
+          "code:tools/refine_scene_vectors.py": "bad78d59da34733a622a190f5285d8f4a4b17b948eb0ed2840e8a69868f071c4",
+          "code:tools/retrieval_deployments.py": "723f4f8e351c432777611ace44230e3477a85ef85229f52cd6b1f65a837df7e4",
+          "code:tools/retrieval_profile.py": "4861125ba064821989e4bd5dbfdd5020bbd8e489736caf57c20ded64d5628b82",
+          "code:tools/run_recovery_ui_probe.py": "4079de9f3d60fd2935c5ff5f51791c147222e690a74d92bd47404b6a6e1f59a6",
+          "code:tools/run_visn_release.py": "9c764f853d4dd8088033a0fb39ce43872019c621d46c21b9bd8661f707f1339e",
+          "code:tools/select_clear_tracks.py": "33324ae7107d28a5646d85d0c3b162837a0978c156bed9bd260f156a0be3f97f",
+          "code:tools/semantic_memory_server.py": "5c0e6d58ce9d39d2c6220a59c577fc5fc3f89bcc1702141d9ba7cb92325139d1",
+          "code:tools/state_verification.py": "21218c07b396771c071cc6287e1c8474238dd1bb485f4abaf2d9d6e51d342cca",
+          "code:tools/temporal_interpretation.py": "17a9fd0e653ea8fa36a1b4dc315ac1282af55156fc08533f22e93e8027d55531",
+          "code:tools/vectorize_landing_assets.py": "15303fd19825fca2fb5880f15e46b96af47edfa28105c62a22c172d1d2f66b03",
+          "code:tools/worker_lifeline.py": "bd529b4f86ed5988c2c3ecf59cc8459d0f03633683d9f292c09fe735d6aac763",
+          "code:tools/workflow_indexing.py": "1a948acaaf0283deea57a472922227c6267e498d50f958072a1183510cd1bec4",
+          "code:tools/workflow_resources.py": "c6853239705775a7da51d5393a5763f4e50f53df6a51a0acdcda45bd7819bf60",
+          "code:tools/workflow_telemetry.py": "c0b21d7ab7ef7d58715d21f94b379b8095fd5f473ed5d0c497ad4e14381a4ef5",
+          "code:tools/yolo26_runner.py": "6d31ce4fa74ef403f86a9220c0cd8ea42505c1cd5adeafa300c599d73a332ad7",
+          "code:tools/yolo26_worker.py": "ea3d34fe46e65e587e77c92a6a4d64a1c858a8cc34a33bc1219478a50fedef2d",
+          "compiled-rust": "d96818390cf83fe0badc26083c8719c09f0db2f396eeda29d6b6207f0f881d42",
+          "configured-script:0": "6d31ce4fa74ef403f86a9220c0cd8ea42505c1cd5adeafa300c599d73a332ad7",
+          "configured-script:1": "ea3d34fe46e65e587e77c92a6a4d64a1c858a8cc34a33bc1219478a50fedef2d",
+          "configured-script:2": "c6853239705775a7da51d5393a5763f4e50f53df6a51a0acdcda45bd7819bf60",
+          "detector-identity": "fcea3f7f4aa0b442b8ed47acde8b4e8c4c4049118ef2631f6a1d035093048b06",
+          "detector-runtime": "5cd66b303f3bfd9508733c621079df61e3cffa447ac4466c12d1cab0e1744448",
+          "evidence": "9d9477ba73f5251a34e0210ddc01816def430b826dcec247b526c92dfe7dd1ff",
+          "model:tracker": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+          "settings": "9d51c18fd446526d936d1040510b4826c152948d242a191cb9fe09d5e179be63"
+        }
+      },
+      "version": "entity-memory-v2-pts",
+      "source_sha256": "620505ae16489c579b9660959a43f869a4f31a3f590e999e24fdaa8d83888a06",
+      "detector_model": "/Users/anagha/projects/visn_rust/yolo26s.pt",
+      "detector_fps": 5.0,
+      "status": "ready",
+      "entities": [
+        {
+          "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+          "entity_id": "2e54e70f-cbf2-5611-a4f9-19622d4b28b9",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "2",
+          "class_name": "car",
+          "observations": [
+            {
+              "bbox": [
+                0.06395608,
+                0.321401,
+                0.11121046,
+                0.13253614
+              ],
+              "detector_confidence": 0.80204767,
+              "observation_id": "bf2779a2-101a-50df-a16c-2bf32bccd1ec",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 0,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.064, 0.321, 0.111, 0.133]; detector score 0.802 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.06395608,
+                0.321401,
+                0.11121046,
+                0.13253614
+              ],
+              "detector_confidence": 0.80204767,
+              "observation_id": "b43eeb3a-3ea3-5695-8fad-fffc569b0ede",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 0,
+              "kind": "first_observed",
+              "description": "car first observed under tracker ID 2"
+            },
+            {
+              "bbox": [
+                0.0,
+                0.369111,
+                0.12959193,
+                0.15184754
+              ],
+              "detector_confidence": 0.6939221,
+              "observation_id": "2bce1b4b-e70e-5ed7-8fb8-c2a6b2aededf",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3760,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.000, 0.369, 0.130, 0.152]; detector score 0.694 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.0,
+                0.369111,
+                0.12959193,
+                0.15184754
+              ],
+              "detector_confidence": 0.6939221,
+              "observation_id": "f6d4d612-00f8-5e48-9373-c41f5c3f09bd",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3760,
+              "kind": "last_observed",
+              "description": "car last observed under tracker ID 2"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+          "entity_id": "59bf5962-211e-5919-93eb-16d73a0b2bc8",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "1",
+          "class_name": "car",
+          "observations": [
+            {
+              "bbox": [
+                0.59846884,
+                0.4702641,
+                0.10887833,
+                0.20165083
+              ],
+              "detector_confidence": 0.86276126,
+              "observation_id": "18979aa9-dac7-50aa-95dc-cdfce043e2fc",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 0,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.598, 0.470, 0.109, 0.202]; detector score 0.863 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.59846884,
+                0.4702641,
+                0.10887833,
+                0.20165083
+              ],
+              "detector_confidence": 0.86276126,
+              "observation_id": "de9f8c85-2da6-52c0-b05b-873d55d7e802",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 0,
+              "kind": "first_observed",
+              "description": "car first observed under tracker ID 1"
+            },
+            {
+              "bbox": [
+                0.6028003,
+                0.47543055,
+                0.10959028,
+                0.19780418
+              ],
+              "detector_confidence": 0.50325125,
+              "observation_id": "ab98404b-6852-59f7-bbad-dfbb849cc054",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3920,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.603, 0.475, 0.110, 0.198]; detector score 0.503 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.6028003,
+                0.47543055,
+                0.10959028,
+                0.19780418
+              ],
+              "detector_confidence": 0.50325125,
+              "observation_id": "3c99e98f-bbcf-5b51-8c06-bff37933e3fa",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3920,
+              "kind": "last_observed",
+              "description": "car last observed under tracker ID 1"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+          "entity_id": "657732d5-d6fb-5d46-ae4f-08463e95deda",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "37",
+          "class_name": "truck",
+          "observations": [
+            {
+              "bbox": [
+                0.032981418,
+                0.3485159,
+                0.11467358,
+                0.14002857
+              ],
+              "detector_confidence": 0.3231331,
+              "observation_id": "1beac03e-2aad-5bb0-9b7c-894095375053",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 1800,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.033, 0.349, 0.115, 0.140]; detector score 0.323 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.032981418,
+                0.3485159,
+                0.11467358,
+                0.14002857
+              ],
+              "detector_confidence": 0.3231331,
+              "observation_id": "27c81e2f-76fd-5e9a-8504-8a7ad756670d",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 1800,
+              "kind": "first_observed",
+              "description": "truck first observed under tracker ID 37"
+            },
+            {
+              "bbox": [
+                0.010916,
+                0.36010137,
+                0.12428587,
+                0.14883342
+              ],
+              "detector_confidence": 0.5904436,
+              "observation_id": "475fc85b-6031-55e5-85f9-2b1bcfcc6d36",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3160,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.011, 0.360, 0.124, 0.149]; detector score 0.590 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.010916,
+                0.36010137,
+                0.12428587,
+                0.14883342
+              ],
+              "detector_confidence": 0.5904436,
+              "observation_id": "772d4461-eb2c-56b2-a7e8-595475ea156d",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3160,
+              "kind": "last_observed",
+              "description": "truck last observed under tracker ID 37"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+          "entity_id": "72e0d9b0-4528-541d-b6a1-467a2745ae00",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "45",
+          "class_name": "truck",
+          "observations": [
+            {
+              "bbox": [
+                0.13157667,
+                0.26900366,
+                0.102092244,
+                0.11688506
+              ],
+              "detector_confidence": 0.3537559,
+              "observation_id": "4a59be25-ff2c-596d-a32a-02e58b8f911b",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3160,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.132, 0.269, 0.102, 0.117]; detector score 0.354 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.13157667,
+                0.26900366,
+                0.102092244,
+                0.11688506
+              ],
+              "detector_confidence": 0.3537559,
+              "observation_id": "29246620-9492-5aef-8a0e-21e5ce001ded",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3160,
+              "kind": "first_observed",
+              "description": "truck first observed under tracker ID 45"
+            },
+            {
+              "bbox": [
+                0.116834335,
+                0.30524272,
+                0.084189765,
+                0.095955215
+              ],
+              "detector_confidence": 0.42885238,
+              "observation_id": "d28dfe7a-3523-5a88-808e-c53811562a5b",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3920,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.117, 0.305, 0.084, 0.096]; detector score 0.429 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.116834335,
+                0.30524272,
+                0.084189765,
+                0.095955215
+              ],
+              "detector_confidence": 0.42885238,
+              "observation_id": "df522429-2047-5625-9cac-d38a251139fb",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3920,
+              "kind": "last_observed",
+              "description": "truck last observed under tracker ID 45"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+          "entity_id": "7907548a-d475-586a-8eb4-066a4ca1706f",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "30",
+          "class_name": "car",
+          "observations": [
+            {
+              "bbox": [
+                0.48560372,
+                0.121273115,
+                0.036884084,
+                0.054470275
+              ],
+              "detector_confidence": 0.5339639,
+              "observation_id": "d3a28f99-7cd2-5039-889c-aacbfa78ea4d",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 1640,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.486, 0.121, 0.037, 0.054]; detector score 0.534 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.48560372,
+                0.121273115,
+                0.036884084,
+                0.054470275
+              ],
+              "detector_confidence": 0.5339639,
+              "observation_id": "b49e66de-a04d-5ca5-8a09-f0718ea6be98",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 1640,
+              "kind": "first_observed",
+              "description": "car first observed under tracker ID 30"
+            },
+            {
+              "bbox": [
+                0.48227108,
+                0.17546052,
+                0.04445025,
+                0.06552624
+              ],
+              "detector_confidence": 0.3743616,
+              "observation_id": "d8d134d2-6843-5f54-9212-64792dfe883e",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3920,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.482, 0.175, 0.044, 0.066]; detector score 0.374 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.48227108,
+                0.17546052,
+                0.04445025,
+                0.06552624
+              ],
+              "detector_confidence": 0.3743616,
+              "observation_id": "d6ca853a-9019-5a84-8a86-b97e63de813f",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3920,
+              "kind": "last_observed",
+              "description": "car last observed under tracker ID 30"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+          "entity_id": "dfa19782-1b84-5cda-b211-9fb3ddd61419",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "7",
+          "class_name": "truck",
+          "observations": [
+            {
+              "bbox": [
+                0.6595496,
+                0.6054194,
+                0.23205236,
+                0.39385122
+              ],
+              "detector_confidence": 0.48965627,
+              "observation_id": "63d6702b-b718-53c1-bb1e-788f170d301a",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 0,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.660, 0.605, 0.232, 0.394]; detector score 0.490 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.6595496,
+                0.6054194,
+                0.23205236,
+                0.39385122
+              ],
+              "detector_confidence": 0.48965627,
+              "observation_id": "9153552f-56b3-54a8-ab66-f6402d610230",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 0,
+              "kind": "first_observed",
+              "description": "truck first observed under tracker ID 7"
+            },
+            {
+              "bbox": [
+                0.66480446,
+                0.6078535,
+                0.2306853,
+                0.39131555
+              ],
+              "detector_confidence": 0.75822544,
+              "observation_id": "836645c5-df22-5f5f-b8fe-c868253e8020",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 680,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.665, 0.608, 0.231, 0.391]; detector score 0.758 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.66480446,
+                0.6078535,
+                0.2306853,
+                0.39131555
+              ],
+              "detector_confidence": 0.75822544,
+              "observation_id": "b6b954fd-a5e2-5bc7-9335-de7aa47100aa",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 680,
+              "kind": "last_observed",
+              "description": "truck last observed under tracker ID 7"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+          "entity_id": "eeff90ba-cc51-59f4-8993-a85ba939f186",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "17",
+          "class_name": "car",
+          "observations": [
+            {
+              "bbox": [
+                0.19177845,
+                0.2508092,
+                0.06767921,
+                0.086311914
+              ],
+              "detector_confidence": 0.563169,
+              "observation_id": "c5d0c645-87b3-5086-9803-5a6da0dd5c67",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 1000,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.192, 0.251, 0.068, 0.086]; detector score 0.563 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.19177845,
+                0.2508092,
+                0.06767921,
+                0.086311914
+              ],
+              "detector_confidence": 0.563169,
+              "observation_id": "1031d361-0ac9-537a-a26b-a6ba91f3a2b5",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 1000,
+              "kind": "first_observed",
+              "description": "car first observed under tracker ID 17"
+            },
+            {
+              "bbox": [
+                0.12276199,
+                0.2705521,
+                0.08923317,
+                0.11554118
+              ],
+              "detector_confidence": 0.43418398,
+              "observation_id": "67408767-3138-58e1-a58b-5b5a53232beb",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3160,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.123, 0.271, 0.089, 0.116]; detector score 0.434 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.12276199,
+                0.2705521,
+                0.08923317,
+                0.11554118
+              ],
+              "detector_confidence": 0.43418398,
+              "observation_id": "f90ada86-bc0d-5ff1-b4a9-794117593d4f",
+              "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+              "timestamp_ms": 3160,
+              "kind": "last_observed",
+              "description": "car last observed under tracker ID 17"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        }
+      ],
+      "links": [
+        {
+          "from": "18979aa9-dac7-50aa-95dc-cdfce043e2fc",
+          "to": "de9f8c85-2da6-52c0-b05b-873d55d7e802",
+          "entity_id": "59bf5962-211e-5919-93eb-16d73a0b2bc8",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "de9f8c85-2da6-52c0-b05b-873d55d7e802",
+          "to": "ab98404b-6852-59f7-bbad-dfbb849cc054",
+          "entity_id": "59bf5962-211e-5919-93eb-16d73a0b2bc8",
+          "relation": "same_tracker_order",
+          "gap_ms": 3920
+        },
+        {
+          "from": "ab98404b-6852-59f7-bbad-dfbb849cc054",
+          "to": "3c99e98f-bbcf-5b51-8c06-bff37933e3fa",
+          "entity_id": "59bf5962-211e-5919-93eb-16d73a0b2bc8",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "c5d0c645-87b3-5086-9803-5a6da0dd5c67",
+          "to": "1031d361-0ac9-537a-a26b-a6ba91f3a2b5",
+          "entity_id": "eeff90ba-cc51-59f4-8993-a85ba939f186",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "1031d361-0ac9-537a-a26b-a6ba91f3a2b5",
+          "to": "67408767-3138-58e1-a58b-5b5a53232beb",
+          "entity_id": "eeff90ba-cc51-59f4-8993-a85ba939f186",
+          "relation": "same_tracker_order",
+          "gap_ms": 2160
+        },
+        {
+          "from": "67408767-3138-58e1-a58b-5b5a53232beb",
+          "to": "f90ada86-bc0d-5ff1-b4a9-794117593d4f",
+          "entity_id": "eeff90ba-cc51-59f4-8993-a85ba939f186",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "bf2779a2-101a-50df-a16c-2bf32bccd1ec",
+          "to": "b43eeb3a-3ea3-5695-8fad-fffc569b0ede",
+          "entity_id": "2e54e70f-cbf2-5611-a4f9-19622d4b28b9",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "b43eeb3a-3ea3-5695-8fad-fffc569b0ede",
+          "to": "2bce1b4b-e70e-5ed7-8fb8-c2a6b2aededf",
+          "entity_id": "2e54e70f-cbf2-5611-a4f9-19622d4b28b9",
+          "relation": "same_tracker_order",
+          "gap_ms": 3760
+        },
+        {
+          "from": "2bce1b4b-e70e-5ed7-8fb8-c2a6b2aededf",
+          "to": "f6d4d612-00f8-5e48-9373-c41f5c3f09bd",
+          "entity_id": "2e54e70f-cbf2-5611-a4f9-19622d4b28b9",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "d3a28f99-7cd2-5039-889c-aacbfa78ea4d",
+          "to": "b49e66de-a04d-5ca5-8a09-f0718ea6be98",
+          "entity_id": "7907548a-d475-586a-8eb4-066a4ca1706f",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "b49e66de-a04d-5ca5-8a09-f0718ea6be98",
+          "to": "d8d134d2-6843-5f54-9212-64792dfe883e",
+          "entity_id": "7907548a-d475-586a-8eb4-066a4ca1706f",
+          "relation": "same_tracker_order",
+          "gap_ms": 2280
+        },
+        {
+          "from": "d8d134d2-6843-5f54-9212-64792dfe883e",
+          "to": "d6ca853a-9019-5a84-8a86-b97e63de813f",
+          "entity_id": "7907548a-d475-586a-8eb4-066a4ca1706f",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "1beac03e-2aad-5bb0-9b7c-894095375053",
+          "to": "27c81e2f-76fd-5e9a-8504-8a7ad756670d",
+          "entity_id": "657732d5-d6fb-5d46-ae4f-08463e95deda",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "27c81e2f-76fd-5e9a-8504-8a7ad756670d",
+          "to": "475fc85b-6031-55e5-85f9-2b1bcfcc6d36",
+          "entity_id": "657732d5-d6fb-5d46-ae4f-08463e95deda",
+          "relation": "same_tracker_order",
+          "gap_ms": 1360
+        },
+        {
+          "from": "475fc85b-6031-55e5-85f9-2b1bcfcc6d36",
+          "to": "772d4461-eb2c-56b2-a7e8-595475ea156d",
+          "entity_id": "657732d5-d6fb-5d46-ae4f-08463e95deda",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "4a59be25-ff2c-596d-a32a-02e58b8f911b",
+          "to": "29246620-9492-5aef-8a0e-21e5ce001ded",
+          "entity_id": "72e0d9b0-4528-541d-b6a1-467a2745ae00",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "29246620-9492-5aef-8a0e-21e5ce001ded",
+          "to": "d28dfe7a-3523-5a88-808e-c53811562a5b",
+          "entity_id": "72e0d9b0-4528-541d-b6a1-467a2745ae00",
+          "relation": "same_tracker_order",
+          "gap_ms": 760
+        },
+        {
+          "from": "d28dfe7a-3523-5a88-808e-c53811562a5b",
+          "to": "df522429-2047-5625-9cac-d38a251139fb",
+          "entity_id": "72e0d9b0-4528-541d-b6a1-467a2745ae00",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "63d6702b-b718-53c1-bb1e-788f170d301a",
+          "to": "9153552f-56b3-54a8-ab66-f6402d610230",
+          "entity_id": "dfa19782-1b84-5cda-b211-9fb3ddd61419",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "9153552f-56b3-54a8-ab66-f6402d610230",
+          "to": "836645c5-df22-5f5f-b8fe-c868253e8020",
+          "entity_id": "dfa19782-1b84-5cda-b211-9fb3ddd61419",
+          "relation": "same_tracker_order",
+          "gap_ms": 680
+        },
+        {
+          "from": "836645c5-df22-5f5f-b8fe-c868253e8020",
+          "to": "b6b954fd-a5e2-5bc7-9335-de7aa47100aa",
+          "entity_id": "dfa19782-1b84-5cda-b211-9fb3ddd61419",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        }
+      ],
+      "notes": [
+        "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred.",
+        "0 observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims."
+      ]
+    },
+    "camera": {
+      "camera_id": "junction",
+      "live_url": "http://***",
+      "country": "",
+      "country_code": "",
+      "region": "",
+      "city": "",
+      "latitude": null,
+      "longitude": null,
+      "zip": null,
+      "timezone": "",
+      "manufacturer": "",
+      "description": ""
+    },
+    "duration_ms": 3960,
+    "frames_decoded": 19,
+    "evidence_url": "/api/v1/memory-events/6b67cdf6-fb61-5701-b5d2-acae58a457a6/source",
+    "events": [
+      {
+        "capture_extent": "finished",
+        "source_session_id": "e29ba076602a4f6389fda6288ba12740",
+        "privacy": {
+          "source": {
+            "decoded_pixel_contract": "8-bit BGR; higher-bit input rejected, never silently reduced",
+            "detections": {
+              "face": 3,
+              "plate": 2
+            },
+            "detector_threshold": 0.1,
+            "elapsed_seconds": 1.597459791926667,
+            "max_timestamp_quantization_ms": 0.5,
+            "models": {
+              "plate": {
+                "bytes": 28612350,
+                "file": "yolo-v9-s-608-license-plates-end2end.onnx",
+                "sha256": "2b878b38d9aa07b6ddc3ea75c4ffcb39869bc5c218e0a14002f60ab2f7b0be9a",
+                "url": "https://github.com/ankandrew/open-image-models/releases/download/assets/yolo-v9-s-608-license-plates-end2end.onnx"
+              },
+              "yunet": {
+                "bytes": 232589,
+                "file": "face_detection_yunet_2023mar.onnx",
+                "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+                "url": "https://media.githubusercontent.com/media/opencv/opencv_zoo/48b10fa505aeb51fbd127fc60a5c660040e823b7/models/face_detection_yunet/face_detection_yunet_2023mar.onnx"
+              }
+            },
+            "observed_source_end": "98/25",
+            "requested_seconds": 14.976264708209785,
+            "runtime": {
+              "numpy": "2.5.4",
+              "onnxruntime": "1.31.0",
+              "opencv": "4.14.0",
+              "precision": "FP32",
+              "providers": [
+                "CPUExecutionProvider"
+              ],
+              "pyav": "19.0.1",
+              "threads": 1
+            },
+            "sanitizer": "solid_pixel_replacement",
+            "sanitizer_code_sha256": "a5b051943960f960e0f55b513784e406b59acd040bad194311bf2f526b1f20d5",
+            "source_pixel_format": "yuv420p",
+            "source_time_base": "1/90000",
+            "timestamp_policy": "source_PTS_recorded; relative_PTS_rounded_to_ms; collisions_rejected",
+            "tracker_code_sha256": "5823205be19f0a98ebcc1ae7b1dcd0c1c04242f23e4be2db792c4ce1015cad0c",
+            "capture": {
+              "association_sessions": [
+                {
+                  "session_id": "e29ba076602a4f6389fda6288ba12740:0",
+                  "first_frame_index": 0,
+                  "last_frame_index": 18,
+                  "first_observed_ms": 0,
+                  "last_observed_ms": 3920,
+                  "start_reason": "initial_capture"
+                }
+              ],
+              "session_id": "e29ba076602a4f6389fda6288ba12740",
+              "requested_seconds": 14.976264708209785,
+              "termination": "source_clock_regressed",
+              "observed_frames": 19,
+              "last_observed_frame_ms": 3920,
+              "transport_started_wall_ms": 1792772046984,
+              "transport_finished_wall_ms": 1792772048531,
+              "transport_time_is_not_capture_time": true,
+              "continuity_certified": false,
+              "timestamp_jump_threshold_ms": 1000,
+              "timestamp_jump_count": 0,
+              "timestamp_jump_samples": [],
+              "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+            },
+            "clock_kind": "source_pts",
+            "clock_limitations": [],
+            "schema": "visn-sanitized-media-v1",
+            "policy": "sanitized-pixels-v1",
+            "qualification": "integration_candidate_not_general_privacy_acceptance",
+            "media_sha256": "620505ae16489c579b9660959a43f869a4f31a3f590e999e24fdaa8d83888a06",
+            "media_bytes": 1671412,
+            "frames": 19,
+            "width": 480,
+            "height": 360,
+            "ledger_sha256": "85eaf86bd306affd09eabd7a4b9f24fe0f290507a3eb62b09bdeb0e17664be60",
+            "audio": "removed"
+          },
+          "thumbnail_sha256": "49512057a7e656cfdc89a51d7e4b679beafd08f0c7542a53f44a38c90d662225",
+          "clip_sha256": "0b581bc1b48f373cdf000fa94c0fa1c1ac57cff47473c6886b7665ee79e07fe1"
+        },
+        "source_duration_ms": 3960,
+        "interpretation": null,
+        "event_id": "6b67cdf6-fb61-5701-b5d2-acae58a457a6",
+        "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+        "camera_id": "junction",
+        "cluster_id": null,
+        "start_ms": 0,
+        "end_ms": 3960,
+        "duration_ms": 3960,
+        "activity_mean": 0.058602747,
+        "activity_peak": 0.08134709,
+        "quality": 0.8365776,
+        "boundary_reason": "stream_start",
+        "thumbnail_url": "/api/v1/memory-events/6b67cdf6-fb61-5701-b5d2-acae58a457a6/thumbnail",
+        "evidence_url": "/api/v1/memory-events/6b67cdf6-fb61-5701-b5d2-acae58a457a6/clip",
+        "description": {
+          "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.08; inspect the linked evidence for visual confirmation.",
+          "scene_type": "metadata-only fallback",
+          "visible_objects": [],
+          "visible_people": [],
+          "apparent_actions": [],
+          "visible_text": [],
+          "conditions": "Not visually assessed",
+          "confidence": 0.2,
+          "generated_by_model": false,
+          "model": null,
+          "fallback_reason": "VLM event enrichment was disabled"
+        },
+        "visual_signature": [
+          0.4993369,
+          0.007813039,
+          0.0,
+          0.0019532598,
+          0.016044633,
+          0.0015347041,
+          0.0,
+          0.00041855566,
+          0.02413671,
+          0.0066968906,
+          0.0002790371,
+          0.004185557,
+          0.004325075,
+          0.001255667,
+          0.0,
+          0.00013951855,
+          0.0270666,
+          0.017160783,
+          0.0013951856,
+          0.0009766299,
+          0.081339315,
+          0.0054412237,
+          0.0,
+          0.0023718155,
+          0.064178534,
+          0.00013951855,
+          0.0,
+          0.0011161484,
+          0.08315306,
+          0.0044645937,
+          0.0,
+          0.0002790371,
+          0.041855566,
+          0.06948024,
+          0.1819322,
+          0.4263687,
+          0.08399017,
+          0.03585627,
+          0.013114744,
+          0.0046041124,
+          0.041855566,
+          0.080362685,
+          0.21164966,
+          0.372375,
+          0.095291175,
+          0.03767001,
+          0.014091374,
+          0.0039065196,
+          0.041855566,
+          0.08329258,
+          0.1495639,
+          0.35535377,
+          0.13965808,
+          0.05301705,
+          0.026927082,
+          0.007534002,
+          0.014312596,
+          0.005643961,
+          0.007927284,
+          0.3432501
+        ]
+      }
+    ],
+    "data_quality_notes": [
+      "Observed 19 frames; capture stopped because source_clock_regressed. Transport times are not verified scene capture times; continuity is not certified.",
+      "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+      "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+      "Observer analysis retrieved 7 of 19 consumed source frames.",
+      "Event clips use stream copy when compatible and fall back to H.264 only when required.",
+      "Source session 1: initial_capture. Independent source-relative clock; no elapsed time between sessions is inferred. Capture journal state: completed."
+    ]
+  },
+  {
+    "capture_extent": "finished",
+    "storage_session_id": "34cfc6c4-f519-4078-acb4-a046254153a2",
+    "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+    "long_memory": {
+      "execution_profile": {
+        "version": "tracker-enrichment-v1",
+        "fingerprint": "0d213762f93136c317ce7b19e2e7f861a98b415a348acea876d3fd4e43b71ea2",
+        "components": {
+          "code:tools/adaptive_cv_worker.py": "db2199c4147c8f18b67d8b0bdc04e0442a1b7e2b33af1b8d9334d490ffb2f8a5",
+          "code:tools/audit_depin_implementation.py": "31b69d991d6d00157fe5c27cfc56656123763cc86e1ecbb379d78cd570a6a496",
+          "code:tools/benchmark_memory_workflow.py": "ce566314e606d803dc779a134fedaf49d95e317e25c01899d1a1fe839c3a9797",
+          "code:tools/bitstream_gater.py": "b63b42ee7068a6d01ed9e68479312910140c5b1cf4bebfeb0d5dd75512d8dc3e",
+          "code:tools/capture_evaluation_streams.py": "2029cfa33d9b524c71333742b61cf6e62e283b72d3f4f8eb36da59164ff77892",
+          "code:tools/check_background_index_workflow.py": "2dc623dd80f989799934ea94ef1dbb239169b8b409e4118dc6d300eca108e46a",
+          "code:tools/check_background_indexing.py": "d131ca187f47e5aba5ca2c656e3e53fe5f3f865dc4c767d3eebebe3115e08bca",
+          "code:tools/check_canonical_vectors.py": "95b4d97d2efdd2655738520ed53a3c4e718786451c941d1faf09ea25091c40a3",
+          "code:tools/check_capture_reconnect.py": "6477c9f3e9bffd2e62ba3266b376545e9e91abd2c8dffbaef586ffa26744288f",
+          "code:tools/check_capture_sessions.py": "7db937e17f9add323cc3fc8c4c1c8c0f2c7b16ed44e3b5498b85963787f88f1b",
+          "code:tools/check_crop_comparison.py": "1b0daf3057941b7f9098ad043cddac28796c19f675ec0acc57a971321cf885c6",
+          "code:tools/check_depin_contracts.py": "5d737272fac93a29cbe1520c92af2876870f97fa758cf904ddbd5af7eb5cf765",
+          "code:tools/check_depin_pipeline.py": "6013d590a21d8acb9a477ea4ad0fa783e920583448c94485557d8ca683a46792",
+          "code:tools/check_detector_sampling.py": "75bcb436fcb0bdb5134bb205b0d578bb2cff4593df0ab3dcf7291c78685f5628",
+          "code:tools/check_evaluation_metrics.py": "51c9b4ff309de50a1bc9d2beb4949e0db4d83d19c67c117eaaac808cb66c69fd",
+          "code:tools/check_execution_profiles.py": "92b360d146b1bba834b25aaf650ff78a0db1b63d99a1c160c5e62816397bae84",
+          "code:tools/check_general_video_experiment.py": "4844df2500336f27a86ee7a5b3888c9b8079b6a9649e4999493c5f384672a26b",
+          "code:tools/check_grouped_decode.py": "fb864208bad21ea9e682ebeb92c1385de0f683eb12051528569c08886c8812db",
+          "code:tools/check_grouped_decode_workflow.py": "6a9f55438f94329c7aa2394bf7f0ec0d914b9f50735738d8ee9a8aa1d8bb53bc",
+          "code:tools/check_interpretation.py": "fb67ff60472db10501a4da519788037d080d90639a31196c223b75cd51e7867c",
+          "code:tools/check_interpretation_api.py": "6260f62b5a79cd058f0bc60bc4b4cf63b094f793b08d5e4a834abac7cdc8af85",
+          "code:tools/check_long_memory.py": "48f9a29ab5d30bb7d24cae159f496bb7ab470a3b9ec2f10748818b6d64f3c086",
+          "code:tools/check_long_memory_index.py": "4312a244b3b4551f2d51ce02bc4cfa96217ac676f5fe119fd2fa158342c32a06",
+          "code:tools/check_memory_runner.py": "ca600cd413a4cacc7cd8e62d95d1f8c596b037244bee61eeffa797dadc389be9",
+          "code:tools/check_metadata_projection.py": "907c281b522a5aad56c49633ae2c5e6d831d0c0ef578f3ab0c3e52c71726e983",
+          "code:tools/check_multisession_workflow.py": "94266d157c0c72cd49fe30387bddf4a9592ee742b8bc2b8ec584123eb0fd48a8",
+          "code:tools/check_old_binary_compatibility.py": "9867dc90cef7975cc4e7f8710ac8f183b4e2f02fb8300c1b1a39e39346bc7cfe",
+          "code:tools/check_privacy_media.py": "e9d53dc033579153a809a1ae175d0b3c7d75bf45a8a373aee376a35e03b36662",
+          "code:tools/check_privacy_workflow.py": "a95ea790f3beced296ec9b53a4336c4693ffa822c5764089c95727088b1c541d",
+          "code:tools/check_producer_provenance.py": "19114c0493f1a20ce5f56f143667cd8f0d8956c1d69235b3113a4108ca91d640",
+          "code:tools/check_projection_replay.py": "1e3ff4bab7a9a308a54373c8bae48559ff707f90ca2000168465850c14ef9163",
+          "code:tools/check_query_snapshot_comparison.py": "03365aff83b5d4a5901e722fcbfe203dac047e8d249722f80a86f15c51eec2bf",
+          "code:tools/check_query_snapshot_workflow.py": "5679a96dfeeddcad152d02f9496d30bd89a765c11bc95a3dd2b01a65ae4f3d69",
+          "code:tools/check_real_retrieval_profile.py": "b3f023be9c4d75d1c8811f25d3b358c440b2e8f41ff453c3f95bd6446f91e5e1",
+          "code:tools/check_recording_recovery.py": "aea73a9056ec2c067297ceac2ea0f1a104de75231ec041ca4fb5d79ae677b01a",
+          "code:tools/check_recording_revocation.py": "1571251ce250a3c8e66fecf17a1aa1f58a53fcdf149c643d0816e91d5c547ff8",
+          "code:tools/check_release_admission.py": "04f9841b7aa8b3b2a0bacd11d282c2459f4de98c45dfc52df7b18b4b88904df5",
+          "code:tools/check_resource_coordination.py": "cb2ba2c9ca8f5d61fa50be4040e0f947bde44512f790e5ab5941a55d7eebe817",
+          "code:tools/check_resource_load.py": "10e465ca18f4a7fff4696a69c01bf031fd0d6bb543c1240ab34e5a938a3378fb",
+          "code:tools/check_resource_native_workflow.py": "5dcfe2f3295e2fb70691d2e97feb52e32c2de90cc624ebb0c73c7734f3d8af6f",
+          "code:tools/check_retrieval.py": "e73366a5917515ad60092c94b5fdfcbe8c63759416ee1884743ae443d19f1a62",
+          "code:tools/check_retrieval_deployments.py": "fef30264bc168547da513ed02d767f813b17b24145001a1ca62f2c66a4550141",
+          "code:tools/check_retrieval_profiles.py": "7eca65670a4a82221eeb691565114bb3da7bfec37cc57f35fc22d1643c3bbf12",
+          "code:tools/check_reviewed_states.py": "69bc67e8ae54e4428538a22d5183b340048f7dab184d8226e36e23280bd06bed",
+          "code:tools/check_source_crops.py": "b9a56080484569e4ec62f3ea8ada5f3853a685fef3b55a043506f577a07f6915",
+          "code:tools/check_state_review.py": "36c6cec3835c4a54a68eaa7e38fd383e4272e6c5fa59d36b269791acdc9ddc21",
+          "code:tools/check_state_verification.py": "8bfb3f5efe16bc9eed8bd82978b1aef3da09d50c2db55c770444d61be4d32b93",
+          "code:tools/check_temporal_corpus.py": "edd9bb23c5db306027baa66561f2f768a21347a29ac2f0d476891d1d9997629b",
+          "code:tools/check_temporal_index.py": "500cf21edf268594c228eed1c80b2841f162b3678e3c1ecd97e74e0974a792f4",
+          "code:tools/check_track_grounding.py": "f296a776d9d494b9b5d2bd48862f1a363ff89227e5d4575b01c03f08ef4aeaf8",
+          "code:tools/check_track_visibility.py": "07f4ffa85d0d172794707383f6034e4c9691d359f438fd5eb72356f6e27a164d",
+          "code:tools/check_tracking_continuity.py": "25299bce92dc02a1572700181923fefe9b3dafa881a23f128ed05f42fc14a8c9",
+          "code:tools/check_tracking_continuity_replay.py": "44a61eff1ff7ee1bc45db003d6115885e233b59f364d147ca307b8178298867b",
+          "code:tools/check_work_caches.py": "6f4fd79350f8e97cf7bfaf5bb6756deee929112e7118dd95bf705ecb071c9a07",
+          "code:tools/check_workflow_telemetry.py": "e984f21921b202b94d0c824e4bc6c637a834aab0ecbc7be63205ae5fcf1941f9",
+          "code:tools/compare_yolo26_backends.py": "832dcf284f28c6f70bc1967b440bcd571d6ee310038eb0d147259a5ee62b076c",
+          "code:tools/evaluate_crop_modes.py": "f6ea62dc62c91c9e5593dea0f1c247b9d599316148635e5a6df3bc7c74a35da8",
+          "code:tools/evaluate_retrieval_corpus.py": "7cf73f565ccb85fe97dfc8df378857231c6ff1e7e3973879391b05db817fa128",
+          "code:tools/evaluate_reviewed_states.py": "ea15e999131280413959c5bbcfcb71cc17f0d28eed10ea79e3fed18af1e5132b",
+          "code:tools/evaluate_stream_behaviors.py": "9f6edaf48a58ee3280b0f72fccc56ad4e740c8744fcb2351fcb4ab6eebd55f31",
+          "code:tools/evaluate_temporal.py": "95932cebd9f62ffd1850600ab54d0b4e6406307ce108f31bf0ae71d3214495c1",
+          "code:tools/evaluate_temporal_corpus.py": "d9f0af36a25da2497368f261e43321df6a45d0a73acb06b67d8741c6e1389bc3",
+          "code:tools/evaluate_track_grounding.py": "bba1aa2d93540a94696f0b0e244ace9da102831270029b0bf23fb08899e97c5e",
+          "code:tools/event_memory_runner.py": "547d29cd6c69de06d5df6551e6d0351857c1ea4a0ce30ed15f693515db3d4303",
+          "code:tools/evidence_backup.py": "8b674ba1b2aa4e16deb04b670dbaf9f26c67285086f9546b4859e02088a28c53",
+          "code:tools/execution_runtime.py": "3a9c57371b819752b0155a9ae96e418d6c5206d9f8fc091de02d9a16b6982223",
+          "code:tools/export_yolo26.py": "3867f4065ec6f20127bc2a5b2bfb15e256455e09b2c79db20f7e062c02bf05ed",
+          "code:tools/fixtures/paused_multisession_runner.py": "0ff974f987a4e198d1a6a94e880f1285a50c82340f1cea5df6677111c86a4a6f",
+          "code:tools/fixtures/profile_memory_runner.py": "34cde8e43f86ac269cc7a4453bc17b69b6853356c4c333098256fda822cd115e",
+          "code:tools/fixtures/recovery_memory_runner.py": "477fe9153a0fbe27a57b1731139eae33dc0349a82cb3006a9457777354facd99",
+          "code:tools/general_video_experiment.py": "cede724247124cb9660272ba281adb50464b03249cc6ddaa2a5263c34fdb4a31",
+          "code:tools/grouped_decode.py": "2490f10c9b91badf94c743c4cf7b54d42024c561362b1078c9c89e391c5c240a",
+          "code:tools/liveness_verifier.py": "909012932d332831363ef71178814392ab574cd70c6b66629ea759b229ff4879",
+          "code:tools/make_contribution_samples.py": "7d6c9740abc89d7c79b00f779fa94f6500ec895583c8dc5f9757587c651f64ce",
+          "code:tools/prepare_privacy_models.py": "5d8fc91a9db6e5bd48f035f795ace8afd9563e5314361c1efff747bd94add731",
+          "code:tools/prepare_state_review.py": "0c3e50c4193e82ac31f7c7a37513ff6570440fb6925b2c160cb3f9a6697845b3",
+          "code:tools/privacy_media.py": "a5b051943960f960e0f55b513784e406b59acd040bad194311bf2f526b1f20d5",
+          "code:tools/privacy_redactor.py": "5823205be19f0a98ebcc1ae7b1dcd0c1c04242f23e4be2db792c4ce1015cad0c",
+          "code:tools/reconcile_projection_binding.py": "257b7c397fded06f69347ad4e459a9357e5a38fe7a9ec528aa5354645802e05e",
+          "code:tools/refine_scene_vectors.py": "bad78d59da34733a622a190f5285d8f4a4b17b948eb0ed2840e8a69868f071c4",
+          "code:tools/retrieval_deployments.py": "723f4f8e351c432777611ace44230e3477a85ef85229f52cd6b1f65a837df7e4",
+          "code:tools/retrieval_profile.py": "4861125ba064821989e4bd5dbfdd5020bbd8e489736caf57c20ded64d5628b82",
+          "code:tools/run_recovery_ui_probe.py": "4079de9f3d60fd2935c5ff5f51791c147222e690a74d92bd47404b6a6e1f59a6",
+          "code:tools/run_visn_release.py": "9c764f853d4dd8088033a0fb39ce43872019c621d46c21b9bd8661f707f1339e",
+          "code:tools/select_clear_tracks.py": "33324ae7107d28a5646d85d0c3b162837a0978c156bed9bd260f156a0be3f97f",
+          "code:tools/semantic_memory_server.py": "5c0e6d58ce9d39d2c6220a59c577fc5fc3f89bcc1702141d9ba7cb92325139d1",
+          "code:tools/state_verification.py": "21218c07b396771c071cc6287e1c8474238dd1bb485f4abaf2d9d6e51d342cca",
+          "code:tools/temporal_interpretation.py": "17a9fd0e653ea8fa36a1b4dc315ac1282af55156fc08533f22e93e8027d55531",
+          "code:tools/vectorize_landing_assets.py": "15303fd19825fca2fb5880f15e46b96af47edfa28105c62a22c172d1d2f66b03",
+          "code:tools/worker_lifeline.py": "bd529b4f86ed5988c2c3ecf59cc8459d0f03633683d9f292c09fe735d6aac763",
+          "code:tools/workflow_indexing.py": "1a948acaaf0283deea57a472922227c6267e498d50f958072a1183510cd1bec4",
+          "code:tools/workflow_resources.py": "c6853239705775a7da51d5393a5763f4e50f53df6a51a0acdcda45bd7819bf60",
+          "code:tools/workflow_telemetry.py": "c0b21d7ab7ef7d58715d21f94b379b8095fd5f473ed5d0c497ad4e14381a4ef5",
+          "code:tools/yolo26_runner.py": "6d31ce4fa74ef403f86a9220c0cd8ea42505c1cd5adeafa300c599d73a332ad7",
+          "code:tools/yolo26_worker.py": "ea3d34fe46e65e587e77c92a6a4d64a1c858a8cc34a33bc1219478a50fedef2d",
+          "compiled-rust": "d96818390cf83fe0badc26083c8719c09f0db2f396eeda29d6b6207f0f881d42",
+          "configured-script:0": "6d31ce4fa74ef403f86a9220c0cd8ea42505c1cd5adeafa300c599d73a332ad7",
+          "configured-script:1": "ea3d34fe46e65e587e77c92a6a4d64a1c858a8cc34a33bc1219478a50fedef2d",
+          "configured-script:2": "c6853239705775a7da51d5393a5763f4e50f53df6a51a0acdcda45bd7819bf60",
+          "detector-identity": "fcea3f7f4aa0b442b8ed47acde8b4e8c4c4049118ef2631f6a1d035093048b06",
+          "detector-runtime": "5cd66b303f3bfd9508733c621079df61e3cffa447ac4466c12d1cab0e1744448",
+          "evidence": "09540fabb58c19a2a19320c5652726e74d86c218e1afc99a9f2bbc83e72a7d8e",
+          "model:tracker": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+          "settings": "9d51c18fd446526d936d1040510b4826c152948d242a191cb9fe09d5e179be63"
+        }
+      },
+      "version": "entity-memory-v2-pts",
+      "source_sha256": "4ee857d452d8fa2ebe02054d634e8cb5ea63796108ff19f64c0a6c701d985c04",
+      "detector_model": "/Users/anagha/projects/visn_rust/yolo26s.pt",
+      "detector_fps": 5.0,
+      "status": "ready",
+      "entities": [
+        {
+          "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+          "entity_id": "11cbbfe0-0077-5530-a417-280630e64caa",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "82",
+          "class_name": "car",
+          "observations": [
+            {
+              "bbox": [
+                0.48560372,
+                0.121273115,
+                0.036884084,
+                0.054470275
+              ],
+              "detector_confidence": 0.5339639,
+              "observation_id": "af833636-991b-5134-a8b1-4f6e6724d163",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 1640,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.486, 0.121, 0.037, 0.054]; detector score 0.534 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.48560372,
+                0.121273115,
+                0.036884084,
+                0.054470275
+              ],
+              "detector_confidence": 0.5339639,
+              "observation_id": "3c561071-7c29-502d-a61c-4a8afb2ffe42",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 1640,
+              "kind": "first_observed",
+              "description": "car first observed under tracker ID 82"
+            },
+            {
+              "bbox": [
+                0.48227108,
+                0.17546052,
+                0.04445025,
+                0.06552624
+              ],
+              "detector_confidence": 0.3743616,
+              "observation_id": "79e52668-8cf8-50bd-90d7-08614de7aceb",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3920,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.482, 0.175, 0.044, 0.066]; detector score 0.374 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.48227108,
+                0.17546052,
+                0.04445025,
+                0.06552624
+              ],
+              "detector_confidence": 0.3743616,
+              "observation_id": "c4d9a81f-1399-5f3d-a796-7b18b4d57447",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3920,
+              "kind": "last_observed",
+              "description": "car last observed under tracker ID 82"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+          "entity_id": "457e93b4-6872-50a0-8e66-1acb45d767fe",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "54",
+          "class_name": "car",
+          "observations": [
+            {
+              "bbox": [
+                0.06395608,
+                0.321401,
+                0.11121046,
+                0.13253614
+              ],
+              "detector_confidence": 0.80204767,
+              "observation_id": "0f9f41f9-7e83-5461-9707-85ef862566e9",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 0,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.064, 0.321, 0.111, 0.133]; detector score 0.802 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.06395608,
+                0.321401,
+                0.11121046,
+                0.13253614
+              ],
+              "detector_confidence": 0.80204767,
+              "observation_id": "8aea03ef-b7fc-5812-a53c-de60e7a29e51",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 0,
+              "kind": "first_observed",
+              "description": "car first observed under tracker ID 54"
+            },
+            {
+              "bbox": [
+                0.0,
+                0.369111,
+                0.12959193,
+                0.15184754
+              ],
+              "detector_confidence": 0.6939221,
+              "observation_id": "2f12a7e1-b391-5485-bba9-58bf37ed38a6",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3760,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.000, 0.369, 0.130, 0.152]; detector score 0.694 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.0,
+                0.369111,
+                0.12959193,
+                0.15184754
+              ],
+              "detector_confidence": 0.6939221,
+              "observation_id": "be5827be-33ce-5eb9-9c5f-d340182154ec",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3760,
+              "kind": "last_observed",
+              "description": "car last observed under tracker ID 54"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+          "entity_id": "5b20113d-5e11-5664-831c-5a6c36664102",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "89",
+          "class_name": "truck",
+          "observations": [
+            {
+              "bbox": [
+                0.032981418,
+                0.3485159,
+                0.11467358,
+                0.14002857
+              ],
+              "detector_confidence": 0.3231331,
+              "observation_id": "f8e95e6a-21c6-5bd8-a0bb-01f89918e97c",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 1800,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.033, 0.349, 0.115, 0.140]; detector score 0.323 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.032981418,
+                0.3485159,
+                0.11467358,
+                0.14002857
+              ],
+              "detector_confidence": 0.3231331,
+              "observation_id": "1cdd578e-6bcd-581b-9579-da5506a4848c",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 1800,
+              "kind": "first_observed",
+              "description": "truck first observed under tracker ID 89"
+            },
+            {
+              "bbox": [
+                0.010916,
+                0.36010137,
+                0.12428587,
+                0.14883342
+              ],
+              "detector_confidence": 0.5904436,
+              "observation_id": "9b2baa50-aa2f-5fd7-871f-091da511fad4",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3160,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.011, 0.360, 0.124, 0.149]; detector score 0.590 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.010916,
+                0.36010137,
+                0.12428587,
+                0.14883342
+              ],
+              "detector_confidence": 0.5904436,
+              "observation_id": "21615171-c881-5d8c-af6c-4cbcd38a9afd",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3160,
+              "kind": "last_observed",
+              "description": "truck last observed under tracker ID 89"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+          "entity_id": "b2ce64b2-5f94-5d2e-9386-68c0a56286b0",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "59",
+          "class_name": "truck",
+          "observations": [
+            {
+              "bbox": [
+                0.6595496,
+                0.6054194,
+                0.23205236,
+                0.39385122
+              ],
+              "detector_confidence": 0.48965627,
+              "observation_id": "01dd6ef3-d863-5b6f-bcfe-8b66bb86e5ec",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 0,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.660, 0.605, 0.232, 0.394]; detector score 0.490 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.6595496,
+                0.6054194,
+                0.23205236,
+                0.39385122
+              ],
+              "detector_confidence": 0.48965627,
+              "observation_id": "39e2ff4f-72b9-594a-8da9-62e632097f15",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 0,
+              "kind": "first_observed",
+              "description": "truck first observed under tracker ID 59"
+            },
+            {
+              "bbox": [
+                0.66480446,
+                0.6078535,
+                0.2306853,
+                0.39131555
+              ],
+              "detector_confidence": 0.75822544,
+              "observation_id": "9d5b527c-d332-5fc3-9625-1f14541844eb",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 680,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.665, 0.608, 0.231, 0.391]; detector score 0.758 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.66480446,
+                0.6078535,
+                0.2306853,
+                0.39131555
+              ],
+              "detector_confidence": 0.75822544,
+              "observation_id": "c6895a83-f92f-55e6-8cbd-359000682ceb",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 680,
+              "kind": "last_observed",
+              "description": "truck last observed under tracker ID 59"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+          "entity_id": "c88fd8ef-3b51-56f0-bee2-710546e37bdd",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "69",
+          "class_name": "car",
+          "observations": [
+            {
+              "bbox": [
+                0.19177845,
+                0.2508092,
+                0.06767921,
+                0.086311914
+              ],
+              "detector_confidence": 0.563169,
+              "observation_id": "03adb147-0b6f-5a0a-8261-e2ff28a3dc22",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 1000,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.192, 0.251, 0.068, 0.086]; detector score 0.563 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.19177845,
+                0.2508092,
+                0.06767921,
+                0.086311914
+              ],
+              "detector_confidence": 0.563169,
+              "observation_id": "1f13f036-74dd-5e74-b5ad-0ba974e77dfb",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 1000,
+              "kind": "first_observed",
+              "description": "car first observed under tracker ID 69"
+            },
+            {
+              "bbox": [
+                0.12276199,
+                0.2705521,
+                0.08923317,
+                0.11554118
+              ],
+              "detector_confidence": 0.43418398,
+              "observation_id": "0aebc6a9-b1b2-5f83-a7b6-05fe45d9a758",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3160,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.123, 0.271, 0.089, 0.116]; detector score 0.434 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.12276199,
+                0.2705521,
+                0.08923317,
+                0.11554118
+              ],
+              "detector_confidence": 0.43418398,
+              "observation_id": "0fc4f10a-14d3-5872-ac39-7d9de0929fb9",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3160,
+              "kind": "last_observed",
+              "description": "car last observed under tracker ID 69"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+          "entity_id": "dec76926-af5c-5cf9-836a-b37f755aa65d",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "53",
+          "class_name": "car",
+          "observations": [
+            {
+              "bbox": [
+                0.59846884,
+                0.4702641,
+                0.10887833,
+                0.20165083
+              ],
+              "detector_confidence": 0.86276126,
+              "observation_id": "4cb27419-dbdd-5ef2-822c-69e9e06d41eb",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 0,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.598, 0.470, 0.109, 0.202]; detector score 0.863 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.59846884,
+                0.4702641,
+                0.10887833,
+                0.20165083
+              ],
+              "detector_confidence": 0.86276126,
+              "observation_id": "56d104a6-4e6d-5cad-b3d6-f0ddee7c66ca",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 0,
+              "kind": "first_observed",
+              "description": "car first observed under tracker ID 53"
+            },
+            {
+              "bbox": [
+                0.6028003,
+                0.47543055,
+                0.10959028,
+                0.19780418
+              ],
+              "detector_confidence": 0.50325125,
+              "observation_id": "33018ba6-76b7-58d2-a7f9-f84686607d50",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3920,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.603, 0.475, 0.110, 0.198]; detector score 0.503 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.6028003,
+                0.47543055,
+                0.10959028,
+                0.19780418
+              ],
+              "detector_confidence": 0.50325125,
+              "observation_id": "b97750f8-7b71-51b4-a7c2-eba581eece1a",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3920,
+              "kind": "last_observed",
+              "description": "car last observed under tracker ID 53"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        },
+        {
+          "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+          "entity_id": "f08cb400-4e69-5f44-aa51-9423b8e323ae",
+          "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+          "camera_id": "junction",
+          "track_id": "97",
+          "class_name": "truck",
+          "observations": [
+            {
+              "bbox": [
+                0.13157667,
+                0.26900366,
+                0.102092244,
+                0.11688506
+              ],
+              "detector_confidence": 0.3537559,
+              "observation_id": "b3c9546b-088c-56ca-87a6-844ecd9a359b",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3160,
+              "kind": "detector_observation",
+              "description": "truck detection at normalized box [0.132, 0.269, 0.102, 0.117]; detector score 0.354 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.13157667,
+                0.26900366,
+                0.102092244,
+                0.11688506
+              ],
+              "detector_confidence": 0.3537559,
+              "observation_id": "48d42ffd-1367-5b06-9343-cd896f6e9a9d",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3160,
+              "kind": "first_observed",
+              "description": "truck first observed under tracker ID 97"
+            },
+            {
+              "bbox": [
+                0.116834335,
+                0.30524272,
+                0.084189765,
+                0.095955215
+              ],
+              "detector_confidence": 0.42885238,
+              "observation_id": "b005d35d-5adc-5569-b340-3639469fac76",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3920,
+              "kind": "detector_observation",
+              "description": "car detection at normalized box [0.117, 0.305, 0.084, 0.096]; detector score 0.429 (not identity confidence)"
+            },
+            {
+              "bbox": [
+                0.116834335,
+                0.30524272,
+                0.084189765,
+                0.095955215
+              ],
+              "detector_confidence": 0.42885238,
+              "observation_id": "7ad61833-9dfb-5b89-af7d-f3272acb2765",
+              "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+              "timestamp_ms": 3920,
+              "kind": "last_observed",
+              "description": "truck last observed under tracker ID 97"
+            }
+          ],
+          "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+        }
+      ],
+      "links": [
+        {
+          "from": "4cb27419-dbdd-5ef2-822c-69e9e06d41eb",
+          "to": "56d104a6-4e6d-5cad-b3d6-f0ddee7c66ca",
+          "entity_id": "dec76926-af5c-5cf9-836a-b37f755aa65d",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "56d104a6-4e6d-5cad-b3d6-f0ddee7c66ca",
+          "to": "33018ba6-76b7-58d2-a7f9-f84686607d50",
+          "entity_id": "dec76926-af5c-5cf9-836a-b37f755aa65d",
+          "relation": "same_tracker_order",
+          "gap_ms": 3920
+        },
+        {
+          "from": "33018ba6-76b7-58d2-a7f9-f84686607d50",
+          "to": "b97750f8-7b71-51b4-a7c2-eba581eece1a",
+          "entity_id": "dec76926-af5c-5cf9-836a-b37f755aa65d",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "0f9f41f9-7e83-5461-9707-85ef862566e9",
+          "to": "8aea03ef-b7fc-5812-a53c-de60e7a29e51",
+          "entity_id": "457e93b4-6872-50a0-8e66-1acb45d767fe",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "8aea03ef-b7fc-5812-a53c-de60e7a29e51",
+          "to": "2f12a7e1-b391-5485-bba9-58bf37ed38a6",
+          "entity_id": "457e93b4-6872-50a0-8e66-1acb45d767fe",
+          "relation": "same_tracker_order",
+          "gap_ms": 3760
+        },
+        {
+          "from": "2f12a7e1-b391-5485-bba9-58bf37ed38a6",
+          "to": "be5827be-33ce-5eb9-9c5f-d340182154ec",
+          "entity_id": "457e93b4-6872-50a0-8e66-1acb45d767fe",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "01dd6ef3-d863-5b6f-bcfe-8b66bb86e5ec",
+          "to": "39e2ff4f-72b9-594a-8da9-62e632097f15",
+          "entity_id": "b2ce64b2-5f94-5d2e-9386-68c0a56286b0",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "39e2ff4f-72b9-594a-8da9-62e632097f15",
+          "to": "9d5b527c-d332-5fc3-9625-1f14541844eb",
+          "entity_id": "b2ce64b2-5f94-5d2e-9386-68c0a56286b0",
+          "relation": "same_tracker_order",
+          "gap_ms": 680
+        },
+        {
+          "from": "9d5b527c-d332-5fc3-9625-1f14541844eb",
+          "to": "c6895a83-f92f-55e6-8cbd-359000682ceb",
+          "entity_id": "b2ce64b2-5f94-5d2e-9386-68c0a56286b0",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "03adb147-0b6f-5a0a-8261-e2ff28a3dc22",
+          "to": "1f13f036-74dd-5e74-b5ad-0ba974e77dfb",
+          "entity_id": "c88fd8ef-3b51-56f0-bee2-710546e37bdd",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "1f13f036-74dd-5e74-b5ad-0ba974e77dfb",
+          "to": "0aebc6a9-b1b2-5f83-a7b6-05fe45d9a758",
+          "entity_id": "c88fd8ef-3b51-56f0-bee2-710546e37bdd",
+          "relation": "same_tracker_order",
+          "gap_ms": 2160
+        },
+        {
+          "from": "0aebc6a9-b1b2-5f83-a7b6-05fe45d9a758",
+          "to": "0fc4f10a-14d3-5872-ac39-7d9de0929fb9",
+          "entity_id": "c88fd8ef-3b51-56f0-bee2-710546e37bdd",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "af833636-991b-5134-a8b1-4f6e6724d163",
+          "to": "3c561071-7c29-502d-a61c-4a8afb2ffe42",
+          "entity_id": "11cbbfe0-0077-5530-a417-280630e64caa",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "3c561071-7c29-502d-a61c-4a8afb2ffe42",
+          "to": "79e52668-8cf8-50bd-90d7-08614de7aceb",
+          "entity_id": "11cbbfe0-0077-5530-a417-280630e64caa",
+          "relation": "same_tracker_order",
+          "gap_ms": 2280
+        },
+        {
+          "from": "79e52668-8cf8-50bd-90d7-08614de7aceb",
+          "to": "c4d9a81f-1399-5f3d-a796-7b18b4d57447",
+          "entity_id": "11cbbfe0-0077-5530-a417-280630e64caa",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "f8e95e6a-21c6-5bd8-a0bb-01f89918e97c",
+          "to": "1cdd578e-6bcd-581b-9579-da5506a4848c",
+          "entity_id": "5b20113d-5e11-5664-831c-5a6c36664102",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "1cdd578e-6bcd-581b-9579-da5506a4848c",
+          "to": "9b2baa50-aa2f-5fd7-871f-091da511fad4",
+          "entity_id": "5b20113d-5e11-5664-831c-5a6c36664102",
+          "relation": "same_tracker_order",
+          "gap_ms": 1360
+        },
+        {
+          "from": "9b2baa50-aa2f-5fd7-871f-091da511fad4",
+          "to": "21615171-c881-5d8c-af6c-4cbcd38a9afd",
+          "entity_id": "5b20113d-5e11-5664-831c-5a6c36664102",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "b3c9546b-088c-56ca-87a6-844ecd9a359b",
+          "to": "48d42ffd-1367-5b06-9343-cd896f6e9a9d",
+          "entity_id": "f08cb400-4e69-5f44-aa51-9423b8e323ae",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        },
+        {
+          "from": "48d42ffd-1367-5b06-9343-cd896f6e9a9d",
+          "to": "b005d35d-5adc-5569-b340-3639469fac76",
+          "entity_id": "f08cb400-4e69-5f44-aa51-9423b8e323ae",
+          "relation": "same_tracker_order",
+          "gap_ms": 760
+        },
+        {
+          "from": "b005d35d-5adc-5569-b340-3639469fac76",
+          "to": "7ad61833-9dfb-5b89-af7d-f3272acb2765",
+          "entity_id": "f08cb400-4e69-5f44-aa51-9423b8e323ae",
+          "relation": "same_tracker_order",
+          "gap_ms": 0
+        }
+      ],
+      "notes": [
+        "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred.",
+        "0 observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims."
+      ]
+    },
+    "camera": {
+      "camera_id": "junction",
+      "live_url": "http://***",
+      "country": "",
+      "country_code": "",
+      "region": "",
+      "city": "",
+      "latitude": null,
+      "longitude": null,
+      "zip": null,
+      "timezone": "",
+      "manufacturer": "",
+      "description": ""
+    },
+    "duration_ms": 3960,
+    "frames_decoded": 19,
+    "evidence_url": "/api/v1/memory-events/1f8a2d30-a832-567e-977c-92ecdf4ee754/source",
+    "events": [
+      {
+        "capture_extent": "finished",
+        "source_session_id": "34cfc6c4f5194078acb4a046254153a2",
+        "privacy": {
+          "source": {
+            "decoded_pixel_contract": "8-bit BGR; higher-bit input rejected, never silently reduced",
+            "detections": {
+              "face": 3,
+              "plate": 2
+            },
+            "detector_threshold": 0.1,
+            "elapsed_seconds": 1.664113458013162,
+            "max_timestamp_quantization_ms": 0.5,
+            "models": {
+              "plate": {
+                "bytes": 28612350,
+                "file": "yolo-v9-s-608-license-plates-end2end.onnx",
+                "sha256": "2b878b38d9aa07b6ddc3ea75c4ffcb39869bc5c218e0a14002f60ab2f7b0be9a",
+                "url": "https://github.com/ankandrew/open-image-models/releases/download/assets/yolo-v9-s-608-license-plates-end2end.onnx"
+              },
+              "yunet": {
+                "bytes": 232589,
+                "file": "face_detection_yunet_2023mar.onnx",
+                "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+                "url": "https://media.githubusercontent.com/media/opencv/opencv_zoo/48b10fa505aeb51fbd127fc60a5c660040e823b7/models/face_detection_yunet/face_detection_yunet_2023mar.onnx"
+              }
+            },
+            "observed_source_end": "98/25",
+            "requested_seconds": 11.08,
+            "runtime": {
+              "numpy": "2.5.4",
+              "onnxruntime": "1.31.0",
+              "opencv": "4.14.0",
+              "precision": "FP32",
+              "providers": [
+                "CPUExecutionProvider"
+              ],
+              "pyav": "19.0.1",
+              "threads": 1
+            },
+            "sanitizer": "solid_pixel_replacement",
+            "sanitizer_code_sha256": "a5b051943960f960e0f55b513784e406b59acd040bad194311bf2f526b1f20d5",
+            "source_pixel_format": "yuv420p",
+            "source_time_base": "1/90000",
+            "timestamp_policy": "source_PTS_recorded; relative_PTS_rounded_to_ms; collisions_rejected",
+            "tracker_code_sha256": "5823205be19f0a98ebcc1ae7b1dcd0c1c04242f23e4be2db792c4ce1015cad0c",
+            "capture": {
+              "association_sessions": [
+                {
+                  "session_id": "34cfc6c4f5194078acb4a046254153a2:0",
+                  "first_frame_index": 0,
+                  "last_frame_index": 18,
+                  "first_observed_ms": 0,
+                  "last_observed_ms": 3920,
+                  "start_reason": "initial_capture"
+                }
+              ],
+              "session_id": "34cfc6c4f5194078acb4a046254153a2",
+              "requested_seconds": 11.08,
+              "termination": "end_of_stream",
+              "observed_frames": 19,
+              "last_observed_frame_ms": 3920,
+              "transport_started_wall_ms": 1792772048603,
+              "transport_finished_wall_ms": 1792772050221,
+              "transport_time_is_not_capture_time": true,
+              "continuity_certified": false,
+              "timestamp_jump_threshold_ms": 1000,
+              "timestamp_jump_count": 0,
+              "timestamp_jump_samples": [],
+              "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+            },
+            "clock_kind": "source_pts",
+            "clock_limitations": [],
+            "schema": "visn-sanitized-media-v1",
+            "policy": "sanitized-pixels-v1",
+            "qualification": "integration_candidate_not_general_privacy_acceptance",
+            "media_sha256": "4ee857d452d8fa2ebe02054d634e8cb5ea63796108ff19f64c0a6c701d985c04",
+            "media_bytes": 1671412,
+            "frames": 19,
+            "width": 480,
+            "height": 360,
+            "ledger_sha256": "b1db1d65bc32796ed162ef23b49f90d41b0edf5f3c15be393f04406d776eef3f",
+            "audio": "removed"
+          },
+          "thumbnail_sha256": "49512057a7e656cfdc89a51d7e4b679beafd08f0c7542a53f44a38c90d662225",
+          "clip_sha256": "0b581bc1b48f373cdf000fa94c0fa1c1ac57cff47473c6886b7665ee79e07fe1"
+        },
+        "source_duration_ms": 3960,
+        "interpretation": null,
+        "event_id": "1f8a2d30-a832-567e-977c-92ecdf4ee754",
+        "job_id": "01a1698a-74aa-76c2-90e6-2a2038851364",
+        "camera_id": "junction",
+        "cluster_id": null,
+        "start_ms": 0,
+        "end_ms": 3960,
+        "duration_ms": 3960,
+        "activity_mean": 0.058602747,
+        "activity_peak": 0.08134709,
+        "quality": 0.8365776,
+        "boundary_reason": "stream_start",
+        "thumbnail_url": "/api/v1/memory-events/1f8a2d30-a832-567e-977c-92ecdf4ee754/thumbnail",
+        "evidence_url": "/api/v1/memory-events/1f8a2d30-a832-567e-977c-92ecdf4ee754/clip",
+        "description": {
+          "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.08; inspect the linked evidence for visual confirmation.",
+          "scene_type": "metadata-only fallback",
+          "visible_objects": [],
+          "visible_people": [],
+          "apparent_actions": [],
+          "visible_text": [],
+          "conditions": "Not visually assessed",
+          "confidence": 0.2,
+          "generated_by_model": false,
+          "model": null,
+          "fallback_reason": "VLM event enrichment was disabled"
+        },
+        "visual_signature": [
+          0.4993369,
+          0.007813039,
+          0.0,
+          0.0019532598,
+          0.016044633,
+          0.0015347041,
+          0.0,
+          0.00041855566,
+          0.02413671,
+          0.0066968906,
+          0.0002790371,
+          0.004185557,
+          0.004325075,
+          0.001255667,
+          0.0,
+          0.00013951855,
+          0.0270666,
+          0.017160783,
+          0.0013951856,
+          0.0009766299,
+          0.081339315,
+          0.0054412237,
+          0.0,
+          0.0023718155,
+          0.064178534,
+          0.00013951855,
+          0.0,
+          0.0011161484,
+          0.08315306,
+          0.0044645937,
+          0.0,
+          0.0002790371,
+          0.041855566,
+          0.06948024,
+          0.1819322,
+          0.4263687,
+          0.08399017,
+          0.03585627,
+          0.013114744,
+          0.0046041124,
+          0.041855566,
+          0.080362685,
+          0.21164966,
+          0.372375,
+          0.095291175,
+          0.03767001,
+          0.014091374,
+          0.0039065196,
+          0.041855566,
+          0.08329258,
+          0.1495639,
+          0.35535377,
+          0.13965808,
+          0.05301705,
+          0.026927082,
+          0.007534002,
+          0.014312596,
+          0.005643961,
+          0.007927284,
+          0.3432501
+        ]
+      }
+    ],
+    "data_quality_notes": [
+      "Observed 19 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.",
+      "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+      "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+      "Observer analysis retrieved 7 of 19 consumed source frames.",
+      "Event clips use stream copy when compatible and fall back to H.264 only when required.",
+      "Source session 2: source_clock_regressed. Independent source-relative clock; no elapsed time between sessions is inferred. Capture journal state: completed."
+    ]
+  }
+]

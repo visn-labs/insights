@@ -20,6 +20,7 @@ import shutil
 import statistics
 import subprocess
 import sys
+import uuid
 from typing import Any
 
 from workflow_telemetry import WorkflowTrace, measured, stage
@@ -39,6 +40,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--maximum-event-seconds", type=float, default=15.0)
     parser.add_argument("--clip-mode", choices=("copy", "transcode", "reference"), default="copy")
     parser.add_argument("--threads", type=int, default=1)
+    parser.add_argument("--resume-retained", action="store_true")
+    parser.add_argument("--capture-sessions", action="store_true")
+    parser.add_argument("--reconnect-attempts", type=int, default=0, help="Explicit live-source retry budget, 0–8; requires session capture")
     return parser.parse_args()
 
 
@@ -55,6 +59,14 @@ def redacted(source: str) -> str:
 
 @measured('capture')
 def record_network_source(ffmpeg: str, source: str, target: Path, seconds: float) -> None:
+    policy = os.environ.get('VISN_MEDIA_POLICY', 'research-raw-v1')
+    if policy == 'sanitized-v1':
+        from privacy_media import PrivacyDetector, sanitize
+        detector = PrivacyDetector(os.environ.get('VISN_PRIVACY_MODEL_DIR', '.retrieval/privacy-models'))
+        sanitize(source, target, seconds, detector)
+        return
+    if policy != 'research-raw-v1':
+        raise ValueError('unsupported_media_policy')
     network = source.startswith(("http://", "https://", "rtsp://", "rtsps://"))
     if not network:
         try:
@@ -216,12 +228,22 @@ def extract_clip(
         target.unlink(missing_ok=True)
 
     transcoded = subprocess.run(
-        [*common, "-c:v", "libx264", "-preset", "ultrafast", "-crf", "28", "-pix_fmt", "yuv420p", "-threads", str(threads), "-c:a", "aac", "-movflags", "+faststart", "-y", str(target)],
+        [*common, "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2", "-c:v", "libx264", "-preset", "ultrafast", "-crf", "28", "-pix_fmt", "yuv420p", "-threads", str(threads), "-c:a", "aac", "-movflags", "+faststart", "-y", str(target)],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
         check=False,
     )
     return transcoded.returncode == 0 and target.is_file() and target.stat().st_size > 0
+
+
+def privacy_timing_notes(manifest):
+    capture=manifest.get('capture')
+    if not capture:
+        return []
+    notes=[f"Observed {capture['observed_frames']} frames; capture stopped because {capture['termination']}. Transport times are not verified scene capture times; continuity is not certified."]
+    if capture['timestamp_jump_count']:
+        notes.append(f"{capture['timestamp_jump_count']} intervals have timestamp spacing over {capture['timestamp_jump_threshold_ms']}ms; variable frame rate and missing observations cannot be distinguished.")
+    return notes
 
 
 @measured('observer_analysis')
@@ -361,7 +383,11 @@ def analyze(cv2: Any, np: Any, ffmpeg: str, evidence: Path, output_dir: Path, ar
         "duration_ms": duration_ms,
         "frames_decoded": frames_consumed,
         "events": events,
-        "data_quality_notes": [
+        "data_quality_notes": privacy_timing_notes(getattr(args, 'privacy_manifest', {})) + getattr(args, 'privacy_manifest', {}).get('clock_limitations', []) + ([
+            "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending."
+        ] if os.environ.get('VISN_MEDIA_POLICY') == 'sanitized-v1' else [
+            "Research raw profile: this recording is not privacy sanitized."
+        ]) + [
             "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
             f"Observer analysis retrieved {observer_frames} of {frames_consumed} consumed source frames.",
             clip_note,
@@ -369,12 +395,58 @@ def analyze(cv2: Any, np: Any, ffmpeg: str, evidence: Path, output_dir: Path, ar
     }
 
 
+def analyze_capture_sessions(cv2, np, ffmpeg, output_dir, args):
+    from privacy_media import PrivacyDetector, capture_sessions, verify_capture_sessions, verify_commit, digest
+    if os.environ.get('VISN_MEDIA_POLICY') != 'sanitized-v1':
+        raise ValueError('source_sessions_require_sanitized_profile')
+    bundle = output_dir/'capture'
+    if not args.resume_retained:
+        detector = PrivacyDetector(os.environ.get('VISN_PRIVACY_MODEL_DIR', '.retrieval/privacy-models'))
+        capture_sessions(args.source, bundle, args.max_seconds, detector, reconnect_attempts=args.reconnect_attempts)
+    manifest = verify_capture_sessions(bundle, allow_partial=args.resume_retained)
+    parent = output_dir/'sessions'
+    if parent.is_symlink():
+        raise ValueError('session_storage_symlink')
+    parent.mkdir(exist_ok=True)
+    results = []
+    for index, session in enumerate(manifest['sessions']):
+        identifier = str(uuid.UUID(session['session_id']))
+        directory = parent/identifier
+        if directory.is_symlink():
+            raise ValueError('session_storage_symlink')
+        directory.mkdir(exist_ok=True)
+        source = bundle/session['file']
+        evidence = directory/'source.mkv'
+        for suffix in ('', '.privacy.json', '.frames.jsonl'):
+            original, target = Path(str(source)+suffix), Path(str(evidence)+suffix)
+            if target.is_symlink():
+                raise ValueError('session_storage_symlink')
+            if target.exists():
+                if digest(target) != digest(original):
+                    raise ValueError('retained_session_artifact_changed')
+            else:
+                os.link(original, target)
+        args.privacy_manifest = verify_commit(evidence)
+        result = analyze(cv2, np, ffmpeg, evidence, directory, args)
+        result['storage_session_id'] = identifier
+        result['capture_extent'] = 'finished' if manifest['state'] == 'completed' else 'retained_prefix'
+        result['data_quality_notes'].append(f"Source session {index+1}: {session['start_reason']}. Independent source-relative clock; no elapsed time between sessions is inferred. Capture journal state: {manifest['state']}.")
+        results.append(result)
+    return dict(sessions=results)
+
+
 def main() -> None:
+    from worker_lifeline import start
+    start()
     args = parse_args()
     if args.source == "-":
         args.source = sys.stdin.read().strip()
     if not args.source:
         fail("a video source is required")
+    if not 0 <= args.reconnect_attempts <= 8:
+        fail("reconnect attempts must be between zero and eight")
+    if args.reconnect_attempts and (not args.capture_sessions or os.environ.get("VISN_MEDIA_POLICY") != "sanitized-v1"):
+        fail("reconnect attempts require sanitized source-session capture")
     if (
         not math.isfinite(args.observer_fps)
         or args.observer_fps <= 0
@@ -416,10 +488,23 @@ def main() -> None:
             cv2.setNumThreads(args.threads)
             ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
             logging.info("Recording bounded camera interval: %.1fs", args.max_seconds)
-            record_network_source(ffmpeg, args.source, evidence, args.max_seconds)
-            logging.info("Recording retained; analyzing intervals and generating browser clips")
-            result = analyze(cv2, np, ffmpeg, evidence, output_dir, args)
-            logging.info("Indexed %d intervals over %dms", len(result['events']), result['duration_ms'])
+            if args.capture_sessions:
+                result = analyze_capture_sessions(cv2, np, ffmpeg, output_dir, args)
+            elif args.resume_retained:
+                if os.environ.get('VISN_MEDIA_POLICY') != 'sanitized-v1':
+                    raise ValueError('retained_recovery_requires_sanitized_profile')
+                from privacy_media import verify_commit
+                verify_commit(evidence)
+                logging.info('Resuming verified retained evidence without opening the camera stream')
+            else:
+                record_network_source(ffmpeg, args.source, evidence, args.max_seconds)
+            if not args.capture_sessions and os.environ.get('VISN_MEDIA_POLICY') == 'sanitized-v1':
+                from privacy_media import verify_commit
+                args.privacy_manifest = verify_commit(evidence)
+            if not args.capture_sessions:
+                logging.info("Recording retained; analyzing intervals and generating browser clips")
+                result = analyze(cv2, np, ffmpeg, evidence, output_dir, args)
+                logging.info("Indexed %d intervals over %dms", len(result['events']), result['duration_ms'])
         except ImportError as error:
             fail(f"missing memory-runner dependency: {error}; install tools/requirements-yolo.txt")
         except Exception as error:

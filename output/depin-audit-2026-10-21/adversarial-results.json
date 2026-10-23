@@ -1,0 +1,329 @@
+{
+  "status": {
+    "http": 200,
+    "body": {
+      "engine_version": "2026.10-sota-depin-blueprint",
+      "compressed_domain_gating_enabled": true,
+      "physical_liveness_prnu_enf_enabled": true,
+      "privacy_three_tier_redaction_enabled": true,
+      "adaptive_tracking_density_handover_enabled": true,
+      "hierarchical_anomaly_cascade_enabled": true,
+      "clickhouse_h3_olap_enabled": true,
+      "quantized_1bit_diskann_enabled": true,
+      "spatio_temporal_video_rag_enabled": true,
+      "poc_five_factor_engine_enabled": true,
+      "pinned_tracker_config": "bytetrack.yaml",
+      "nominal_grid_frequency_hz": 50.0,
+      "memory_reduction_ratio": "96% (32x compression via 1-bit BQ)"
+    }
+  },
+  "uncalibrated_liveness": {
+    "http": 200,
+    "body": {
+      "is_authentic": true,
+      "pce_score": -100.0,
+      "enf_correlation": 1.0,
+      "estimated_enf_hz": 50.0,
+      "accumulated_calibration_frames": 0,
+      "status": "calibrating",
+      "details": "Calibrating PRNU sensor signature: 0/200 frames"
+    }
+  },
+  "caller_fabricated_liveness": {
+    "http": 200,
+    "body": {
+      "is_authentic": true,
+      "pce_score": 300.0,
+      "enf_correlation": 1.0,
+      "estimated_enf_hz": 3.0,
+      "accumulated_calibration_frames": 250,
+      "status": "verified_live",
+      "details": "Stream verified: PCE=300.0 >= 50.0, ENF rho=1.00 >= 0.65"
+    }
+  },
+  "new_low_confidence_face": {
+    "http": 200,
+    "body": []
+  },
+  "first_face": {
+    "http": 200,
+    "body": [
+      {
+        "mask_id": 1,
+        "dilated_bbox": [
+          0.09,
+          0.09,
+          0.120000005,
+          0.120000005
+        ],
+        "confidence": 0.95,
+        "occlusion_frames": 0,
+        "is_occluded_projection": false,
+        "sanitization": "cryptographic_erasure",
+        "attributes": null
+      }
+    ]
+  },
+  "moving_face": {
+    "http": 200,
+    "body": [
+      {
+        "mask_id": 1,
+        "dilated_bbox": [
+          0.125,
+          0.09,
+          0.120000005,
+          0.120000005
+        ],
+        "confidence": 0.95,
+        "occlusion_frames": 0,
+        "is_occluded_projection": false,
+        "sanitization": "cryptographic_erasure",
+        "attributes": null
+      }
+    ]
+  },
+  "moving_face_right_edge_uncovered": 0.004999994999999979,
+  "unrelated_empty_camera_request": {
+    "http": 200,
+    "body": [
+      {
+        "mask_id": 1,
+        "dilated_bbox": [
+          0.14,
+          0.09,
+          0.120000005,
+          0.120000005
+        ],
+        "confidence": 0.95,
+        "occlusion_frames": 1,
+        "is_occluded_projection": true,
+        "sanitization": "cryptographic_erasure",
+        "attributes": null
+      }
+    ]
+  },
+  "rust_active_gating": {
+    "http": 200,
+    "body": {
+      "should_decode_frame": false,
+      "total_macroblocks": 8160,
+      "foreground_macroblocks": 18,
+      "foreground_ratio": 0.0022058825,
+      "motion_entropy": 0.0,
+      "mean_foreground_motion": 14.422204,
+      "compressed_rois": [
+        [
+          0.026041666,
+          0.05514706,
+          0.008333334,
+          0.014705882
+        ]
+      ],
+      "mpeg_vcm_loss": 2507.5,
+      "cpu_throughput_fps": 3450.0,
+      "reason": "idle_stream_gated: fg_ratio=0.002 < 0.035, entropy=0.000"
+    }
+  },
+  "python_active_gating": {
+    "should_decode_frame": true,
+    "total_macroblocks": 100,
+    "foreground_macroblocks": 18,
+    "foreground_ratio": 0.18,
+    "motion_entropy": 0.0,
+    "mean_foreground_motion": 14.42,
+    "compressed_rois": [
+      [
+        0.00125,
+        0.05514705882352941,
+        0.01,
+        0.014705882352941176
+      ]
+    ],
+    "mpeg_vcm_loss": 1623.0,
+    "cpu_throughput_fps": 3480.0,
+    "reason": "motion_detected: fg_ratio=0.180 >= 0.035"
+  },
+  "empty_rag": {
+    "http": 200,
+    "body": {
+      "decoupled_query": {
+        "raw_query": "Why did the truck stop?",
+        "detection_entities": [
+          "vehicle"
+        ],
+        "ocr_targets": [],
+        "asr_keywords": [],
+        "query_type": "causal_investigation",
+        "h3_filter": null,
+        "time_range_ms": null
+      },
+      "candidate_clips_considered": 0,
+      "hops_traversed": 2,
+      "intent_keyframes": [],
+      "context_tokens_estimated": 0,
+      "synthesis_summary": "Synthesized 0 causal keyframes for query 'Why did the truck stop?'. Temporal sequence confirmed across 0 clips.",
+      "latency_ms": 1.2
+    }
+  },
+  "vector_sizing": {
+    "http": 200,
+    "body": {
+      "dimension": 384,
+      "graph_degree_m": 16,
+      "vector_count": 100000000,
+      "ram_fp32_bytes": 183040000000,
+      "ram_fp16_bytes": 98560000000,
+      "ram_sq8_bytes": 56320000000,
+      "ram_bq1_bytes": 19360000000,
+      "compression_ratio_bq1_vs_fp32": 9.454545,
+      "bq1_memory_savings_percent": 89.42308
+    }
+  },
+  "constructed_vector_recall": {
+    "corpus_size": 50,
+    "dimension": 384,
+    "exact_top10": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109
+    ],
+    "approximate_top10": [
+      0,
+      2,
+      5,
+      1,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9
+    ],
+    "recall_at_10": 0.0,
+    "request_ms": 1.473333000000021,
+    "scope": "adversarial synthetic fixture, not a dataset estimate"
+  },
+  "below_quality_threshold_payout": {
+    "http": 200,
+    "body": {
+      "epoch_index": 1,
+      "total_reward_pool": 100.0,
+      "total_nodes_evaluated": 1,
+      "verified_active_nodes": 1,
+      "spoofed_or_disqualified_nodes": 0,
+      "total_composite_weight": 0.833061,
+      "node_scores": [
+        {
+          "camera_id": "camera-a",
+          "contributor_id": "owner-a",
+          "factor_l_liveness": 1.0,
+          "factor_q_quality": 0.2,
+          "factor_h_entropy": 2.0,
+          "factor_d_demand": 1.5,
+          "factor_m_loyalty": 1.3884349,
+          "composite_weight": 0.833061,
+          "epoch_weight_share": 1.0,
+          "allocated_payout": 100.0,
+          "status": "FLAGGED: Below minimum optical quality threshold (7000 bps)"
+        }
+      ]
+    }
+  },
+  "duplicate_camera_payout": {
+    "http": 200,
+    "body": {
+      "epoch_index": 1,
+      "total_reward_pool": 100.0,
+      "total_nodes_evaluated": 2,
+      "verified_active_nodes": 2,
+      "spoofed_or_disqualified_nodes": 0,
+      "total_composite_weight": 1.666122,
+      "node_scores": [
+        {
+          "camera_id": "camera-a",
+          "contributor_id": "owner-a",
+          "factor_l_liveness": 1.0,
+          "factor_q_quality": 0.2,
+          "factor_h_entropy": 2.0,
+          "factor_d_demand": 1.5,
+          "factor_m_loyalty": 1.3884349,
+          "composite_weight": 0.833061,
+          "epoch_weight_share": 0.5,
+          "allocated_payout": 50.0,
+          "status": "FLAGGED: Below minimum optical quality threshold (7000 bps)"
+        },
+        {
+          "camera_id": "camera-a",
+          "contributor_id": "owner-a",
+          "factor_l_liveness": 1.0,
+          "factor_q_quality": 0.2,
+          "factor_h_entropy": 2.0,
+          "factor_d_demand": 1.5,
+          "factor_m_loyalty": 1.3884349,
+          "composite_weight": 0.833061,
+          "epoch_weight_share": 0.5,
+          "allocated_payout": 50.0,
+          "status": "FLAGGED: Below minimum optical quality threshold (7000 bps)"
+        }
+      ]
+    }
+  },
+  "negative_reward_pool": {
+    "http": 200,
+    "body": {
+      "epoch_index": 1,
+      "total_reward_pool": -100.0,
+      "total_nodes_evaluated": 1,
+      "verified_active_nodes": 1,
+      "spoofed_or_disqualified_nodes": 0,
+      "total_composite_weight": 0.833061,
+      "node_scores": [
+        {
+          "camera_id": "camera-a",
+          "contributor_id": "owner-a",
+          "factor_l_liveness": 1.0,
+          "factor_q_quality": 0.2,
+          "factor_h_entropy": 2.0,
+          "factor_d_demand": 1.5,
+          "factor_m_loyalty": 1.3884349,
+          "composite_weight": 0.833061,
+          "epoch_weight_share": 1.0,
+          "allocated_payout": -100.0,
+          "status": "FLAGGED: Below minimum optical quality threshold (7000 bps)"
+        }
+      ]
+    }
+  },
+  "invalid_dimension_insert": {
+    "error": "Remote end closed connection without response"
+  },
+  "valid_search_after_bad_insert": {
+    "error": "Remote end closed connection without response"
+  },
+  "status_after_bad_insert": {
+    "http": 200,
+    "body": {
+      "engine_version": "2026.10-sota-depin-blueprint",
+      "compressed_domain_gating_enabled": true,
+      "physical_liveness_prnu_enf_enabled": true,
+      "privacy_three_tier_redaction_enabled": true,
+      "adaptive_tracking_density_handover_enabled": true,
+      "hierarchical_anomaly_cascade_enabled": true,
+      "clickhouse_h3_olap_enabled": true,
+      "quantized_1bit_diskann_enabled": true,
+      "spatio_temporal_video_rag_enabled": true,
+      "poc_five_factor_engine_enabled": true,
+      "pinned_tracker_config": "bytetrack.yaml",
+      "nominal_grid_frequency_hz": 50.0,
+      "memory_reduction_ratio": "96% (32x compression via 1-bit BQ)"
+    }
+  }
+}

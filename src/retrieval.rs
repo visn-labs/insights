@@ -42,6 +42,11 @@ pub fn eligible(request: &MemoryQueryRequest, event: &MemoryEvent) -> bool {
             .as_ref()
             .is_none_or(|id| event.cluster_id.as_ref() == Some(id))
         && (request.camera_ids.is_empty() || request.camera_ids.contains(&event.camera_id))
+        && (request.source_session_ids.is_empty()
+            || event
+                .source_session_id
+                .as_ref()
+                .is_some_and(|id| request.source_session_ids.contains(id)))
         && request.start_ms.is_none_or(|start| event.end_ms >= start)
         && request.end_ms.is_none_or(|end| event.start_ms <= end)
 }
@@ -93,6 +98,7 @@ pub async fn search(
     if request.semantic_enabled && !filtered.is_empty() {
         if let Some(url) = &config.retrieval_url {
             match remote_search(
+                config,
                 url,
                 config.retrieval_timeout_secs,
                 request,
@@ -124,6 +130,7 @@ pub async fn search(
 }
 
 async fn remote_search(
+    config: &Config,
     url: &str,
     timeout: u64,
     request: &MemoryQueryRequest,
@@ -141,15 +148,16 @@ async fn remote_search(
         .connect_timeout(Duration::from_secs(2))
         .timeout(Duration::from_secs(timeout))
         .build()?;
-    let response=client.post(format!("{}/search",url.trim_end_matches('/')))
+    let response=config.pin_retrieval(client.post(format!("{}/search",url.trim_end_matches('/')))
         .header("X-Visn-Query-ID", query_id.unwrap_or_else(Uuid::now_v7).to_string()).json(&json!({
         "query":request.query,"events":events,"limit":request.limit.clamp(1,50),"rerank":request.rerank_enabled,
         "lexical_ids":lexical.iter().map(|item|item.event.event_id).collect::<Vec<_>>()
-    })).send().await.context("Qwen retrieval service request failed")?.error_for_status().context("Qwen retrieval service returned an error")?;
+    }))).send().await.context("Qwen retrieval service request failed")?.error_for_status().context("Qwen retrieval service returned an error")?;
     let body: SearchResult = response
         .json()
         .await
         .context("invalid retrieval response")?;
+    config.verify_retrieval_profile(&body.provenance["worker_profile"])?;
     validate(
         &body,
         candidates.iter().map(|(e, _)| e.event_id).collect(),
@@ -179,6 +187,7 @@ pub fn event_payload<'a>(
 ) -> anyhow::Result<Vec<serde_json::Value>> {
     events.map(|event| {
         Ok(json!({"event_id":event.event_id,
+            "expected_source_sha256":event.privacy.as_ref().map(|p| &p.source.media_sha256),
             // Source intervals avoid copy-mode keyframe padding and reference-mode full clips.
             "source_path":std::path::absolute(&event.source_evidence_path).context("invalid source evidence path")?,
             "start_ms":event.start_ms,"end_ms":event.end_ms}))
@@ -207,6 +216,35 @@ fn validate(body: &SearchResult, allowed: HashSet<Uuid>, limit: usize) -> anyhow
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn selected_worker_profile_is_forwarded_and_cannot_be_silently_ignored() {
+        let mut config = Config::from_env().unwrap();
+        config.retrieval_expected_profile = Some("a".repeat(64));
+        let request = config
+            .pin_retrieval(reqwest::Client::new().post("http://127.0.0.1/search"))
+            .build()
+            .unwrap();
+        assert_eq!(
+            request.headers()["X-Visn-Expected-Profile"]
+                .to_str()
+                .unwrap(),
+            "a".repeat(64)
+        );
+        assert!(config
+            .verify_retrieval_profile(&json!({"fingerprint":"a".repeat(64)}))
+            .is_ok());
+        assert!(config
+            .verify_retrieval_profile(&json!({"fingerprint":"b".repeat(64)}))
+            .is_err());
+        assert!(config
+            .verify_retrieval_profile(&serde_json::Value::Null)
+            .is_err());
+        config.retrieval_expected_profile = None;
+        assert!(config
+            .verify_retrieval_profile(&serde_json::Value::Null)
+            .is_ok());
+    }
     async fn search(
         config: &Config,
         request: &MemoryQueryRequest,

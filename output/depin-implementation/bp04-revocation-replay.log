@@ -1,0 +1,13 @@
+Capture and prepare actual sanitized evidence
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_recording_revocation.py", line 177, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/anagha/projects/visn_rust/tools/check_recording_revocation.py", line 107, in main
+    job=wait_until(prepared,45)
+  File "/Users/anagha/projects/visn_rust/tools/check_recording_recovery.py", line 35, in wait_until
+    result=predicate()
+  File "/Users/anagha/projects/visn_rust/tools/check_recording_revocation.py", line 106, in prepared
+    return current if current.get('visual_projection',{}).get('state')=='completed' else None
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'

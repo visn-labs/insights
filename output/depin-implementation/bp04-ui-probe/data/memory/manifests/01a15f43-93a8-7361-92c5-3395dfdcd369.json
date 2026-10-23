@@ -1,0 +1,39 @@
+{
+  "request_fingerprint": "c8f0631678d504fab024c5fe911d3790f22007c90def45ac34366764245a9c0f",
+  "camera_checkpoints": {},
+  "recovery_attempts": 0,
+  "id": "01a15f43-93a8-7361-92c5-3395dfdcd369",
+  "request": {
+    "idempotency_key": "cb08b375fdb519ead6cbe17ff43054f9",
+    "long_memory_enabled": false,
+    "temporal_enabled": false,
+    "name": "Uncertain acknowledgement check",
+    "cluster_id": "local-test-cluster",
+    "cameras": [
+      {
+        "camera_id": "camera-1-fdc0d062",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 2,
+    "observer_fps": 1.0,
+    "vlm_enabled": false,
+    "vlm_model": "google/gemma-4-26b-a4b-qat"
+  },
+  "status": "running",
+  "created_at_ms": 1792599626664,
+  "started_at_ms": 1792599626679,
+  "completed_at_ms": null,
+  "result": null,
+  "error": null
+}

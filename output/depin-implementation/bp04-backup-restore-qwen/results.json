@@ -1,0 +1,1740 @@
+{
+  "scope": "Atomic cutover/rollback through Rust; fixtures by default, --actual uses cached Qwen.",
+  "actual_qwen": true,
+  "lost_ack": false,
+  "replace_pending": false,
+  "legacy_binding": null,
+  "backup": {
+    "snapshot": "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-backup-restore-qwen/snapshot",
+    "snapshot_sha256": "d3020973c9126e4f1055840c5e3bb4afe5c4366a482687b4530b833db080a65c",
+    "source_state_sha256": "bf73a4309432a1173e62510647598d04a5fe51590e71a29e993245a33415e4da",
+    "lineage": {
+      "id": "5530d0a6-34a6-4409-8466-bdbc497fee95",
+      "schema": "visn-recovery-lineage-v1"
+    }
+  },
+  "restore": {
+    "destination": "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-backup-restore-qwen/restored-data",
+    "schema": "visn-evidence-restore-v1",
+    "snapshot_sha256": "d3020973c9126e4f1055840c5e3bb4afe5c4366a482687b4530b833db080a65c",
+    "current_state_sha256": "e8515c7f7868df0db85bff274ad8ce44b999848f191efbeeb13453cf13faa325",
+    "lineage": {
+      "id": "5530d0a6-34a6-4409-8466-bdbc497fee95",
+      "schema": "visn-recovery-lineage-v1"
+    },
+    "revoked_job_ids": [
+      "01a16985-85d3-7061-9244-e0474adf26bd"
+    ],
+    "excluded_new_nonrevoked_job_ids": [],
+    "visual_preparation": "explicit_rebuild_required",
+    "external_cleanup": "pending; prior acknowledgements are not copied as completion",
+    "crash_before_publish": "SIGKILL; destination absent; current state unchanged; retry succeeded",
+    "restored_generation": "c2f80a91-f7c8-45e4-afd8-8248441e73e1",
+    "remote_cleanup": {
+      "source_paths": [
+        "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-backup-restore-qwen/data/memory/01a16985-85d3-7061-9244-e0474adf26bd/junction/source.mkv"
+      ],
+      "target_receipts": {
+        "6a5f23901118c8095f2f6f810d0e6b94a040ad0978c95227358c3d8ce629b2c3": {
+          "cleanup_complete": true,
+          "index_storage": "bba84c41f5103bab99189ee7dad31f9b1280198612b75be1c8e8433f73902115",
+          "media_erased": false,
+          "pending_policies": [],
+          "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+          "scope_id": "01a16985-85d3-7061-9244-e0474adf26bd",
+          "status": "revoked"
+        },
+        "d40395df90e10982877ac39c51dd7750c9c87df4ab361bbe63068a6df20158a8": {
+          "cleanup_complete": true,
+          "index_storage": "1593bc9818863fb6e056222be7369e3e35924ffdff186158a9f72b6a882cbe7d",
+          "media_erased": false,
+          "pending_policies": [],
+          "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+          "scope_id": "01a16985-85d3-7061-9244-e0474adf26bd",
+          "status": "revoked"
+        }
+      },
+      "registry_revision": "a26a3c8c-05ec-4317-88db-ce37bba8f33b",
+      "local_cleanup_state": "completed",
+      "local_cleanup_error": null,
+      "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+      "revoked_at_ms": 1792771776956,
+      "cleanup_state": "completed",
+      "attempts": 5,
+      "next_attempt_at_ms": 0,
+      "worker_fingerprint": "6a5f23901118c8095f2f6f810d0e6b94a040ad0978c95227358c3d8ce629b2c3",
+      "last_error": null,
+      "receipt": {
+        "cleanup_complete": true,
+        "index_storage": "1593bc9818863fb6e056222be7369e3e35924ffdff186158a9f72b6a882cbe7d",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+        "scope_id": "01a16985-85d3-7061-9244-e0474adf26bd",
+        "status": "revoked"
+      }
+    },
+    "source_recapture": false
+  },
+  "generations": [
+    "47e185f6-d2cc-482a-a9b0-847e0008c082",
+    "2fcfe4f8-76c3-4117-a1c3-48447ed1ed0f"
+  ],
+  "inflight_a": {
+    "deployment_generation": "47e185f6-d2cc-482a-a9b0-847e0008c082",
+    "elapsed_secs": 1.835,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "legacy-renormalize-v1",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 380,
+      "decode_entries": 2,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 1,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "b430629b101335bb6baec5e74ca1624b68fdfd7c5c58d1913ea9dc884f3702c5",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "bba84c41f5103bab99189ee7dad31f9b1280198612b75be1c8e8433f73902115",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "vector_policy": "legacy-renormalize-v1",
+        "work_caches": true
+      }
+    }
+  },
+  "selected_b": {
+    "deployment_generation": "2fcfe4f8-76c3-4117-a1c3-48447ed1ed0f",
+    "elapsed_secs": 1.683,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "canonical-unit-v2",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 380,
+      "decode_entries": 2,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 1,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "270f0bdaba93b367945ac144b1da298a92bc4c479fcb401aa84f59ba811381fa",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "1593bc9818863fb6e056222be7369e3e35924ffdff186158a9f72b6a882cbe7d",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-canonical-v2.sqlite3",
+        "vector_policy": "canonical-unit-v2",
+        "work_caches": true
+      }
+    }
+  },
+  "rolled_back": {
+    "deployment_generation": "47e185f6-d2cc-482a-a9b0-847e0008c082",
+    "elapsed_secs": 0.257,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "legacy-renormalize-v1",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 760,
+      "decode_entries": 4,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 2,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "b430629b101335bb6baec5e74ca1624b68fdfd7c5c58d1913ea9dc884f3702c5",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "bba84c41f5103bab99189ee7dad31f9b1280198612b75be1c8e8433f73902115",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "vector_policy": "legacy-renormalize-v1",
+        "work_caches": true
+      }
+    }
+  },
+  "wrong_storage_rejection": {
+    "source_paths": [
+      "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-backup-restore-qwen/data/memory/01a16985-85d3-7061-9244-e0474adf26bd/junction/source.mkv"
+    ],
+    "target_receipts": {},
+    "registry_revision": "8b7b649c-08c9-4d53-88e1-b6a97de6cf58",
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+    "revoked_at_ms": 1792771776956,
+    "cleanup_state": "blocked",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792771783485,
+    "worker_fingerprint": "6a5f23901118c8095f2f6f810d0e6b94a040ad0978c95227358c3d8ce629b2c3",
+    "last_error": "revocation_storage_changed",
+    "receipt": null
+  },
+  "failed_stage_generation": "b1990194-ee04-455c-bc3c-747ba833a337",
+  "retired_projection": {
+    "deployment_generation": "47e185f6-d2cc-482a-a9b0-847e0008c082",
+    "retry_requested": false,
+    "revision": "01a16986-1727-7b71-935e-ea6892194ad2",
+    "state": "cancelled",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792771770113,
+    "task_id": "e5109450-6bdf-5250-98ac-a0f079a691ef",
+    "worker_fingerprint": "6a5f23901118c8095f2f6f810d0e6b94a040ad0978c95227358c3d8ce629b2c3",
+    "last_error": "projection_deployment_retired",
+    "receipt": {
+      "completed": 0,
+      "coverage": "prepared_intervals_only_not_exhaustive_scene_coverage",
+      "created_at": 1792771759.986397,
+      "embedding": {
+        "decode_policy": "single-seek-v1",
+        "frames": 2,
+        "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+        "instruction": "Retrieve camera video segments that visually match the search query.",
+        "model": "Qwen/Qwen3-VL-Embedding-2B",
+        "pixels": 64,
+        "runtime": {
+          "attention": "sdpa",
+          "cuda_tf32": false,
+          "cuda_version": null,
+          "cudnn_benchmark": false,
+          "cudnn_deterministic": false,
+          "cudnn_tf32": true,
+          "cudnn_version": null,
+          "deterministic_algorithms": false,
+          "device": "cpu",
+          "dtype": "float32",
+          "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+          "float32_matmul_precision": "highest",
+          "interop_threads": 16,
+          "machine": "arm64",
+          "packages": {
+            "imageio-ffmpeg": "0.6.0",
+            "numpy": "2.5.4",
+            "pillow": "12.3.0",
+            "qwen-vl-utils": "0.0.14",
+            "torch": "2.8.0",
+            "transformers": "4.57.3"
+          },
+          "threads": 2,
+          "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+        },
+        "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+        "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+        "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+      },
+      "error": null,
+      "failed": 0,
+      "id": "e5109450-6bdf-5250-98ac-a0f079a691ef",
+      "item_errors": [],
+      "max_attempts": 2,
+      "pending": 1,
+      "profile_current": true,
+      "scope_id": "01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": "queued",
+      "total": 1,
+      "updated_at": 1792771759.986397,
+      "vector_policy": "legacy-renormalize-v1",
+      "worker_profile": {
+        "fingerprint": "b430629b101335bb6baec5e74ca1624b68fdfd7c5c58d1913ea9dc884f3702c5",
+        "manifest": {
+          "decode_policy": "single-seek-v1",
+          "embedding": {
+            "decode_policy": "single-seek-v1",
+            "frames": 2,
+            "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+            "instruction": "Retrieve camera video segments that visually match the search query.",
+            "model": "Qwen/Qwen3-VL-Embedding-2B",
+            "pixels": 64,
+            "runtime": {
+              "attention": "sdpa",
+              "cuda_tf32": false,
+              "cuda_version": null,
+              "cudnn_benchmark": false,
+              "cudnn_deterministic": false,
+              "cudnn_tf32": true,
+              "cudnn_version": null,
+              "deterministic_algorithms": false,
+              "device": "cpu",
+              "dtype": "float32",
+              "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+              "float32_matmul_precision": "highest",
+              "interop_threads": 16,
+              "machine": "arm64",
+              "packages": {
+                "imageio-ffmpeg": "0.6.0",
+                "numpy": "2.5.4",
+                "pillow": "12.3.0",
+                "qwen-vl-utils": "0.0.14",
+                "torch": "2.8.0",
+                "transformers": "4.57.3"
+              },
+              "threads": 2,
+              "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+            },
+            "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+            "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+            "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+          },
+          "index_schema": "vectors-v1",
+          "index_storage": "bba84c41f5103bab99189ee7dad31f9b1280198612b75be1c8e8433f73902115",
+          "interpretation": {
+            "identity": "configuration_only_not_model_weight_attestation",
+            "model": null,
+            "revision": null
+          },
+          "qualification": "integration_candidate_not_quality_acceptance",
+          "reranker": {
+            "implementation": "81f2c61998e66deddaf93c2e3a06759d0d282d70a44828cc623d1e9bfe9b8533",
+            "model": "Qwen/Qwen3-VL-Reranker-2B",
+            "runtime": {
+              "attention": "sdpa",
+              "cuda_tf32": false,
+              "cuda_version": null,
+              "cudnn_benchmark": false,
+              "cudnn_deterministic": false,
+              "cudnn_tf32": true,
+              "cudnn_version": null,
+              "deterministic_algorithms": false,
+              "device": "cpu",
+              "dtype": "float32",
+              "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+              "float32_matmul_precision": "highest",
+              "interop_threads": 16,
+              "machine": "arm64",
+              "packages": {
+                "imageio-ffmpeg": "0.6.0",
+                "numpy": "2.5.4",
+                "pillow": "12.3.0",
+                "qwen-vl-utils": "0.0.14",
+                "torch": "2.8.0",
+                "transformers": "4.57.3"
+              },
+              "threads": 2,
+              "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+            },
+            "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+          },
+          "schema": "visn-retrieval-profile-v1",
+          "vector_database": "semantic-v1.sqlite3",
+          "vector_policy": "legacy-renormalize-v1",
+          "work_caches": true
+        }
+      }
+    }
+  },
+  "revocation": {
+    "source_paths": [
+      "/Users/anagha/projects/visn_rust/output/depin-implementation/bp04-backup-restore-qwen/data/memory/01a16985-85d3-7061-9244-e0474adf26bd/junction/source.mkv"
+    ],
+    "target_receipts": {
+      "6a5f23901118c8095f2f6f810d0e6b94a040ad0978c95227358c3d8ce629b2c3": {
+        "cleanup_complete": true,
+        "index_storage": "bba84c41f5103bab99189ee7dad31f9b1280198612b75be1c8e8433f73902115",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+        "scope_id": "01a16985-85d3-7061-9244-e0474adf26bd",
+        "status": "revoked"
+      },
+      "d40395df90e10982877ac39c51dd7750c9c87df4ab361bbe63068a6df20158a8": {
+        "cleanup_complete": true,
+        "index_storage": "1593bc9818863fb6e056222be7369e3e35924ffdff186158a9f72b6a882cbe7d",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+        "scope_id": "01a16985-85d3-7061-9244-e0474adf26bd",
+        "status": "revoked"
+      }
+    },
+    "registry_revision": "8b7b649c-08c9-4d53-88e1-b6a97de6cf58",
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+    "revoked_at_ms": 1792771776956,
+    "cleanup_state": "completed",
+    "attempts": 3,
+    "next_attempt_at_ms": 0,
+    "worker_fingerprint": "6a5f23901118c8095f2f6f810d0e6b94a040ad0978c95227358c3d8ce629b2c3",
+    "last_error": null,
+    "receipt": {
+      "cleanup_complete": true,
+      "index_storage": "1593bc9818863fb6e056222be7369e3e35924ffdff186158a9f72b6a882cbe7d",
+      "media_erased": false,
+      "pending_policies": [],
+      "revision": "01a16986-61bc-7d42-8200-c42d8f066758",
+      "scope_id": "01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": "revoked"
+    }
+  },
+  "source_requests": [
+    "/source.mp4",
+    "/source.mp4"
+  ],
+  "observations": [
+    {
+      "path": "/api/v1/memory-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f/visual-index/e5109450-6bdf-5250-98ac-a0f079a691ef/retry?deployment_generation=47e185f6-d2cc-482a-a9b0-847e0008c082",
+      "status": 409
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f/visual-index/e5109450-6bdf-5250-98ac-a0f079a691ef/retry?deployment_generation=47e185f6-d2cc-482a-a9b0-847e0008c082",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 400
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-feed-7630-bfff-6597615e9f0f",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd/visual-index",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-events/697a1e41-55f7-5ce7-b880-33caa6c7bf33/source",
+      "status": 404
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16985-85d3-7061-9244-e0474adf26bd",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    }
+  ]
+}

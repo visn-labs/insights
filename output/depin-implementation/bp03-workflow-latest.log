@@ -1,0 +1,4 @@
+Checking strict profile and real-model upload
+Checking HTTP recording and derived artifact serving
+Checking changed evidence is rejected before serving or querying
+Passed 24 API requests; output/depin-implementation/bp03-workflow-latest

@@ -1,0 +1,38 @@
+.objc[30476]: Class AVFFrameReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1017643a8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1057ac3a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+objc[30476]: Class AVFAudioReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1017643f8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1057ac3f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+.....[ WARN:0@0.255] global loadsave.cpp:278 findDecoder imread_('1/lena.jpg'): can't open/read file: check file path/integrity
+E[ WARN:0@0.379] global loadsave.cpp:278 findDecoder imread_('1/lena.jpg'): can't open/read file: check file path/integrity
+F[ WARN:0@0.380] global loadsave.cpp:278 findDecoder imread_('1/plate.png'): can't open/read file: check file path/integrity
+F
+======================================================================
+ERROR: test_live_mjpeg_uses_observed_arrival_not_invented_capture_timestamps (__main__.ModelChecks.test_live_mjpeg_uses_observed_arrival_not_invented_capture_timestamps)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_privacy_media.py", line 163, in test_live_mjpeg_uses_observed_arrival_not_invented_capture_timestamps
+    jpeg=cv2.imencode('.jpg',image)[1].tobytes()
+         ~~~~~~~~~~~~^^^^^^^^^^^^^^
+cv2.error: OpenCV(4.14.0) /Users/xperience/GHA-OpenCV-Python/_work/opencv-python/opencv-python/opencv/modules/imgcodecs/src/loadsave.cpp:1646: error: (-215:Assertion failed) !_img.empty() in function 'imencodeWithMetadata'
+
+
+======================================================================
+FAIL: test_public_face_and_plate_sequences (__main__.ModelChecks.test_public_face_and_plate_sequences) (kind='face')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_privacy_media.py", line 206, in test_public_face_and_plate_sequences
+    self.assertIsNotNone(image)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^
+AssertionError: unexpectedly None
+
+======================================================================
+FAIL: test_public_face_and_plate_sequences (__main__.ModelChecks.test_public_face_and_plate_sequences) (kind='plate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_privacy_media.py", line 206, in test_public_face_and_plate_sequences
+    self.assertIsNotNone(image)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^
+AssertionError: unexpectedly None
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.735s
+
+FAILED (failures=2, errors=1)

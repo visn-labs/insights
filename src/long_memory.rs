@@ -12,6 +12,8 @@ const UNCERTAINTY: &str = "Tracker association, not verified physical identity. 
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct EntityMemory {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub execution_profile: Option<crate::execution_profile::ExecutionProfile>,
     pub version: String,
     pub source_sha256: String,
     pub detector_model: String,
@@ -23,6 +25,8 @@ pub struct EntityMemory {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Entity {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_session_id: Option<String>,
     pub entity_id: Uuid,
     pub job_id: Uuid,
     pub camera_id: String,
@@ -125,10 +129,15 @@ pub fn build(
                 .or_insert(*observation);
         }
         // Namespace numeric tracker IDs by recording AND camera. Never merge by class or caption.
-        let entity_id = Uuid::new_v5(
-            &job_id,
-            format!("{VERSION}:{}:{}", camera.camera.camera_id, track.track_id).as_bytes(),
-        );
+        let identity = match &camera.source_session_id {
+            Some(session) => format!(
+                "{VERSION}:{}",
+                serde_json::to_string(&(&camera.camera.camera_id, session, &track.track_id))
+                    .expect("scalar session identity")
+            ),
+            None => format!("{VERSION}:{}:{}", camera.camera.camera_id, track.track_id),
+        };
+        let entity_id = Uuid::new_v5(&job_id, identity.as_bytes());
         let mut points = vec![
             (
                 track.started_at_ms,
@@ -215,6 +224,7 @@ pub fn build(
             });
         }
         entities.push(Entity {
+            source_session_id: camera.source_session_id.clone(),
             entity_id,
             job_id,
             camera_id: camera.camera.camera_id.clone(),
@@ -225,8 +235,22 @@ pub fn build(
         });
     }
     entities.sort_by_key(|e| e.entity_id);
-    EntityMemory {version:VERSION.into(),source_sha256:digest,detector_model:model,detector_fps:5.0,status:"ready".into(),entities,links,
-        notes:vec![UNCERTAINTY.into(),format!("{omitted} observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims.")]}
+    let association_boundaries = entities.iter().any(|e| e.track_id.starts_with("session-"));
+    let mut notes = vec![UNCERTAINTY.into(),format!("{omitted} observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims.")];
+    if association_boundaries {
+        notes.push("Session-prefixed tracker IDs separate reconnects or observed frame spacing over 1000ms. Such spacing does not prove lost frames; legacy unprefixed IDs do not certify continuity.".into());
+    }
+    EntityMemory {
+        execution_profile: None,
+        version: VERSION.into(),
+        source_sha256: digest,
+        detector_model: model,
+        detector_fps: 5.0,
+        status: "ready".into(),
+        entities,
+        links,
+        notes,
+    }
 }
 
 pub fn answer(
@@ -308,6 +332,7 @@ pub fn answer(
                     events.get(&o.event_id).is_some_and(|event| {
                         event.job_id == entity.job_id
                             && event.camera_id == entity.camera_id
+                            && event.source_session_id == entity.source_session_id
                             && event.start_ms <= o.timestamp_ms
                             && o.timestamp_ms < event.end_ms
                     }) && request.start_ms.is_none_or(|t| o.timestamp_ms >= t)

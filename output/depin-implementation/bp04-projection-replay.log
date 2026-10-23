@@ -1,0 +1,6 @@
+Capture while indexing worker is unavailable
+127.0.0.1 - - [21/Oct/2026 22:09:49] "GET /face-sequence.mkv HTTP/1.1" 200 -
+Start real indexing queue; deliberately lose the first committed-task acknowledgement
+127.0.0.1 - - [21/Oct/2026 22:09:58] "POST /index-jobs HTTP/1.1" 202 -
+Changed sanitized source is blocked before explicit or replay indexing
+Passed durable replay, lost acknowledgement, restart and tamper checks: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-projection-replay

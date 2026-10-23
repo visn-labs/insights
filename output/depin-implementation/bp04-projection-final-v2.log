@@ -1,0 +1,15 @@
+Capture while indexing worker is unavailable
+127.0.0.1 - - [21/Oct/2026 22:17:42] "GET /face-sequence.mkv HTTP/1.1" 200 -
+Start real indexing queue; deliberately lose the first committed-task acknowledgement
+127.0.0.1 - - [21/Oct/2026 22:17:47] "POST /index-jobs HTTP/1.1" 202 -
+127.0.0.1 - - [21/Oct/2026 22:17:51] "POST /index-jobs HTTP/1.1" 202 -
+Reject a receipt from the wrong scope; explicit prepare recovers without duplicate jobs
+127.0.0.1 - - [21/Oct/2026 22:17:51] "POST /index-jobs HTTP/1.1" 202 -
+127.0.0.1 - - [21/Oct/2026 22:17:52] "POST /index-jobs HTTP/1.1" 202 -
+127.0.0.1 - - [21/Oct/2026 22:17:53] "POST /index-jobs HTTP/1.1" 202 -
+Retry route republishes durable intent after a terminal worker failure
+127.0.0.1 - - [21/Oct/2026 22:17:54] "GET /index-jobs/6a0a1760-9d36-56c0-b13f-7691487d5288 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:17:54] "POST /index-jobs/6a0a1760-9d36-56c0-b13f-7691487d5288/retry HTTP/1.1" 200 -
+127.0.0.1 - - [21/Oct/2026 22:17:54] "POST /index-jobs/6a0a1760-9d36-56c0-b13f-7691487d5288/retry HTTP/1.1" 200 -
+Changed sanitized source is blocked before explicit or replay indexing
+Passed durable replay, lost acknowledgement, restart and tamper checks: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-projection-final-v2

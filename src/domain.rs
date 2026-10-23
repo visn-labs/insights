@@ -128,6 +128,7 @@ pub enum JobStatus {
     Running,
     Completed,
     Failed,
+    Cancelled,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -218,6 +219,8 @@ pub struct ViewDescription {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct UploadRecord {
+    #[serde(default)]
+    pub privacy: Option<crate::privacy_media::SanitizedMedia>,
     pub id: Uuid,
     pub original_name: String,
     pub content_type: String,
@@ -246,6 +249,9 @@ pub struct RepresentativeFrame {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct CapabilityResponse {
+    pub media_policy: String,
+    pub media_qualification: String,
+    pub privacy_upload_limit_bytes: usize,
     pub entity_memory_version: String,
     pub service_version: String,
     pub local_state: String,
@@ -492,6 +498,10 @@ pub struct CameraProfile {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryJobRequest {
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub capture_sessions: bool,
+    #[serde(default)]
+    pub idempotency_key: Option<String>,
     #[serde(default)]
     pub long_memory_enabled: bool,
     #[serde(default)]
@@ -514,8 +524,28 @@ fn default_observer_fps() -> f32 {
     1.0
 }
 
+fn manifest_storage_version() -> u32 {
+    1
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryJobRecord {
+    #[serde(default = "manifest_storage_version")]
+    pub storage_version: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub execution_profile: Option<crate::execution_profile::ExecutionProfile>,
+    #[serde(default)]
+    pub metadata_projection: Option<crate::metadata_projection::ProjectionIntent>,
+    #[serde(default)]
+    pub revocation: Option<RecordingRevocation>,
+    #[serde(default)]
+    pub visual_projection: Option<VisualProjection>,
+    #[serde(default)]
+    pub request_fingerprint: Option<String>,
+    #[serde(default)]
+    pub camera_checkpoints: std::collections::BTreeMap<String, String>,
+    #[serde(default)]
+    pub recovery_attempts: usize,
     pub id: Uuid,
     pub request: MemoryJobRequest,
     pub status: JobStatus,
@@ -524,6 +554,69 @@ pub struct MemoryJobRecord {
     pub completed_at_ms: Option<u64>,
     pub result: Option<MemoryJobResult>,
     pub error: Option<String>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RecordingRevocation {
+    #[serde(default)]
+    pub source_paths: Vec<String>,
+    #[serde(default)]
+    pub target_receipts: std::collections::BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
+    pub registry_revision: Option<Uuid>,
+    #[serde(default = "pending_cleanup")]
+    pub local_cleanup_state: String,
+    #[serde(default)]
+    pub local_cleanup_error: Option<String>,
+    pub revision: Uuid,
+    pub revoked_at_ms: u64,
+    pub cleanup_state: String,
+    pub attempts: u32,
+    pub next_attempt_at_ms: u64,
+    pub worker_fingerprint: Option<String>,
+    pub last_error: Option<String>,
+    pub receipt: Option<serde_json::Value>,
+}
+
+fn pending_cleanup() -> String {
+    "pending".into()
+}
+
+/// Projection intent is committed in the same manifest as canonical recording completion.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct VisualProjection {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub binding_migration: Option<serde_json::Value>,
+    #[serde(default)]
+    pub deployment_generation: Option<Uuid>,
+    #[serde(default)]
+    pub retry_requested: bool,
+    pub revision: Uuid,
+    pub state: String,
+    pub attempts: u32,
+    pub next_attempt_at_ms: u64,
+    pub task_id: Option<Uuid>,
+    pub worker_fingerprint: Option<String>,
+    pub last_error: Option<String>,
+    pub receipt: Option<serde_json::Value>,
+}
+
+impl Default for VisualProjection {
+    fn default() -> Self {
+        Self {
+            binding_migration: None,
+            deployment_generation: None,
+            retry_requested: false,
+            revision: Uuid::now_v7(),
+            state: "pending".into(),
+            attempts: 0,
+            next_attempt_at_ms: 0,
+            task_id: None,
+            worker_fingerprint: None,
+            last_error: None,
+            receipt: None,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -547,6 +640,12 @@ pub struct MemoryCameraFailure {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryCameraResult {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub capture_extent: Option<CaptureExtent>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub storage_session_id: Option<Uuid>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_session_id: Option<String>,
     #[serde(default)]
     pub long_memory: Option<crate::long_memory::EntityMemory>,
     pub camera: CameraProfile,
@@ -555,6 +654,31 @@ pub struct MemoryCameraResult {
     pub evidence_url: String,
     pub events: Vec<MemoryEvent>,
     pub data_quality_notes: Vec<String>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum CaptureExtent {
+    Finished,
+    RetainedPrefix,
+}
+
+impl MemoryCameraResult {
+    pub fn evidence_directory(&self, camera_directory: &std::path::Path) -> std::path::PathBuf {
+        match self.storage_session_id {
+            Some(id) => camera_directory.join("sessions").join(id.to_string()),
+            None => camera_directory.to_path_buf(),
+        }
+    }
+
+    pub fn storage_session_matches_provenance(&self) -> bool {
+        self.storage_session_id.is_none_or(|id| {
+            self.source_session_id
+                .as_deref()
+                .and_then(|value| Uuid::parse_str(value).ok())
+                == Some(id)
+        })
+    }
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -579,6 +703,12 @@ pub struct MemoryEventDescription {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryEvent {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub capture_extent: Option<CaptureExtent>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_session_id: Option<String>,
+    #[serde(default)]
+    pub privacy: Option<crate::privacy_media::SanitizedEventEvidence>,
     #[serde(default)]
     pub source_duration_ms: u64,
     #[serde(default)]
@@ -609,6 +739,8 @@ pub struct MemoryEvent {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryQueryRequest {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub source_session_ids: Vec<String>,
     #[serde(default)]
     pub long_memory_enabled: bool,
     #[serde(default)]
@@ -638,8 +770,47 @@ pub struct MemoryQueryRequest {
     pub vlm_model: Option<String>,
 }
 
+impl MemoryEvent {
+    pub fn source_session_matches_provenance(&self) -> bool {
+        self.source_session_id.as_ref().is_none_or(|session| {
+            !session.is_empty()
+                && session.len() <= 128
+                && self
+                    .privacy
+                    .as_ref()
+                    .and_then(|p| p.source.capture.as_ref())
+                    .is_some_and(|c| &c.session_id == session)
+        })
+    }
+}
+
 fn default_retrieval_enabled() -> bool {
     true
+}
+
+pub fn memory_event_id(
+    job: Uuid,
+    camera: &str,
+    session: Option<&str>,
+    start: u64,
+    end: u64,
+) -> Uuid {
+    let name = match session {
+        Some(session) => {
+            serde_json::to_string(&(camera, session, start, end)).expect("scalar session identity")
+        }
+        None => format!("{camera}:{start}:{end}"),
+    };
+    Uuid::new_v5(&job, name.as_bytes())
+}
+
+pub fn memory_projection_key(camera: &str, session: Option<&str>) -> String {
+    match session {
+        Some(session) => {
+            serde_json::to_string(&(camera, session)).expect("scalar session identity")
+        }
+        None => camera.to_owned(),
+    }
 }
 
 fn default_query_limit() -> usize {
@@ -656,6 +827,8 @@ pub struct MemoryQueryMatch {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MemoryQueryResponse {
+    #[serde(default)]
+    pub metadata_provenance: serde_json::Value,
     pub long_memory: Option<crate::long_memory::JourneyAnswer>,
     pub interpretations: Vec<SequenceInterpretation>,
     pub interpretation_notes: Vec<String>,

@@ -1,0 +1,30 @@
+[0.0s] Record real sanitized evidence through Rust
+[9.2s] Stage both complete index/profile targets; activate A
+[9.8s] Queue another real recording under A before cutover
+[19.5s] Retain a failed inactive stage; never activate incomplete coverage
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 671, in process_post
+    receipt = service.indexer.submit(body)
+  File "/Users/anagha/projects/visn_rust/tools/workflow_indexing.py", line 136, in submit
+    path, sha = self.service.source(event)
+                ~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/workflow_telemetry.py", line 126, in call
+    if CURRENT.get() is None: return function(*args, **kwargs)
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 310, in source
+    raise ValueError('Sanitized source hash differs from committed evidence')
+ValueError: Sanitized source hash differs from committed evidence
+[19.6s] Hold an actual A response, activate B, then finish both on their declared generations
+[19.6s] Explicit replacement must retire the old task before changing its durable intent
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_retrieval_deployments.py", line 241, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/anagha/projects/visn_rust/tools/check_retrieval_deployments.py", line 176, in main
+    api(second_route+'/visual-index',{},502)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/anagha/projects/visn_rust/tools/check_retrieval_deployments.py", line 90, in api
+    assert response.status==status,(path,response.status,value)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('/api/v1/memory-jobs/01a16963-c273-7342-ba52-ac86466dae2d/visual-index', 400, {'error': 'error sending request for url (http://127.0.0.1:60706/index-jobs)'})

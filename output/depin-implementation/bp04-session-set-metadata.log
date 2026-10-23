@@ -1,0 +1,7 @@
+[1.7s] Capture and materialize real sanitized evidence metadata
+[15.8s] Reject changed projection; retain exact canonical graph answer with explicit fallback
+[16.3s] Interrupt projection publication, restart with durable pending intent, then repair storage
+[21.1s] Reject changed sanitized source before aggregate or graph admission
+[21.1s] Reject changed capture metadata even when encoded evidence is unchanged
+[21.6s] Deny revoked projections; fail safely on cleanup symlink and recover after restart
+[24.9s] Passed exact metadata, graph parity, restart, corruption and local revocation replay: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-session-set-metadata

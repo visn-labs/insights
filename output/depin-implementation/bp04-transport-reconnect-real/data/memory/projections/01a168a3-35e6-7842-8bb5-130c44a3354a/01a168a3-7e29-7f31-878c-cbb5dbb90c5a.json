@@ -1,0 +1,469 @@
+{
+  "version": "evidence-metadata-v1",
+  "job_id": "01a168a3-35e6-7842-8bb5-130c44a3354a",
+  "revision": "01a168a3-7e29-7f31-878c-cbb5dbb90c5a",
+  "media_policy": "sanitized-v1",
+  "input_fingerprint": "1217dac9dc0925c562bc95874545bc01462a9d99685c975eedaba200e8e128c0",
+  "cameras": {
+    "[\"junction\",\"82167700b2eb498d951a0bd91960010b\"]": {
+      "capture_extent": "finished",
+      "camera_id": "junction",
+      "source_session_id": "82167700b2eb498d951a0bd91960010b",
+      "capture_timeline": {
+        "association_sessions": [
+          {
+            "session_id": "82167700b2eb498d951a0bd91960010b:0",
+            "first_frame_index": 0,
+            "last_frame_index": 46,
+            "first_observed_ms": 0,
+            "last_observed_ms": 8000,
+            "start_reason": "initial_capture"
+          }
+        ],
+        "session_id": "82167700b2eb498d951a0bd91960010b",
+        "requested_seconds": 8.12,
+        "termination": "requested_limit_reached",
+        "observed_frames": 47,
+        "last_observed_frame_ms": 8000,
+        "transport_started_wall_ms": 1792756892024,
+        "transport_finished_wall_ms": 1792756895733,
+        "transport_time_is_not_capture_time": true,
+        "continuity_certified": false,
+        "timestamp_jump_threshold_ms": 1000,
+        "timestamp_jump_count": 0,
+        "timestamp_jump_samples": [],
+        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+      },
+      "duration_ms": 8040,
+      "source_sha256": "1d4b81ae37a98c3b2e8dfe2c16247c5a6b8cf899a08f0a81784e3c445c045c0b",
+      "intervals": [
+        {
+          "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+          "start_ms": 0,
+          "end_ms": 8040
+        }
+      ],
+      "graph": {
+        "version": "entity-memory-v2-pts",
+        "source_sha256": "1d4b81ae37a98c3b2e8dfe2c16247c5a6b8cf899a08f0a81784e3c445c045c0b",
+        "detector_model": "/Users/anagha/projects/visn_rust/yolo26s.pt",
+        "detector_fps": 5.0,
+        "status": "ready",
+        "entities": [
+          {
+            "source_session_id": "82167700b2eb498d951a0bd91960010b",
+            "entity_id": "6e4ad890-2327-55fb-94ee-be275880776e",
+            "job_id": "01a168a3-35e6-7842-8bb5-130c44a3354a",
+            "camera_id": "junction",
+            "track_id": "35",
+            "class_name": "car",
+            "observations": [
+              {
+                "bbox": [
+                  0.65209764,
+                  0.6238909,
+                  0.14901873,
+                  0.3332233
+                ],
+                "detector_confidence": 0.8892757,
+                "observation_id": "dfbf7565-c3e4-57bd-adcf-54ee934ab57f",
+                "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+                "timestamp_ms": 0,
+                "kind": "detector_observation",
+                "description": "car detection at normalized box [0.652, 0.624, 0.149, 0.333]; detector score 0.889 (not identity confidence)"
+              },
+              {
+                "bbox": [
+                  0.65209764,
+                  0.6238909,
+                  0.14901873,
+                  0.3332233
+                ],
+                "detector_confidence": 0.8892757,
+                "observation_id": "6e70b399-1c89-5b2a-871c-b1467348ceef",
+                "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+                "timestamp_ms": 0,
+                "kind": "first_observed",
+                "description": "car first observed under tracker ID 35"
+              },
+              {
+                "bbox": [
+                  0.65534407,
+                  0.6195676,
+                  0.15210469,
+                  0.34208938
+                ],
+                "detector_confidence": 0.606296,
+                "observation_id": "9dc3c525-c8ba-5681-afa9-d3ab387687ef",
+                "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+                "timestamp_ms": 720,
+                "kind": "detector_observation",
+                "description": "truck detection at normalized box [0.655, 0.620, 0.152, 0.342]; detector score 0.606 (not identity confidence)"
+              },
+              {
+                "bbox": [
+                  0.65534407,
+                  0.6195676,
+                  0.15210469,
+                  0.34208938
+                ],
+                "detector_confidence": 0.606296,
+                "observation_id": "425be79e-ab3a-50cf-8585-40d62919f95e",
+                "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+                "timestamp_ms": 720,
+                "kind": "last_observed",
+                "description": "car last observed under tracker ID 35"
+              }
+            ],
+            "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+          },
+          {
+            "source_session_id": "82167700b2eb498d951a0bd91960010b",
+            "entity_id": "d57b1b4a-6a3e-5cce-9fd4-35166576aebb",
+            "job_id": "01a168a3-35e6-7842-8bb5-130c44a3354a",
+            "camera_id": "junction",
+            "track_id": "48",
+            "class_name": "truck",
+            "observations": [
+              {
+                "bbox": [
+                  0.5208007,
+                  0.17363268,
+                  0.064893626,
+                  0.07700395
+                ],
+                "detector_confidence": 0.42803293,
+                "observation_id": "22579066-899c-59ee-b5ff-e9ffbe51c1b1",
+                "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+                "timestamp_ms": 0,
+                "kind": "detector_observation",
+                "description": "car detection at normalized box [0.521, 0.174, 0.065, 0.077]; detector score 0.428 (not identity confidence)"
+              },
+              {
+                "bbox": [
+                  0.5208007,
+                  0.17363268,
+                  0.064893626,
+                  0.07700395
+                ],
+                "detector_confidence": 0.42803293,
+                "observation_id": "e0b19a87-7a83-5768-9f75-67474eae1ce8",
+                "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+                "timestamp_ms": 0,
+                "kind": "first_observed",
+                "description": "truck first observed under tracker ID 48"
+              },
+              {
+                "bbox": [
+                  0.52969027,
+                  0.1935513,
+                  0.07251291,
+                  0.08621705
+                ],
+                "detector_confidence": 0.47894627,
+                "observation_id": "43666b83-cdf6-5342-ae2d-952b8f29f077",
+                "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+                "timestamp_ms": 720,
+                "kind": "detector_observation",
+                "description": "truck detection at normalized box [0.530, 0.194, 0.073, 0.086]; detector score 0.479 (not identity confidence)"
+              },
+              {
+                "bbox": [
+                  0.52969027,
+                  0.1935513,
+                  0.07251291,
+                  0.08621705
+                ],
+                "detector_confidence": 0.47894627,
+                "observation_id": "0001ec19-3fd3-5369-8b6d-b6cc554fe114",
+                "event_id": "1653708b-697a-52a6-b55a-eac9c1aa582c",
+                "timestamp_ms": 720,
+                "kind": "last_observed",
+                "description": "truck last observed under tracker ID 48"
+              }
+            ],
+            "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+          }
+        ],
+        "links": [
+          {
+            "from": "dfbf7565-c3e4-57bd-adcf-54ee934ab57f",
+            "to": "6e70b399-1c89-5b2a-871c-b1467348ceef",
+            "entity_id": "6e4ad890-2327-55fb-94ee-be275880776e",
+            "relation": "same_tracker_order",
+            "gap_ms": 0
+          },
+          {
+            "from": "6e70b399-1c89-5b2a-871c-b1467348ceef",
+            "to": "9dc3c525-c8ba-5681-afa9-d3ab387687ef",
+            "entity_id": "6e4ad890-2327-55fb-94ee-be275880776e",
+            "relation": "same_tracker_order",
+            "gap_ms": 720
+          },
+          {
+            "from": "9dc3c525-c8ba-5681-afa9-d3ab387687ef",
+            "to": "425be79e-ab3a-50cf-8585-40d62919f95e",
+            "entity_id": "6e4ad890-2327-55fb-94ee-be275880776e",
+            "relation": "same_tracker_order",
+            "gap_ms": 0
+          },
+          {
+            "from": "22579066-899c-59ee-b5ff-e9ffbe51c1b1",
+            "to": "e0b19a87-7a83-5768-9f75-67474eae1ce8",
+            "entity_id": "d57b1b4a-6a3e-5cce-9fd4-35166576aebb",
+            "relation": "same_tracker_order",
+            "gap_ms": 0
+          },
+          {
+            "from": "e0b19a87-7a83-5768-9f75-67474eae1ce8",
+            "to": "43666b83-cdf6-5342-ae2d-952b8f29f077",
+            "entity_id": "d57b1b4a-6a3e-5cce-9fd4-35166576aebb",
+            "relation": "same_tracker_order",
+            "gap_ms": 720
+          },
+          {
+            "from": "43666b83-cdf6-5342-ae2d-952b8f29f077",
+            "to": "0001ec19-3fd3-5369-8b6d-b6cc554fe114",
+            "entity_id": "d57b1b4a-6a3e-5cce-9fd4-35166576aebb",
+            "relation": "same_tracker_order",
+            "gap_ms": 0
+          }
+        ],
+        "notes": [
+          "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred.",
+          "0 observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims."
+        ]
+      }
+    },
+    "[\"junction\",\"f4be89c86c2143d3ba600c5f6185fdfb\"]": {
+      "capture_extent": "finished",
+      "camera_id": "junction",
+      "source_session_id": "f4be89c86c2143d3ba600c5f6185fdfb",
+      "capture_timeline": {
+        "association_sessions": [
+          {
+            "session_id": "f4be89c86c2143d3ba600c5f6185fdfb:0",
+            "first_frame_index": 0,
+            "last_frame_index": 22,
+            "first_observed_ms": 0,
+            "last_observed_ms": 3880,
+            "start_reason": "initial_capture"
+          }
+        ],
+        "session_id": "f4be89c86c2143d3ba600c5f6185fdfb",
+        "requested_seconds": 11.98393154097721,
+        "termination": "transport_disconnected",
+        "observed_frames": 23,
+        "last_observed_frame_ms": 3880,
+        "transport_started_wall_ms": 1792756889816,
+        "transport_finished_wall_ms": 1792756891670,
+        "transport_time_is_not_capture_time": true,
+        "continuity_certified": false,
+        "timestamp_jump_threshold_ms": 1000,
+        "timestamp_jump_count": 0,
+        "timestamp_jump_samples": [],
+        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+      },
+      "duration_ms": 3920,
+      "source_sha256": "c1a7c7bd62eed1db299e835d64a9b3a127c3feddcec6bfcb75190f036757be96",
+      "intervals": [
+        {
+          "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+          "start_ms": 0,
+          "end_ms": 3920
+        }
+      ],
+      "graph": {
+        "version": "entity-memory-v2-pts",
+        "source_sha256": "c1a7c7bd62eed1db299e835d64a9b3a127c3feddcec6bfcb75190f036757be96",
+        "detector_model": "/Users/anagha/projects/visn_rust/yolo26s.pt",
+        "detector_fps": 5.0,
+        "status": "ready",
+        "entities": [
+          {
+            "source_session_id": "f4be89c86c2143d3ba600c5f6185fdfb",
+            "entity_id": "b70867cb-bdcd-52ae-8236-f6e21c521bad",
+            "job_id": "01a168a3-35e6-7842-8bb5-130c44a3354a",
+            "camera_id": "junction",
+            "track_id": "2",
+            "class_name": "car",
+            "observations": [
+              {
+                "bbox": [
+                  0.65209764,
+                  0.6238909,
+                  0.14901873,
+                  0.3332233
+                ],
+                "detector_confidence": 0.8892757,
+                "observation_id": "c979ed17-410b-52ca-8e02-4da27e5087b1",
+                "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+                "timestamp_ms": 0,
+                "kind": "detector_observation",
+                "description": "car detection at normalized box [0.652, 0.624, 0.149, 0.333]; detector score 0.889 (not identity confidence)"
+              },
+              {
+                "bbox": [
+                  0.65209764,
+                  0.6238909,
+                  0.14901873,
+                  0.3332233
+                ],
+                "detector_confidence": 0.8892757,
+                "observation_id": "365f8c39-a8e9-5989-a340-aca2dc9e5188",
+                "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+                "timestamp_ms": 0,
+                "kind": "first_observed",
+                "description": "car first observed under tracker ID 2"
+              },
+              {
+                "bbox": [
+                  0.65534407,
+                  0.6195676,
+                  0.15210469,
+                  0.34208938
+                ],
+                "detector_confidence": 0.606296,
+                "observation_id": "75e6046f-ad14-564d-9012-8b2f51c23bb0",
+                "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+                "timestamp_ms": 720,
+                "kind": "detector_observation",
+                "description": "truck detection at normalized box [0.655, 0.620, 0.152, 0.342]; detector score 0.606 (not identity confidence)"
+              },
+              {
+                "bbox": [
+                  0.65534407,
+                  0.6195676,
+                  0.15210469,
+                  0.34208938
+                ],
+                "detector_confidence": 0.606296,
+                "observation_id": "256f33c7-ced3-5fe5-92f8-ad7921beb4bd",
+                "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+                "timestamp_ms": 720,
+                "kind": "last_observed",
+                "description": "car last observed under tracker ID 2"
+              }
+            ],
+            "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+          },
+          {
+            "source_session_id": "f4be89c86c2143d3ba600c5f6185fdfb",
+            "entity_id": "fee6c92d-1ed5-5f30-bb0f-33b9cb628cce",
+            "job_id": "01a168a3-35e6-7842-8bb5-130c44a3354a",
+            "camera_id": "junction",
+            "track_id": "15",
+            "class_name": "truck",
+            "observations": [
+              {
+                "bbox": [
+                  0.5208007,
+                  0.17363268,
+                  0.064893626,
+                  0.07700395
+                ],
+                "detector_confidence": 0.42803293,
+                "observation_id": "d2d522a4-d144-5dd3-aa81-a202ff97397e",
+                "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+                "timestamp_ms": 0,
+                "kind": "detector_observation",
+                "description": "car detection at normalized box [0.521, 0.174, 0.065, 0.077]; detector score 0.428 (not identity confidence)"
+              },
+              {
+                "bbox": [
+                  0.5208007,
+                  0.17363268,
+                  0.064893626,
+                  0.07700395
+                ],
+                "detector_confidence": 0.42803293,
+                "observation_id": "6433eca0-cf22-56d0-b016-0b04b1923e82",
+                "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+                "timestamp_ms": 0,
+                "kind": "first_observed",
+                "description": "truck first observed under tracker ID 15"
+              },
+              {
+                "bbox": [
+                  0.52969027,
+                  0.1935513,
+                  0.07251291,
+                  0.08621705
+                ],
+                "detector_confidence": 0.47894627,
+                "observation_id": "e15119a7-991a-534c-9d82-166d00cf2ad3",
+                "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+                "timestamp_ms": 720,
+                "kind": "detector_observation",
+                "description": "truck detection at normalized box [0.530, 0.194, 0.073, 0.086]; detector score 0.479 (not identity confidence)"
+              },
+              {
+                "bbox": [
+                  0.52969027,
+                  0.1935513,
+                  0.07251291,
+                  0.08621705
+                ],
+                "detector_confidence": 0.47894627,
+                "observation_id": "459483db-117a-5951-b3d9-ed2584d7b542",
+                "event_id": "cf30f111-3b68-5a63-b670-6ae93e11b0c5",
+                "timestamp_ms": 720,
+                "kind": "last_observed",
+                "description": "truck last observed under tracker ID 15"
+              }
+            ],
+            "uncertainty": "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred."
+          }
+        ],
+        "links": [
+          {
+            "from": "d2d522a4-d144-5dd3-aa81-a202ff97397e",
+            "to": "6433eca0-cf22-56d0-b016-0b04b1923e82",
+            "entity_id": "fee6c92d-1ed5-5f30-bb0f-33b9cb628cce",
+            "relation": "same_tracker_order",
+            "gap_ms": 0
+          },
+          {
+            "from": "6433eca0-cf22-56d0-b016-0b04b1923e82",
+            "to": "e15119a7-991a-534c-9d82-166d00cf2ad3",
+            "entity_id": "fee6c92d-1ed5-5f30-bb0f-33b9cb628cce",
+            "relation": "same_tracker_order",
+            "gap_ms": 720
+          },
+          {
+            "from": "e15119a7-991a-534c-9d82-166d00cf2ad3",
+            "to": "459483db-117a-5951-b3d9-ed2584d7b542",
+            "entity_id": "fee6c92d-1ed5-5f30-bb0f-33b9cb628cce",
+            "relation": "same_tracker_order",
+            "gap_ms": 0
+          },
+          {
+            "from": "c979ed17-410b-52ca-8e02-4da27e5087b1",
+            "to": "365f8c39-a8e9-5989-a340-aca2dc9e5188",
+            "entity_id": "b70867cb-bdcd-52ae-8236-f6e21c521bad",
+            "relation": "same_tracker_order",
+            "gap_ms": 0
+          },
+          {
+            "from": "365f8c39-a8e9-5989-a340-aca2dc9e5188",
+            "to": "75e6046f-ad14-564d-9012-8b2f51c23bb0",
+            "entity_id": "b70867cb-bdcd-52ae-8236-f6e21c521bad",
+            "relation": "same_tracker_order",
+            "gap_ms": 720
+          },
+          {
+            "from": "75e6046f-ad14-564d-9012-8b2f51c23bb0",
+            "to": "256f33c7-ced3-5fe5-92f8-ad7921beb4bd",
+            "entity_id": "b70867cb-bdcd-52ae-8236-f6e21c521bad",
+            "relation": "same_tracker_order",
+            "gap_ms": 0
+          }
+        ],
+        "notes": [
+          "Tracker association, not verified physical identity. ID switches, occlusion and missed detections remain possible. First/last observed do not mean arrival/departure. No cross-camera or cross-recording identity is inferred.",
+          "0 observations without an indexed evidence interval were omitted. Times are source-relative, not synchronized wall-clock times. Detector cadence uses source presentation timestamps (receipt times for live network analysis); nominal FPS is only a fallback clock. Rule events are algorithm outputs, not VLM action claims."
+        ]
+      }
+    }
+  }
+}

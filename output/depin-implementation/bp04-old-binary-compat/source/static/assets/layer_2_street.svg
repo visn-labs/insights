@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100">
+  <rect width="1000" height="100" fill="#7f8c8d"/>
+  
+  <!-- Perspective lines / Cobblestone hints -->
+  <path d="M0 20 L1000 20" stroke="#95a5a6" stroke-width="2"/>
+  <path d="M0 50 L1000 50" stroke="#95a5a6" stroke-width="3"/>
+  <path d="M0 80 L1000 80" stroke="#95a5a6" stroke-width="4"/>
+  
+  <!-- Paving cuts -->
+  <g stroke="#95a5a6" stroke-width="2">
+    <path d="M50 0 L40 100" />
+    <path d="M150 0 L140 100" />
+    <path d="M250 0 L240 100" />
+    <path d="M350 0 L340 100" />
+    <path d="M450 0 L440 100" />
+    <path d="M550 0 L540 100" />
+    <path d="M650 0 L640 100" />
+    <path d="M750 0 L740 100" />
+    <path d="M850 0 L840 100" />
+    <path d="M950 0 L940 100" />
+  </g>
+</svg>

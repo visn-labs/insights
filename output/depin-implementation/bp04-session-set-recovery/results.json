@@ -1,0 +1,4220 @@
+{
+  "scope": "local real-capture crash/cancel recovery",
+  "source_hits": [
+    {
+      "path": "/face-sequence.mkv",
+      "time_ns": 1792682771667228000
+    },
+    {
+      "path": "/face-sequence.mkv",
+      "time_ns": 1792682774361175000
+    }
+  ],
+  "worker_groups": [
+    {
+      "worker_pid": 37481,
+      "descendant_pid": 37494,
+      "phase": "after_capture"
+    },
+    {
+      "worker_pid": 37520,
+      "descendant_pid": 37531,
+      "phase": "after_capture"
+    },
+    {
+      "worker_pid": 37562,
+      "descendant_pid": 37567,
+      "phase": "before_capture"
+    }
+  ],
+  "requests": [
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 202,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": null,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 202,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682770636,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 409,
+      "response": {
+        "error": "idempotency_key_conflict"
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "failed",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682770636,
+        "completed_at_ms": 1792682772623,
+        "result": null,
+        "error": "recording_interrupted_by_restart: resume retained evidence only; live time cannot be recaptured"
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 202,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "failed",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682770636,
+        "completed_at_ms": 1792682772623,
+        "result": null,
+        "error": "recording_interrupted_by_restart: resume retained evidence only; live time cannot be recaptured"
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e/resume",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682770636,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682770636,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-4c7b-71b0-bcd7-aba5148cc07a",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-4c7b-71b0-bcd7-abb8e6ae8923",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "completed",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": 1792682773627,
+        "result": {
+          "cluster_id": null,
+          "cameras_requested": 1,
+          "cameras_processed": 1,
+          "camera_failures": [],
+          "events_indexed": 1,
+          "source_duration_ms": 2000,
+          "observer_frames_decoded": 8,
+          "camera_results": [
+            {
+              "source_session_id": "56bd03eac7494f4299062699109921e9",
+              "long_memory": null,
+              "camera": {
+                "camera_id": "camera-a",
+                "live_url": "http://***",
+                "country": "",
+                "country_code": "",
+                "region": "",
+                "city": "",
+                "latitude": null,
+                "longitude": null,
+                "zip": null,
+                "timezone": "",
+                "manufacturer": "",
+                "description": ""
+              },
+              "duration_ms": 2000,
+              "frames_decoded": 8,
+              "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/source",
+              "events": [
+                {
+                  "source_session_id": "56bd03eac7494f4299062699109921e9",
+                  "privacy": {
+                    "source": {
+                      "capture": {
+                        "association_sessions": [
+                          {
+                            "session_id": "56bd03eac7494f4299062699109921e9:0",
+                            "first_frame_index": 0,
+                            "last_frame_index": 7,
+                            "first_observed_ms": 0,
+                            "last_observed_ms": 1750,
+                            "start_reason": "initial_capture"
+                          }
+                        ],
+                        "session_id": "56bd03eac7494f4299062699109921e9",
+                        "requested_seconds": 2.0,
+                        "termination": "end_of_stream",
+                        "observed_frames": 8,
+                        "last_observed_frame_ms": 1750,
+                        "transport_started_wall_ms": 1792682771662,
+                        "transport_finished_wall_ms": 1792682772505,
+                        "transport_time_is_not_capture_time": true,
+                        "continuity_certified": false,
+                        "timestamp_jump_threshold_ms": 1000,
+                        "timestamp_jump_count": 0,
+                        "timestamp_jump_samples": [],
+                        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+                      },
+                      "clock_kind": "source_pts",
+                      "clock_limitations": [],
+                      "schema": "visn-sanitized-media-v1",
+                      "policy": "sanitized-pixels-v1",
+                      "qualification": "integration_candidate_not_general_privacy_acceptance",
+                      "media_sha256": "89158b0a978a49d988eedb74e20da8fd923330b6443db0fa79b518cc47c6eb72",
+                      "media_bytes": 2052109,
+                      "frames": 8,
+                      "width": 512,
+                      "height": 512,
+                      "ledger_sha256": "06b5a80ee796b825e107b1ce0262a71e215394fee4a9d3a23b1d11b21648f8b3",
+                      "audio": "removed"
+                    },
+                    "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                    "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+                  },
+                  "source_duration_ms": 2000,
+                  "interpretation": null,
+                  "event_id": "be49e5f1-263e-5528-b0c6-2932050da35d",
+                  "job_id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+                  "camera_id": "camera-a",
+                  "cluster_id": null,
+                  "start_ms": 0,
+                  "end_ms": 2000,
+                  "duration_ms": 2000,
+                  "activity_mean": 1.2357927e-09,
+                  "activity_peak": 1.6477236e-09,
+                  "quality": 0.8068943,
+                  "boundary_reason": "stream_start",
+                  "thumbnail_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/thumbnail",
+                  "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/clip",
+                  "description": {
+                    "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                    "scene_type": "metadata-only fallback",
+                    "visible_objects": [],
+                    "visible_people": [],
+                    "apparent_actions": [],
+                    "visible_text": [],
+                    "conditions": "Not visually assessed",
+                    "confidence": 0.2,
+                    "generated_by_model": false,
+                    "model": null,
+                    "fallback_reason": "VLM event enrichment was disabled"
+                  },
+                  "visual_signature": [
+                    0.20665148,
+                    0.22989553,
+                    0.17034326,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.00067865837,
+                    0.028164323,
+                    0.019002436,
+                    0.00033932918,
+                    0.0020359752,
+                    0.05429267,
+                    0.29487708,
+                    0.03613856,
+                    0.17339721,
+                    0.04513078,
+                    0.33440894,
+                    0.3393292,
+                    0.09229754,
+                    0.053953342,
+                    0.0039022858,
+                    0.0,
+                    0.2641678,
+                    0.12572147,
+                    0.20563349,
+                    0.18849736,
+                    0.15507345,
+                    0.052256696,
+                    0.05089938,
+                    0.00016966459,
+                    0.17220956,
+                    0.0018663106,
+                    0.060570262,
+                    0.10468306,
+                    0.08601995,
+                    0.16830729,
+                    0.30590528,
+                    0.1428576,
+                    0.017607287,
+                    0.010423684,
+                    0.0069642845,
+                    0.35397142
+                  ]
+                }
+              ],
+              "data_quality_notes": [
+                "Observed 8 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.",
+                "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+                "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+                "Observer analysis retrieved 4 of 8 consumed source frames.",
+                "Event clips use stream copy when compatible and fall back to H.264 only when required."
+              ]
+            }
+          ],
+          "algorithm_version": "retrieval-memory-v1-sparse-adaptive"
+        },
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 202,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": null,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 202,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682773663,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 409,
+      "response": {
+        "error": "idempotency_key_conflict"
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513/cancel",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "cancelled",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682773663,
+        "completed_at_ms": 1792682775253,
+        "result": null,
+        "error": "recording_cancelled: only already committed evidence can be resumed"
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513/resume",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682773663,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682773663,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {},
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {
+          "camera-a": "af3a328356e1b78867ffb4cb503dac5d14dee952b693e82dcc3f2db45d12735a"
+        },
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-4c96-75e3-a7d2-069a5310b513",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-56a6-7771-a124-42cb2fa361c3",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ad227a0ccc8bde3c23d708d8956ce15738966e8fe50eb625f53370d6faa58857",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-56a6-7771-a124-42d3329bc38f",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "4830a4f57f7acdcceec6f4447f61d260066cab24039e97396cb060cfdb7d2f7e",
+        "camera_checkpoints": {
+          "camera-a": "af3a328356e1b78867ffb4cb503dac5d14dee952b693e82dcc3f2db45d12735a"
+        },
+        "recovery_attempts": 1,
+        "id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+        "request": {
+          "idempotency_key": "cancel-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "completed",
+        "created_at_ms": 1792682773654,
+        "started_at_ms": 1792682775411,
+        "completed_at_ms": 1792682776230,
+        "result": {
+          "cluster_id": null,
+          "cameras_requested": 1,
+          "cameras_processed": 1,
+          "camera_failures": [],
+          "events_indexed": 1,
+          "source_duration_ms": 2000,
+          "observer_frames_decoded": 8,
+          "camera_results": [
+            {
+              "source_session_id": "596668f658cd4edabb547b2e19895d44",
+              "long_memory": null,
+              "camera": {
+                "camera_id": "camera-a",
+                "live_url": "http://***",
+                "country": "",
+                "country_code": "",
+                "region": "",
+                "city": "",
+                "latitude": null,
+                "longitude": null,
+                "zip": null,
+                "timezone": "",
+                "manufacturer": "",
+                "description": ""
+              },
+              "duration_ms": 2000,
+              "frames_decoded": 8,
+              "evidence_url": "/api/v1/memory-events/55f6d851-adf9-5814-ab52-b2aa97e26e37/source",
+              "events": [
+                {
+                  "source_session_id": "596668f658cd4edabb547b2e19895d44",
+                  "privacy": {
+                    "source": {
+                      "capture": {
+                        "association_sessions": [
+                          {
+                            "session_id": "596668f658cd4edabb547b2e19895d44:0",
+                            "first_frame_index": 0,
+                            "last_frame_index": 7,
+                            "first_observed_ms": 0,
+                            "last_observed_ms": 1750,
+                            "start_reason": "initial_capture"
+                          }
+                        ],
+                        "session_id": "596668f658cd4edabb547b2e19895d44",
+                        "requested_seconds": 2.0,
+                        "termination": "end_of_stream",
+                        "observed_frames": 8,
+                        "last_observed_frame_ms": 1750,
+                        "transport_started_wall_ms": 1792682774359,
+                        "transport_finished_wall_ms": 1792682775163,
+                        "transport_time_is_not_capture_time": true,
+                        "continuity_certified": false,
+                        "timestamp_jump_threshold_ms": 1000,
+                        "timestamp_jump_count": 0,
+                        "timestamp_jump_samples": [],
+                        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+                      },
+                      "clock_kind": "source_pts",
+                      "clock_limitations": [],
+                      "schema": "visn-sanitized-media-v1",
+                      "policy": "sanitized-pixels-v1",
+                      "qualification": "integration_candidate_not_general_privacy_acceptance",
+                      "media_sha256": "65e645407e5b71ccb6a3a1a0edbfe53251c473fca622bbbb21b7376b6049594a",
+                      "media_bytes": 2052109,
+                      "frames": 8,
+                      "width": 512,
+                      "height": 512,
+                      "ledger_sha256": "4c35d29cf02d57b6342a6777b0ead69e2f1d06297a063541a886061c8a8ce936",
+                      "audio": "removed"
+                    },
+                    "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                    "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+                  },
+                  "source_duration_ms": 2000,
+                  "interpretation": null,
+                  "event_id": "55f6d851-adf9-5814-ab52-b2aa97e26e37",
+                  "job_id": "01a16438-4c96-75e3-a7d2-069a5310b513",
+                  "camera_id": "camera-a",
+                  "cluster_id": null,
+                  "start_ms": 0,
+                  "end_ms": 2000,
+                  "duration_ms": 2000,
+                  "activity_mean": 1.2357927e-09,
+                  "activity_peak": 1.6477236e-09,
+                  "quality": 0.8068943,
+                  "boundary_reason": "stream_start",
+                  "thumbnail_url": "/api/v1/memory-events/55f6d851-adf9-5814-ab52-b2aa97e26e37/thumbnail",
+                  "evidence_url": "/api/v1/memory-events/55f6d851-adf9-5814-ab52-b2aa97e26e37/clip",
+                  "description": {
+                    "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                    "scene_type": "metadata-only fallback",
+                    "visible_objects": [],
+                    "visible_people": [],
+                    "apparent_actions": [],
+                    "visible_text": [],
+                    "conditions": "Not visually assessed",
+                    "confidence": 0.2,
+                    "generated_by_model": false,
+                    "model": null,
+                    "fallback_reason": "VLM event enrichment was disabled"
+                  },
+                  "visual_signature": [
+                    0.20665148,
+                    0.22989553,
+                    0.17034326,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.00067865837,
+                    0.028164323,
+                    0.019002436,
+                    0.00033932918,
+                    0.0020359752,
+                    0.05429267,
+                    0.29487708,
+                    0.03613856,
+                    0.17339721,
+                    0.04513078,
+                    0.33440894,
+                    0.3393292,
+                    0.09229754,
+                    0.053953342,
+                    0.0039022858,
+                    0.0,
+                    0.2641678,
+                    0.12572147,
+                    0.20563349,
+                    0.18849736,
+                    0.15507345,
+                    0.052256696,
+                    0.05089938,
+                    0.00016966459,
+                    0.17220956,
+                    0.0018663106,
+                    0.060570262,
+                    0.10468306,
+                    0.08601995,
+                    0.16830729,
+                    0.30590528,
+                    0.1428576,
+                    0.017607287,
+                    0.010423684,
+                    0.0069642845,
+                    0.35397142
+                  ]
+                }
+              ],
+              "data_quality_notes": [
+                "Observed 8 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.",
+                "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+                "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+                "Observer analysis retrieved 4 of 8 consumed source frames.",
+                "Event clips use stream copy when compatible and fall back to H.264 only when required."
+              ]
+            }
+          ],
+          "algorithm_version": "retrieval-memory-v1-sparse-adaptive"
+        },
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-4c7b-71b0-bcd7-aba5148cc07a",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "completed",
+          "output_sha256": "785c5962f333588ebe87bf4e63d1b24f6037a6c349a9294664fc74c73b217341",
+          "attempts": 1,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-4c7b-71b0-bcd7-abb8e6ae8923",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "completed",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": 1792682773627,
+        "result": {
+          "cluster_id": null,
+          "cameras_requested": 1,
+          "cameras_processed": 1,
+          "camera_failures": [],
+          "events_indexed": 1,
+          "source_duration_ms": 2000,
+          "observer_frames_decoded": 8,
+          "camera_results": [
+            {
+              "source_session_id": "56bd03eac7494f4299062699109921e9",
+              "long_memory": null,
+              "camera": {
+                "camera_id": "camera-a",
+                "live_url": "http://***",
+                "country": "",
+                "country_code": "",
+                "region": "",
+                "city": "",
+                "latitude": null,
+                "longitude": null,
+                "zip": null,
+                "timezone": "",
+                "manufacturer": "",
+                "description": ""
+              },
+              "duration_ms": 2000,
+              "frames_decoded": 8,
+              "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/source",
+              "events": [
+                {
+                  "source_session_id": "56bd03eac7494f4299062699109921e9",
+                  "privacy": {
+                    "source": {
+                      "capture": {
+                        "association_sessions": [
+                          {
+                            "session_id": "56bd03eac7494f4299062699109921e9:0",
+                            "first_frame_index": 0,
+                            "last_frame_index": 7,
+                            "first_observed_ms": 0,
+                            "last_observed_ms": 1750,
+                            "start_reason": "initial_capture"
+                          }
+                        ],
+                        "session_id": "56bd03eac7494f4299062699109921e9",
+                        "requested_seconds": 2.0,
+                        "termination": "end_of_stream",
+                        "observed_frames": 8,
+                        "last_observed_frame_ms": 1750,
+                        "transport_started_wall_ms": 1792682771662,
+                        "transport_finished_wall_ms": 1792682772505,
+                        "transport_time_is_not_capture_time": true,
+                        "continuity_certified": false,
+                        "timestamp_jump_threshold_ms": 1000,
+                        "timestamp_jump_count": 0,
+                        "timestamp_jump_samples": [],
+                        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+                      },
+                      "clock_kind": "source_pts",
+                      "clock_limitations": [],
+                      "schema": "visn-sanitized-media-v1",
+                      "policy": "sanitized-pixels-v1",
+                      "qualification": "integration_candidate_not_general_privacy_acceptance",
+                      "media_sha256": "89158b0a978a49d988eedb74e20da8fd923330b6443db0fa79b518cc47c6eb72",
+                      "media_bytes": 2052109,
+                      "frames": 8,
+                      "width": 512,
+                      "height": 512,
+                      "ledger_sha256": "06b5a80ee796b825e107b1ce0262a71e215394fee4a9d3a23b1d11b21648f8b3",
+                      "audio": "removed"
+                    },
+                    "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                    "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+                  },
+                  "source_duration_ms": 2000,
+                  "interpretation": null,
+                  "event_id": "be49e5f1-263e-5528-b0c6-2932050da35d",
+                  "job_id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+                  "camera_id": "camera-a",
+                  "cluster_id": null,
+                  "start_ms": 0,
+                  "end_ms": 2000,
+                  "duration_ms": 2000,
+                  "activity_mean": 1.2357927e-09,
+                  "activity_peak": 1.6477236e-09,
+                  "quality": 0.8068943,
+                  "boundary_reason": "stream_start",
+                  "thumbnail_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/thumbnail",
+                  "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/clip",
+                  "description": {
+                    "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                    "scene_type": "metadata-only fallback",
+                    "visible_objects": [],
+                    "visible_people": [],
+                    "apparent_actions": [],
+                    "visible_text": [],
+                    "conditions": "Not visually assessed",
+                    "confidence": 0.2,
+                    "generated_by_model": false,
+                    "model": null,
+                    "fallback_reason": "VLM event enrichment was disabled"
+                  },
+                  "visual_signature": [
+                    0.20665148,
+                    0.22989553,
+                    0.17034326,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.00067865837,
+                    0.028164323,
+                    0.019002436,
+                    0.00033932918,
+                    0.0020359752,
+                    0.05429267,
+                    0.29487708,
+                    0.03613856,
+                    0.17339721,
+                    0.04513078,
+                    0.33440894,
+                    0.3393292,
+                    0.09229754,
+                    0.053953342,
+                    0.0039022858,
+                    0.0,
+                    0.2641678,
+                    0.12572147,
+                    0.20563349,
+                    0.18849736,
+                    0.15507345,
+                    0.052256696,
+                    0.05089938,
+                    0.00016966459,
+                    0.17220956,
+                    0.0018663106,
+                    0.060570262,
+                    0.10468306,
+                    0.08601995,
+                    0.16830729,
+                    0.30590528,
+                    0.1428576,
+                    0.017607287,
+                    0.010423684,
+                    0.0069642845,
+                    0.35397142
+                  ]
+                }
+              ],
+              "data_quality_notes": [
+                "Observed 8 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.",
+                "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+                "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+                "Observer analysis retrieved 4 of 8 consumed source frames.",
+                "Event clips use stream copy when compatible and fall back to H.264 only when required."
+              ]
+            }
+          ],
+          "algorithm_version": "retrieval-memory-v1-sparse-adaptive"
+        },
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e/resume",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-4c7b-71b0-bcd7-aba5148cc07a",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "completed",
+          "output_sha256": "785c5962f333588ebe87bf4e63d1b24f6037a6c349a9294664fc74c73b217341",
+          "attempts": 1,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-4c7b-71b0-bcd7-abb8e6ae8923",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 1,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "completed",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": 1792682773627,
+        "result": {
+          "cluster_id": null,
+          "cameras_requested": 1,
+          "cameras_processed": 1,
+          "camera_failures": [],
+          "events_indexed": 1,
+          "source_duration_ms": 2000,
+          "observer_frames_decoded": 8,
+          "camera_results": [
+            {
+              "source_session_id": "56bd03eac7494f4299062699109921e9",
+              "long_memory": null,
+              "camera": {
+                "camera_id": "camera-a",
+                "live_url": "http://***",
+                "country": "",
+                "country_code": "",
+                "region": "",
+                "city": "",
+                "latitude": null,
+                "longitude": null,
+                "zip": null,
+                "timezone": "",
+                "manufacturer": "",
+                "description": ""
+              },
+              "duration_ms": 2000,
+              "frames_decoded": 8,
+              "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/source",
+              "events": [
+                {
+                  "source_session_id": "56bd03eac7494f4299062699109921e9",
+                  "privacy": {
+                    "source": {
+                      "capture": {
+                        "association_sessions": [
+                          {
+                            "session_id": "56bd03eac7494f4299062699109921e9:0",
+                            "first_frame_index": 0,
+                            "last_frame_index": 7,
+                            "first_observed_ms": 0,
+                            "last_observed_ms": 1750,
+                            "start_reason": "initial_capture"
+                          }
+                        ],
+                        "session_id": "56bd03eac7494f4299062699109921e9",
+                        "requested_seconds": 2.0,
+                        "termination": "end_of_stream",
+                        "observed_frames": 8,
+                        "last_observed_frame_ms": 1750,
+                        "transport_started_wall_ms": 1792682771662,
+                        "transport_finished_wall_ms": 1792682772505,
+                        "transport_time_is_not_capture_time": true,
+                        "continuity_certified": false,
+                        "timestamp_jump_threshold_ms": 1000,
+                        "timestamp_jump_count": 0,
+                        "timestamp_jump_samples": [],
+                        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+                      },
+                      "clock_kind": "source_pts",
+                      "clock_limitations": [],
+                      "schema": "visn-sanitized-media-v1",
+                      "policy": "sanitized-pixels-v1",
+                      "qualification": "integration_candidate_not_general_privacy_acceptance",
+                      "media_sha256": "89158b0a978a49d988eedb74e20da8fd923330b6443db0fa79b518cc47c6eb72",
+                      "media_bytes": 2052109,
+                      "frames": 8,
+                      "width": 512,
+                      "height": 512,
+                      "ledger_sha256": "06b5a80ee796b825e107b1ce0262a71e215394fee4a9d3a23b1d11b21648f8b3",
+                      "audio": "removed"
+                    },
+                    "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                    "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+                  },
+                  "source_duration_ms": 2000,
+                  "interpretation": null,
+                  "event_id": "be49e5f1-263e-5528-b0c6-2932050da35d",
+                  "job_id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+                  "camera_id": "camera-a",
+                  "cluster_id": null,
+                  "start_ms": 0,
+                  "end_ms": 2000,
+                  "duration_ms": 2000,
+                  "activity_mean": 1.2357927e-09,
+                  "activity_peak": 1.6477236e-09,
+                  "quality": 0.8068943,
+                  "boundary_reason": "stream_start",
+                  "thumbnail_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/thumbnail",
+                  "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/clip",
+                  "description": {
+                    "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                    "scene_type": "metadata-only fallback",
+                    "visible_objects": [],
+                    "visible_people": [],
+                    "apparent_actions": [],
+                    "visible_text": [],
+                    "conditions": "Not visually assessed",
+                    "confidence": 0.2,
+                    "generated_by_model": false,
+                    "model": null,
+                    "fallback_reason": "VLM event enrichment was disabled"
+                  },
+                  "visual_signature": [
+                    0.20665148,
+                    0.22989553,
+                    0.17034326,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.00067865837,
+                    0.028164323,
+                    0.019002436,
+                    0.00033932918,
+                    0.0020359752,
+                    0.05429267,
+                    0.29487708,
+                    0.03613856,
+                    0.17339721,
+                    0.04513078,
+                    0.33440894,
+                    0.3393292,
+                    0.09229754,
+                    0.053953342,
+                    0.0039022858,
+                    0.0,
+                    0.2641678,
+                    0.12572147,
+                    0.20563349,
+                    0.18849736,
+                    0.15507345,
+                    0.052256696,
+                    0.05089938,
+                    0.00016966459,
+                    0.17220956,
+                    0.0018663106,
+                    0.060570262,
+                    0.10468306,
+                    0.08601995,
+                    0.16830729,
+                    0.30590528,
+                    0.1428576,
+                    0.017607287,
+                    0.010423684,
+                    0.0069642845,
+                    0.35397142
+                  ]
+                }
+              ],
+              "data_quality_notes": [
+                "Observed 8 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.",
+                "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+                "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+                "Observer analysis retrieved 4 of 8 consumed source frames.",
+                "Event clips use stream copy when compatible and fall back to H.264 only when required."
+              ]
+            }
+          ],
+          "algorithm_version": "retrieval-memory-v1-sparse-adaptive"
+        },
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e/resume",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-4c7b-71b0-bcd7-aba5148cc07a",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "completed",
+          "output_sha256": "785c5962f333588ebe87bf4e63d1b24f6037a6c349a9294664fc74c73b217341",
+          "attempts": 1,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-4c7b-71b0-bcd7-abb8e6ae8923",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 2,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-4c7b-71b0-bcd7-aba5148cc07a",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "completed",
+          "output_sha256": "785c5962f333588ebe87bf4e63d1b24f6037a6c349a9294664fc74c73b217341",
+          "attempts": 1,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-4c7b-71b0-bcd7-abb8e6ae8923",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 2,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682772767,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-4c7b-71b0-bcd7-aba5148cc07a",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "completed",
+          "output_sha256": "785c5962f333588ebe87bf4e63d1b24f6037a6c349a9294664fc74c73b217341",
+          "attempts": 1,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-4c7b-71b0-bcd7-abb8e6ae8923",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 2,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776457,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-4c7b-71b0-bcd7-aba5148cc07a",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "completed",
+          "output_sha256": "785c5962f333588ebe87bf4e63d1b24f6037a6c349a9294664fc74c73b217341",
+          "attempts": 1,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-4c7b-71b0-bcd7-abb8e6ae8923",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 2,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776457,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-5808-7c11-beb1-d514df403007",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-5808-7c11-beb1-d52aca264786",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 2,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "completed",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776457,
+        "completed_at_ms": 1792682776584,
+        "result": {
+          "cluster_id": null,
+          "cameras_requested": 1,
+          "cameras_processed": 1,
+          "camera_failures": [],
+          "events_indexed": 1,
+          "source_duration_ms": 2000,
+          "observer_frames_decoded": 8,
+          "camera_results": [
+            {
+              "source_session_id": "56bd03eac7494f4299062699109921e9",
+              "long_memory": null,
+              "camera": {
+                "camera_id": "camera-a",
+                "live_url": "http://***",
+                "country": "",
+                "country_code": "",
+                "region": "",
+                "city": "",
+                "latitude": null,
+                "longitude": null,
+                "zip": null,
+                "timezone": "",
+                "manufacturer": "",
+                "description": ""
+              },
+              "duration_ms": 2000,
+              "frames_decoded": 8,
+              "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/source",
+              "events": [
+                {
+                  "source_session_id": "56bd03eac7494f4299062699109921e9",
+                  "privacy": {
+                    "source": {
+                      "capture": {
+                        "association_sessions": [
+                          {
+                            "session_id": "56bd03eac7494f4299062699109921e9:0",
+                            "first_frame_index": 0,
+                            "last_frame_index": 7,
+                            "first_observed_ms": 0,
+                            "last_observed_ms": 1750,
+                            "start_reason": "initial_capture"
+                          }
+                        ],
+                        "session_id": "56bd03eac7494f4299062699109921e9",
+                        "requested_seconds": 2.0,
+                        "termination": "end_of_stream",
+                        "observed_frames": 8,
+                        "last_observed_frame_ms": 1750,
+                        "transport_started_wall_ms": 1792682771662,
+                        "transport_finished_wall_ms": 1792682772505,
+                        "transport_time_is_not_capture_time": true,
+                        "continuity_certified": false,
+                        "timestamp_jump_threshold_ms": 1000,
+                        "timestamp_jump_count": 0,
+                        "timestamp_jump_samples": [],
+                        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+                      },
+                      "clock_kind": "source_pts",
+                      "clock_limitations": [],
+                      "schema": "visn-sanitized-media-v1",
+                      "policy": "sanitized-pixels-v1",
+                      "qualification": "integration_candidate_not_general_privacy_acceptance",
+                      "media_sha256": "89158b0a978a49d988eedb74e20da8fd923330b6443db0fa79b518cc47c6eb72",
+                      "media_bytes": 2052109,
+                      "frames": 8,
+                      "width": 512,
+                      "height": 512,
+                      "ledger_sha256": "06b5a80ee796b825e107b1ce0262a71e215394fee4a9d3a23b1d11b21648f8b3",
+                      "audio": "removed"
+                    },
+                    "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                    "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+                  },
+                  "source_duration_ms": 2000,
+                  "interpretation": null,
+                  "event_id": "be49e5f1-263e-5528-b0c6-2932050da35d",
+                  "job_id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+                  "camera_id": "camera-a",
+                  "cluster_id": null,
+                  "start_ms": 0,
+                  "end_ms": 2000,
+                  "duration_ms": 2000,
+                  "activity_mean": 1.2357927e-09,
+                  "activity_peak": 1.6477236e-09,
+                  "quality": 0.8068943,
+                  "boundary_reason": "stream_start",
+                  "thumbnail_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/thumbnail",
+                  "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/clip",
+                  "description": {
+                    "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                    "scene_type": "metadata-only fallback",
+                    "visible_objects": [],
+                    "visible_people": [],
+                    "apparent_actions": [],
+                    "visible_text": [],
+                    "conditions": "Not visually assessed",
+                    "confidence": 0.2,
+                    "generated_by_model": false,
+                    "model": null,
+                    "fallback_reason": "VLM event enrichment was disabled"
+                  },
+                  "visual_signature": [
+                    0.20665148,
+                    0.22989553,
+                    0.17034326,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.00067865837,
+                    0.028164323,
+                    0.019002436,
+                    0.00033932918,
+                    0.0020359752,
+                    0.05429267,
+                    0.29487708,
+                    0.03613856,
+                    0.17339721,
+                    0.04513078,
+                    0.33440894,
+                    0.3393292,
+                    0.09229754,
+                    0.053953342,
+                    0.0039022858,
+                    0.0,
+                    0.2641678,
+                    0.12572147,
+                    0.20563349,
+                    0.18849736,
+                    0.15507345,
+                    0.052256696,
+                    0.05089938,
+                    0.00016966459,
+                    0.17220956,
+                    0.0018663106,
+                    0.060570262,
+                    0.10468306,
+                    0.08601995,
+                    0.16830729,
+                    0.30590528,
+                    0.1428576,
+                    0.017607287,
+                    0.010423684,
+                    0.0069642845,
+                    0.35397142
+                  ]
+                }
+              ],
+              "data_quality_notes": [
+                "Observed 8 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.",
+                "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+                "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+                "Observer analysis retrieved 4 of 8 consumed source frames.",
+                "Event clips use stream copy when compatible and fall back to H.264 only when required."
+              ]
+            }
+          ],
+          "algorithm_version": "retrieval-memory-v1-sparse-adaptive"
+        },
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e/resume",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-5808-7c11-beb1-d514df403007",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-5808-7c11-beb1-d52aca264786",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 3,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776457,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-5808-7c11-beb1-d514df403007",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-5808-7c11-beb1-d52aca264786",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 3,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776457,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-5808-7c11-beb1-d514df403007",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-5808-7c11-beb1-d52aca264786",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 3,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "failed",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776695,
+        "completed_at_ms": 1792682776705,
+        "result": null,
+        "error": "all memory cameras failed: camera-a: camera_checkpoint_changed"
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e/resume",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-5808-7c11-beb1-d514df403007",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-5808-7c11-beb1-d52aca264786",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 4,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776695,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-5808-7c11-beb1-d514df403007",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-5808-7c11-beb1-d52aca264786",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 4,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776695,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-5808-7c11-beb1-d514df403007",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-5808-7c11-beb1-d52aca264786",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 4,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776765,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-40c2-7352-82f4-43a9a6a63b8e",
+      "status": 200,
+      "response": {
+        "metadata_projection": {
+          "revision": "01a16438-5923-75f0-af2c-98bb93ea834d",
+          "version": "evidence-metadata-v1",
+          "input_fingerprint": "ff1f2d7b674849affabb6c090a80d95169dec24b0ace70b2ec1268bfbe0cbdc8",
+          "state": "pending",
+          "output_sha256": null,
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "last_error": null
+        },
+        "revocation": null,
+        "visual_projection": {
+          "retry_requested": false,
+          "revision": "01a16438-5923-75f0-af2c-98c4f4640b1f",
+          "state": "pending",
+          "attempts": 0,
+          "next_attempt_at_ms": 0,
+          "task_id": null,
+          "worker_fingerprint": null,
+          "last_error": null,
+          "receipt": null
+        },
+        "request_fingerprint": "09b0c9fcacac088433726975eaa8801370f66f0ee35572989c7086af9fab8c93",
+        "camera_checkpoints": {
+          "camera-a": "8d7ce1e506ff75d45ef109c679afc22ca7a44025e20834df08cec9d2910ae176"
+        },
+        "recovery_attempts": 4,
+        "id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+        "request": {
+          "idempotency_key": "crash-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "crash after committed capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "completed",
+        "created_at_ms": 1792682770626,
+        "started_at_ms": 1792682776765,
+        "completed_at_ms": 1792682776867,
+        "result": {
+          "cluster_id": null,
+          "cameras_requested": 1,
+          "cameras_processed": 1,
+          "camera_failures": [],
+          "events_indexed": 1,
+          "source_duration_ms": 2000,
+          "observer_frames_decoded": 8,
+          "camera_results": [
+            {
+              "source_session_id": "56bd03eac7494f4299062699109921e9",
+              "long_memory": null,
+              "camera": {
+                "camera_id": "camera-a",
+                "live_url": "http://***",
+                "country": "",
+                "country_code": "",
+                "region": "",
+                "city": "",
+                "latitude": null,
+                "longitude": null,
+                "zip": null,
+                "timezone": "",
+                "manufacturer": "",
+                "description": ""
+              },
+              "duration_ms": 2000,
+              "frames_decoded": 8,
+              "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/source",
+              "events": [
+                {
+                  "source_session_id": "56bd03eac7494f4299062699109921e9",
+                  "privacy": {
+                    "source": {
+                      "capture": {
+                        "association_sessions": [
+                          {
+                            "session_id": "56bd03eac7494f4299062699109921e9:0",
+                            "first_frame_index": 0,
+                            "last_frame_index": 7,
+                            "first_observed_ms": 0,
+                            "last_observed_ms": 1750,
+                            "start_reason": "initial_capture"
+                          }
+                        ],
+                        "session_id": "56bd03eac7494f4299062699109921e9",
+                        "requested_seconds": 2.0,
+                        "termination": "end_of_stream",
+                        "observed_frames": 8,
+                        "last_observed_frame_ms": 1750,
+                        "transport_started_wall_ms": 1792682771662,
+                        "transport_finished_wall_ms": 1792682772505,
+                        "transport_time_is_not_capture_time": true,
+                        "continuity_certified": false,
+                        "timestamp_jump_threshold_ms": 1000,
+                        "timestamp_jump_count": 0,
+                        "timestamp_jump_samples": [],
+                        "gap_interpretation": "Large timestamp spacing is observed; VFR and missing observations cannot be distinguished here"
+                      },
+                      "clock_kind": "source_pts",
+                      "clock_limitations": [],
+                      "schema": "visn-sanitized-media-v1",
+                      "policy": "sanitized-pixels-v1",
+                      "qualification": "integration_candidate_not_general_privacy_acceptance",
+                      "media_sha256": "89158b0a978a49d988eedb74e20da8fd923330b6443db0fa79b518cc47c6eb72",
+                      "media_bytes": 2052109,
+                      "frames": 8,
+                      "width": 512,
+                      "height": 512,
+                      "ledger_sha256": "06b5a80ee796b825e107b1ce0262a71e215394fee4a9d3a23b1d11b21648f8b3",
+                      "audio": "removed"
+                    },
+                    "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                    "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+                  },
+                  "source_duration_ms": 2000,
+                  "interpretation": null,
+                  "event_id": "be49e5f1-263e-5528-b0c6-2932050da35d",
+                  "job_id": "01a16438-40c2-7352-82f4-43a9a6a63b8e",
+                  "camera_id": "camera-a",
+                  "cluster_id": null,
+                  "start_ms": 0,
+                  "end_ms": 2000,
+                  "duration_ms": 2000,
+                  "activity_mean": 1.2357927e-09,
+                  "activity_peak": 1.6477236e-09,
+                  "quality": 0.8068943,
+                  "boundary_reason": "stream_start",
+                  "thumbnail_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/thumbnail",
+                  "evidence_url": "/api/v1/memory-events/be49e5f1-263e-5528-b0c6-2932050da35d/clip",
+                  "description": {
+                    "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                    "scene_type": "metadata-only fallback",
+                    "visible_objects": [],
+                    "visible_people": [],
+                    "apparent_actions": [],
+                    "visible_text": [],
+                    "conditions": "Not visually assessed",
+                    "confidence": 0.2,
+                    "generated_by_model": false,
+                    "model": null,
+                    "fallback_reason": "VLM event enrichment was disabled"
+                  },
+                  "visual_signature": [
+                    0.20665148,
+                    0.22989553,
+                    0.17034326,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.00067865837,
+                    0.028164323,
+                    0.019002436,
+                    0.00033932918,
+                    0.0020359752,
+                    0.05429267,
+                    0.29487708,
+                    0.03613856,
+                    0.17339721,
+                    0.04513078,
+                    0.33440894,
+                    0.3393292,
+                    0.09229754,
+                    0.053953342,
+                    0.0039022858,
+                    0.0,
+                    0.2641678,
+                    0.12572147,
+                    0.20563349,
+                    0.18849736,
+                    0.15507345,
+                    0.052256696,
+                    0.05089938,
+                    0.00016966459,
+                    0.17220956,
+                    0.0018663106,
+                    0.060570262,
+                    0.10468306,
+                    0.08601995,
+                    0.16830729,
+                    0.30590528,
+                    0.1428576,
+                    0.017607287,
+                    0.010423684,
+                    0.0069642845,
+                    0.35397142
+                  ]
+                }
+              ],
+              "data_quality_notes": [
+                "Observed 8 frames; capture stopped because end_of_stream. Transport times are not verified scene capture times; continuity is not certified.",
+                "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+                "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+                "Observer analysis retrieved 4 of 8 consumed source frames.",
+                "Event clips use stream copy when compatible and fall back to H.264 only when required."
+              ]
+            }
+          ],
+          "algorithm_version": "retrieval-memory-v1-sparse-adaptive"
+        },
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 202,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "08437893499c6c3ac6a7be64258a8249ca61a31e79fc4d51357658fd835421d5",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-596e-7660-b849-dbda4cc53c19",
+        "request": {
+          "idempotency_key": "before-capture-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel before capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792682776942,
+        "started_at_ms": null,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 202,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "08437893499c6c3ac6a7be64258a8249ca61a31e79fc4d51357658fd835421d5",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-596e-7660-b849-dbda4cc53c19",
+        "request": {
+          "idempotency_key": "before-capture-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel before capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792682776942,
+        "started_at_ms": 1792682776952,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 409,
+      "response": {
+        "error": "idempotency_key_conflict"
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-596e-7660-b849-dbda4cc53c19/cancel",
+      "status": 200,
+      "response": {
+        "metadata_projection": null,
+        "revocation": null,
+        "visual_projection": null,
+        "request_fingerprint": "08437893499c6c3ac6a7be64258a8249ca61a31e79fc4d51357658fd835421d5",
+        "camera_checkpoints": {},
+        "recovery_attempts": 0,
+        "id": "01a16438-596e-7660-b849-dbda4cc53c19",
+        "request": {
+          "idempotency_key": "before-capture-operation-0123456789",
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "cancel before capture",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "camera-a",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "cancelled",
+        "created_at_ms": 1792682776942,
+        "started_at_ms": 1792682776952,
+        "completed_at_ms": 1792682777344,
+        "result": null,
+        "error": "recording_cancelled: only already committed evidence can be resumed"
+      }
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a16438-596e-7660-b849-dbda4cc53c19/resume",
+      "status": 400,
+      "response": {
+        "error": "no_committed_evidence_to_resume: a new live recording needs a new operation"
+      }
+    }
+  ]
+}

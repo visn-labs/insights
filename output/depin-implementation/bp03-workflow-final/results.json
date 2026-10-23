@@ -1,0 +1,1014 @@
+{
+  "scope": "real detector and application integration only; acceptance unqualified",
+  "recording_id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+  "upload_id": "01a15f0b-8bef-7bc1-9b99-4050958ed0b8",
+  "requests": [
+    {
+      "route": "/api/v1/capabilities",
+      "status": 200,
+      "response": {
+        "media_policy": "sanitized-v1",
+        "media_qualification": "integration candidate; independent privacy/utility acceptance pending",
+        "privacy_upload_limit_bytes": 67108864,
+        "entity_memory_version": "entity-memory-v2-pts",
+        "service_version": "0.1.0",
+        "local_state": "memory + local uploads; no database required",
+        "simulator": true,
+        "yolo26_command": true,
+        "multi_camera_clusters": true,
+        "retrieval_memory_v1": true,
+        "max_cluster_cameras": 16,
+        "stream_protocols": [
+          "http",
+          "https",
+          "rtsp",
+          "rtsps"
+        ],
+        "max_analysis_secs": 3600,
+        "gemma_endpoint": "http://127.0.0.1:9/v1",
+        "lmstudio_api_endpoint": "http://127.0.0.1:9/api/v1",
+        "kafka_compiled": false,
+        "kafka_enabled": false
+      },
+      "bytes": 631,
+      "sha256": "4c7fe335fe2aaab88c5ce2dc8b737be9e47e2c908fd66db36c1202d6a521a6ab"
+    },
+    {
+      "route": "/api/v1/uploads",
+      "status": 201,
+      "response": {
+        "privacy": {
+          "schema": "visn-sanitized-media-v1",
+          "policy": "sanitized-pixels-v1",
+          "qualification": "integration_candidate_not_general_privacy_acceptance",
+          "media_sha256": "4e56d1039d0c8eb6b3aae872a84d006b7d9b21b4a39caed9ef29930d153db5b9",
+          "media_bytes": 2052109,
+          "frames": 8,
+          "width": 512,
+          "height": 512,
+          "ledger_sha256": "65a23816c554b6bb6237f4989a94554bf75d3b56b4c7b105a49bf5e3021b1583",
+          "audio": "removed"
+        },
+        "id": "01a15f0b-8bef-7bc1-9b99-4050958ed0b8",
+        "original_name": "fixture.mkv",
+        "content_type": "video/x-matroska",
+        "size_bytes": 2052109,
+        "sha256": "4e56d1039d0c8eb6b3aae872a84d006b7d9b21b4a39caed9ef29930d153db5b9"
+      },
+      "bytes": 596,
+      "sha256": "11d22bddb488edb9d62bf914a47a4ddd3a70a757016bea88738aac9a060990b6"
+    },
+    {
+      "route": "/api/v1/uploads/01a15f0b-8bef-7bc1-9b99-4050958ed0b8/content",
+      "status": 200,
+      "response": null,
+      "bytes": 78398,
+      "sha256": "72c03294eb475d38515735e6519abb155fc474ac53c409a038c0424e537e557b"
+    },
+    {
+      "route": "/api/v1/uploads",
+      "status": 400,
+      "response": {
+        "error": "privacy_processing_blocked: detector/decode/verification failed; raw fallback prohibited"
+      },
+      "bytes": 100,
+      "sha256": "b2eb68c90c9a46ce59d54c9eefd7f3848877765201c284afb7cc63fffed0f49f"
+    },
+    {
+      "route": "/api/v1/memory-jobs",
+      "status": 202,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "queued",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": null,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 573,
+      "sha256": "60d461012be5dc5c05404af0115cb91e95a46fd9f009bad877d5ca0fe5a8e7f9"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "running",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": null,
+        "result": null,
+        "error": null
+      },
+      "bytes": 583,
+      "sha256": "3c39b012a2d4b2b8bf551d4cbb77fe35f45b3e9d11eef09728a6431ff024e05d"
+    },
+    {
+      "route": "/api/v1/memory-jobs/01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+      "status": 200,
+      "response": {
+        "id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+        "request": {
+          "long_memory_enabled": false,
+          "temporal_enabled": false,
+          "name": "privacy contract replay",
+          "cluster_id": null,
+          "cameras": [
+            {
+              "camera_id": "privacy-demo",
+              "live_url": "http://***",
+              "country": "",
+              "country_code": "",
+              "region": "",
+              "city": "",
+              "latitude": null,
+              "longitude": null,
+              "zip": null,
+              "timezone": "",
+              "manufacturer": "",
+              "description": ""
+            }
+          ],
+          "monitor_duration_secs": 2,
+          "observer_fps": 2.0,
+          "vlm_enabled": false,
+          "vlm_model": null
+        },
+        "status": "completed",
+        "created_at_ms": 1792595958571,
+        "started_at_ms": 1792595958572,
+        "completed_at_ms": 1792595960664,
+        "result": {
+          "cluster_id": null,
+          "cameras_requested": 1,
+          "cameras_processed": 1,
+          "camera_failures": [],
+          "events_indexed": 1,
+          "source_duration_ms": 2000,
+          "observer_frames_decoded": 8,
+          "camera_results": [
+            {
+              "long_memory": null,
+              "camera": {
+                "camera_id": "privacy-demo",
+                "live_url": "http://***",
+                "country": "",
+                "country_code": "",
+                "region": "",
+                "city": "",
+                "latitude": null,
+                "longitude": null,
+                "zip": null,
+                "timezone": "",
+                "manufacturer": "",
+                "description": ""
+              },
+              "duration_ms": 2000,
+              "frames_decoded": 8,
+              "evidence_url": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/source",
+              "events": [
+                {
+                  "privacy": {
+                    "source": {
+                      "schema": "visn-sanitized-media-v1",
+                      "policy": "sanitized-pixels-v1",
+                      "qualification": "integration_candidate_not_general_privacy_acceptance",
+                      "media_sha256": "54233c83df2f82db2c52743725a0a0619eca3c1a0c4fa71a35e10c2061b27c0a",
+                      "media_bytes": 2052109,
+                      "frames": 8,
+                      "width": 512,
+                      "height": 512,
+                      "ledger_sha256": "65a23816c554b6bb6237f4989a94554bf75d3b56b4c7b105a49bf5e3021b1583",
+                      "audio": "removed"
+                    },
+                    "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                    "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+                  },
+                  "source_duration_ms": 2000,
+                  "interpretation": null,
+                  "event_id": "3bc0550f-95fe-5ef9-a836-9e583028d31e",
+                  "job_id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+                  "camera_id": "privacy-demo",
+                  "cluster_id": null,
+                  "start_ms": 0,
+                  "end_ms": 2000,
+                  "duration_ms": 2000,
+                  "activity_mean": 1.2357927e-09,
+                  "activity_peak": 1.6477236e-09,
+                  "quality": 0.8068943,
+                  "boundary_reason": "stream_start",
+                  "thumbnail_url": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/thumbnail",
+                  "evidence_url": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/clip",
+                  "description": {
+                    "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                    "scene_type": "metadata-only fallback",
+                    "visible_objects": [],
+                    "visible_people": [],
+                    "apparent_actions": [],
+                    "visible_text": [],
+                    "conditions": "Not visually assessed",
+                    "confidence": 0.2,
+                    "generated_by_model": false,
+                    "model": null,
+                    "fallback_reason": "VLM event enrichment was disabled"
+                  },
+                  "visual_signature": [
+                    0.20665148,
+                    0.22989553,
+                    0.17034326,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.00067865837,
+                    0.028164323,
+                    0.019002436,
+                    0.00033932918,
+                    0.0020359752,
+                    0.05429267,
+                    0.29487708,
+                    0.03613856,
+                    0.17339721,
+                    0.04513078,
+                    0.33440894,
+                    0.3393292,
+                    0.09229754,
+                    0.053953342,
+                    0.0039022858,
+                    0.0,
+                    0.2641678,
+                    0.12572147,
+                    0.20563349,
+                    0.18849736,
+                    0.15507345,
+                    0.052256696,
+                    0.05089938,
+                    0.00016966459,
+                    0.17220956,
+                    0.0018663106,
+                    0.060570262,
+                    0.10468306,
+                    0.08601995,
+                    0.16830729,
+                    0.30590528,
+                    0.1428576,
+                    0.017607287,
+                    0.010423684,
+                    0.0069642845,
+                    0.35397142
+                  ]
+                }
+              ],
+              "data_quality_notes": [
+                "Sanitized-pixel integration profile: face/plate detection ran before persistence and observation; independent privacy/utility qualification remains pending.",
+                "V1 activity boundaries use sparse luma and histogram change; the encoded source remains available for verification.",
+                "Observer analysis retrieved 4 of 8 consumed source frames.",
+                "Event clips use stream copy when compatible and fall back to H.264 only when required."
+              ]
+            }
+          ],
+          "algorithm_version": "retrieval-memory-v1-sparse-adaptive"
+        },
+        "error": null
+      },
+      "bytes": 3720,
+      "sha256": "78fac5d828a6d0beeff7157cf022eb63f99f3535c0bb05cbfad256e0116b9726"
+    },
+    {
+      "route": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/clip",
+      "status": 200,
+      "response": null,
+      "bytes": 115102,
+      "sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+    },
+    {
+      "route": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/thumbnail",
+      "status": 200,
+      "response": null,
+      "bytes": 36674,
+      "sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278"
+    },
+    {
+      "route": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/source",
+      "status": 200,
+      "response": null,
+      "bytes": 2052109,
+      "sha256": "54233c83df2f82db2c52743725a0a0619eca3c1a0c4fa71a35e10c2061b27c0a"
+    },
+    {
+      "route": "/api/v1/memory-query",
+      "status": 200,
+      "response": {
+        "long_memory": null,
+        "interpretations": [],
+        "interpretation_notes": [],
+        "query_id": "01a15f0b-a5de-76b0-baff-6f6730815951",
+        "query": "recorded activity",
+        "summary": "Retrieved 1 candidate event from 1 indexed events. Candidates are ranked by relevance, not verified facts or confidence.",
+        "matches": [
+          {
+            "rank": 1,
+            "score": 0.34947124,
+            "matched_terms": [
+              "recorded",
+              "activity"
+            ],
+            "event": {
+              "privacy": {
+                "source": {
+                  "schema": "visn-sanitized-media-v1",
+                  "policy": "sanitized-pixels-v1",
+                  "qualification": "integration_candidate_not_general_privacy_acceptance",
+                  "media_sha256": "54233c83df2f82db2c52743725a0a0619eca3c1a0c4fa71a35e10c2061b27c0a",
+                  "media_bytes": 2052109,
+                  "frames": 8,
+                  "width": 512,
+                  "height": 512,
+                  "ledger_sha256": "65a23816c554b6bb6237f4989a94554bf75d3b56b4c7b105a49bf5e3021b1583",
+                  "audio": "removed"
+                },
+                "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+              },
+              "source_duration_ms": 2000,
+              "interpretation": null,
+              "event_id": "3bc0550f-95fe-5ef9-a836-9e583028d31e",
+              "job_id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+              "camera_id": "privacy-demo",
+              "cluster_id": null,
+              "start_ms": 0,
+              "end_ms": 2000,
+              "duration_ms": 2000,
+              "activity_mean": 1.2357927e-09,
+              "activity_peak": 1.6477236e-09,
+              "quality": 0.8068943,
+              "boundary_reason": "stream_start",
+              "thumbnail_url": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/thumbnail",
+              "evidence_url": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/clip",
+              "description": {
+                "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                "scene_type": "metadata-only fallback",
+                "visible_objects": [],
+                "visible_people": [],
+                "apparent_actions": [],
+                "visible_text": [],
+                "conditions": "Not visually assessed",
+                "confidence": 0.2,
+                "generated_by_model": false,
+                "model": null,
+                "fallback_reason": "VLM event enrichment was disabled"
+              },
+              "visual_signature": [
+                0.20665148,
+                0.22989553,
+                0.17034326,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.00067865837,
+                0.028164323,
+                0.019002436,
+                0.00033932918,
+                0.0020359752,
+                0.05429267,
+                0.29487708,
+                0.03613856,
+                0.17339721,
+                0.04513078,
+                0.33440894,
+                0.3393292,
+                0.09229754,
+                0.053953342,
+                0.0039022858,
+                0.0,
+                0.2641678,
+                0.12572147,
+                0.20563349,
+                0.18849736,
+                0.15507345,
+                0.052256696,
+                0.05089938,
+                0.00016966459,
+                0.17220956,
+                0.0018663106,
+                0.060570262,
+                0.10468306,
+                0.08601995,
+                0.16830729,
+                0.30590528,
+                0.1428576,
+                0.017607287,
+                0.010423684,
+                0.0069642845,
+                0.35397142
+              ]
+            }
+          }
+        ],
+        "events_considered": 1,
+        "retrieval_mode": "local_lexical_metadata",
+        "retrieval_notes": [],
+        "retrieval_provenance": null,
+        "model": null,
+        "fallback_reason": null
+      },
+      "bytes": 2602,
+      "sha256": "8f56c868c69d15edc4aa8e90653c1b95ff968a60e6d8d0fe21b668a86c335012"
+    },
+    {
+      "route": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/thumbnail",
+      "status": 404,
+      "response": {
+        "error": "memory artifact not found"
+      },
+      "bytes": 37,
+      "sha256": "5a7dddb7b7d8f9b3bc8fece64b9fd57714442f3d3a90c7ebcf0dda598f33397a"
+    },
+    {
+      "route": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/thumbnail",
+      "status": 200,
+      "response": null,
+      "bytes": 36674,
+      "sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278"
+    },
+    {
+      "route": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/source",
+      "status": 404,
+      "response": {
+        "error": "memory artifact not found"
+      },
+      "bytes": 37,
+      "sha256": "5a7dddb7b7d8f9b3bc8fece64b9fd57714442f3d3a90c7ebcf0dda598f33397a"
+    },
+    {
+      "route": "/api/v1/memory-query",
+      "status": 400,
+      "response": {
+        "error": "privacy_media_geometry_or_size"
+      },
+      "bytes": 42,
+      "sha256": "d640250eedc5a8014253d9e6506b393ee77141ba5a32293f4bddae206edb9343"
+    },
+    {
+      "route": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/source",
+      "status": 200,
+      "response": null,
+      "bytes": 2052109,
+      "sha256": "54233c83df2f82db2c52743725a0a0619eca3c1a0c4fa71a35e10c2061b27c0a"
+    },
+    {
+      "route": "/api/v1/memory-query",
+      "status": 200,
+      "response": {
+        "long_memory": null,
+        "interpretations": [],
+        "interpretation_notes": [],
+        "query_id": "01a15f0b-a7c3-76e2-ba6b-32d6bb9e101e",
+        "query": "recorded activity",
+        "summary": "Retrieved 1 candidate event from 1 indexed events. Candidates are ranked by relevance, not verified facts or confidence.",
+        "matches": [
+          {
+            "rank": 1,
+            "score": 0.34947124,
+            "matched_terms": [
+              "activity",
+              "recorded"
+            ],
+            "event": {
+              "privacy": {
+                "source": {
+                  "schema": "visn-sanitized-media-v1",
+                  "policy": "sanitized-pixels-v1",
+                  "qualification": "integration_candidate_not_general_privacy_acceptance",
+                  "media_sha256": "54233c83df2f82db2c52743725a0a0619eca3c1a0c4fa71a35e10c2061b27c0a",
+                  "media_bytes": 2052109,
+                  "frames": 8,
+                  "width": 512,
+                  "height": 512,
+                  "ledger_sha256": "65a23816c554b6bb6237f4989a94554bf75d3b56b4c7b105a49bf5e3021b1583",
+                  "audio": "removed"
+                },
+                "thumbnail_sha256": "8437d397cae46432909975635af2f4a9340744f95b148a132a6e49b6dca75278",
+                "clip_sha256": "70cb8705c52aa94e40b30059f818bd24dbd9b233371643cf7b6f21528e65afca"
+              },
+              "source_duration_ms": 2000,
+              "interpretation": null,
+              "event_id": "3bc0550f-95fe-5ef9-a836-9e583028d31e",
+              "job_id": "01a15f0b-9b2b-7212-9c78-ea05e4970f80",
+              "camera_id": "privacy-demo",
+              "cluster_id": null,
+              "start_ms": 0,
+              "end_ms": 2000,
+              "duration_ms": 2000,
+              "activity_mean": 1.2357927e-09,
+              "activity_peak": 1.6477236e-09,
+              "quality": 0.8068943,
+              "boundary_reason": "stream_start",
+              "thumbnail_url": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/thumbnail",
+              "evidence_url": "/api/v1/memory-events/3bc0550f-95fe-5ef9-a836-9e583028d31e/clip",
+              "description": {
+                "summary": "No backend scene description was supplied. The lightweight observer recorded an activity peak of 0.00; inspect the linked evidence for visual confirmation.",
+                "scene_type": "metadata-only fallback",
+                "visible_objects": [],
+                "visible_people": [],
+                "apparent_actions": [],
+                "visible_text": [],
+                "conditions": "Not visually assessed",
+                "confidence": 0.2,
+                "generated_by_model": false,
+                "model": null,
+                "fallback_reason": "VLM event enrichment was disabled"
+              },
+              "visual_signature": [
+                0.20665148,
+                0.22989553,
+                0.17034326,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.00067865837,
+                0.028164323,
+                0.019002436,
+                0.00033932918,
+                0.0020359752,
+                0.05429267,
+                0.29487708,
+                0.03613856,
+                0.17339721,
+                0.04513078,
+                0.33440894,
+                0.3393292,
+                0.09229754,
+                0.053953342,
+                0.0039022858,
+                0.0,
+                0.2641678,
+                0.12572147,
+                0.20563349,
+                0.18849736,
+                0.15507345,
+                0.052256696,
+                0.05089938,
+                0.00016966459,
+                0.17220956,
+                0.0018663106,
+                0.060570262,
+                0.10468306,
+                0.08601995,
+                0.16830729,
+                0.30590528,
+                0.1428576,
+                0.017607287,
+                0.010423684,
+                0.0069642845,
+                0.35397142
+              ]
+            }
+          }
+        ],
+        "events_considered": 1,
+        "retrieval_mode": "local_lexical_metadata",
+        "retrieval_notes": [],
+        "retrieval_provenance": null,
+        "model": null,
+        "fallback_reason": null
+      },
+      "bytes": 2602,
+      "sha256": "3fed60517cb8903c33405de40fcae20b69df4f4cd276ece1f7316cc197cea2b4"
+    }
+  ]
+}

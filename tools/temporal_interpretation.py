@@ -2,6 +2,7 @@
 import gc
 import hashlib
 import json
+from pathlib import Path
 import logging
 import os
 import math
@@ -396,6 +397,7 @@ class SequenceInterpreter:
                 'selected_track_visibility_min_edge':MIN_CROP_EDGE if event.get('grounding') is not None else None,
                 'crop_policy':dict(version=CROP_VERSION,mode=getattr(self.service.args,'interpretation_crop_mode','source') if event.get('grounding') is not None else 'none',max_edge=SOURCE_CROP_MAX_EDGE,model_crop_max_edge=MODEL_CROP_MAX_EDGE)}
             key = hashlib.sha256(json.dumps([digest, start, end, query, event.get('metadata'), event.get('grounding'), provenance], sort_keys=True).encode()).hexdigest()
+            self.service.record_artifact_source('interpretation', key, Path(event['source_path']).resolve())
             with stage('interpretation_cache_read'):
                 row = self.service.db.execute('SELECT result FROM interpretations WHERE key=?',(key,)).fetchone()
             cached = row is not None

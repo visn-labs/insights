@@ -1,0 +1,14 @@
+F...
+======================================================================
+FAIL: test_abrupt_http_body_disconnect_rolls_over (__main__.Checks.test_abrupt_http_body_disconnect_rolls_over)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_capture_reconnect.py", line 89, in test_abrupt_http_body_disconnect_rolls_over
+    self.assertEqual(report['sessions'][0]['frames'], 10)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 9 != 10
+
+----------------------------------------------------------------------
+Ran 4 tests in 4.414s
+
+FAILED (failures=1)

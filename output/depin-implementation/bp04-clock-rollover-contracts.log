@@ -1,0 +1,16 @@
+objc[34113]: Class AVFFrameReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1039703a8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1079b83a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+objc[34113]: Class AVFAudioReceiver is implemented in both /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/av/.dylibs/libavdevice.63.1.102.dylib (0x1039703f8) and /Users/anagha/projects/visn_rust/.venv-retrieval/lib/python3.13/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1079b83f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+...F
+======================================================================
+FAIL: test_resolution_change_starts_new_sanitized_file (__main__.Checks.test_resolution_change_starts_new_sanitized_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_capture_sessions.py", line 76, in test_resolution_change_starts_new_sanitized_file
+    self.assertEqual(sum(entry['frames'] for entry in report['sessions']), 20)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 19 != 20
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.731s
+
+FAILED (failures=1)

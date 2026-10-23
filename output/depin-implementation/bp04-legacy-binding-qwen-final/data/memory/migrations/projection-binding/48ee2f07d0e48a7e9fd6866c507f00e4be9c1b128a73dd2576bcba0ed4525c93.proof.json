@@ -1,0 +1,149 @@
+{
+  "schema": "visn-projection-binding-migration-v1",
+  "original_manifest_sha256": "48ee2f07d0e48a7e9fd6866c507f00e4be9c1b128a73dd2576bcba0ed4525c93",
+  "previous_revision": "01a16971-2a39-75b1-97be-48c67edfd26c",
+  "deployment_generation": "7a1369b1-ee88-4f4c-b189-4998d57bb681",
+  "registry_revision": "c99e3a67-c504-4a77-b6bd-b464f674e7ef",
+  "at_ms": 1792770389479,
+  "verification": "exact_current_task_contract_not_historical_attestation",
+  "receipt": {
+    "id": "7aa46480-f15a-5799-9ffb-f2949319b421",
+    "scope_id": "01a16971-11c3-7cd1-85b1-2a59bc3b5735",
+    "status": "queued",
+    "created_at": 1792770388.602676,
+    "updated_at": 1792770388.602676,
+    "total": 1,
+    "completed": 0,
+    "failed": 0,
+    "pending": 1,
+    "error": null,
+    "item_errors": [],
+    "vector_policy": "legacy-renormalize-v1",
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "09e108419958bb833b0087b1d15f0094a172ba8e96102e415e8d01ca5ad2b1d9",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "max_attempts": 2,
+    "profile_current": true,
+    "coverage": "prepared_intervals_only_not_exhaustive_scene_coverage",
+    "worker_profile": {
+      "manifest": {
+        "schema": "visn-retrieval-profile-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "09e108419958bb833b0087b1d15f0094a172ba8e96102e415e8d01ca5ad2b1d9",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "reranker": {
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea",
+          "runtime": {
+            "packages": {
+              "torch": "2.8.0",
+              "transformers": "4.57.3",
+              "qwen-vl-utils": "0.0.14",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "imageio-ffmpeg": "0.6.0"
+            },
+            "device": "cpu",
+            "dtype": "float32",
+            "attention": "sdpa",
+            "machine": "arm64",
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa",
+            "threads": 2,
+            "interop_threads": 16,
+            "float32_matmul_precision": "highest",
+            "deterministic_algorithms": false,
+            "cuda_version": null,
+            "cudnn_version": null,
+            "cuda_tf32": false,
+            "cudnn_tf32": true,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617"
+          },
+          "implementation": "09e108419958bb833b0087b1d15f0094a172ba8e96102e415e8d01ca5ad2b1d9"
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "vector_policy": "legacy-renormalize-v1",
+        "decode_policy": "single-seek-v1",
+        "index_schema": "vectors-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "index_storage": "bdefc8bd99c16bb5783964c92603c597e4dc34da637a2231131c8e3d9973066e",
+        "work_caches": true,
+        "interpretation": {
+          "model": null,
+          "revision": null,
+          "identity": "configuration_only_not_model_weight_attestation"
+        }
+      },
+      "fingerprint": "5e14164f3d41f5e4554c588471725daf8810fb86a44fade1a6c2fde409e5c2f0"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const frozen=JSON.parse(fs.readFileSync('docs/LOGO_FREEZE.json','utf8'));
+const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
+const svg=fs.readFileSync('static/assets/visn-mark.svg');
+const factory=fs.readFileSync('static/assets/journey.js','utf8');
+const three=fs.readFileSync('static/assets/observation-desk.js','utf8');
+assert.equal(hash(svg),frozen.svg_sha256,'Frozen SVG logo changed');
+assert.equal(hash(factory.slice(factory.indexOf('function logo('),factory.indexOf('export function mountJourney'))),frozen.svg_factory_sha256,'Frozen SVG geometry/colours changed');
+assert.equal(hash(three.slice(three.indexOf(' buildMark(){'),three.indexOf(' buildPath(){'))),frozen.three_mark_sha256,'Frozen 3D mark changed');
+console.log('Logo freeze: SVG asset, SVG factory/pose and 3D mark unchanged.');

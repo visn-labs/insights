@@ -1,0 +1,21 @@
+{
+  "version": "evidence-metadata-v1",
+  "job_id": "01a15f96-720d-7740-bff9-f3fa441629ad",
+  "revision": "01a15f96-7b0a-7e31-b3c6-9ec34715bf73",
+  "media_policy": "sanitized-v1",
+  "input_fingerprint": "bc470e12d1534081f6ebf69a3a7d832705d738be2b9320f58306013e38dbc619",
+  "cameras": {
+    "projection-camera": {
+      "duration_ms": 2000,
+      "source_sha256": "a77331525e1074fb36f373107c347b0117807ea54aee399ebdd678f09e1994a1",
+      "intervals": [
+        {
+          "event_id": "5df62a59-70a4-54d9-b08f-04e8c8977b0b",
+          "start_ms": 0,
+          "end_ms": 2000
+        }
+      ],
+      "graph": null
+    }
+  }
+}

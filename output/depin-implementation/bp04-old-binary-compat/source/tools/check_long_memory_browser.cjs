@@ -1,0 +1,21 @@
+const {chromium}=require('playwright');const assert=require('node:assert/strict');const fs=require('node:fs');
+const base=process.env.VISN_TEST_URL||'http://127.0.0.1:8195';const job=process.env.VISN_TEST_JOB||'01a138f2-0df1-72b0-b49d-88451f598886';
+(async()=>{const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(base+'/#/workspace');await page.waitForFunction(()=>document.querySelector('#memory-job-select').options.length>1);await page.locator('#memory-job-select').selectOption(job);
+ assert.equal(await page.locator('#memory-query-long').isChecked(),false);
+ if(process.env.REBUILD_MEMORY==='1'){
+  const built=page.waitForResponse(r=>r.url().endsWith('/long-memory')&&r.request().method()==='POST',{timeout:600000});await page.locator('#memory-build-links').click();assert.equal(await page.locator('#memory-build-links').isDisabled(),true);assert.equal((await built).status(),200);await page.waitForFunction(()=>!document.querySelector('#memory-build-links').disabled);
+ }
+ const record=await(await page.request.get(base+'/api/v1/memory-jobs/'+job)).json();const entities=record.result.camera_results.flatMap(c=>c.long_memory.entities);const entity=entities.sort((a,b)=>new Set(b.observations.map(o=>o.event_id)).size-new Set(a.observations.map(o=>o.event_id)).size)[0];
+ assert.ok(entity);await page.locator('#memory-query-entity').selectOption(entity.entity_id);assert.equal(await page.locator('#memory-query-long').isChecked(),true);assert.equal(await page.locator('#memory-query-vlm').isDisabled(),true);
+ await page.locator('#memory-query-semantic').uncheck();await page.locator('#memory-query-text').fill('What observations occurred before and after for this vehicle?');
+ const response=page.waitForResponse(r=>r.url().endsWith('/memory-query')&&r.request().method()==='POST');await page.locator('#memory-query-button').click();const r=await response;assert.equal(r.status(),200);const result=await r.json();assert.equal(result.long_memory.status,'tracker_linked');assert.equal(result.long_memory.entities[0].entity_id,entity.entity_id);assert.ok(result.long_memory.supporting_events.length>=2);await page.waitForFunction(()=>document.querySelector('#memory-query-title').textContent.includes('linked tracker'));assert.ok((await page.locator('#memory-query-mode').textContent()).includes('Linked memory'));
+ const journey=page.locator('.entity-history').first();await journey.locator(':scope > summary').click();await journey.locator(':scope > summary').scrollIntoViewIfNeeded();assert.equal(await journey.locator('a').count(),entity.observations.length);
+ const link=journey.locator('a').first();const popup=page.waitForEvent('popup');await link.click();const video=await popup;await video.waitForLoadState('domcontentloaded');assert.ok(video.url().includes('/clip'));await video.close();
+ fs.mkdirSync('output/playwright/experiment3',{recursive:true});await page.screenshot({path:'output/playwright/experiment3/timeline.png'});fs.writeFileSync('output/playwright/experiment3/query.json',JSON.stringify(result,null,2));
+ await page.setViewportSize({width:390,height:844});await journey.locator(':scope > summary').scrollIntoViewIfNeeded();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.screenshot({path:'output/playwright/experiment3/mobile.png'});
+ await page.locator('#memory-search-all').click();assert.equal(await page.locator('#memory-query-entity').inputValue(),'');
+ await page.locator('#memory-query-temporal').check();assert.equal(await page.locator('#memory-query-long').isChecked(),false);await page.locator('#memory-query-temporal').uncheck();assert.equal(await page.locator('#memory-query-vlm').isDisabled(),false);
+ assert.deepEqual(errors,[]);console.log(JSON.stringify({entities:entities.length,linked_clips:result.long_memory.supporting_events.length,browserErrors:errors}));
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});

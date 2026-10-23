@@ -1,0 +1,32 @@
+{
+  "query": "A person opening an indoor door",
+  "events": [
+    {
+      "event_id": "dac61d5f-3ac6-55ab-ba3f-2d1c1c1733c2",
+      "source_path": "/Users/anagha/projects/visn_rust/data/live-evaluation-2026-10-16/memory/01a1433a-26bf-7e50-b482-5007781d97c7/live-1/source.mkv",
+      "start_ms": 0,
+      "end_ms": 8400
+    },
+    {
+      "event_id": "cfbf0ee1-58ef-5c2b-8b99-71826c63761b",
+      "source_path": "/Users/anagha/projects/visn_rust/data/live-evaluation-2026-10-16/memory/01a1433a-26bf-7e50-b482-5007781d97c7/live-1/source.mkv",
+      "start_ms": 8400,
+      "end_ms": 23600
+    },
+    {
+      "event_id": "ee6eb552-fd74-5e7b-b2be-0612177ab227",
+      "source_path": "/Users/anagha/projects/visn_rust/data/live-evaluation-2026-10-16/memory/01a1433a-26bf-7e50-b482-5007781d97c7/live-1/source.mkv",
+      "start_ms": 23600,
+      "end_ms": 39040
+    },
+    {
+      "event_id": "d4dec473-1a60-5572-8d5c-78819430a6aa",
+      "source_path": "/Users/anagha/projects/visn_rust/data/live-evaluation-2026-10-16/memory/01a1433a-26bf-7e50-b482-5007781d97c7/live-1/source.mkv",
+      "start_ms": 39040,
+      "end_ms": 44800
+    }
+  ],
+  "lexical_ids": [],
+  "limit": 4,
+  "rerank": true
+}

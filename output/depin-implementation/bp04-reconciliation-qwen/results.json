@@ -1,0 +1,1508 @@
+{
+  "scope": "Atomic cutover/rollback through Rust; fixtures by default, --actual uses cached Qwen.",
+  "actual_qwen": true,
+  "lost_ack": true,
+  "replace_pending": false,
+  "generations": [
+    "3531d589-dcea-4a5d-9c28-403fe5a219a3",
+    "e1c12391-566f-489c-953a-2aa12d5b7c63"
+  ],
+  "inflight_a": {
+    "deployment_generation": "3531d589-dcea-4a5d-9c28-403fe5a219a3",
+    "elapsed_secs": 1.628,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "legacy-renormalize-v1",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 380,
+      "decode_entries": 2,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 1,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "ff3e2267ddc86f6fe8857c6196738b2d6f48950d753f23386c3e948e6022f59d",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "0b69823d87c177261c0651bf05b5326e4cf6c1c47c367f9cbff86c9548f00c73",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "vector_policy": "legacy-renormalize-v1",
+        "work_caches": true
+      }
+    }
+  },
+  "selected_b": {
+    "deployment_generation": "e1c12391-566f-489c-953a-2aa12d5b7c63",
+    "elapsed_secs": 1.741,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "canonical-unit-v2",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 380,
+      "decode_entries": 2,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 1,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "3319c92e8893491c1f1a30c908dda2449b99d5ab98762851a0ecb6f059e36083",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "80d7f83d50352467527ca8b4a6ced3dc95a0e7e098b45fee6a06f338a25f40e6",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-canonical-v2.sqlite3",
+        "vector_policy": "canonical-unit-v2",
+        "work_caches": true
+      }
+    }
+  },
+  "rolled_back": {
+    "deployment_generation": "3531d589-dcea-4a5d-9c28-403fe5a219a3",
+    "elapsed_secs": 0.261,
+    "embedding": {
+      "decode_policy": "single-seek-v1",
+      "frames": 2,
+      "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+      "instruction": "Retrieve camera video segments that visually match the search query.",
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "pixels": 64,
+      "runtime": {
+        "attention": "sdpa",
+        "cuda_tf32": false,
+        "cuda_version": null,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "cudnn_tf32": true,
+        "cudnn_version": null,
+        "deterministic_algorithms": false,
+        "device": "cpu",
+        "dtype": "float32",
+        "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+        "float32_matmul_precision": "highest",
+        "interop_threads": 16,
+        "machine": "arm64",
+        "packages": {
+          "imageio-ffmpeg": "0.6.0",
+          "numpy": "2.5.4",
+          "pillow": "12.3.0",
+          "qwen-vl-utils": "0.0.14",
+          "torch": "2.8.0",
+          "transformers": "4.57.3"
+        },
+        "threads": 2,
+        "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+      },
+      "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+      "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+      "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+    },
+    "fusion": "reciprocal-rank-k60",
+    "reranker_snapshot": null,
+    "shortlist_limit": 20,
+    "vector_policy": "legacy-renormalize-v1",
+    "work_cache": {
+      "counters": {
+        "decode_evictions": 0,
+        "decode_hits": 0,
+        "ffmpeg_calls": 0,
+        "grouped_calls": 0,
+        "grouped_fallbacks": 0,
+        "query_calls": 1,
+        "query_hits": 0,
+        "rerank_calls": 0,
+        "rerank_hits": 0
+      },
+      "decode_bytes": 760,
+      "decode_entries": 4,
+      "decode_policy": "single-seek-v1",
+      "enabled": true,
+      "query_entries": 2,
+      "rerank_entries": 0
+    },
+    "worker_profile": {
+      "fingerprint": "ff3e2267ddc86f6fe8857c6196738b2d6f48950d753f23386c3e948e6022f59d",
+      "manifest": {
+        "decode_policy": "single-seek-v1",
+        "embedding": {
+          "decode_policy": "single-seek-v1",
+          "frames": 2,
+          "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+          "instruction": "Retrieve camera video segments that visually match the search query.",
+          "model": "Qwen/Qwen3-VL-Embedding-2B",
+          "pixels": 64,
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "sampler": "ffmpeg-pts-bounded-midpoints-v4-hold-last",
+          "upstream": "393e2978d27852b0d0230d6994f37f9c15bed73c",
+          "weights": "f3bdfb6de825bf6f296ac0e57a807a2606048eea48c589be8d701ea055ef105e"
+        },
+        "index_schema": "vectors-v1",
+        "index_storage": "0b69823d87c177261c0651bf05b5326e4cf6c1c47c367f9cbff86c9548f00c73",
+        "interpretation": {
+          "identity": "configuration_only_not_model_weight_attestation",
+          "model": null,
+          "revision": null
+        },
+        "qualification": "integration_candidate_not_quality_acceptance",
+        "reranker": {
+          "implementation": "a7ac50f8bb822054cd54ccbdea4895a006c00816a656a1e4951dda019e511472",
+          "model": "Qwen/Qwen3-VL-Reranker-2B",
+          "runtime": {
+            "attention": "sdpa",
+            "cuda_tf32": false,
+            "cuda_version": null,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": false,
+            "cudnn_tf32": true,
+            "cudnn_version": null,
+            "deterministic_algorithms": false,
+            "device": "cpu",
+            "dtype": "float32",
+            "ffmpeg_sha256": "6d175a4743ca50256e89a8cdd731100f9cee33bd79aeea46894d209410dc6617",
+            "float32_matmul_precision": "highest",
+            "interop_threads": 16,
+            "machine": "arm64",
+            "packages": {
+              "imageio-ffmpeg": "0.6.0",
+              "numpy": "2.5.4",
+              "pillow": "12.3.0",
+              "qwen-vl-utils": "0.0.14",
+              "torch": "2.8.0",
+              "transformers": "4.57.3"
+            },
+            "threads": 2,
+            "torch_build": "bb3c6b7b7e101efd54dadc724dab329da4d1a5cb6f246199bf74a957977f86aa"
+          },
+          "weights": "c19796c5e7a45a897b153f2c88145a1617e6f9652e5e94fa4886c0c708cad2ea"
+        },
+        "schema": "visn-retrieval-profile-v1",
+        "vector_database": "semantic-v1.sqlite3",
+        "vector_policy": "legacy-renormalize-v1",
+        "work_caches": true
+      }
+    }
+  },
+  "wrong_storage_rejection": {
+    "target_receipts": {
+      "1d18de95551a334c538b83801b4df2ff126271bc7bbc88562f2f27b0cd0a074c": {
+        "cleanup_complete": true,
+        "index_storage": "80d7f83d50352467527ca8b4a6ced3dc95a0e7e098b45fee6a06f338a25f40e6",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16965-4ebe-7b20-b6fd-8399711ffe48",
+        "scope_id": "01a16964-7392-7a13-b898-252421c8f8d4",
+        "status": "revoked"
+      }
+    },
+    "registry_revision": "1af687f6-b763-4bdd-86c4-7b8c14d0b488",
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a16965-4ebe-7b20-b6fd-8399711ffe48",
+    "revoked_at_ms": 1792769609406,
+    "cleanup_state": "blocked",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792769615712,
+    "worker_fingerprint": "d8d1aa2d2a6a6720e1600abc8252e35bb64abd8f5afc352fe98a2e5e7e221b57",
+    "last_error": "revocation_storage_changed",
+    "receipt": {
+      "cleanup_complete": true,
+      "index_storage": "80d7f83d50352467527ca8b4a6ced3dc95a0e7e098b45fee6a06f338a25f40e6",
+      "media_erased": false,
+      "pending_policies": [],
+      "revision": "01a16965-4ebe-7b20-b6fd-8399711ffe48",
+      "scope_id": "01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": "revoked"
+    }
+  },
+  "failed_stage_generation": "a8d57a37-10ba-449e-b915-d89c831d7824",
+  "retired_projection": {
+    "deployment_generation": "3531d589-dcea-4a5d-9c28-403fe5a219a3",
+    "retry_requested": false,
+    "revision": "01a16965-0e55-7cc2-9ec1-67ec6bc2b68c",
+    "state": "cancelled",
+    "attempts": 2,
+    "next_attempt_at_ms": 1792769602665,
+    "task_id": "01fa6bf4-e13b-5898-9b5d-559218a00a42",
+    "worker_fingerprint": "d8d1aa2d2a6a6720e1600abc8252e35bb64abd8f5afc352fe98a2e5e7e221b57",
+    "last_error": "projection_deployment_retired",
+    "receipt": null
+  },
+  "revocation": {
+    "target_receipts": {
+      "1d18de95551a334c538b83801b4df2ff126271bc7bbc88562f2f27b0cd0a074c": {
+        "cleanup_complete": true,
+        "index_storage": "80d7f83d50352467527ca8b4a6ced3dc95a0e7e098b45fee6a06f338a25f40e6",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16965-4ebe-7b20-b6fd-8399711ffe48",
+        "scope_id": "01a16964-7392-7a13-b898-252421c8f8d4",
+        "status": "revoked"
+      },
+      "d8d1aa2d2a6a6720e1600abc8252e35bb64abd8f5afc352fe98a2e5e7e221b57": {
+        "cleanup_complete": true,
+        "index_storage": "0b69823d87c177261c0651bf05b5326e4cf6c1c47c367f9cbff86c9548f00c73",
+        "media_erased": false,
+        "pending_policies": [],
+        "revision": "01a16965-4ebe-7b20-b6fd-8399711ffe48",
+        "scope_id": "01a16964-7392-7a13-b898-252421c8f8d4",
+        "status": "revoked"
+      }
+    },
+    "registry_revision": "1af687f6-b763-4bdd-86c4-7b8c14d0b488",
+    "local_cleanup_state": "completed",
+    "local_cleanup_error": null,
+    "revision": "01a16965-4ebe-7b20-b6fd-8399711ffe48",
+    "revoked_at_ms": 1792769609406,
+    "cleanup_state": "completed",
+    "attempts": 3,
+    "next_attempt_at_ms": 0,
+    "worker_fingerprint": "d8d1aa2d2a6a6720e1600abc8252e35bb64abd8f5afc352fe98a2e5e7e221b57",
+    "last_error": null,
+    "receipt": {
+      "cleanup_complete": true,
+      "index_storage": "0b69823d87c177261c0651bf05b5326e4cf6c1c47c367f9cbff86c9548f00c73",
+      "media_erased": false,
+      "pending_policies": [],
+      "revision": "01a16965-4ebe-7b20-b6fd-8399711ffe48",
+      "scope_id": "01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": "revoked"
+    }
+  },
+  "source_requests": [
+    "/source.mp4",
+    "/source.mp4"
+  ],
+  "observations": [
+    {
+      "path": "/api/v1/memory-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61/visual-index/01fa6bf4-e13b-5898-9b5d-559218a00a42/retry?deployment_generation=3531d589-dcea-4a5d-9c28-403fe5a219a3",
+      "status": 409
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61/visual-index/01fa6bf4-e13b-5898-9b5d-559218a00a42/retry?deployment_generation=3531d589-dcea-4a5d-9c28-403fe5a219a3",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 400
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-f615-7630-889f-d49f7c700b61/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4/revoke",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-jobs/01a16964-7392-7a13-b898-252421c8f8d4",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/memory-query",
+      "status": 410
+    }
+  ]
+}

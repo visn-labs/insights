@@ -1,0 +1,68 @@
+[     206ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[    6190ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[   16698ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[   37698ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[   78199ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  139700ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  201201ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  262702ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  324203ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  385703ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  447204ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  508704ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  570205ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  631706ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  693200ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[  767994ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[ 1065003ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[ 1634399ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[ 1831767ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[ 1893242ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[ 1953247ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[ 2014748ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[ 2074750ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://127.0.0.1:49720/api/v1/memory-jobs/01a16440-ff08-7e13-b01d-d76778725f3c/visual-index:0
+[ 2091239ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/jobs:0
+[ 2091240ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadJobs (http://127.0.0.1:49720/app.js:985:24)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:22) @ http://127.0.0.1:49720/app.js:993
+[ 2091241ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/cluster-jobs:0
+[ 2091241ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadClusterJobs (http://127.0.0.1:49720/app.js:1000:31)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:34) @ http://127.0.0.1:49720/app.js:1007
+[ 2091241ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/memory-jobs:0
+[ 2091241ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadMemoryJobs (http://127.0.0.1:49720/app.js:529:30)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:53) @ http://127.0.0.1:49720/app.js:547
+[ 2092739ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/jobs:0
+[ 2092739ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadJobs (http://127.0.0.1:49720/app.js:985:24)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:22) @ http://127.0.0.1:49720/app.js:993
+[ 2092739ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/cluster-jobs:0
+[ 2092739ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadClusterJobs (http://127.0.0.1:49720/app.js:1000:31)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:34) @ http://127.0.0.1:49720/app.js:1007
+[ 2092739ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/memory-jobs:0
+[ 2092739ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadMemoryJobs (http://127.0.0.1:49720/app.js:529:30)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:53) @ http://127.0.0.1:49720/app.js:547
+[ 2094242ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/jobs:0
+[ 2094242ms] [WARNING] Could not refresh jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadJobs (http://127.0.0.1:49720/app.js:985:24)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:22) @ http://127.0.0.1:49720/app.js:993
+[ 2094243ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/cluster-jobs:0
+[ 2094243ms] [WARNING] Could not refresh cluster jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadClusterJobs (http://127.0.0.1:49720/app.js:1000:31)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:34) @ http://127.0.0.1:49720/app.js:1007
+[ 2094243ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:49720/api/v1/memory-jobs:0
+[ 2094243ms] [WARNING] Could not refresh memory jobs TypeError: Failed to fetch
+    at api (http://127.0.0.1:49720/app.js:242:26)
+    at loadMemoryJobs (http://127.0.0.1:49720/app.js:529:30)
+    at refreshJobLists (http://127.0.0.1:49720/app.js:1013:53) @ http://127.0.0.1:49720/app.js:547

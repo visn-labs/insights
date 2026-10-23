@@ -1,0 +1,14 @@
+Create genuine reset fixture from retained development footage
+Capture and index both source-clock sessions through the API
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/check_multisession_workflow.py", line 242, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/anagha/projects/visn_rust/tools/check_multisession_workflow.py", line 113, in main
+    job=request('/api/v1/memory-jobs',dict(name='Real clock reset',capture_sessions=True,
+        cameras=[dict(camera_id='junction',live_url=f'http://127.0.0.1:{server.server_port}/reset.ts')],
+        monitor_duration_secs=12 if args.transport_reconnect else 15,observer_fps=2,long_memory_enabled=True,vlm_enabled=False),202)
+  File "/Users/anagha/projects/visn_rust/tools/check_multisession_workflow.py", line 100, in request
+    assert response.status == expected, (route,response.status,value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('/api/v1/memory-jobs', 400, {'error': 'execution_runtime_probe_failed'})

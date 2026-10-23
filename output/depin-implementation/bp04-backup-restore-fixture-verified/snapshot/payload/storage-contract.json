@@ -1,0 +1,12 @@
+{
+  "schema": "visn-storage-contract",
+  "version": 1,
+  "required_features": [
+    "committed-media-hash-admission",
+    "durable-revocation",
+    "legacy-projection-quarantine",
+    "retrieval-generation-binding",
+    "revocation-source-contract",
+    "saved-privacy-policy"
+  ]
+}

@@ -1,0 +1,21 @@
+127.0.0.1 - - [23/Oct/2026 21:11:03] "GET /profile HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "GET /profile HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "POST /search HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "POST /search HTTP/1.1" 409 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "POST /index-jobs HTTP/1.1" 404 -
+Retrieval request failed
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/semantic_memory_server.py", line 672, in process_post
+    raise ValueError('resolve_only must be a boolean')
+ValueError: resolve_only must be a boolean
+127.0.0.1 - - [23/Oct/2026 21:11:03] "POST /index-jobs HTTP/1.1" 400 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "POST /index-jobs HTTP/1.1" 202 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "POST /index-jobs HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "POST /search HTTP/1.1" 409 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "GET /profile HTTP/1.1" 200 -
+127.0.0.1 - - [23/Oct/2026 21:11:03] "POST /search HTTP/1.1" 409 -
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.946s
+
+OK

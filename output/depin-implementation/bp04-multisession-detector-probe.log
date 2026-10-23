@@ -1,0 +1,14 @@
+/Users/anagha/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/m9/t5q0cyl936sbj46dm933jp4w0000gr/T/matplotlib-anjom_qg because there was an issue with the default path (/Users/anagha/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Matplotlib is building the font cache; this may take a moment.
+Traceback (most recent call last):
+  File "/Users/anagha/projects/visn_rust/tools/yolo26_runner.py", line 592, in <module>
+    main()
+  File "/Users/anagha/projects/visn_rust/tools/yolo26_runner.py", line 456, in main
+    epoch = continuity.observe(source_time_ms)
+  File "/Users/anagha/projects/visn_rust/tools/yolo26_runner.py", line 41, in observe
+    raise ValueError("source_clock_regressed_start_new_recording")
+ValueError: source_clock_regressed_start_new_recording

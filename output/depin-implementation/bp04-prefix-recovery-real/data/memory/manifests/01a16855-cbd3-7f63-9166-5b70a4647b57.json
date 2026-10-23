@@ -1,0 +1,73 @@
+{
+  "metadata_projection": {
+    "revision": "01a16855-eebe-7391-9ef0-2634829da2b0",
+    "version": "evidence-metadata-v1",
+    "input_fingerprint": "1003dccefbf876b32e031b3a17dbd2029bf89f1a47d1e937cbfd72c3ed4f2d79",
+    "state": "cancelled",
+    "output_sha256": null,
+    "attempts": 1,
+    "next_attempt_at_ms": 0,
+    "last_error": null
+  },
+  "revocation": {
+    "local_cleanup_state": "pending",
+    "local_cleanup_error": null,
+    "revision": "01a1686f-4afb-7d83-9313-d1e12d799bb1",
+    "revoked_at_ms": 1792753486587,
+    "cleanup_state": "pending",
+    "attempts": 0,
+    "next_attempt_at_ms": 0,
+    "worker_fingerprint": null,
+    "last_error": null,
+    "receipt": null
+  },
+  "visual_projection": {
+    "retry_requested": false,
+    "revision": "01a16855-eebe-7391-9ef0-26484bf71943",
+    "state": "cancelled",
+    "attempts": 0,
+    "next_attempt_at_ms": 0,
+    "task_id": null,
+    "worker_fingerprint": null,
+    "last_error": null,
+    "receipt": null
+  },
+  "request_fingerprint": "638521d422685bf40f16be1829698023ff4ea67f09ae536bd0333f447e04e28e",
+  "camera_checkpoints": {},
+  "recovery_attempts": 1,
+  "id": "01a16855-cbd3-7f63-9166-5b70a4647b57",
+  "request": {
+    "capture_sessions": true,
+    "idempotency_key": null,
+    "long_memory_enabled": true,
+    "temporal_enabled": false,
+    "name": "Committed-prefix recovery",
+    "cluster_id": null,
+    "cameras": [
+      {
+        "camera_id": "prefix-junction",
+        "live_url": "http://***",
+        "country": "",
+        "country_code": "",
+        "region": "",
+        "city": "",
+        "latitude": null,
+        "longitude": null,
+        "zip": null,
+        "timezone": "",
+        "manufacturer": "",
+        "description": ""
+      }
+    ],
+    "monitor_duration_secs": 15,
+    "observer_fps": 2.0,
+    "vlm_enabled": false,
+    "vlm_model": null
+  },
+  "status": "cancelled",
+  "created_at_ms": 1792751815635,
+  "started_at_ms": 1792751819407,
+  "completed_at_ms": 1792753486587,
+  "result": null,
+  "error": "recording_revoked"
+}

@@ -1,0 +1,3 @@
+{"timestamp":"2026-10-21T17:51:08.163587Z","level":"INFO","fields":{"message":"visn Phase 0 service ready","address":"127.0.0.1:60323","media_workers":4,"detector_threads":1,"persistent_detector":true,"detector_batch_size":4,"vlm_context_length":4096,"vlm_exclusive_media":true},"target":"visn_phase0"}
+{"timestamp":"2026-10-21T17:51:08.537562Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 502 Bad Gateway","latency":"198 ms"},"target":"tower_http::trace::on_failure"}
+{"timestamp":"2026-10-21T17:51:10.563379Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 502 Bad Gateway","latency":"117 ms"},"target":"tower_http::trace::on_failure"}

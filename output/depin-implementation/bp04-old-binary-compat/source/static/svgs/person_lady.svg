@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="1024" height="1024" role="img" aria-labelledby="title"><title id="title">Victorian woman with pleated dress, fitted bodice and ribbon bonnet</title><defs>
+ <linearGradient id="cloth" x1="0" x2="1"><stop stop-color="#342f2a"/><stop offset=".42" stop-color="#756450"/><stop offset=".7" stop-color="#5b4d3f"/><stop offset="1" stop-color="#302b27"/></linearGradient>
+ <linearGradient id="skin" x1="0" x2="1" y2=".5"><stop stop-color="#a87552"/><stop offset=".5" stop-color="#e0ba91"/><stop offset="1" stop-color="#b3825e"/></linearGradient>
+ <linearGradient id="leather" x2=".2" y2="1"><stop stop-color="#6c503c"/><stop offset="1" stop-color="#292420"/></linearGradient>
+ <linearGradient id="silk" x1="0" x2="1"><stop stop-color="#594637"/><stop offset=".4" stop-color="#a18968"/><stop offset=".65" stop-color="#80684f"/><stop offset="1" stop-color="#49392d"/></linearGradient>
+ <radialGradient id="shadow"><stop stop-color="#3c3028" stop-opacity=".23"/><stop offset="1" stop-color="#3c3028" stop-opacity="0"/></radialGradient>
+ </defs><ellipse cx="401" cy="651" rx="113" ry="20" fill="url(#shadow)"/><g stroke-linejoin="round" stroke-linecap="round"><path d="M369 590l-7 37q-28 10-25 20 28 8 54-2l5-54m24-1 1 41q-13 14-4 19 23 8 46-2 2-8-22-17l-2-41" fill="url(#leather)" stroke="#302921" stroke-width="2"/><path d="M340 645q27 8 48-3m30 4q23 6 43-1" fill="none" stroke="#b99a76" stroke-width="1"/><path d="M375 342q-22 59-36 125l-28 161q81 33 172-1l-28-161q-14-67-37-125Z" fill="url(#silk)" stroke="#584332" stroke-width="2"/>
+ <path d="M376 373q-19 131-30 248m42-248-9 258m25-258 8 257m3-259 36 253m-27-247 44 238" fill="none" stroke="#c2a884" stroke-opacity=".42" stroke-width="3"/>
+ <path d="M318 613q79 29 158 1m-159 8q83 27 161-1" fill="none" stroke="#4f3d2e" stroke-width="3"/>
+ <path d="M382 233q-26 4-39 21l9 70 23 32q23 10 45-1l24-35 5-64q-13-20-39-23Z" fill="url(#silk)" stroke="#584332" stroke-width="2"/>
+ <path d="M385 233l14 35 14-35" fill="#ecddbf"/><path d="M397 271l1 70m-26-86 10 77m43-76-12 76" stroke="#ceb28b" stroke-width="1.5" fill="none"/>
+ <path d="M373 342q25 7 50-1l2 12q-26 8-52 0Z" fill="#51402f"/>
+ <path d="M346 251q-25 13-21 48l10 56-7 56 17 3 16-61-7-60m88-42q20 8 21 38l-4 61 14 55-16 6-22-59 0-60" fill="url(#silk)" stroke="#584332" stroke-width="2"/>
+ <path d="M328 408l-3 23q-4 15 2 15l5-17 0 21q5 3 7-5l2-22 5 13q5 2 3-10l-5-14m112-5 3 23q-2 17 4 17l2-19 4 22q5 2 4-9l-1-17 6 12q5 0 0-13l-7-19" fill="url(#skin)"/>
+ <path d="M326 405l21 5m107-6 21-4" stroke="#dfcdae" stroke-width="5"/><circle cx="403" cy="315" r="2.7" fill="#b69b6e" stroke="#6a5035"/><circle cx="403" cy="340" r="2.7" fill="#b69b6e" stroke="#6a5035"/><circle cx="403" cy="365" r="2.7" fill="#b69b6e" stroke="#6a5035"/><circle cx="403" cy="390" r="2.7" fill="#b69b6e" stroke="#6a5035"/><path d="M373 200 Q369 175 380 165 Q395 153 414 166 Q427 177 420 201 L415 216 Q405 230 393 220 L382 209Z" fill="url(#skin)"/>
+ <path d="M377 180 Q377 157 397 158 Q420 157 423 179 L414 176 Q412 166 401 171 Q388 168 382 185Z" fill="#49382c"/>
+ <path d="M384 186q7-4 13-1m7-1q7-3 12 1" stroke="#674b36" stroke-width="2" fill="none"/>
+ <path d="M385 190q5-3 10 0m10-1q5-3 9 0" stroke="#49382e" stroke-width="1.5" fill="none"/>
+ <path d="M401 187l-3 14 6 1m-12 9q9 3 16-2" stroke="#9d6b50" stroke-width="1.5" fill="none"/>
+ <path d="M376 188q-8-7-6 6l7 7m44-13q6-6 4 5l-5 8" fill="url(#skin)"/>
+ <path d="M388 215l-2 22 24 2-1-21" fill="url(#skin)"/><path d="M368 181q-10-37 11-50 23-15 48 4 20 17 7 49l-14-11q8-26-16-31-24-3-24 31Z" fill="url(#silk)" stroke="#bd9f79" stroke-width="3"/><path d="M371 175q-2 50 27 65m31-64q5 39-27 64" stroke="#c1a882" stroke-width="5" fill="none"/><path d="M399 238q-22-12-16 5l16-2q21 15 17-3Z" fill="#9b7d5b"/><path d="M426 141q12-19 15-1-2 9-15 8 17 5 13 13-10 9-16-10" fill="#dbbd8d"/></g></svg>

@@ -1,0 +1,8 @@
+Checking single writer, durable acknowledgements and idempotency
+Hard-killing only owned Rust parent; checking worker and descendant exit
+Checking cancellation and retained-only recovery
+Checking restart persistence of completed checkpoints
+Checking anchored checkpoint reuse without any observation worker
+Checking modified checkpoint metadata is rejected, then recoverable after restoration
+Checking cancellation before capture cannot be resumed as a new live interval
+Passed 64 HTTP checks plus crash/ownership/child checks: /Users/anagha/projects/visn_rust/output/depin-implementation/bp04-session-set-recovery

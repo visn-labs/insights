@@ -24,6 +24,33 @@ OUTPUT_PREFIX = "VISN_DETECTOR_JSON:"
 OBSERVATIONS_OUTPUT_PREFIX = "VISN_OBSERVATIONS_JSON:"
 
 
+class TrackingContinuity:
+    """Conservative association boundaries; spacing does not certify frame loss."""
+
+    def __init__(self):
+        self.epoch = 0
+        self.previous_ms = None
+
+    def reconnect(self):
+        self.epoch += 1
+        self.previous_ms = None
+
+    def observe(self, timestamp_ms):
+        if self.previous_ms is not None:
+            if timestamp_ms < self.previous_ms:
+                raise ValueError("source_clock_regressed_start_new_recording")
+            if timestamp_ms - self.previous_ms > 1000:
+                self.epoch += 1
+        self.previous_ms = timestamp_ms
+        return self.epoch
+
+    @staticmethod
+    def track_id(epoch, local_id):
+        # Epoch zero preserves existing control identifiers. Later epochs must
+        # not merge with IDs reused by a reset tracker in the same camera job.
+        return str(local_id) if epoch == 0 else f"session-{epoch}:{local_id}"
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -387,6 +414,8 @@ def main() -> None:
     best_frame_quality = float("-inf")
     frame_index = 0
     wall_start = time.monotonic()
+    continuity = TrackingContinuity()
+    tracker_epoch = 0
 
     try:
         while True:
@@ -403,6 +432,7 @@ def main() -> None:
                 if not is_network_stream or time.monotonic() >= wall_start + args.max_seconds:
                     break
                 capture.release()
+                continuity.reconnect()
                 time.sleep(min(1.0, max(0.0, wall_start + args.max_seconds - time.monotonic())))
                 capture = safe_open_capture(
                     cv2,
@@ -423,6 +453,7 @@ def main() -> None:
                 source_time_ms = int(frame_index * 1000.0 / nominal_fps)
             if source_time_ms > args.max_seconds * 1000:
                 break
+            epoch = continuity.observe(source_time_ms)
             if not is_network_stream and elapsed_seconds > args.max_seconds * 2:
                 fail("Video read exceeded the bounded wall-clock deadline")
             if not sampler.accept(source_time_ms):
@@ -452,6 +483,11 @@ def main() -> None:
                 )
                 best_frame_time_ms = source_time_ms
                 best_frame_quality = frame_quality
+            if epoch != tracker_epoch:
+                for tracker in getattr(getattr(model, "predictor", None), "trackers", []):
+                    tracker.reset()
+                track_appearance_sample_times.clear()
+                tracker_epoch = epoch
             with redirect_stdout(sys.stderr):
                 results = model.track(
                     frame,
@@ -471,7 +507,7 @@ def main() -> None:
                 for index, row in enumerate(box_rows):
                     x1, y1, x2, y2 = row[:4]
                     if tracked:
-                        track_id = str(int(row[4]))
+                        track_id = TrackingContinuity.track_id(epoch, int(row[4]))
                         confidence = float(row[5])
                         class_id = int(row[6])
                     else:

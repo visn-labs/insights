@@ -4,12 +4,14 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
 import io
 import json
+import sqlite3
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import threading
 import time
 from types import SimpleNamespace
 import unittest
+import uuid
 from unittest.mock import patch
 
 from check_retrieval import Models, write_video
@@ -199,6 +201,77 @@ class Checks(unittest.TestCase):
                 self.assertEqual(request('/search',{'query':'red'})[0],503)
                 self.assertTrue(request('/health')[1]['scheduler']['active'])
             finally:service.lock.release()
+
+
+    def test_revocation_purges_only_unshared_artifacts_and_survives_restart(self):
+        with TemporaryDirectory() as tmp:
+            service, body = self.setup_service(tmp)
+            job = self.drain(service, service.indexer.submit(body))
+            source = Path(body['events'][0]['source_path'])
+            alias = source.with_name('permitted-copy.mp4');alias.write_bytes(source.read_bytes())
+            permitted = dict(body['events'][0], source_path=str(alias), event_id='permitted')
+            service.embedding(permitted)
+            service.db.execute('CREATE TABLE interpretations(key TEXT PRIMARY KEY,result TEXT NOT NULL)')
+            service.db.execute('INSERT INTO interpretations VALUES (?,?)',('private-answer','{}'))
+            service.record_artifact_source('interpretation','private-answer',source)
+            service.db.execute('INSERT INTO vectors VALUES (?,?,?)',('legacy-untracked',service.models.version,'[1,0]'))
+            service.db.commit()
+            request = dict(scope_id=body['scope_id'], revision=str(uuid.uuid4()), source_paths=[str(source)])
+            self.assertTrue(service.indexer.revoke(request)['cleanup_complete'])
+            self.assertEqual(service.indexer.get(job['id'])['status'],'cancelled')
+            with self.assertRaisesRegex(ValueError,'revoked'):service.indexer.submit(body)
+            with self.assertRaisesRegex(ValueError,'revoked'):service.indexer.action(job['id'],'retry')
+            with self.assertRaisesRegex(ValueError,'revoked'):service.source(body['events'][0])
+            self.assertTrue(service.embedding(permitted)[1], 'Independently permitted shared artifact must remain reusable')
+            self.assertEqual(service.db.execute('SELECT count(*) FROM vectors').fetchone()[0],1)
+            self.assertEqual(service.db.execute('SELECT count(*) FROM interpretations').fetchone()[0],0)
+            self.assertFalse(service.decode_cache)
+            self.assertTrue(source.exists(),'Revocation is not physical media erasure')
+            with self.assertRaisesRegex(ValueError,'contract conflict'):
+                service.indexer.revoke(dict(request,source_paths=[str(alias)]))
+            service.indexer.close();service.indexer = IndexJobs(service);self.addCleanup(service.indexer.close)
+            self.assertTrue(service.indexer.revoke(request)['cleanup_complete'])
+            with self.assertRaisesRegex(ValueError,'revoked'):service.source(body['events'][0])
+
+    def test_active_other_policy_denies_immediately_and_replays_its_cleanup(self):
+        with TemporaryDirectory() as tmp:
+            service, body = self.setup_service(tmp)
+            other = Retrieval(SimpleNamespace(data_dir=tmp,frames=2,frame_size=64,vector_policy='canonical-unit-v2'),Models())
+            self.addCleanup(other.db.close);self.addCleanup(other.revocations.close)
+            other.indexer = IndexJobs(other);self.addCleanup(other.indexer.close)
+            for worker in [service,other]:worker.embedding(body['events'][0])
+            request = dict(scope_id=body['scope_id'],revision=str(uuid.uuid4()),source_paths=[body['events'][0]['source_path']])
+            self.assertFalse(service.indexer.revoke(request)['cleanup_complete'])
+            with self.assertRaisesRegex(ValueError,'revoked'):other.source(body['events'][0])
+            self.assertTrue(other.indexer.run_one())
+            self.assertTrue(service.indexer.revoke(request)['cleanup_complete'])
+            for worker in [service,other]:self.assertEqual(worker.db.execute('SELECT count(*) FROM vectors').fetchone()[0],0)
+
+    def test_interrupted_cleanup_is_denied_then_replayed(self):
+        with TemporaryDirectory() as tmp:
+            service, body = self.setup_service(tmp)
+            service.embedding(body['events'][0])
+            request = dict(scope_id=body['scope_id'],revision=str(uuid.uuid4()),source_paths=[body['events'][0]['source_path']])
+            with patch.object(service.indexer,'purge_artifacts',side_effect=RuntimeError('fixture interrupted cleanup')):
+                with self.assertRaisesRegex(RuntimeError,'interrupted'):service.indexer.revoke(request)
+            with self.assertRaisesRegex(ValueError,'revoked'):service.source(body['events'][0])
+            service.indexer.close();service.indexer = IndexJobs(service);self.addCleanup(service.indexer.close)
+            self.assertTrue(service.indexer.run_one())
+            self.assertEqual(service.db.execute('SELECT count(*) FROM vectors').fetchone()[0],0)
+            self.assertTrue(service.indexer.revoke(request)['cleanup_complete'])
+
+    def test_inactive_other_policy_is_cleaned_under_its_owner_lease(self):
+        with TemporaryDirectory() as tmp:
+            service, body = self.setup_service(tmp)
+            other = Retrieval(SimpleNamespace(data_dir=tmp,frames=2,frame_size=64,vector_policy='canonical-unit-v2'),Models())
+            other.indexer = IndexJobs(other)
+            other.embedding(body['events'][0])
+            other.indexer.close();other.db.close();other.revocations.close()
+            request = dict(scope_id=body['scope_id'],revision=str(uuid.uuid4()),source_paths=[body['events'][0]['source_path']])
+            self.assertTrue(service.indexer.revoke(request)['cleanup_complete'])
+            with closing(sqlite3.connect(Path(tmp)/'semantic-canonical-v2.sqlite3')) as cache:
+                self.assertEqual(cache.execute('SELECT count(*) FROM vectors').fetchone()[0],0)
+            with self.assertRaisesRegex(ValueError,'revocation object'):service.indexer.revoke([])
 
 
 if __name__=='__main__':unittest.main()
