@@ -15,6 +15,7 @@ from contextlib import redirect_stdout
 import json
 import math
 import os
+from pathlib import Path
 import sys
 import time
 from typing import Any
@@ -22,6 +23,20 @@ from typing import Any
 
 OUTPUT_PREFIX = "VISN_DETECTOR_JSON:"
 OBSERVATIONS_OUTPUT_PREFIX = "VISN_OBSERVATIONS_JSON:"
+DEFAULT_TRACKER = str(Path(__file__).resolve().parents[1] / "runtime" / "bytetrack.yaml")
+
+
+def track_frame(model: Any, frame: Any, args: argparse.Namespace) -> Any:
+    """Keep fallback tracking independent of changing Ultralytics defaults."""
+    return model.track(
+        frame,
+        persist=True,
+        verbose=False,
+        conf=args.confidence,
+        device=args.device,
+        imgsz=args.imgsz,
+        tracker=DEFAULT_TRACKER,
+    )
 
 
 class TrackingContinuity:
@@ -489,14 +504,7 @@ def main() -> None:
                 track_appearance_sample_times.clear()
                 tracker_epoch = epoch
             with redirect_stdout(sys.stderr):
-                results = model.track(
-                    frame,
-                    persist=True,
-                    verbose=False,
-                    conf=args.confidence,
-                    device=args.device,
-                    imgsz=args.imgsz,
-                )
+                results = track_frame(model, frame, args)
             result = results[0]
             boxes = result.boxes
             if boxes is not None:

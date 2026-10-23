@@ -38,7 +38,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-batch-size", type=int, default=4)
     parser.add_argument("--batch-wait-ms", type=float, default=12.0)
     parser.add_argument("--imgsz", type=int, default=640)
-    parser.add_argument("--tracker", default="bytetrack.yaml")
+    parser.add_argument("--tracker", default=runner.DEFAULT_TRACKER)
     parser.add_argument(
         "--warmup",
         action="store_true",
@@ -380,6 +380,8 @@ def main() -> None:
             return None
 
     tracker_config = IterableSimpleNamespace(**YAML.load(check_yaml(args.tracker)))
+    if tracker_config.tracker_type != "bytetrack":
+        raise ValueError("The persistent worker supports only ByteTrack configurations")
     tracker_config.device = args.device or "cpu"
     lease = Residency('detector')
     model = None
